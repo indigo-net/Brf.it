@@ -152,14 +152,16 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 
 		// Handle directories
 		if d.IsDir() {
-			name := filepath.Base(path)
-			// Skip hidden directories (e.g., .git, .idea)
-			if !s.opts.IncludeHidden && IsHidden(name) {
-				return filepath.SkipDir
-			}
-			// Check gitignore for directory
-			if s.ignorer != nil && s.ignorer.MatchesPath(path) {
-				return filepath.SkipDir
+			// Skip hidden directories (e.g., .git, .idea), but not the root directory
+			if path != s.opts.RootPath {
+				name := filepath.Base(path)
+				if !s.opts.IncludeHidden && IsHidden(name) {
+					return filepath.SkipDir
+				}
+				// Check gitignore for directory
+				if s.ignorer != nil && s.ignorer.MatchesPath(path) {
+					return filepath.SkipDir
+				}
 			}
 			return nil
 		}
