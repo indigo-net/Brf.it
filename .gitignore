@@ -1,11 +1,17 @@
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+bin/
+
 # Worktrees
 .worktrees/
-
-# Dependencies
-node_modules/
-
-# Build output
-dist/
 
 # IDE
 .idea/
@@ -19,4 +25,3 @@ Thumbs.db
 
 # Logs
 *.log
-npm-debug.log*
