@@ -2,6 +2,9 @@
 package scanner
 
 import (
+	"io/fs"
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -89,6 +92,7 @@ type FileScanner struct {
 	opts       *ScanOptions
 	ignorer    *ignore.GitIgnore
 	ignorerErr error
+	logger     *log.Logger
 }
 
 // NewFileScanner creates a new FileScanner with the given options.
@@ -99,7 +103,8 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 	}
 
 	scanner := &FileScanner{
-		opts: opts,
+		opts:   opts,
+		logger: log.New(os.Stderr, "[brfit] ", 0),
 	}
 
 	// Try to load gitignore file
@@ -114,4 +119,100 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 	}
 
 	return scanner, nil
+}
+
+// Scan implements the Scanner interface.
+// It recursively traverses the directory tree and returns matching files.
+func (s *FileScanner) Scan() (*ScanResult, error) {
+	result := &ScanResult{}
+
+	// Check if root path is a file
+	info, err := os.Stat(s.opts.RootPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if !info.IsDir() {
+		// Single file - check if it matches criteria
+		if entry, ok := s.checkFile(s.opts.RootPath, info); ok {
+			result.Files = append(result.Files, entry)
+			result.TotalSize = entry.Size
+		} else {
+			result.SkippedCount = 1
+		}
+		return result, nil
+	}
+
+	// Directory - walk recursively using WalkDir (more efficient than Walk)
+	err = filepath.WalkDir(s.opts.RootPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			// Skip files/directories we can't access
+			return nil
+		}
+
+		// Handle directories
+		if d.IsDir() {
+			name := filepath.Base(path)
+			// Skip hidden directories (e.g., .git, .idea)
+			if !s.opts.IncludeHidden && IsHidden(name) {
+				return filepath.SkipDir
+			}
+			// Check gitignore for directory
+			if s.ignorer != nil && s.ignorer.MatchesPath(path) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		// Get file info for size check
+		info, err := d.Info()
+		if err != nil {
+			return nil
+		}
+
+		// Check file
+		if entry, ok := s.checkFile(path, info); ok {
+			result.Files = append(result.Files, entry)
+			result.TotalSize += entry.Size
+		} else {
+			result.SkippedCount++
+		}
+
+		return nil
+	})
+
+	return result, err
+}
+
+// checkFile checks if a file should be included in the scan results.
+func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) {
+	// Check hidden
+	name := filepath.Base(path)
+	if !s.opts.IncludeHidden && IsHidden(name) {
+		return FileEntry{}, false
+	}
+
+	// Check gitignore
+	if s.ignorer != nil && s.ignorer.MatchesPath(path) {
+		return FileEntry{}, false
+	}
+
+	// Check extension
+	language, ok := s.opts.GetLanguage(path)
+	if !ok {
+		return FileEntry{}, false
+	}
+
+	// Check file size - log warning for large files
+	if info.Size() > s.opts.MaxFileSize {
+		s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)\n",
+			path, info.Size(), s.opts.MaxFileSize)
+		return FileEntry{}, false
+	}
+
+	return FileEntry{
+		Path:     path,
+		Language: language,
+		Size:     info.Size(),
+	}, true
 }
