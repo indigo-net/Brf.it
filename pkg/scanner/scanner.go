@@ -4,6 +4,8 @@ package scanner
 import (
 	"path/filepath"
 	"strings"
+
+	ignore "github.com/sabhiram/go-gitignore"
 )
 
 // FileEntry represents a single file discovered during scanning.
@@ -74,4 +76,42 @@ func (o *ScanOptions) GetLanguage(path string) (string, bool) {
 // IsHidden checks if a file or directory name is hidden (starts with dot).
 func IsHidden(name string) bool {
 	return strings.HasPrefix(name, ".")
+}
+
+// Scanner defines the interface for file system scanning.
+type Scanner interface {
+	// Scan performs the scan and returns scan results.
+	Scan() (*ScanResult, error)
+}
+
+// FileScanner implements Scanner for file system traversal.
+type FileScanner struct {
+	opts       *ScanOptions
+	ignorer    *ignore.GitIgnore
+	ignorerErr error
+}
+
+// NewFileScanner creates a new FileScanner with the given options.
+// If opts is nil, default options are used.
+func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
+	if opts == nil {
+		opts = DefaultScanOptions()
+	}
+
+	scanner := &FileScanner{
+		opts: opts,
+	}
+
+	// Try to load gitignore file
+	if opts.IgnoreFile != "" {
+		ignorer, err := ignore.CompileIgnoreFile(opts.IgnoreFile)
+		if err != nil {
+			// Store error but don't fail - gitignore is optional
+			scanner.ignorerErr = err
+		} else {
+			scanner.ignorer = ignorer
+		}
+	}
+
+	return scanner, nil
 }

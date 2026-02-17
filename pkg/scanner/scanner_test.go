@@ -4,6 +4,41 @@ import (
 	"testing"
 )
 
+func TestScannerInterface(t *testing.T) {
+	// Verify FileScanner implements Scanner interface
+	// Note: This test will pass once Scan() method is implemented in Task 4
+	// var _ Scanner = (*FileScanner)(nil)
+}
+
+func TestNewFileScanner(t *testing.T) {
+	opts := DefaultScanOptions()
+	opts.RootPath = "."
+
+	scanner, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatalf("NewFileScanner returned error: %v", err)
+	}
+
+	if scanner == nil {
+		t.Fatal("expected scanner to be non-nil")
+	}
+
+	if scanner.opts != opts {
+		t.Error("expected opts to be set")
+	}
+}
+
+func TestNewFileScannerNilOptions(t *testing.T) {
+	scanner, err := NewFileScanner(nil)
+	if err != nil {
+		t.Fatalf("NewFileScanner with nil options returned error: %v", err)
+	}
+
+	if scanner.opts == nil {
+		t.Fatal("expected default options to be set")
+	}
+}
+
 func TestFileEntryDefaults(t *testing.T) {
 	entry := FileEntry{}
 
