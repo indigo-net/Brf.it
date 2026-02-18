@@ -1,6 +1,8 @@
 // Package parser provides code parsing capabilities for brfit.
 package parser
 
+import "sync"
+
 // Signature represents an extracted code signature (function, class, method, etc.).
 type Signature struct {
 	// Name is the identifier name (e.g., "Scan", "FileScanner").
@@ -89,4 +91,62 @@ type Parser interface {
 
 	// Languages returns the list of supported languages.
 	Languages() []string
+}
+
+// Registry manages available parsers.
+type Registry struct {
+	mu      sync.RWMutex
+	parsers map[string]Parser
+}
+
+// NewRegistry creates a new empty parser registry.
+func NewRegistry() *Registry {
+	return &Registry{
+		parsers: make(map[string]Parser),
+	}
+}
+
+// defaultRegistry is the global parser registry.
+var defaultRegistry = NewRegistry()
+
+// DefaultRegistry returns the global parser registry.
+func DefaultRegistry() *Registry {
+	return defaultRegistry
+}
+
+// Register adds a parser for the given language.
+func (r *Registry) Register(lang string, parser Parser) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.parsers[lang] = parser
+}
+
+// Get returns the parser for the given language.
+func (r *Registry) Get(lang string) (Parser, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	parser, ok := r.parsers[lang]
+	return parser, ok
+}
+
+// Languages returns all registered languages.
+func (r *Registry) Languages() []string {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	langs := make([]string, 0, len(r.parsers))
+	for lang := range r.parsers {
+		langs = append(langs, lang)
+	}
+	return langs
+}
+
+// RegisterParser registers a parser in the default registry.
+func RegisterParser(lang string, parser Parser) {
+	defaultRegistry.Register(lang, parser)
+}
+
+// GetParser returns a parser from the default registry.
+func GetParser(lang string) (Parser, bool) {
+	return defaultRegistry.Get(lang)
 }

@@ -91,3 +91,39 @@ func TestMockParser(t *testing.T) {
 		t.Errorf("expected signature name 'Test', got '%s'", result.Signatures[0].Name)
 	}
 }
+
+func TestRegistry(t *testing.T) {
+	registry := NewRegistry()
+
+	// Register mock parser
+	mock := &MockParser{}
+	registry.Register("go", mock)
+
+	// Test Get
+	parser, ok := registry.Get("go")
+	if !ok {
+		t.Fatal("expected to find parser for 'go'")
+	}
+	if parser != mock {
+		t.Error("expected same parser instance")
+	}
+
+	// Test Get non-existent
+	_, ok = registry.Get("python")
+	if ok {
+		t.Error("expected not to find parser for 'python'")
+	}
+
+	// Test Languages
+	langs := registry.Languages()
+	if len(langs) != 1 || langs[0] != "go" {
+		t.Errorf("expected ['go'], got %v", langs)
+	}
+}
+
+func TestDefaultRegistry(t *testing.T) {
+	registry := DefaultRegistry()
+	if registry == nil {
+		t.Fatal("expected non-nil registry")
+	}
+}
