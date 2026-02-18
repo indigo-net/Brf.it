@@ -127,3 +127,27 @@ func TestDefaultRegistry(t *testing.T) {
 		t.Fatal("expected non-nil registry")
 	}
 }
+
+func TestDetectLanguage(t *testing.T) {
+	tests := []struct {
+		path     string
+		expected string
+	}{
+		{"main.go", "go"},
+		{"app.ts", "typescript"},
+		{"component.tsx", "tsx"},
+		{"index.js", "javascript"},
+		{"App.jsx", "jsx"},
+		{"README.md", ""},
+		{"config.json", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			lang := DetectLanguage(tt.path)
+			if lang != tt.expected {
+				t.Errorf("expected language '%s', got '%s'", tt.expected, lang)
+			}
+		})
+	}
+}

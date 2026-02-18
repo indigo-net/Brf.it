@@ -1,7 +1,10 @@
 // Package parser provides code parsing capabilities for brfit.
 package parser
 
-import "sync"
+import (
+	"path/filepath"
+	"sync"
+)
 
 // Signature represents an extracted code signature (function, class, method, etc.).
 type Signature struct {
@@ -149,4 +152,34 @@ func RegisterParser(lang string, parser Parser) {
 // GetParser returns a parser from the default registry.
 func GetParser(lang string) (Parser, bool) {
 	return defaultRegistry.Get(lang)
+}
+
+// LanguageMapping maps file extensions to language names.
+var LanguageMapping = map[string]string{
+	".go":    "go",
+	".ts":    "typescript",
+	".tsx":   "tsx",
+	".js":    "javascript",
+	".jsx":   "jsx",
+	".py":    "python",
+	".java":  "java",
+	".rs":    "rust",
+	".rb":    "ruby",
+	".php":   "php",
+	".c":     "c",
+	".cpp":   "cpp",
+	".h":     "c",
+	".hpp":   "cpp",
+	".cs":    "csharp",
+	".swift": "swift",
+	".kt":    "kotlin",
+}
+
+// DetectLanguage returns the language for a given file path.
+func DetectLanguage(path string) string {
+	ext := filepath.Ext(path)
+	if lang, ok := LanguageMapping[ext]; ok {
+		return lang
+	}
+	return ""
 }
