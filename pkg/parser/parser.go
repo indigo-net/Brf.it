@@ -81,3 +81,12 @@ type Options struct {
 	// IncludePrivate whether to include non-exported/private signatures.
 	IncludePrivate bool
 }
+
+// Parser defines the interface for code parsers.
+type Parser interface {
+	// Parse parses the given content and returns extracted signatures.
+	Parse(content string, opts *Options) (*ParseResult, error)
+
+	// Languages returns the list of supported languages.
+	Languages() []string
+}

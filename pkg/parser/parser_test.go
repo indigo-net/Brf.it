@@ -46,3 +46,48 @@ func TestNodeKind(t *testing.T) {
 		t.Errorf("expected Type 'function_declaration', got '%s'", node.Type)
 	}
 }
+
+func TestParserInterface(t *testing.T) {
+	// Verify MockParser implements Parser interface
+	var _ Parser = (*MockParser)(nil)
+}
+
+// MockParser is a mock implementation for testing.
+type MockParser struct {
+	signatures []Signature
+	err        error
+}
+
+func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error) {
+	if m.err != nil {
+		return &ParseResult{Error: m.err}, m.err
+	}
+	return &ParseResult{
+		Signatures: m.signatures,
+	}, nil
+}
+
+func (m *MockParser) Languages() []string {
+	return []string{"go", "typescript", "javascript"}
+}
+
+func TestMockParser(t *testing.T) {
+	mock := &MockParser{
+		signatures: []Signature{
+			{Name: "Test", Kind: "function", Text: "func Test()", Line: 1},
+		},
+	}
+
+	result, err := mock.Parse("package main", nil)
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Signatures) != 1 {
+		t.Errorf("expected 1 signature, got %d", len(result.Signatures))
+	}
+
+	if result.Signatures[0].Name != "Test" {
+		t.Errorf("expected signature name 'Test', got '%s'", result.Signatures[0].Name)
+	}
+}
