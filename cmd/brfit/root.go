@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/indigo-net/Brf.it/internal/config"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
 	"github.com/spf13/cobra"
 )
 
@@ -115,11 +116,38 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		return fmt.Errorf("configuration error: %w", err)
 	}
 
-	// TODO: Phase 3+ will implement actual processing
-	// For now, just print a placeholder message
-	fmt.Printf("Processing: %s\n", c.Path)
-	fmt.Printf("Mode: %s, Format: %s\n", c.Mode, c.Format)
-	fmt.Println("(Full implementation coming in Phase 3+)")
+	// Create scan options from config
+	scanOpts := &scanner.ScanOptions{
+		RootPath:            c.Path,
+		SupportedExtensions: c.SupportedExtensions(),
+		IgnoreFile:          c.IgnoreFile,
+		IncludeHidden:       c.IncludeHidden,
+		MaxFileSize:         c.MaxFileSize,
+	}
+
+	// Create scanner
+	fileScanner, err := scanner.NewFileScanner(scanOpts)
+	if err != nil {
+		return fmt.Errorf("failed to create scanner: %w", err)
+	}
+
+	// Perform scan
+	result, err := fileScanner.Scan()
+	if err != nil {
+		return fmt.Errorf("scan failed: %w", err)
+	}
+
+	// Output results (placeholder - Phase 7 will add XML/MD formatting)
+	fmt.Printf("Scanned: %s\n", c.Path)
+	fmt.Printf("Found %d file(s) (%d bytes total)", len(result.Files), result.TotalSize)
+	if result.SkippedCount > 0 {
+		fmt.Printf(", %d skipped", result.SkippedCount)
+	}
+	fmt.Println()
+
+	for _, entry := range result.Files {
+		fmt.Printf("  - %s [%s] (%d bytes)\n", entry.Path, entry.Language, entry.Size)
+	}
 
 	return nil
 }
