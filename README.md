@@ -22,29 +22,141 @@ AI에게 큰 프로젝트의 코드를 전달할 때, 모든 파일을 그대로
 
 Brf.it은 이 문제를 해결합니다.
 
-### 계획된 기능
+### 기능
 
 - **지능형 코드 압축**: 함수 시그니처와 주석만 추출 (Tree-sitter 기반)
 - **다양한 출력 포맷**: XML, Markdown 선택 가능
 - **구조화된 메타데이터**: 디렉토리 트리와 심볼 리스트 포함
-- **간편한 사용**: `npx brfit <path>` 한 줄로 실행
+- **토큰 카운트**: 출력물의 토큰 수 자동 계산
+- **간편한 사용**: `brfit <path>` 한 줄로 실행
 
-### 사용 예시 (계획)
+### 지원 언어
+
+- Go (`.go`)
+- TypeScript (`.ts`, `.tsx`)
+- JavaScript (`.js`, `.jsx`)
+
+### 설치
 
 ```bash
-# 기본 사용법
-npx brfit ./src
-
-# Markdown 포맷으로 출력
-npx brfit ./src -f md
-
-# 결과를 파일로 저장
-npx brfit . -o output.xml
+# 소스에서 빌드
+git clone https://github.com/indigo-net/Brf.it.git
+cd Brf.it
+go build -o bin/brfit ./cmd/brfit
 ```
 
-### 개발 현황
+### 사용법
 
-현재 개발 중입니다. MVP 완성 후 npm에 배포될 예정입니다.
+```bash
+brfit [path] [options]
+```
+
+#### 옵션
+
+| 옵션 | 설명 | 기본값 |
+|------|------|--------|
+| `-m, --mode` | 출력 모드 | `sig` |
+| `-f, --format` | 출력 포맷 (`xml`, `md`, `markdown`) | `xml` |
+| `-o, --output` | 출력 파일 경로 | stdout |
+| `-i, --ignore` | 무시 파일 (gitignore 패턴) | `.gitignore` |
+| `--include-hidden` | 숨김 파일 포함 | `false` |
+| `--no-tree` | 디렉토리 트리 생략 | `false` |
+| `--no-tokens` | 토큰 수 계산 비활성화 | `false` |
+| `--max-size` | 최대 파일 크기 (bytes) | `512000` (500KB) |
+| `-v, --version` | 버전 정보 표시 | |
+
+### 사용 예시
+
+```bash
+# 기본 사용법 (XML, stdout)
+brfit .
+
+# Markdown 포맷으로 출력
+brfit . -f md
+
+# 결과를 파일로 저장
+brfit . -o output.xml
+
+# 하위 디렉토리에 저장 (자동 생성)
+brfit . -o build/output/result.xml
+
+# 토큰 카운트 없이
+brfit . --no-tokens
+
+# 트리 없이 시그니처만
+brfit . --no-tree
+
+# 숨김 파일 포함
+brfit . --include-hidden
+
+# 커스텀 ignore 파일
+brfit . -i .brfitignore
+
+# 최대 파일 크기 설정
+brfit . --max-size 1000000
+
+# 버전 확인
+brfit --version
+
+# 도움말
+brfit --help
+```
+
+### 출력 예시
+
+#### XML
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+    <tree>pkg/
+└── scanner/
+    └── scanner.go</tree>
+    <symbols>
+      - func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)
+    </symbols>
+  </metadata>
+  <files>
+    <file path="pkg/scanner/scanner.go" language="go">
+      <signature>func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)</signature>
+      <doc>ScanDirectory recursively scans the directory.</doc>
+    </file>
+  </files>
+</brfit>
+```
+
+#### Markdown
+
+```markdown
+# Brf.it Output
+
+## Directory Tree
+
+```
+pkg/
+└── scanner/
+    └── scanner.go
+```
+
+## Symbols
+
+- `func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)`
+
+---
+
+## Files
+
+### pkg/scanner/scanner.go
+
+```go
+func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)
+```
+
+> ScanDirectory recursively scans the directory.
+
+---
+```
 
 ---
 
@@ -66,26 +178,142 @@ When sharing a large project's code with AI, copying all files directly leads to
 
 Brf.it solves this problem.
 
-### Planned Features
+### Features
 
 - **Smart Code Compression**: Extract only function signatures and comments (Tree-sitter based)
 - **Multiple Output Formats**: Choose between XML and Markdown
 - **Structured Metadata**: Includes directory tree and symbol list
-- **Simple Usage**: Run with just `npx brfit <path>`
+- **Token Counting**: Automatic token count calculation
+- **Simple Usage**: Run with just `brfit <path>`
 
-### Usage Examples (Planned)
+### Supported Languages
+
+- Go (`.go`)
+- TypeScript (`.ts`, `.tsx`)
+- JavaScript (`.js`, `.jsx`)
+
+### Installation
 
 ```bash
-# Basic usage
-npx brfit ./src
-
-# Output in Markdown format
-npx brfit ./src -f md
-
-# Save output to file
-npx brfit . -o output.xml
+# Build from source
+git clone https://github.com/indigo-net/Brf.it.git
+cd Brf.it
+go build -o bin/brfit ./cmd/brfit
 ```
 
-### Development Status
+### Usage
 
-Currently in development. Will be published to npm after MVP completion.
+```bash
+brfit [path] [options]
+```
+
+#### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-m, --mode` | Output mode | `sig` |
+| `-f, --format` | Output format (`xml`, `md`, `markdown`) | `xml` |
+| `-o, --output` | Output file path | stdout |
+| `-i, --ignore` | Ignore file (gitignore patterns) | `.gitignore` |
+| `--include-hidden` | Include hidden files | `false` |
+| `--no-tree` | Skip directory tree | `false` |
+| `--no-tokens` | Disable token count | `false` |
+| `--max-size` | Maximum file size (bytes) | `512000` (500KB) |
+| `-v, --version` | Show version information | |
+
+### Examples
+
+```bash
+# Basic usage (XML, stdout)
+brfit .
+
+# Output in Markdown format
+brfit . -f md
+
+# Save output to file
+brfit . -o output.xml
+
+# Save to subdirectory (auto-created)
+brfit . -o build/output/result.xml
+
+# Without token count
+brfit . --no-tokens
+
+# Skip directory tree
+brfit . --no-tree
+
+# Include hidden files
+brfit . --include-hidden
+
+# Custom ignore file
+brfit . -i .brfitignore
+
+# Set max file size
+brfit . --max-size 1000000
+
+# Show version
+brfit --version
+
+# Show help
+brfit --help
+```
+
+### Output Examples
+
+#### XML
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+    <tree>pkg/
+└── scanner/
+    └── scanner.go</tree>
+    <symbols>
+      - func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)
+    </symbols>
+  </metadata>
+  <files>
+    <file path="pkg/scanner/scanner.go" language="go">
+      <signature>func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)</signature>
+      <doc>ScanDirectory recursively scans the directory.</doc>
+    </file>
+  </files>
+</brfit>
+```
+
+#### Markdown
+
+```markdown
+# Brf.it Output
+
+## Directory Tree
+
+```
+pkg/
+└── scanner/
+    └── scanner.go
+```
+
+## Symbols
+
+- `func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)`
+
+---
+
+## Files
+
+### pkg/scanner/scanner.go
+
+```go
+func ScanDirectory(root string, opts *ScanOptions) ([]FileEntry, error)
+```
+
+> ScanDirectory recursively scans the directory.
+
+---
+```
+
+## License
+
+MIT
