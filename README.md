@@ -38,8 +38,20 @@ Brf.it은 이 문제를 해결합니다.
 
 ### 설치
 
+#### npm (권장)
+
 ```bash
-# 소스에서 빌드
+# npx로 바로 실행
+npx brfit .
+
+# 또는 전역 설치
+npm install -g brfit
+brfit .
+```
+
+#### 소스에서 빌드
+
+```bash
 git clone https://github.com/indigo-net/Brf.it.git
 cd Brf.it
 go build -o bin/brfit ./cmd/brfit
@@ -69,37 +81,37 @@ brfit [path] [options]
 
 ```bash
 # 기본 사용법 (XML, stdout)
-brfit .
+npx brfit .
 
 # Markdown 포맷으로 출력
-brfit . -f md
+npx brfit . -f md
 
 # 결과를 파일로 저장
-brfit . -o output.xml
+npx brfit . -o output.xml
 
 # 하위 디렉토리에 저장 (자동 생성)
-brfit . -o build/output/result.xml
+npx brfit . -o build/output/result.xml
 
 # 토큰 카운트 없이
-brfit . --no-tokens
+npx brfit . --no-tokens
 
 # 트리 없이 시그니처만
-brfit . --no-tree
+npx brfit . --no-tree
 
 # 숨김 파일 포함
-brfit . --include-hidden
+npx brfit . --include-hidden
 
 # 커스텀 ignore 파일
-brfit . -i .brfitignore
+npx brfit . -i .brfitignore
 
 # 최대 파일 크기 설정
-brfit . --max-size 1000000
+npx brfit . --max-size 1000000
 
 # 버전 확인
-brfit --version
+npx brfit --version
 
 # 도움말
-brfit --help
+npx brfit --help
 ```
 
 ### 출력 예시
@@ -194,8 +206,20 @@ Brf.it solves this problem.
 
 ### Installation
 
+#### npm (Recommended)
+
 ```bash
-# Build from source
+# Run directly with npx
+npx brfit .
+
+# Or install globally
+npm install -g brfit
+brfit .
+```
+
+#### Build from Source
+
+```bash
 git clone https://github.com/indigo-net/Brf.it.git
 cd Brf.it
 go build -o bin/brfit ./cmd/brfit
@@ -225,37 +249,37 @@ brfit [path] [options]
 
 ```bash
 # Basic usage (XML, stdout)
-brfit .
+npx brfit .
 
 # Output in Markdown format
-brfit . -f md
+npx brfit . -f md
 
 # Save output to file
-brfit . -o output.xml
+npx brfit . -o output.xml
 
 # Save to subdirectory (auto-created)
-brfit . -o build/output/result.xml
+npx brfit . -o build/output/result.xml
 
 # Without token count
-brfit . --no-tokens
+npx brfit . --no-tokens
 
 # Skip directory tree
-brfit . --no-tree
+npx brfit . --no-tree
 
 # Include hidden files
-brfit . --include-hidden
+npx brfit . --include-hidden
 
 # Custom ignore file
-brfit . -i .brfitignore
+npx brfit . -i .brfitignore
 
 # Set max file size
-brfit . --max-size 1000000
+npx brfit . --max-size 1000000
 
 # Show version
-brfit --version
+npx brfit --version
 
 # Show help
-brfit --help
+npx brfit --help
 ```
 
 ### Output Examples
