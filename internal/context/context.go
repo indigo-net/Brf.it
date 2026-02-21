@@ -5,6 +5,7 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 )
 
 // Options contains CLI options for packaging.
@@ -58,6 +59,10 @@ type Result struct {
 
 	// TotalSize is the total size of processed files.
 	TotalSize int64
+
+	// TokenCount is the number of tokens in the output.
+	// Returns 0 if token counting is disabled or tokenizer is not set.
+	TokenCount int
 }
 
 // Packager orchestrates scanning, extraction, and formatting.
@@ -65,9 +70,11 @@ type Packager struct {
 	scanner    scanner.Scanner
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
+	tokenizer  tokenizer.Tokenizer
 }
 
 // NewPackager creates a new Packager with the given dependencies.
+// Tokenizer is set to NoOpTokenizer by default; use SetTokenizer to change.
 func NewPackager(
 	s scanner.Scanner,
 	e extractor.Extractor,
@@ -77,6 +84,17 @@ func NewPackager(
 		scanner:    s,
 		extractor:  e,
 		formatters: f,
+		tokenizer:  tokenizer.NewNoOpTokenizer(),
+	}
+}
+
+// SetTokenizer sets the tokenizer for the packager.
+// Pass nil to disable token counting (uses NoOpTokenizer).
+func (p *Packager) SetTokenizer(t tokenizer.Tokenizer) {
+	if t == nil {
+		p.tokenizer = tokenizer.NewNoOpTokenizer()
+	} else {
+		p.tokenizer = t
 	}
 }
 
@@ -143,15 +161,20 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		return nil, err
 	}
 
+	// 8. Calculate token count
+	tokenCount, _ := p.tokenizer.Count(string(content))
+
 	return &Result{
 		Content:         content,
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalFiles:      len(extractResult.Files),
 		TotalSize:       extractResult.TotalSize,
+		TokenCount:      tokenCount,
 	}, nil
 }
 
 // NewDefaultPackager creates a Packager with default dependencies.
+// Tokenizer is set to TiktokenTokenizer if available, otherwise NoOpTokenizer.
 func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error) {
 	s, err := scanner.NewFileScanner(scanOpts)
 	if err != nil {
@@ -165,7 +188,14 @@ func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error) {
 		"markdown": formatter.NewMarkdownFormatter(),
 	}
 
-	return NewPackager(s, e, formatters), nil
+	p := NewPackager(s, e, formatters)
+
+	// Try to set up tiktoken tokenizer (graceful fallback to NoOp)
+	if tt, err := tokenizer.NewTiktokenTokenizer(); err == nil {
+		p.SetTokenizer(tt)
+	}
+
+	return p, nil
 }
 
 // normalizeFormat converts CLI format flag to formatter key.

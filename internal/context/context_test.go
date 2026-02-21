@@ -8,6 +8,7 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 )
 
 // mockScanner implements scanner.Scanner for testing
@@ -90,6 +91,11 @@ func TestPackagerPackage(t *testing.T) {
 
 	if !strings.Contains(string(result.Content), "<brfit>") {
 		t.Error("expected XML output to contain <brfit>")
+	}
+
+	// TokenCount should be 0 (NoOpTokenizer by default)
+	if result.TokenCount != 0 {
+		t.Errorf("expected TokenCount 0 (NoOpTokenizer), got %d", result.TokenCount)
 	}
 }
 
@@ -208,6 +214,143 @@ func TestPackagerUnknownFormat(t *testing.T) {
 	// Should fallback to xml
 	if !strings.Contains(string(result.Content), "<?xml") {
 		t.Error("expected fallback to XML format")
+	}
+}
+
+func TestPackagerSetTokenizer(t *testing.T) {
+	mockScan := &mockScanner{
+		result: &scanner.ScanResult{
+			Files: []scanner.FileEntry{
+				{Path: "test.go"},
+			},
+		},
+	}
+
+	mockExt := &mockExtractor{
+		result: &extractor.ExtractResult{
+			Files: []extractor.ExtractedFile{
+				{
+					Path:       "test.go",
+					Language:   "go",
+					Signatures: []parser.Signature{{Text: "func Test()", Language: "go"}},
+				},
+			},
+			TotalSignatures: 1,
+		},
+	}
+
+	formatters := map[string]formatter.Formatter{
+		"xml": formatter.NewXMLFormatter(),
+	}
+
+	p := NewPackager(mockScan, mockExt, formatters)
+
+	// Default: NoOpTokenizer
+	result, err := p.Package(&Options{Format: "xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.TokenCount != 0 {
+		t.Errorf("expected TokenCount 0 with NoOpTokenizer, got %d", result.TokenCount)
+	}
+
+	// Set nil tokenizer (should use NoOpTokenizer)
+	p.SetTokenizer(nil)
+	result, err = p.Package(&Options{Format: "xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.TokenCount != 0 {
+		t.Errorf("expected TokenCount 0 with nil tokenizer, got %d", result.TokenCount)
+	}
+}
+
+func TestPackagerWithTiktokenTokenizer(t *testing.T) {
+	mockScan := &mockScanner{
+		result: &scanner.ScanResult{
+			Files: []scanner.FileEntry{
+				{Path: "test.go"},
+			},
+		},
+	}
+
+	mockExt := &mockExtractor{
+		result: &extractor.ExtractResult{
+			Files: []extractor.ExtractedFile{
+				{
+					Path:       "test.go",
+					Language:   "go",
+					Signatures: []parser.Signature{{Text: "func Test()", Language: "go"}},
+				},
+			},
+			TotalSignatures: 1,
+		},
+	}
+
+	formatters := map[string]formatter.Formatter{
+		"xml": formatter.NewXMLFormatter(),
+	}
+
+	p := NewPackager(mockScan, mockExt, formatters)
+
+	// Set TiktokenTokenizer
+	tt, err := tokenizer.NewTiktokenTokenizer()
+	if err != nil {
+		t.Fatalf("failed to create tiktoken tokenizer: %v", err)
+	}
+	p.SetTokenizer(tt)
+
+	result, err := p.Package(&Options{Format: "xml"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// TokenCount should be > 0 with TiktokenTokenizer
+	if result.TokenCount <= 0 {
+		t.Errorf("expected TokenCount > 0 with TiktokenTokenizer, got %d", result.TokenCount)
+	}
+}
+
+func TestPackagerTokenizerConsistency(t *testing.T) {
+	mockScan := &mockScanner{
+		result: &scanner.ScanResult{
+			Files: []scanner.FileEntry{
+				{Path: "test.go"},
+			},
+		},
+	}
+
+	mockExt := &mockExtractor{
+		result: &extractor.ExtractResult{
+			Files: []extractor.ExtractedFile{
+				{
+					Path:       "test.go",
+					Language:   "go",
+					Signatures: []parser.Signature{{Text: "func Test()", Language: "go"}},
+				},
+			},
+			TotalSignatures: 1,
+		},
+	}
+
+	formatters := map[string]formatter.Formatter{
+		"xml": formatter.NewXMLFormatter(),
+	}
+
+	p := NewPackager(mockScan, mockExt, formatters)
+
+	tt, err := tokenizer.NewTiktokenTokenizer()
+	if err != nil {
+		t.Fatalf("failed to create tiktoken tokenizer: %v", err)
+	}
+	p.SetTokenizer(tt)
+
+	// Multiple calls should return consistent token counts
+	result1, _ := p.Package(&Options{Format: "xml"})
+	result2, _ := p.Package(&Options{Format: "xml"})
+
+	if result1.TokenCount != result2.TokenCount {
+		t.Errorf("inconsistent token counts: %d vs %d", result1.TokenCount, result2.TokenCount)
 	}
 }
 
