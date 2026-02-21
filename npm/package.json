@@ -1,0 +1,28 @@
+{
+  "name": "brfit",
+  "version": "0.1.0",
+  "description": "Brief your code for AI assistants",
+  "bin": {
+    "brfit": "./index.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/indigo-net/Brf.it.git",
+    "directory": "npm"
+  },
+  "keywords": ["ai", "cli", "code", "signature", "tree-sitter"],
+  "author": "indigo-net",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/indigo-net/Brf.it/issues"
+  },
+  "homepage": "https://github.com/indigo-net/Brf.it#readme",
+  "engines": {
+    "node": ">=16"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
+}
