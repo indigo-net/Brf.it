@@ -131,3 +131,18 @@ func TestTreeSitterParserUnsupportedLanguage(t *testing.T) {
 		t.Error("expected nil result for unsupported language")
 	}
 }
+
+func TestTreeSitterParserAutoRegistration(t *testing.T) {
+	// Verify parser is registered in default registry
+	registry := parser.DefaultRegistry()
+
+	for _, lang := range []string{"go", "typescript", "tsx"} {
+		p, ok := registry.Get(lang)
+		if !ok {
+			t.Errorf("expected parser for '%s' to be registered", lang)
+		}
+		if p == nil {
+			t.Errorf("expected non-nil parser for '%s'", lang)
+		}
+	}
+}

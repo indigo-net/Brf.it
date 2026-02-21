@@ -10,6 +10,13 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"
 )
 
+// init registers the TreeSitterParser with the default registry.
+func init() {
+	parser.RegisterParser("go", NewTreeSitterParser())
+	parser.RegisterParser("typescript", NewTreeSitterParser())
+	parser.RegisterParser("tsx", NewTreeSitterParser())
+}
+
 // TreeSitterParser implements parser.Parser using Tree-sitter.
 type TreeSitterParser struct {
 	queries map[string]LanguageQuery
