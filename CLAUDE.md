@@ -62,6 +62,7 @@ Claude, brf.it 프로젝트를 **Go(Golang)**로 구현할 때 준수해야 할 
 
 - **GoDoc**: 모든 Export 된 요소에는 GoDoc 스타일 주석을 필수적으로 작성하세요.
 - **Testing**: `go test`를 활용해 테이블 기반 테스트(Table-driven tests)를 작성하세요.
+- **Parser Import**: Tree-sitter 파서를 사용하는 테스트에서는 `_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"` blank import로 파서 자동 등록을 트리거해야 합니다.
 
 ---
 
@@ -115,6 +116,19 @@ Options:
 ---
 
 ## 핵심 기술 노트
+
+### ScanOptions 기본값 사용
+
+`ScanOptions` 구조체는 부분적으로 설정할 때 설정하지 않은 필드가 zero value가 됩니다. 기본값을 유지하려면 `DefaultScanOptions()` 호출 후 필요한 필드만 수정하세요:
+
+```go
+defaultOpts := scanner.DefaultScanOptions()
+scanOpts := &scanner.ScanOptions{
+    RootPath:            tmpDir,
+    SupportedExtensions: defaultOpts.SupportedExtensions,
+    MaxFileSize:         defaultOpts.MaxFileSize,
+}
+```
 
 ### 대용량 파일 방어 로직
 
