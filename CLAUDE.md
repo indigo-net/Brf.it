@@ -145,3 +145,23 @@ if fileSize > maxFileSize {
   </files>
 </brfit>
 ```
+
+---
+
+## Tree-sitter Go 바인딩 참고
+
+go-tree-sitter API 사용 시 주의사항:
+
+- 언어 로드: `sitter.NewLanguage(tree_sitter_go.Language())` (GetLanguage() 아님)
+- 파싱: `parser.Parse(code, nil)` (인자 순서 주의)
+- 쿼리 매칭: `qc.Matches(query, node, code)` 후 `matches.Next()` 사용
+- 노드 타입: `node.Kind()` (Type() 아님)
+- 캡처 이름: `query.CaptureNames()[capture.Index]`
+- TypeScript: `tree_sitter_typescript.LanguageTypescript()` / `LanguageTSX()`
+
+---
+
+## Phase 계획서 컨벤션
+
+- 각 Phase 구현 전 `PHASE_N_PLAN.md` 파일을 루트에 작성
+- 계획서에는 TDD 방식의 테스트 코드와 Pseudo-code 포함
