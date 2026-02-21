@@ -30,13 +30,13 @@ const (
 
 // DefaultKindMapping provides default kind mappings (can be overridden per language).
 var DefaultKindMapping = map[string]string{
-	"function_declaration":   "function",
-	"method_declaration":     "method",
-	"type_declaration":       "type",
-	"struct_type":            "struct",
-	"interface_type":         "interface",
-	"class_declaration":      "class",
-	"arrow_function":         "function",
-	"function_expression":    "function",
-	"method_definition":      "method",
+	"function_declaration": "function",
+	"method_declaration":   "method",
+	"type_declaration":     "type",
+	"struct_type":          "struct",
+	"interface_type":       "interface",
+	"class_declaration":    "class",
+	"arrow_function":       "function",
+	"function_expression":  "function",
+	"method_definition":    "method",
 }
