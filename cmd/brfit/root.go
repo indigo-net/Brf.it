@@ -3,10 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/indigo-net/Brf.it/internal/config"
+	"github.com/indigo-net/Brf.it/internal/context"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
 	"github.com/spf13/cobra"
+
+	// Import treesitter parser to register Go/TypeScript parsers
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
 )
 
 // Version is set at build time via -ldflags.
@@ -111,6 +116,11 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		c.Path = args[0]
 	}
 
+	// Validate path exists
+	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
+		return fmt.Errorf("path not found: %s", c.Path)
+	}
+
 	// Validate configuration
 	if err := c.Validate(); err != nil {
 		return fmt.Errorf("configuration error: %w", err)
@@ -125,29 +135,63 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		MaxFileSize:         c.MaxFileSize,
 	}
 
-	// Create scanner
-	fileScanner, err := scanner.NewFileScanner(scanOpts)
+	// Create packager with default dependencies
+	packager, err := context.NewDefaultPackager(scanOpts)
 	if err != nil {
-		return fmt.Errorf("failed to create scanner: %w", err)
+		return fmt.Errorf("failed to initialize: %w", err)
 	}
 
-	// Perform scan
-	result, err := fileScanner.Scan()
+	// Disable tokenizer if --no-tokens flag is set
+	if c.NoTokens {
+		packager.SetTokenizer(nil)
+	}
+
+	// Convert config to options
+	opts := c.ToOptions()
+
+	// Execute packaging
+	result, err := packager.Package(opts)
 	if err != nil {
-		return fmt.Errorf("scan failed: %w", err)
+		return fmt.Errorf("processing failed: %w", err)
 	}
 
-	// Output results (placeholder - Phase 7 will add XML/MD formatting)
-	fmt.Printf("Scanned: %s\n", c.Path)
-	fmt.Printf("Found %d file(s) (%d bytes total)", len(result.Files), result.TotalSize)
-	if result.SkippedCount > 0 {
-		fmt.Printf(", %d skipped", result.SkippedCount)
+	// Write output
+	if err := writeOutput(result, c); err != nil {
+		return fmt.Errorf("output failed: %w", err)
 	}
-	fmt.Println()
 
-	for _, entry := range result.Files {
-		fmt.Printf("  - %s [%s] (%d bytes)\n", entry.Path, entry.Language, entry.Size)
+	// Print summary to stderr (doesn't pollute stdout)
+	fmt.Fprintf(os.Stderr, "Files: %d, Signatures: %d",
+		result.TotalFiles, result.TotalSignatures)
+	if result.TokenCount > 0 {
+		fmt.Fprintf(os.Stderr, ", Tokens: %d", result.TokenCount)
 	}
+	fmt.Fprintln(os.Stderr)
 
 	return nil
+}
+
+// writeOutput writes the result to stdout or a file.
+func writeOutput(result *context.Result, c *config.Config) error {
+	if c.Output == "" {
+		// Write to stdout (direct []byte output for efficiency)
+		_, err := os.Stdout.Write(result.Content)
+		return err
+	}
+
+	// Write to file
+	return writeToFile(c.Output, result.Content)
+}
+
+// writeToFile writes content to a file, creating parent directories if needed.
+func writeToFile(path string, content []byte) error {
+	// Create parent directory if needed
+	dir := filepath.Dir(path)
+	if dir != "." && dir != "" {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create directory: %w", err)
+		}
+	}
+
+	return os.WriteFile(path, content, 0644)
 }

@@ -3,11 +3,15 @@ package main
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/indigo-net/Brf.it/internal/config"
+
+	// Import treesitter parser to register it
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
 )
 
 func TestExecuteHelp(t *testing.T) {
@@ -206,5 +210,120 @@ func TestParseFlags(t *testing.T) {
 				t.Errorf("expected MaxFileSize %d, got %d", tt.expectedSize, testCfg.MaxFileSize)
 			}
 		})
+	}
+}
+
+func TestRootCommandIntegration(t *testing.T) {
+	// Create temp directory with sample Go file
+	tmpDir := t.TempDir()
+	testFile := filepath.Join(tmpDir, "test.go")
+	if err := os.WriteFile(testFile, []byte("package main\n\nfunc Add(a, b int) int { return a + b }\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Capture stdout
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	// Run command with XML format
+	cmd := newRootCommandWithConfig(config.DefaultConfig())
+	cmd.SetArgs([]string{tmpDir, "-f", "xml"})
+
+	err := cmd.Execute()
+
+	// Restore stdout and read captured output
+	w.Close()
+	os.Stdout = old
+	var buf bytes.Buffer
+	buf.ReadFrom(r)
+	output := buf.String()
+
+	if err != nil {
+		t.Fatalf("command failed: %v", err)
+	}
+
+	// Verify output contains expected XML
+	if !strings.Contains(output, "<?xml") {
+		t.Error("expected XML output")
+	}
+	if !strings.Contains(output, "<brfit>") {
+		t.Error("expected <brfit> root element")
+	}
+	if !strings.Contains(output, "func Add(a, b int) int") {
+		t.Error("expected function signature in output")
+	}
+}
+
+func TestRootCommandIntegrationMarkdown(t *testing.T) {
+	// Create temp directory with sample Go file
+	tmpDir := t.TempDir()
+	testFile := filepath.Join(tmpDir, "test.go")
+	if err := os.WriteFile(testFile, []byte("package main\n\nfunc Subtract(a, b int) int { return a - b }\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Capture stdout
+	old := os.Stdout
+	r, w, _ := os.Pipe()
+	os.Stdout = w
+
+	// Run command with Markdown format
+	cmd := newRootCommandWithConfig(config.DefaultConfig())
+	cmd.SetArgs([]string{tmpDir, "-f", "md"})
+
+	err := cmd.Execute()
+
+	// Restore stdout and read captured output
+	w.Close()
+	os.Stdout = old
+	var buf bytes.Buffer
+	buf.ReadFrom(r)
+	output := buf.String()
+
+	if err != nil {
+		t.Fatalf("command failed: %v", err)
+	}
+
+	// Verify output contains expected Markdown
+	if !strings.Contains(output, "# Brf.it Output") {
+		t.Error("expected Markdown header")
+	}
+	if !strings.Contains(output, "func Subtract(a, b int) int") {
+		t.Error("expected function signature in output")
+	}
+}
+
+func TestRootCommandPathNotFound(t *testing.T) {
+	cmd := newRootCommandWithConfig(config.DefaultConfig())
+	cmd.SetArgs([]string{"/nonexistent/path/12345"})
+
+	err := cmd.Execute()
+	if err == nil {
+		t.Error("expected error for non-existent path")
+	}
+	if !strings.Contains(err.Error(), "path not found") {
+		t.Errorf("expected 'path not found' error, got: %v", err)
+	}
+}
+
+func TestWriteToFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	outputPath := filepath.Join(tmpDir, "subdir", "output.xml")
+
+	content := []byte("<?xml version=\"1.0\"?>\n<test>content</test>\n")
+
+	if err := writeToFile(outputPath, content); err != nil {
+		t.Fatalf("writeToFile failed: %v", err)
+	}
+
+	// Verify file was created
+	readContent, err := os.ReadFile(outputPath)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	if string(readContent) != string(content) {
+		t.Errorf("file content mismatch: got %q, want %q", string(readContent), string(content))
 	}
 }

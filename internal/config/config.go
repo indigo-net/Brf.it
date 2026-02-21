@@ -4,6 +4,8 @@ package config
 import (
 	"errors"
 	"fmt"
+
+	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
 )
 
 // Config holds all configuration options for the brfit CLI.
@@ -58,9 +60,9 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("invalid mode '%s': only 'sig' mode is supported", c.Mode)
 	}
 
-	// Validate format
-	if c.Format != "xml" && c.Format != "md" {
-		return fmt.Errorf("invalid format '%s': must be 'xml' or 'md'", c.Format)
+	// Validate format (accept "xml", "md", "markdown")
+	if c.Format != "xml" && c.Format != "md" && c.Format != "markdown" {
+		return fmt.Errorf("invalid format '%s': must be 'xml', 'md', or 'markdown'", c.Format)
 	}
 
 	// Validate max file size
@@ -79,5 +81,19 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".tsx": "typescript",
 		".js":  "javascript",
 		".jsx": "javascript",
+	}
+}
+
+// ToOptions converts Config to packager Options.
+func (c *Config) ToOptions() *pkgcontext.Options {
+	return &pkgcontext.Options{
+		Path:           c.Path,
+		Format:         c.Format,
+		Output:         c.Output,
+		IgnoreFile:     c.IgnoreFile,
+		IncludeHidden:  c.IncludeHidden,
+		IncludeTree:    !c.NoTree,
+		IncludePrivate: false, // Future: add --include-private flag
+		MaxFileSize:    c.MaxFileSize,
 	}
 }
