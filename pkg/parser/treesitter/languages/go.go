@@ -4,8 +4,14 @@ package languages
 import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"
+)
 
-	"github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+// Capture name constants (must match treesitter package constants).
+const (
+	captureName      = "name"
+	captureSignature = "signature"
+	captureDoc       = "doc"
+	captureKind      = "kind"
 )
 
 // GoQuery implements LanguageQuery for Go language.
@@ -35,10 +41,10 @@ func (q *GoQuery) Query() []byte {
 // Captures returns the capture names for Go queries.
 func (q *GoQuery) Captures() []string {
 	return []string{
-		treesitter.CaptureName,
-		treesitter.CaptureSignature,
-		treesitter.CaptureDoc,
-		treesitter.CaptureKind,
+		captureName,
+		captureSignature,
+		captureDoc,
+		captureKind,
 	}
 }
 

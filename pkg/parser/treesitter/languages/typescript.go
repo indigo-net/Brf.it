@@ -3,8 +3,6 @@ package languages
 import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"
-
-	"github.com/indigo-net/Brf.it/pkg/parser/treesitter"
 )
 
 // TypeScriptQuery implements LanguageQuery for TypeScript language.
@@ -34,10 +32,10 @@ func (q *TypeScriptQuery) Query() []byte {
 // Captures returns the capture names for TypeScript queries.
 func (q *TypeScriptQuery) Captures() []string {
 	return []string{
-		treesitter.CaptureName,
-		treesitter.CaptureSignature,
-		treesitter.CaptureDoc,
-		treesitter.CaptureKind,
+		captureName,
+		captureSignature,
+		captureDoc,
+		captureKind,
 	}
 }
 
@@ -51,6 +49,7 @@ func (q *TypeScriptQuery) KindMapping() map[string]string {
 		"type_alias_declaration": "type",
 		"arrow_function":         "function",
 		"variable_declaration":   "variable",
+		"export_statement":       "export",
 	}
 }
 
