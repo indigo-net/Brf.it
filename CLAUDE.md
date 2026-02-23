@@ -117,6 +117,16 @@ Options:
 
 ## 핵심 기술 노트
 
+### .gitignore 주의사항
+
+바이너리 이름(`brfit`)이 디렉토리(`cmd/brfit`)와 겹치면 `/brfit`처럼 루트 경로로 지정해야 함
+
+### 릴리즈 및 배포
+
+- **GoReleaser ldflags**: `-X main.version` 등은 `main` 패키지 변수만 주입 가능. `cmd/brfit/main.go`에 변수 선언 필수
+- **릴리즈 트리거**: `git tag v*` push 시 GitHub Actions 자동 실행 (`.github/workflows/release.yml`)
+- **CGO cross-compile**: zig cc 사용 (`.goreleaser.yml` 참조)
+
 ### ScanOptions 기본값 사용
 
 `ScanOptions` 구조체는 부분적으로 설정할 때 설정하지 않은 필드가 zero value가 됩니다. 기본값을 유지하려면 `DefaultScanOptions()` 호출 후 필요한 필드만 수정하세요:
