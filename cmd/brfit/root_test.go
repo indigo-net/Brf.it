@@ -67,8 +67,9 @@ func TestExecuteVersion(t *testing.T) {
 	buf.ReadFrom(r)
 	output := buf.String()
 
-	if !strings.Contains(output, "brfit version") {
-		t.Errorf("expected version output to contain 'brfit version', got '%s'", output)
+	// Check for new format: "brfit VERSION (commit: COMMIT, built: DATE)"
+	if !strings.Contains(output, "brfit") || !strings.Contains(output, "commit:") {
+		t.Errorf("expected version output to contain 'brfit' and 'commit:', got '%s'", output)
 	}
 }
 

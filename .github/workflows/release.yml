@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g., v1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Setup zig cc wrappers
+        run: |
+          mkdir -p /tmp/zigcc
+          # Linux amd64
+          cat > /tmp/zigcc/cc-linux-amd64 << 'EOF'
+          #!/bin/bash
+          zig cc -target x86_64-linux-gnu "$@"
+          EOF
+          # Linux arm64
+          cat > /tmp/zigcc/cc-linux-arm64 << 'EOF'
+          #!/bin/bash
+          zig cc -target aarch64-linux-gnu "$@"
+          EOF
+          # macOS amd64
+          cat > /tmp/zigcc/cc-darwin-amd64 << 'EOF'
+          #!/bin/bash
+          zig cc -target x86_64-macos "$@"
+          EOF
+          # macOS arm64
+          cat > /tmp/zigcc/cc-darwin-arm64 << 'EOF'
+          #!/bin/bash
+          zig cc -target aarch64-macos "$@"
+          EOF
+          # Windows amd64
+          cat > /tmp/zigcc/cc-windows-amd64 << 'EOF'
+          #!/bin/bash
+          zig cc -target x86_64-windows-gnu "$@"
+          EOF
+          chmod +x /tmp/zigcc/*
+
+      - name: Run tests
+        run: go test ./...
+
+      - uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CC_linux_amd64: /tmp/zigcc/cc-linux-amd64
+          CC_linux_arm64: /tmp/zigcc/cc-linux-arm64
+          CC_darwin_amd64: /tmp/zigcc/cc-darwin-amd64
+          CC_darwin_arm64: /tmp/zigcc/cc-darwin-arm64
+          CC_windows_amd64: /tmp/zigcc/cc-windows-amd64

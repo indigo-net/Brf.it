@@ -9,7 +9,8 @@
 go.work
 go.work.sum
 bin/
-brfit
+# Built binary (not the cmd/brfit directory)
+/brfit
 
 # Worktrees
 .worktrees/

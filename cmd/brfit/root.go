@@ -14,8 +14,19 @@ import (
 	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
 )
 
-// Version is set at build time via -ldflags.
-var Version = "0.1.0"
+// Build information (set by main.go from ldflags)
+var (
+	Version = "dev"
+	Commit  = "none"
+	Date    = "unknown"
+)
+
+// SetBuildInfo sets build information from ldflags (called by main.go)
+func SetBuildInfo(v, c, d string) {
+	Version = v
+	Commit = c
+	Date = d
+}
 
 // cfg holds the global configuration for the CLI.
 var cfg *config.Config
@@ -106,7 +117,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 	// Check if version flag is set
 	versionFlag, _ := cmd.Flags().GetBool("version")
 	if versionFlag {
-		fmt.Printf("brfit version %s\n", Version)
+		fmt.Printf("brfit %s (commit: %s, built: %s)\n", Version, Commit, Date)
 		return nil
 	}
 

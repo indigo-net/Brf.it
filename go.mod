@@ -3,6 +3,7 @@ module github.com/indigo-net/Brf.it
 go 1.25.0
 
 require (
+	github.com/pkoukk/tiktoken-go v0.1.8
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/spf13/cobra v1.10.2
 	github.com/tree-sitter/go-tree-sitter v0.25.0
@@ -15,6 +16,5 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect
-	github.com/pkoukk/tiktoken-go v0.1.8 // indirect
 	github.com/spf13/pflag v1.0.9 // indirect
 )
