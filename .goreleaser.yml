@@ -5,94 +5,52 @@ before:
     - go mod tidy
 
 builds:
-  # Linux amd64
-  - id: linux-amd64
+  - id: brfit
     main: ./cmd/brfit
     binary: brfit
     env:
       - CGO_ENABLED=1
-      - CC=zig-cc-x86_64-linux-gnu
     goos:
       - linux
-    goarch:
-      - amd64
-    ldflags:
-      - -s -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.ShortCommit}}
-      - -X main.date={{.Date}}
-      - -linkmode external
-      - -extldflags '-static'
-
-  # Linux arm64
-  - id: linux-arm64
-    main: ./cmd/brfit
-    binary: brfit
-    env:
-      - CGO_ENABLED=1
-      - CC=zig-cc-aarch64-linux-gnu
-    goos:
-      - linux
-    goarch:
-      - arm64
-    ldflags:
-      - -s -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.ShortCommit}}
-      - -X main.date={{.Date}}
-      - -linkmode external
-      - -extldflags '-static'
-
-  # macOS amd64
-  - id: darwin-amd64
-    main: ./cmd/brfit
-    binary: brfit
-    env:
-      - CGO_ENABLED=1
-      - CC=zig-cc-x86_64-macos
-    goos:
       - darwin
-    goarch:
-      - amd64
-    ldflags:
-      - -s -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.ShortCommit}}
-      - -X main.date={{.Date}}
-
-  # macOS arm64
-  - id: darwin-arm64
-    main: ./cmd/brfit
-    binary: brfit
-    env:
-      - CGO_ENABLED=1
-      - CC=zig-cc-aarch64-macos
-    goos:
-      - darwin
-    goarch:
-      - arm64
-    ldflags:
-      - -s -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.ShortCommit}}
-      - -X main.date={{.Date}}
-
-  # Windows amd64
-  - id: windows-amd64
-    main: ./cmd/brfit
-    binary: brfit
-    env:
-      - CGO_ENABLED=1
-      - CC=zig-cc-x86_64-windows-gnu
-    goos:
       - windows
     goarch:
       - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
     ldflags:
       - -s -w
       - -X main.version={{.Version}}
       - -X main.commit={{.ShortCommit}}
       - -X main.date={{.Date}}
+    overrides:
+      - goos: linux
+        goarch: amd64
+        env:
+          - CC=x86_64-linux-gnu-gcc
+          - CXX=x86_64-linux-gnu-g++
+      - goos: linux
+        goarch: arm64
+        env:
+          - CC=aarch64-linux-gnu-gcc
+          - CXX=aarch64-linux-gnu-g++
+      - goos: darwin
+        goarch: amd64
+        env:
+          - CC=o64-clang
+          - CXX=o64-clang++
+      - goos: darwin
+        goarch: arm64
+        env:
+          - CC=oa64-clang
+          - CXX=oa64-clang++
+      - goos: windows
+        goarch: amd64
+        env:
+          - CC=x86_64-w64-mingw32-gcc
+          - CXX=x86_64-w64-mingw32-g++
 
 archives:
   - id: default
