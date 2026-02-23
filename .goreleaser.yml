@@ -1,5 +1,3 @@
-version: 2
-
 before:
   hooks:
     - go mod tidy
@@ -54,12 +52,10 @@ builds:
 
 archives:
   - id: default
-    formats:
-      - tar.gz
+    format: tar.gz
     format_overrides:
       - goos: windows
-        formats:
-          - zip
+        format: zip
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
