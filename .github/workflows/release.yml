@@ -32,33 +32,39 @@ jobs:
 
       - name: Setup zig cc wrappers
         run: |
-          mkdir -p /tmp/zigcc
+          mkdir -p /usr/local/bin
+
           # Linux amd64
-          cat > /tmp/zigcc/cc-linux-amd64 << 'EOF'
+          cat > /usr/local/bin/zig-cc-x86_64-linux-gnu << 'EOF'
           #!/bin/bash
-          zig cc -target x86_64-linux-gnu "$@"
+          exec zig cc -target x86_64-linux-musl "$@"
           EOF
+
           # Linux arm64
-          cat > /tmp/zigcc/cc-linux-arm64 << 'EOF'
+          cat > /usr/local/bin/zig-cc-aarch64-linux-gnu << 'EOF'
           #!/bin/bash
-          zig cc -target aarch64-linux-gnu "$@"
+          exec zig cc -target aarch64-linux-musl "$@"
           EOF
+
           # macOS amd64
-          cat > /tmp/zigcc/cc-darwin-amd64 << 'EOF'
+          cat > /usr/local/bin/zig-cc-x86_64-macos << 'EOF'
           #!/bin/bash
-          zig cc -target x86_64-macos "$@"
+          exec zig cc -target x86_64-macos "$@"
           EOF
+
           # macOS arm64
-          cat > /tmp/zigcc/cc-darwin-arm64 << 'EOF'
+          cat > /usr/local/bin/zig-cc-aarch64-macos << 'EOF'
           #!/bin/bash
-          zig cc -target aarch64-macos "$@"
+          exec zig cc -target aarch64-macos "$@"
           EOF
+
           # Windows amd64
-          cat > /tmp/zigcc/cc-windows-amd64 << 'EOF'
+          cat > /usr/local/bin/zig-cc-x86_64-windows-gnu << 'EOF'
           #!/bin/bash
-          zig cc -target x86_64-windows-gnu "$@"
+          exec zig cc -target x86_64-windows-gnu "$@"
           EOF
-          chmod +x /tmp/zigcc/*
+
+          chmod +x /usr/local/bin/zig-cc-*
 
       - name: Run tests
         run: go test ./...
@@ -70,8 +76,3 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CC_linux_amd64: /tmp/zigcc/cc-linux-amd64
-          CC_linux_arm64: /tmp/zigcc/cc-linux-arm64
-          CC_darwin_amd64: /tmp/zigcc/cc-darwin-amd64
-          CC_darwin_arm64: /tmp/zigcc/cc-darwin-arm64
-          CC_windows_amd64: /tmp/zigcc/cc-windows-amd64
