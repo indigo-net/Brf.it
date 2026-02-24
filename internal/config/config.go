@@ -28,6 +28,10 @@ type Config struct {
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
+	// IncludeBody determines whether to include function/method bodies.
+	// When false (default), only signatures are extracted.
+	IncludeBody bool
+
 	// NoTree skips directory tree generation in output.
 	NoTree bool
 
@@ -46,6 +50,7 @@ func DefaultConfig() *Config {
 		Output:        "",
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
+		IncludeBody:   false,
 		NoTree:        false,
 		NoTokens:      false,
 		MaxFileSize:   512000, // 500KB
@@ -92,6 +97,7 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		Output:         c.Output,
 		IgnoreFile:     c.IgnoreFile,
 		IncludeHidden:  c.IncludeHidden,
+		IncludeBody:    c.IncludeBody,
 		IncludeTree:    !c.NoTree,
 		IncludePrivate: false, // Future: add --include-private flag
 		MaxFileSize:    c.MaxFileSize,

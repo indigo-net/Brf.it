@@ -49,6 +49,8 @@ func (q *TypeScriptQuery) KindMapping() map[string]string {
 		"type_alias_declaration": "type",
 		"arrow_function":         "function",
 		"variable_declaration":   "variable",
+		"variable_declarator":    "arrow",
+		"lexical_declaration":    "arrow",
 		"export_statement":       "export",
 	}
 }
@@ -67,10 +69,12 @@ const typeScriptQueryPattern = `
   )
 ) @signature @kind
 
-; Arrow functions in variable declarations
-(variable_declarator
-  name: (identifier) @name
-  value: (arrow_function)
+; Arrow functions in variable declarations (capture full declaration with const/let/var)
+(lexical_declaration
+  (variable_declarator
+    name: (identifier) @name
+    value: (arrow_function)
+  )
 ) @signature @kind
 
 ; Method definitions

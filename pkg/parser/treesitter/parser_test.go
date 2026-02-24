@@ -1,6 +1,7 @@
 package treesitter
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
@@ -145,4 +146,166 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 			t.Errorf("expected non-nil parser for '%s'", lang)
 		}
 	}
+}
+
+func TestGoSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package main
+
+func Add(a, b int) int {
+	return a + b
+}
+
+func (p *Point) Move(dx, dy int) {
+	p.X += dx
+	p.Y += dy
+}
+
+type Point struct {
+	X, Y int
+}
+`
+
+	// Test with IncludeBody = false (default)
+	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Add":
+			// Should only have signature, no body
+			expected := "func Add(a, b int) int"
+			if sig.Text != expected {
+				t.Errorf("expected signature '%s', got '%s'", expected, sig.Text)
+			}
+		case "Move":
+			// Should only have signature, no body
+			expected := "func (p *Point) Move(dx, dy int)"
+			if sig.Text != expected {
+				t.Errorf("expected signature '%s', got '%s'", expected, sig.Text)
+			}
+		}
+	}
+}
+
+func TestGoIncludeBodyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package main
+
+func Add(a, b int) int {
+	return a + b
+}
+`
+
+	// Test with IncludeBody = true
+	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: true})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	var foundAdd bool
+	for _, sig := range result.Signatures {
+		if sig.Name == "Add" {
+			foundAdd = true
+			// Should include full body
+			if len(sig.Text) < 30 { // "func Add(a, b int) int { return a + b }" is longer
+				t.Errorf("expected full body, got '%s'", sig.Text)
+			}
+			if !contains(sig.Text, "return a + b") {
+				t.Errorf("expected body to contain 'return a + b', got '%s'", sig.Text)
+			}
+		}
+	}
+
+	if !foundAdd {
+		t.Error("expected to find 'Add' function")
+	}
+}
+
+func TestTypeScriptSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `
+export function add(a: number, b: number): number {
+  return a + b;
+}
+
+export class Calculator {
+  multiply(a: number, b: number): number {
+    return a * b;
+  }
+}
+
+export interface Config {
+  timeout: number;
+}
+`
+
+	// Test with IncludeBody = false (default)
+	result, err := p.Parse(code, &parser.Options{Language: "typescript", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "add":
+			// Should NOT contain the body
+			if contains(sig.Text, "return a + b") {
+				t.Errorf("signature should not contain body, got '%s'", sig.Text)
+			}
+		case "Calculator":
+			// Class declaration should not have body
+			if contains(sig.Text, "multiply") {
+				t.Errorf("class signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "multiply":
+			// Method should not have body
+			if contains(sig.Text, "return a * b") {
+				t.Errorf("method signature should not contain body, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+func TestTypeScriptArrowFunctionSignature(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `
+const add = (a: number, b: number): number => {
+  return a + b;
+};
+
+const double = (n: number): number => n * 2;
+`
+
+	// Test with IncludeBody = false (default)
+	result, err := p.Parse(code, &parser.Options{Language: "typescript", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "add":
+			// Arrow function with block body
+			if contains(sig.Text, "return a + b") {
+				t.Errorf("arrow function should not contain body, got '%s'", sig.Text)
+			}
+		case "double":
+			// Arrow function with expression body
+			if contains(sig.Text, "n * 2") && !contains(sig.Text, "...") {
+				t.Errorf("expression body should be replaced with placeholder, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+// contains checks if s contains substr
+func contains(s, substr string) bool {
+	return strings.Contains(s, substr)
 }

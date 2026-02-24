@@ -85,6 +85,11 @@ type Options struct {
 
 	// IncludePrivate whether to include non-exported/private signatures.
 	IncludePrivate bool
+
+	// IncludeBody whether to include function/method bodies in the signature text.
+	// When false (default), only the signature line is extracted.
+	// When true, the full declaration including the body is extracted.
+	IncludeBody bool
 }
 
 // Parser defines the interface for code parsers.

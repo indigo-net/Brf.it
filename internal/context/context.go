@@ -25,6 +25,9 @@ type Options struct {
 	// IncludeHidden determines whether to include hidden files.
 	IncludeHidden bool
 
+	// IncludeBody determines whether to include function/method bodies.
+	IncludeBody bool
+
 	// IncludeTree determines whether to include directory tree.
 	IncludeTree bool
 
@@ -113,6 +116,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 	// 2. Extract signatures
 	extractOpts := &extractor.ExtractOptions{
 		IncludePrivate: opts.IncludePrivate,
+		IncludeBody:    opts.IncludeBody,
 	}
 	extractResult, err := p.extractor.Extract(scanResult, extractOpts)
 	if err != nil {

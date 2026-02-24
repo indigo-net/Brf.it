@@ -47,6 +47,9 @@ type ExtractOptions struct {
 	// IncludePrivate whether to include non-exported/private signatures.
 	IncludePrivate bool
 
+	// IncludeBody whether to include function/method bodies.
+	IncludeBody bool
+
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
 }
@@ -122,6 +125,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	parseResult, err := p.Parse(string(content), &parser.Options{
 		Language:       entry.Language,
 		IncludePrivate: opts.IncludePrivate,
+		IncludeBody:    opts.IncludeBody,
 	})
 	if err != nil {
 		extracted.Error = fmt.Errorf("failed to parse: %w", err)

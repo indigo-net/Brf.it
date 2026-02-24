@@ -2,6 +2,7 @@ package treesitter
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
@@ -15,6 +16,8 @@ func init() {
 	parser.RegisterParser("go", NewTreeSitterParser())
 	parser.RegisterParser("typescript", NewTreeSitterParser())
 	parser.RegisterParser("tsx", NewTreeSitterParser())
+	parser.RegisterParser("javascript", NewTreeSitterParser())
+	parser.RegisterParser("jsx", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -29,6 +32,8 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"go":         languages.NewGoQuery(),
 			"typescript": languages.NewTypeScriptQuery(),
 			"tsx":        languages.NewTypeScriptQuery(), // TSX uses TypeScript grammar
+			"javascript": languages.NewTypeScriptQuery(), // JS uses TypeScript grammar (subset)
+			"jsx":        languages.NewTypeScriptQuery(), // JSX uses TypeScript grammar
 		},
 	}
 }
@@ -158,6 +163,11 @@ func (p *TreeSitterParser) extractSignatures(
 				continue
 			}
 
+			// Strip body if IncludeBody is false (default)
+			if !opts.IncludeBody {
+				sig.Text = stripBody(sig.Text, sig.Kind, opts.Language)
+			}
+
 			sig.Language = opts.Language
 			sig.Exported = isExported(sig.Name, opts.Language)
 			signatures = append(signatures, sig)
@@ -201,4 +211,162 @@ func isExported(name, language string) bool {
 	default:
 		return false
 	}
+}
+
+// stripBody removes the function/method body from the signature text.
+// It preserves only the signature line (declaration without implementation).
+func stripBody(text, kind, language string) string {
+	switch language {
+	case "go":
+		return stripGoBody(text, kind)
+	case "typescript", "tsx", "javascript", "jsx":
+		return stripTypeScriptBody(text, kind)
+	default:
+		return text
+	}
+}
+
+// stripGoBody removes the body from Go function/method/type declarations.
+func stripGoBody(text, kind string) string {
+	switch kind {
+	case "function", "method":
+		// Find the opening brace and remove everything from there
+		braceIdx := strings.Index(text, "{")
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "type":
+		// For type declarations, keep the entire type spec
+		// e.g., "type Foo struct { ... }" -> "type Foo struct { ... }"
+		// or "type Foo interface { ... }" -> keep full interface
+		// Actually for signatures, we might want to keep the structure
+		// but for v0.3.0, let's keep type declarations as-is for now
+		return text
+	}
+	return text
+}
+
+// Regex patterns for TypeScript body stripping
+var (
+	// Matches function body: starts with { and ends with matching }
+	tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+	// Matches arrow function body: => { ... } or => expression
+	tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
+	// Matches class body
+	tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+)
+
+// stripTypeScriptBody removes the body from TypeScript/JavaScript declarations.
+func stripTypeScriptBody(text, kind string) string {
+	switch kind {
+	case "function", "method", "export":
+		// Find the opening brace for function body
+		// Need to be careful with type annotations that contain { }
+		// "export" kind is used for exported function declarations
+		result := stripTSFunctionBody(text)
+		return result
+	case "class":
+		// For classes, remove the class body but keep the declaration
+		// e.g., "class Foo extends Bar { ... }" -> "class Foo extends Bar"
+		braceIdx := findTSClassBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "interface", "type":
+		// Keep interface/type declarations as-is (they define structure)
+		return text
+	case "variable", "arrow":
+		// Arrow functions in variable declarations
+		if strings.Contains(text, "=>") {
+			return stripTSFunctionBody(text)
+		}
+		return text
+	}
+	// Default: try to strip body if it looks like a function
+	if strings.Contains(text, "{") || strings.Contains(text, "=>") {
+		return stripTSFunctionBody(text)
+	}
+	return text
+}
+
+// stripTSFunctionBody removes the function body from a TypeScript function.
+// It handles regular functions, methods, and arrow functions.
+func stripTSFunctionBody(text string) string {
+	// Handle arrow functions: const foo = (args): type => { body } or const foo = (args): type => expr
+	if strings.Contains(text, "=>") {
+		arrowIdx := strings.Index(text, "=>")
+		if arrowIdx > 0 {
+			// Remove everything from => onwards, keep only the signature
+			return strings.TrimSpace(text[:arrowIdx])
+		}
+	}
+
+	// Handle regular functions: function foo(args): type { body }
+	// Find the last ) before { that's part of the signature (not in type annotation)
+	braceIdx := findFunctionBodyStart(text)
+	if braceIdx > 0 {
+		return strings.TrimSpace(text[:braceIdx])
+	}
+
+	return text
+}
+
+// findFunctionBodyStart finds the index where the function body starts.
+// It handles nested braces in type annotations.
+func findFunctionBodyStart(text string) int {
+	// Find the opening brace that starts the function body
+	// This is tricky because type annotations can contain { }
+	// We look for { that follows ) or a type annotation
+
+	parenDepth := 0
+	angleDepth := 0
+	lastParenClose := -1
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+			if parenDepth == 0 {
+				lastParenClose = i
+			}
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			// Only consider { as body start if we're not inside angle brackets
+			// and we've seen the closing paren of the parameter list
+			if angleDepth == 0 && parenDepth == 0 && lastParenClose >= 0 {
+				return i
+			}
+		}
+	}
+
+	return -1
+}
+
+// findTSClassBodyStart finds where the class body starts.
+func findTSClassBodyStart(text string) int {
+	// Class body starts after class declaration, implements, extends clauses
+	// Look for the first { at depth 0
+	angleDepth := 0
+	for i, ch := range text {
+		switch ch {
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
 }

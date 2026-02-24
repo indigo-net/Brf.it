@@ -98,6 +98,9 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.IncludeHidden, "include-hidden", c.IncludeHidden,
 		"include hidden files (dotfiles)")
 
+	cmd.Flags().BoolVar(&c.IncludeBody, "include-body", c.IncludeBody,
+		"include function/method bodies (default: signatures only)")
+
 	cmd.Flags().BoolVar(&c.NoTree, "no-tree", c.NoTree,
 		"skip directory tree in output")
 
