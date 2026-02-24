@@ -138,10 +138,6 @@ func TestMarkdownFormatterFormat(t *testing.T) {
 		t.Error("expected Directory Tree section")
 	}
 
-	if !strings.Contains(outputStr, "## Symbols") {
-		t.Error("expected Symbols section")
-	}
-
 	if !strings.Contains(outputStr, "## Files") {
 		t.Error("expected Files section")
 	}

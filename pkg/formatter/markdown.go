@@ -33,19 +33,6 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString("\n```\n\n")
 	}
 
-	// Symbols
-	if data.TotalSignatures > 0 {
-		buf.WriteString("## Symbols\n\n")
-		for _, file := range data.Files {
-			for _, sig := range file.Signatures {
-				buf.WriteString("- `")
-				buf.WriteString(escapeMarkdown(sig.Text))
-				buf.WriteString("`\n")
-			}
-		}
-		buf.WriteString("\n---\n\n")
-	}
-
 	// Files
 	buf.WriteString("## Files\n\n")
 	for _, file := range data.Files {

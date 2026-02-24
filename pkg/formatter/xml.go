@@ -37,19 +37,6 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString("</tree>\n")
 	}
 
-	// Symbols summary
-	if data.TotalSignatures > 0 {
-		buf.WriteString("    <symbols>\n")
-		for _, file := range data.Files {
-			for _, sig := range file.Signatures {
-				buf.WriteString("      - ")
-				buf.WriteString(escapeXML(sig.Text))
-				buf.WriteByte('\n')
-			}
-		}
-		buf.WriteString("    </symbols>\n")
-	}
-
 	buf.WriteString("  </metadata>\n")
 
 	// Files section
