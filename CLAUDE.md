@@ -108,6 +108,7 @@ Options:
   -o, --output <file>     출력 파일 경로 (기본값: stdout)
   -i, --ignore <file>     커스텀 ignore 파일 (기본값: .gitignore)
   --include-hidden        숨김 파일 포함
+  --include-body          함수 본문 포함 (기본값: 시그니처만)
   --no-tree               디렉토리 트리 생략
   --no-tokens             토큰 수 계산 비활성화
   --max-size <bytes>      최대 파일 크기 (기본값: 512000 = 500KB)
@@ -126,6 +127,8 @@ Options:
 - **GoReleaser ldflags**: `-X main.version` 등은 `main` 패키지 변수만 주입 가능. `cmd/brfit/main.go`에 변수 선언 필수
 - **릴리즈 트리거**: `git tag v*` push 시 GitHub Actions 자동 실행 (`.github/workflows/release.yml`)
 - **CGO cross-compile**: zig cc 사용 (`.goreleaser.yml` 참조)
+- **릴리즈 노트**: 배포 후 GitHub Release (`gh release edit v*`) + `CHANGELOG.md` 둘 다 업데이트 (템플릿: `.github/RELEASE_TEMPLATE.md`)
+- **CHANGELOG 형식**: [Keep a Changelog](https://keepachangelog.com/) 형식 사용
 
 ### ScanOptions 기본값 사용
 
@@ -159,7 +162,6 @@ if fileSize > maxFileSize {
 <brfit>
   <metadata>
     <tree>...</tree>
-    <symbols>...</symbols>
   </metadata>
   <files>
     <file path="src/scanner.go" language="go">
