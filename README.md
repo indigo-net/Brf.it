@@ -124,11 +124,12 @@ brfit . --no-tree
 
 ## Supported Languages
 
-| Language | Extensions |
-|----------|------------|
-| Go | `.go` |
-| TypeScript | `.ts`, `.tsx` |
-| JavaScript | `.js`, `.jsx` |
+| Language | Extensions | Documentation |
+|----------|------------|---------------|
+| Go | `.go` | [Go Guide](docs/languages/go.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
+| Python | `.py` | [Python Guide](docs/languages/python.md) |
 
 ---
 
