@@ -122,9 +122,9 @@ export interface Point {
 func TestTreeSitterParserUnsupportedLanguage(t *testing.T) {
 	p := NewTreeSitterParser()
 
-	code := `print("hello")`
+	code := `fn main() { println!("hello"); }`
 
-	result, err := p.Parse(code, &parser.Options{Language: "python"})
+	result, err := p.Parse(code, &parser.Options{Language: "rust"})
 	if err == nil {
 		t.Error("expected error for unsupported language")
 	}

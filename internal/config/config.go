@@ -86,6 +86,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".tsx": "typescript",
 		".js":  "javascript",
 		".jsx": "javascript",
+		".py":  "python",
 	}
 }
 

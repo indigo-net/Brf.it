@@ -142,6 +142,7 @@ func TestConfigSupportedLanguages(t *testing.T) {
 		".tsx": "typescript",
 		".js":  "javascript",
 		".jsx": "javascript",
+		".py":  "python",
 	}
 
 	for ext, lang := range expected {

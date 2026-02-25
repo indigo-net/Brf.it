@@ -62,6 +62,7 @@ func DefaultScanOptions() *ScanOptions {
 			".tsx": "typescript",
 			".js":  "javascript",
 			".jsx": "javascript",
+			".py":  "python",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

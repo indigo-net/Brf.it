@@ -18,6 +18,7 @@ func init() {
 	parser.RegisterParser("tsx", NewTreeSitterParser())
 	parser.RegisterParser("javascript", NewTreeSitterParser())
 	parser.RegisterParser("jsx", NewTreeSitterParser())
+	parser.RegisterParser("python", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -34,6 +35,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"tsx":        languages.NewTypeScriptQuery(), // TSX uses TypeScript grammar
 			"javascript": languages.NewTypeScriptQuery(), // JS uses TypeScript grammar (subset)
 			"jsx":        languages.NewTypeScriptQuery(), // JSX uses TypeScript grammar
+			"python":     languages.NewPythonQuery(),
 		},
 	}
 }
@@ -154,6 +156,13 @@ func (p *TreeSitterParser) extractSignatures(
 			} else {
 				sig.Kind = kind
 			}
+
+			// Python: distinguish methods from functions by checking first parameter
+			if opts.Language == "python" && sig.Kind == "function" {
+				if isPythonMethod(sig.Text) {
+					sig.Kind = "method"
+				}
+			}
 		}
 
 		// Only add if we have a name and signature
@@ -208,6 +217,9 @@ func isExported(name, language string) bool {
 		// TypeScript/JavaScript: assume all found signatures are exported
 		// (since we query for export_statement patterns)
 		return true
+	case "python":
+		// Python: all elements are considered public (no private filtering)
+		return true
 	default:
 		return false
 	}
@@ -221,6 +233,8 @@ func stripBody(text, kind, language string) string {
 		return stripGoBody(text, kind)
 	case "typescript", "tsx", "javascript", "jsx":
 		return stripTypeScriptBody(text, kind)
+	case "python":
+		return stripPythonBody(text, kind)
 	default:
 		return text
 	}
@@ -369,4 +383,69 @@ func findTSClassBodyStart(text string) int {
 		}
 	}
 	return -1
+}
+
+// stripPythonBody removes the body from Python function/class declarations.
+func stripPythonBody(text, kind string) string {
+	switch kind {
+	case "function", "method":
+		// Find the colon that ends the signature and remove everything after
+		colonIdx := findPythonBodyStart(text)
+		if colonIdx > 0 {
+			return strings.TrimSpace(text[:colonIdx])
+		}
+	case "class":
+		// For classes, also strip at the colon
+		colonIdx := findPythonBodyStart(text)
+		if colonIdx > 0 {
+			return strings.TrimSpace(text[:colonIdx])
+		}
+	}
+	return text
+}
+
+// findPythonBodyStart finds the index of the colon that starts the body.
+// It handles colons inside type annotations like Dict[str, int].
+func findPythonBodyStart(text string) int {
+	parenDepth := 0
+	bracketDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '[':
+			bracketDepth++
+		case ']':
+			bracketDepth--
+		case ':':
+			// Only consider : as body start if we're not inside any brackets
+			if parenDepth == 0 && bracketDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// isPythonMethod checks if a Python function is actually a method
+// by looking for self or cls as the first parameter.
+func isPythonMethod(signature string) bool {
+	parenStart := strings.Index(signature, "(")
+	parenEnd := strings.Index(signature, ")")
+	if parenStart < 0 || parenEnd < 0 || parenEnd <= parenStart+1 {
+		return false
+	}
+
+	params := signature[parenStart+1 : parenEnd]
+	firstParam := strings.TrimSpace(strings.Split(params, ",")[0])
+
+	// Remove type annotation if present (e.g., "self: Self" -> "self")
+	if colonIdx := strings.Index(firstParam, ":"); colonIdx > 0 {
+		firstParam = strings.TrimSpace(firstParam[:colonIdx])
+	}
+
+	return firstParam == "self" || firstParam == "cls"
 }
