@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-26
+
+### Added
+- Python (`.py`) language support
+  - Function and async function extraction
+  - Class and method extraction
+  - Type hints preserved in signatures
+  - Automatic method detection (self/cls first parameter)
+- Language documentation: `docs/languages/go.md`, `typescript.md`, `python.md`
+- Documentation links in README Supported Languages table
+
 ## [0.3.0] - 2026-02-24
 
 ### Added
@@ -38,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.4.0]: https://github.com/indigo-net/Brf.it/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/indigo-net/Brf.it/compare/v0.2.7...v0.3.0
 [0.2.7]: https://github.com/indigo-net/Brf.it/compare/v0.2.6...v0.2.7
 [0.2.6]: https://github.com/indigo-net/Brf.it/compare/v0.2.5...v0.2.6
