@@ -130,6 +130,29 @@ Options:
 - **릴리즈 노트**: 배포 후 GitHub Release (`gh release edit v*`) + `CHANGELOG.md` 둘 다 업데이트 (템플릿: `.github/RELEASE_TEMPLATE.md`)
 - **CHANGELOG 형식**: [Keep a Changelog](https://keepachangelog.com/) 형식 사용
 
+### 릴리즈 절차
+
+```bash
+# 1. 변경사항 커밋
+git add <files> && git commit -m "feat: ..."
+
+# 2. 푸시 및 태그 생성
+git push origin main
+git tag v0.X.0 && git push origin v0.X.0
+
+# 3. GitHub Actions 완료 대기 (~5분)
+gh run list --limit 1
+
+# 4. 릴리즈 노트 업데이트
+gh release edit v0.X.0 --notes "$(cat <<'EOF'
+## Release Notes
+...
+EOF
+)"
+
+# 5. CHANGELOG.md 업데이트 후 커밋
+```
+
 ### ScanOptions 기본값 사용
 
 `ScanOptions` 구조체는 부분적으로 설정할 때 설정하지 않은 필드가 zero value가 됩니다. 기본값을 유지하려면 `DefaultScanOptions()` 호출 후 필요한 필드만 수정하세요:
@@ -188,6 +211,8 @@ if fileSize > maxFileSize {
 4. `internal/config/config.go` - SupportedExtensions()에 확장자 추가 (CLI에서 사용)
 5. `docs/languages/[lang].md` + 다국어 버전 생성
 6. `README*.md` Supported Languages 테이블 업데이트
+7. `pkg/parser/treesitter/languages/[lang]_test.go` - 단위 테스트 작성
+8. `pkg/parser/treesitter/parser_test.go` - TestTreeSitterParserLanguages, TestTreeSitterParserAutoRegistration에 언어 추가, 통합 테스트 함수 추가
 
 ### Tree-sitter AST 디버깅
 
