@@ -6,13 +6,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Code-Briefing-Tool für KI-Assistenten**
+> **Verpacken Sie Ihre Codebasis für KI-Verständnis.**
+>
+> `50 Token → 8 Token` — Gleiche Information, weniger Token.
 
-Brf.it extrahiert Funktionssignaturen aus Ihrer Codebasis, entfernt Implementierungsdetails und reduziert den Token-Verbrauch drastisch, während die wesentlichen Informationen für KI erhalten bleiben.
+[Installation](#installation) · [Schnellstart](#schnellstart) · [Unterstützte Sprachen](#unterstützte-sprachen)
 
 ---
 
-## Was es macht
+## Wie es funktioniert
 
 Anstatt rohen Code an KI-Assistenten zu übergeben:
 
@@ -61,19 +63,29 @@ export async function fetchUser(
 
 ---
 
-## Installation
+## Schnellstart
 
-### macOS (Homebrew)
+### Installation
+
+**macOS (Homebrew)**
 
 ```bash
 brew install indigo-net/tap/brfit
 ```
 
-### Von Release herunterladen
+**Linux / macOS (Skript)**
 
-Laden Sie die neueste Binary von [Releases](https://github.com/indigo-net/Brf.it/releases) herunter.
+```bash
+curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | sh
+```
 
-### Aus Quellcode bauen
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.ps1 | iex
+```
+
+**Aus Quellcode bauen**
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -81,34 +93,47 @@ cd Brf.it
 go build -o brfit ./cmd/brfit
 ```
 
+### Erster Start
+
+```bash
+brfit .                    # Aktuelles Verzeichnis analysieren
+brfit . -f md              # Ausgabe in Markdown
+brfit . -o briefing.xml    # In Datei speichern
+```
+
 ---
 
-## Verwendung
+## Funktionen
+
+| Funktion | Beschreibung |
+|----------|--------------|
+| Tree-sitter-basiert | Präzises AST-Parsing für Sprachstrukturanalyse |
+| Mehrere Formate | XML- und Markdown-Ausgabe |
+| Token-Zählung | Automatische Berechnung der Ausgabe-Token |
+| Gitignore-fähig | Automatischer Ausschluss unnötiger Dateien |
+| Plattformübergreifend | Linux-, macOS- und Windows-Unterstützung |
+
+---
+
+## Unterstützte Sprachen
+
+| Sprache | Erweiterungen | Dokumentation |
+|---------|---------------|---------------|
+| Go | `.go` | [Go-Leitfaden](docs/languages/go.de.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
+| Python | `.py` | [Python-Leitfaden](docs/languages/python.de.md) |
+| C | `.c`, `.h` | [C-Leitfaden](docs/languages/c.de.md) |
+
+---
+
+## CLI-Referenz
 
 ```bash
 brfit [Pfad] [Optionen]
 ```
 
-### Schnelle Beispiele
-
-```bash
-# Signaturen aus dem aktuellen Verzeichnis extrahieren
-brfit .
-
-# Ausgabe im Markdown-Format
-brfit . -f md
-
-# In Datei speichern
-brfit . -o output.xml
-
-# Funktionskörper einschließen (vollständiger Code)
-brfit . --include-body
-
-# Verzeichnisbaum überspringen
-brfit . --no-tree
-```
-
-### CLI-Optionen
+### Optionen
 
 | Option | Kurz | Beschreibung | Standard |
 |--------|------|--------------|----------|
@@ -122,17 +147,23 @@ brfit . --no-tree
 | `--max-size` | | Maximale Dateigröße (Bytes) | `512000` |
 | `--version` | `-v` | Version anzeigen | |
 
----
+### Beispiele
 
-## Unterstützte Sprachen
+```bash
+# An KI-Assistenten senden (in Zwischenablage kopieren)
+brfit . | pbcopy              # macOS
+brfit . | xclip               # Linux
+brfit . | clip                # Windows
 
-| Sprache | Erweiterungen | Dokumentation |
-|---------|---------------|---------------|
-| Go | `.go` | [Go-Leitfaden](docs/languages/go.de.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
-| Python | `.py` | [Python-Leitfaden](docs/languages/python.de.md) |
-| C | `.c`, `.h` | [C-Leitfaden](docs/languages/c.de.md) |
+# Projekt analysieren und in Datei speichern
+brfit ./my-project -o briefing.xml
+
+# Funktionskörper einschließen (vollständiger Code)
+brfit . --include-body
+
+# Verzeichnisbaum-Ausgabe überspringen
+brfit . --no-tree
+```
 
 ---
 
@@ -183,4 +214,4 @@ func Scan(root string) (*Result, error)
 
 ## Lizenz
 
-MIT
+[MIT](LICENSE)

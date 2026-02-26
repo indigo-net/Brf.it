@@ -6,13 +6,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**AIアシスタントのためのコードブリーフィングツール**
+> **コードベースをAIが理解しやすい形式にパッケージング**
+>
+> `50トークン → 8トークン` — 同じ情報、より少ないトークン。
 
-Brf.itはコードベースから関数シグネチャを抽出し、実装の詳細を削除してAIが必要とする重要な情報のみを残します。トークン使用量を大幅に削減できます。
+[インストール](#インストール) · [クイックスタート](#クイックスタート) · [サポート言語](#サポート言語)
 
 ---
 
-## 主な機能
+## 動作原理
 
 AIアシスタントに生のコードを渡す代わりに：
 
@@ -61,19 +63,29 @@ export async function fetchUser(
 
 ---
 
-## インストール
+## クイックスタート
 
-### macOS（Homebrew）
+### インストール
+
+**macOS（Homebrew）**
 
 ```bash
 brew install indigo-net/tap/brfit
 ```
 
-### リリースからダウンロード
+**Linux / macOS（スクリプト）**
 
-[Releases](https://github.com/indigo-net/Brf.it/releases)から最新のバイナリをダウンロードしてください。
+```bash
+curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | sh
+```
 
-### ソースからビルド
+**Windows（PowerShell）**
+
+```powershell
+irm https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.ps1 | iex
+```
+
+**ソースからビルド**
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -81,34 +93,47 @@ cd Brf.it
 go build -o brfit ./cmd/brfit
 ```
 
+### 初回実行
+
+```bash
+brfit .                    # 現在のディレクトリを分析
+brfit . -f md              # Markdown形式で出力
+brfit . -o briefing.xml    # ファイルに保存
+```
+
 ---
 
-## 使い方
+## 機能
+
+| 機能 | 説明 |
+|------|------|
+| Tree-sitterベース | 正確なASTパースで言語構造を分析 |
+| 複数フォーマット | XML、Markdown出力をサポート |
+| トークンカウント | 出力トークン数を自動計算 |
+| gitignore対応 | 不要なファイルを自動除外 |
+| クロスプラットフォーム | Linux、macOS、Windowsをサポート |
+
+---
+
+## サポート言語
+
+| 言語 | 拡張子 | ドキュメント |
+|------|--------|--------------|
+| Go | `.go` | [Goガイド](docs/languages/go.ja.md) |
+| TypeScript | `.ts`、`.tsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
+| JavaScript | `.js`、`.jsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
+| Python | `.py` | [Pythonガイド](docs/languages/python.ja.md) |
+| C | `.c`、`.h` | [Cガイド](docs/languages/c.ja.md) |
+
+---
+
+## CLIリファレンス
 
 ```bash
 brfit [パス] [オプション]
 ```
 
-### クイック例
-
-```bash
-# 現在のディレクトリからシグネチャを抽出
-brfit .
-
-# Markdown形式で出力
-brfit . -f md
-
-# ファイルに保存
-brfit . -o output.xml
-
-# 関数本体を含める（完全なコード）
-brfit . --include-body
-
-# ディレクトリツリーをスキップ
-brfit . --no-tree
-```
-
-### CLIオプション
+### オプション
 
 | オプション | 短縮形 | 説明 | デフォルト |
 |------------|--------|------|------------|
@@ -122,17 +147,23 @@ brfit . --no-tree
 | `--max-size` | | 最大ファイルサイズ（バイト） | `512000` |
 | `--version` | `-v` | バージョンを表示 | |
 
----
+### 例
 
-## サポート言語
+```bash
+# AIアシスタントに渡す（クリップボードにコピー）
+brfit . | pbcopy              # macOS
+brfit . | xclip               # Linux
+brfit . | clip                # Windows
 
-| 言語 | 拡張子 | ドキュメント |
-|------|--------|--------------|
-| Go | `.go` | [Goガイド](docs/languages/go.ja.md) |
-| TypeScript | `.ts`、`.tsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
-| JavaScript | `.js`、`.jsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
-| Python | `.py` | [Pythonガイド](docs/languages/python.ja.md) |
-| C | `.c`、`.h` | [Cガイド](docs/languages/c.ja.md) |
+# プロジェクトを分析してファイルに保存
+brfit ./my-project -o briefing.xml
+
+# 関数本体を含める（完全なコード）
+brfit . --include-body
+
+# ディレクトリツリー出力をスキップ
+brfit . --no-tree
+```
 
 ---
 
@@ -183,4 +214,4 @@ func Scan(root string) (*Result, error)
 
 ## ライセンス
 
-MIT
+[MIT](LICENSE)

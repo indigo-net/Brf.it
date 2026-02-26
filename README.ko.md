@@ -6,13 +6,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**AI 어시스턴트를 위한 코드 브리핑 도구**
+> **코드베이스를 AI가 이해하기 쉬운 형태로 패키징**
+>
+> `50 토큰 → 8 토큰` — 같은 정보, 더 적은 토큰.
 
-Brf.it은 코드베이스에서 함수 시그니처를 추출하여, 구현 세부사항을 제거하고 AI가 필요로 하는 핵심 정보만 남깁니다. 토큰 사용량을 획기적으로 줄일 수 있습니다.
+[설치](#설치) · [빠른 시작](#빠른-시작) · [지원 언어](#지원-언어)
 
 ---
 
-## 주요 기능
+## 동작 방식
 
 AI 어시스턴트에 원본 코드를 전달하는 대신:
 
@@ -61,19 +63,29 @@ export async function fetchUser(
 
 ---
 
-## 설치
+## 빠른 시작
 
-### macOS (Homebrew)
+### 설치
+
+**macOS (Homebrew)**
 
 ```bash
 brew install indigo-net/tap/brfit
 ```
 
-### 릴리즈에서 다운로드
+**Linux / macOS (스크립트)**
 
-[Releases](https://github.com/indigo-net/Brf.it/releases)에서 최신 바이너리를 다운로드하세요.
+```bash
+curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | sh
+```
 
-### 소스에서 빌드
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.ps1 | iex
+```
+
+**소스에서 빌드**
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -81,34 +93,47 @@ cd Brf.it
 go build -o brfit ./cmd/brfit
 ```
 
+### 첫 실행
+
+```bash
+brfit .                    # 현재 디렉토리 분석
+brfit . -f md              # Markdown 출력
+brfit . -o briefing.xml    # 파일로 저장
+```
+
 ---
 
-## 사용법
+## 주요 기능
+
+| 기능 | 설명 |
+|------|------|
+| Tree-sitter 기반 | 정확한 AST 파싱으로 언어 구조 분석 |
+| 다중 포맷 | XML, Markdown 출력 지원 |
+| 토큰 카운팅 | 출력 토큰 수 자동 계산 |
+| gitignore 인식 | 불필요한 파일 자동 제외 |
+| 크로스 플랫폼 | Linux, macOS, Windows 지원 |
+
+---
+
+## 지원 언어
+
+| 언어 | 확장자 | 문서 |
+|------|--------|------|
+| Go | `.go` | [Go 가이드](docs/languages/go.ko.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
+| Python | `.py` | [Python 가이드](docs/languages/python.ko.md) |
+| C | `.c`, `.h` | [C 가이드](docs/languages/c.ko.md) |
+
+---
+
+## CLI 레퍼런스
 
 ```bash
 brfit [경로] [옵션]
 ```
 
-### 빠른 예제
-
-```bash
-# 현재 디렉토리에서 시그니처 추출
-brfit .
-
-# Markdown 형식으로 출력
-brfit . -f md
-
-# 파일로 저장
-brfit . -o output.xml
-
-# 함수 본문 포함 (전체 코드)
-brfit . --include-body
-
-# 디렉토리 트리 생략
-brfit . --no-tree
-```
-
-### CLI 옵션
+### 옵션
 
 | 옵션 | 단축 | 설명 | 기본값 |
 |------|------|------|--------|
@@ -122,17 +147,23 @@ brfit . --no-tree
 | `--max-size` | | 최대 파일 크기 (바이트) | `512000` |
 | `--version` | `-v` | 버전 표시 | |
 
----
+### 예제
 
-## 지원 언어
+```bash
+# AI 어시스턴트에 전달 (클립보드 복사)
+brfit . | pbcopy              # macOS
+brfit . | xclip               # Linux
+brfit . | clip                # Windows
 
-| 언어 | 확장자 | 문서 |
-|------|--------|------|
-| Go | `.go` | [Go 가이드](docs/languages/go.ko.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
-| Python | `.py` | [Python 가이드](docs/languages/python.ko.md) |
-| C | `.c`, `.h` | [C 가이드](docs/languages/c.ko.md) |
+# 프로젝트 분석 후 파일 저장
+brfit ./my-project -o briefing.xml
+
+# 함수 본문 포함 (전체 코드)
+brfit . --include-body
+
+# 디렉토리 트리 출력 생략
+brfit . --no-tree
+```
 
 ---
 
@@ -183,4 +214,4 @@ func Scan(root string) (*Result, error)
 
 ## 라이선스
 
-MIT
+[MIT](LICENSE)

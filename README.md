@@ -6,13 +6,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Brief your code for AI assistants.**
+> **Package your codebase for AI comprehension.**
+>
+> `50 tokens → 8 tokens` — Same information, fewer tokens.
 
-Brf.it extracts function signatures from your codebase, removing implementation details to dramatically reduce token usage while preserving the essential information AI needs.
+[Installation](#installation) · [Quick Start](#quick-start) · [Supported Languages](#supported-languages)
 
 ---
 
-## What It Does
+## How It Works
 
 Instead of feeding raw code to AI assistants:
 
@@ -61,19 +63,29 @@ export async function fetchUser(
 
 ---
 
-## Installation
+## Quick Start
 
-### macOS (Homebrew)
+### Installation
+
+**macOS (Homebrew)**
 
 ```bash
 brew install indigo-net/tap/brfit
 ```
 
-### From Release
+**Linux / macOS (Script)**
 
-Download the latest binary from [Releases](https://github.com/indigo-net/Brf.it/releases).
+```bash
+curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | sh
+```
 
-### From Source
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.ps1 | iex
+```
+
+**From Source**
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -81,34 +93,47 @@ cd Brf.it
 go build -o brfit ./cmd/brfit
 ```
 
+### First Run
+
+```bash
+brfit .                    # Analyze current directory
+brfit . -f md              # Output in Markdown
+brfit . -o briefing.xml    # Save to file
+```
+
 ---
 
-## Usage
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| Tree-sitter Based | Accurate AST parsing for language structure analysis |
+| Multiple Formats | XML and Markdown output support |
+| Token Counting | Automatic output token calculation |
+| Gitignore Aware | Automatically excludes unnecessary files |
+| Cross-Platform | Linux, macOS, and Windows support |
+
+---
+
+## Supported Languages
+
+| Language | Extensions | Documentation |
+|----------|------------|---------------|
+| Go | `.go` | [Go Guide](docs/languages/go.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
+| Python | `.py` | [Python Guide](docs/languages/python.md) |
+| C | `.c`, `.h` | [C Guide](docs/languages/c.md) |
+
+---
+
+## CLI Reference
 
 ```bash
 brfit [path] [options]
 ```
 
-### Quick Examples
-
-```bash
-# Extract signatures from current directory
-brfit .
-
-# Output in Markdown format
-brfit . -f md
-
-# Save to file
-brfit . -o output.xml
-
-# Include function bodies (full code)
-brfit . --include-body
-
-# Skip directory tree
-brfit . --no-tree
-```
-
-### CLI Options
+### Options
 
 | Option | Short | Description | Default |
 |--------|-------|-------------|---------|
@@ -122,17 +147,23 @@ brfit . --no-tree
 | `--max-size` | | Max file size (bytes) | `512000` |
 | `--version` | `-v` | Show version | |
 
----
+### Examples
 
-## Supported Languages
+```bash
+# Copy to clipboard for AI assistants
+brfit . | pbcopy              # macOS
+brfit . | xclip               # Linux
+brfit . | clip                # Windows
 
-| Language | Extensions | Documentation |
-|----------|------------|---------------|
-| Go | `.go` | [Go Guide](docs/languages/go.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| Python | `.py` | [Python Guide](docs/languages/python.md) |
-| C | `.c`, `.h` | [C Guide](docs/languages/c.md) |
+# Analyze project and save
+brfit ./my-project -o briefing.xml
+
+# Include function bodies (full code)
+brfit . --include-body
+
+# Skip directory tree output
+brfit . --no-tree
+```
 
 ---
 
@@ -183,4 +214,4 @@ func Scan(root string) (*Result, error)
 
 ## License
 
-MIT
+[MIT](LICENSE)

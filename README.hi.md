@@ -6,13 +6,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**AI सहायकों के लिए कोड ब्रीफिंग टूल**
+> **अपने कोडबेस को AI समझ के लिए पैकेज करें।**
+>
+> `50 टोकन → 8 टोकन` — समान जानकारी, कम टोकन।
 
-Brf.it आपके कोडबेस से फंक्शन सिग्नेचर निकालता है, इम्प्लीमेंटेशन डिटेल्स हटाकर AI को आवश्यक जानकारी प्रदान करता है। टोकन उपयोग को नाटकीय रूप से कम करता है।
+[इंस्टॉलेशन](#इंस्टॉलेशन) · [क्विक स्टार्ट](#क्विक-स्टार्ट) · [समर्थित भाषाएं](#समर्थित-भाषाएं)
 
 ---
 
-## यह क्या करता है
+## यह कैसे काम करता है
 
 AI सहायकों को रॉ कोड देने की बजाय:
 
@@ -61,19 +63,29 @@ export async function fetchUser(
 
 ---
 
-## इंस्टॉलेशन
+## क्विक स्टार्ट
 
-### macOS (Homebrew)
+### इंस्टॉलेशन
+
+**macOS (Homebrew)**
 
 ```bash
 brew install indigo-net/tap/brfit
 ```
 
-### रिलीज से डाउनलोड
+**Linux / macOS (स्क्रिप्ट)**
 
-[Releases](https://github.com/indigo-net/Brf.it/releases) से नवीनतम बाइनरी डाउनलोड करें।
+```bash
+curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | sh
+```
 
-### सोर्स से बिल्ड
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.ps1 | iex
+```
+
+**सोर्स से बिल्ड**
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -81,34 +93,47 @@ cd Brf.it
 go build -o brfit ./cmd/brfit
 ```
 
+### पहली बार चलाएं
+
+```bash
+brfit .                    # वर्तमान डायरेक्टरी का विश्लेषण
+brfit . -f md              # Markdown में आउटपुट
+brfit . -o briefing.xml    # फाइल में सेव करें
+```
+
 ---
 
-## उपयोग
+## फीचर्स
+
+| फीचर | विवरण |
+|------|-------|
+| Tree-sitter आधारित | सटीक AST पार्सिंग से भाषा संरचना विश्लेषण |
+| मल्टीपल फॉर्मेट्स | XML और Markdown आउटपुट सपोर्ट |
+| टोकन काउंटिंग | आउटपुट टोकन की स्वचालित गणना |
+| Gitignore अवेयर | अनावश्यक फाइल्स को स्वचालित रूप से बाहर करें |
+| क्रॉस-प्लेटफॉर्म | Linux, macOS, और Windows सपोर्ट |
+
+---
+
+## समर्थित भाषाएं
+
+| भाषा | एक्सटेंशन | डॉक्यूमेंटेशन |
+|------|-----------|---------------|
+| Go | `.go` | [Go गाइड](docs/languages/go.hi.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
+| Python | `.py` | [Python गाइड](docs/languages/python.hi.md) |
+| C | `.c`, `.h` | [C गाइड](docs/languages/c.hi.md) |
+
+---
+
+## CLI रेफरेंस
 
 ```bash
 brfit [पथ] [विकल्प]
 ```
 
-### त्वरित उदाहरण
-
-```bash
-# वर्तमान डायरेक्टरी से सिग्नेचर निकालें
-brfit .
-
-# Markdown फॉर्मेट में आउटपुट
-brfit . -f md
-
-# फाइल में सेव करें
-brfit . -o output.xml
-
-# फंक्शन बॉडी शामिल करें (पूरा कोड)
-brfit . --include-body
-
-# डायरेक्टरी ट्री स्किप करें
-brfit . --no-tree
-```
-
-### CLI विकल्प
+### विकल्प
 
 | विकल्प | शॉर्ट | विवरण | डिफ़ॉल्ट |
 |--------|-------|-------|----------|
@@ -122,17 +147,23 @@ brfit . --no-tree
 | `--max-size` | | अधिकतम फाइल साइज (बाइट्स) | `512000` |
 | `--version` | `-v` | वर्जन दिखाएं | |
 
----
+### उदाहरण
 
-## समर्थित भाषाएं
+```bash
+# AI सहायकों को भेजें (क्लिपबोर्ड में कॉपी)
+brfit . | pbcopy              # macOS
+brfit . | xclip               # Linux
+brfit . | clip                # Windows
 
-| भाषा | एक्सटेंशन | डॉक्यूमेंटेशन |
-|------|-----------|---------------|
-| Go | `.go` | [Go गाइड](docs/languages/go.hi.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
-| Python | `.py` | [Python गाइड](docs/languages/python.hi.md) |
-| C | `.c`, `.h` | [C गाइड](docs/languages/c.hi.md) |
+# प्रोजेक्ट का विश्लेषण करें और फाइल में सेव करें
+brfit ./my-project -o briefing.xml
+
+# फंक्शन बॉडी शामिल करें (पूरा कोड)
+brfit . --include-body
+
+# डायरेक्टरी ट्री आउटपुट स्किप करें
+brfit . --no-tree
+```
 
 ---
 
@@ -183,4 +214,4 @@ func Scan(root string) (*Result, error)
 
 ## लाइसेंस
 
-MIT
+[MIT](LICENSE)
