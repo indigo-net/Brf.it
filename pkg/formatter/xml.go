@@ -72,15 +72,22 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString(escapeXML(file.Error.Error()))
 			buf.WriteString("</error>\n")
 		} else {
-			for _, sig := range file.Signatures {
-				buf.WriteString("      <signature>")
-				buf.WriteString(escapeXML(sig.Text))
-				buf.WriteString("</signature>\n")
+			// 빈 파일 확인
+			isEmpty := len(file.Signatures) == 0 && (!data.IncludeImports || len(file.Imports) == 0)
 
-				if sig.Doc != "" {
-					buf.WriteString("      <doc>")
-					buf.WriteString(escapeXML(sig.Doc))
-					buf.WriteString("</doc>\n")
+			if isEmpty {
+				buf.WriteString("      <!-- empty -->\n")
+			} else {
+				for _, sig := range file.Signatures {
+					buf.WriteString("      <signature>")
+					buf.WriteString(escapeXML(sig.Text))
+					buf.WriteString("</signature>\n")
+
+					if sig.Doc != "" {
+						buf.WriteString("      <doc>")
+						buf.WriteString(escapeXML(sig.Doc))
+						buf.WriteString("</doc>\n")
+					}
 				}
 			}
 		}

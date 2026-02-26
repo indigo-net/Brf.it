@@ -251,3 +251,81 @@ func TestMarkdownFormatterEmptyData(t *testing.T) {
 		t.Error("expected Files section")
 	}
 }
+
+func TestMarkdownFormatterEmptyFile(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:       "cmd/main.go",
+				Language:   "go",
+				Signatures: []parser.Signature{}, // 빈 시그니처
+				Imports:    []parser.ImportExport{},
+			},
+		},
+		IncludeImports: false,
+	}
+
+	result, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output := string(result)
+	if !strings.Contains(output, "// (empty)") {
+		t.Errorf("Expected empty comment, got:\n%s", output)
+	}
+}
+
+func TestMarkdownFormatterEmptyFileWithImports(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:       "cmd/main.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+				Imports: []parser.ImportExport{
+					{Type: "import", Path: "fmt"},
+				},
+			},
+		},
+		IncludeImports: true,
+	}
+
+	result, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output := string(result)
+	// imports가 있으면 빈 파일이 아님
+	if strings.Contains(output, "// (empty)") {
+		t.Errorf("Should not show empty comment when imports exist, got:\n%s", output)
+	}
+}
+
+func TestXMLFormatterEmptyFile(t *testing.T) {
+	formatter := NewXMLFormatter()
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:       "cmd/main.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+				Imports:    []parser.ImportExport{},
+			},
+		},
+		IncludeImports: false,
+	}
+
+	result, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output := string(result)
+	if !strings.Contains(output, "<!-- empty -->") {
+		t.Errorf("Expected empty comment, got:\n%s", output)
+	}
+}

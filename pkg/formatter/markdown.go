@@ -76,19 +76,29 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString(escapeMarkdown(file.Error.Error()))
 			buf.WriteString("\n\n")
 		} else {
+			// 빈 파일 확인: 시그니처 없고, (imports 포함 안 함 또는 imports도 없음)
+			isEmpty := len(file.Signatures) == 0 && (!data.IncludeImports || len(file.Imports) == 0)
+
 			buf.WriteString(fmt.Sprintf("```%s\n", file.Language))
-			for _, sig := range file.Signatures {
-				buf.WriteString(sig.Text)
+			if isEmpty {
+				buf.WriteString(getEmptyComment(file.Language))
 				buf.WriteString("\n")
+			} else {
+				for _, sig := range file.Signatures {
+					buf.WriteString(sig.Text)
+					buf.WriteString("\n")
+				}
 			}
 			buf.WriteString("```\n\n")
 
-			// Add docs as quotes
-			for _, sig := range file.Signatures {
-				if sig.Doc != "" {
-					buf.WriteString("> ")
-					buf.WriteString(escapeMarkdown(sig.Doc))
-					buf.WriteString("\n\n")
+			// Add docs as quotes (빈 파일이면 건너뜀)
+			if !isEmpty {
+				for _, sig := range file.Signatures {
+					if sig.Doc != "" {
+						buf.WriteString("> ")
+						buf.WriteString(escapeMarkdown(sig.Doc))
+						buf.WriteString("\n\n")
+					}
 				}
 			}
 		}
