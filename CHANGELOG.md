@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-02-26
+
+### Added
+- `--include-imports` flag to extract import/export statements
+  - Go: `import` declarations
+  - TypeScript/JavaScript: `import` statements and `export` declarations
+  - Python: `import` and `from ... import` statements
+  - Java: `import` declarations (including static imports)
+  - C: `#include` directives
+- Imports rendered in separate `<imports>` section (XML) or "Imports & Exports" section (Markdown)
+- File-grouped output for better readability
+
 ## [0.8.0] - 2026-02-26
 
 ### Added
@@ -98,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.9.0]: https://github.com/indigo-net/Brf.it/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/indigo-net/Brf.it/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/indigo-net/Brf.it/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/indigo-net/Brf.it/compare/v0.5.0...v0.6.0
