@@ -143,15 +143,47 @@ git tag v0.X.0 && git push origin v0.X.0
 # 3. GitHub Actions 완료 대기 (~5분)
 gh run list --limit 1
 
-# 4. 릴리즈 노트 업데이트
+# 4. 릴리즈 노트 업데이트 (.github/RELEASE_TEMPLATE.md 참조)
 gh release edit v0.X.0 --notes "$(cat <<'EOF'
-## Release Notes
+## 🎉 [릴리즈 제목]
 ...
 EOF
 )"
 
 # 5. CHANGELOG.md 업데이트 후 커밋
 ```
+
+### 릴리즈 노트 양식
+
+모든 릴리즈 노트는 아래 양식을 따릅니다 (상세 템플릿: `.github/RELEASE_TEMPLATE.md`):
+
+```markdown
+## 🎉 [기능명/릴리즈 요약]
+
+[1-2문장 설명]
+
+### ✨ New Features
+### 🔧 Improvements
+### 🐛 Bug Fixes
+### 📦 Installation
+### 📝 Example
+
+**Full Changelog**: https://github.com/indigo-net/Brf.it/compare/vPREV...vNEW
+```
+
+**이모지 규칙**:
+
+| 섹션 | 이모지 |
+|------|--------|
+| 제목 | 🎉 |
+| New Features | ✨ |
+| Improvements | 🔧 |
+| Bug Fixes | 🐛 |
+| Breaking Changes | ⚠️ |
+| Deprecated | 🗑️ |
+| Installation | 📦 |
+| Example | 📝 |
+| Documentation | 📚 |
 
 ### ScanOptions 기본값 사용
 
