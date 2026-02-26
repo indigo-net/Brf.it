@@ -39,40 +39,33 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 
 	buf.WriteString("  </metadata>\n")
 
-	// Imports section (if enabled and any imports exist)
-	if data.IncludeImports && hasImports(data.Files) {
-		buf.WriteString("  <imports>\n")
-		for _, file := range data.Files {
-			if len(file.Imports) == 0 {
-				continue
-			}
-			buf.WriteString(fmt.Sprintf("    <file path=%q>\n", file.Path))
+	// Files section
+	buf.WriteString("  <files>\n")
+	for _, file := range data.Files {
+		buf.WriteString(fmt.Sprintf("    <file path=%q language=%q>\n", file.Path, file.Language))
+
+		// Imports section (within file block)
+		if file.Error == nil && data.IncludeImports && len(file.Imports) > 0 {
+			buf.WriteString("      <imports>\n")
 			for _, imp := range file.Imports {
 				if imp.Type == "import" {
-					buf.WriteString("      <import>")
+					buf.WriteString("        <import>")
 					buf.WriteString(escapeXML(imp.Path))
 					buf.WriteString("</import>\n")
 				} else if imp.Type == "export" {
 					if imp.Name != "" {
-						buf.WriteString("      <export>")
+						buf.WriteString("        <export>")
 						buf.WriteString(escapeXML(imp.Name))
 						buf.WriteString("</export>\n")
 					} else if imp.Path != "" {
-						buf.WriteString("      <export>")
+						buf.WriteString("        <export>")
 						buf.WriteString(escapeXML(imp.Path))
 						buf.WriteString("</export>\n")
 					}
 				}
 			}
-			buf.WriteString("    </file>\n")
+			buf.WriteString("      </imports>\n")
 		}
-		buf.WriteString("  </imports>\n")
-	}
-
-	// Files section
-	buf.WriteString("  <files>\n")
-	for _, file := range data.Files {
-		buf.WriteString(fmt.Sprintf("    <file path=%q language=%q>\n", file.Path, file.Language))
 
 		if file.Error != nil {
 			buf.WriteString("      <error>")
@@ -111,12 +104,3 @@ func escapeXML(s string) string {
 	return s
 }
 
-// hasImports checks if any file has imports.
-func hasImports(files []FileData) bool {
-	for _, f := range files {
-		if len(f.Imports) > 0 {
-			return true
-		}
-	}
-	return false
-}

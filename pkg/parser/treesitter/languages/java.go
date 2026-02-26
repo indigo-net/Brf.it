@@ -61,16 +61,8 @@ func (q *JavaQuery) ImportQuery() []byte {
 
 // javaImportQueryPattern is the Tree-sitter query for extracting Java imports.
 const javaImportQueryPattern = `
-; import statements
-(import_declaration
-  (scoped_identifier) @import_path
-)
-
-; static imports
-(import_declaration
-  "static"
-  (scoped_identifier) @import_path
-)
+; import statements (capture full declaration)
+(import_declaration) @import_path
 `
 
 // javaQueryPattern is the Tree-sitter query for extracting Java signatures.

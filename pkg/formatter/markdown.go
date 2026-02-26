@@ -33,17 +33,14 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString("\n```\n\n")
 	}
 
-	// Imports & Exports section (if enabled and any imports exist)
-	if data.IncludeImports && hasImportsForMarkdown(data.Files) {
-		buf.WriteString("---\n\n")
-		buf.WriteString("## Imports & Exports\n\n")
-		for _, file := range data.Files {
-			if len(file.Imports) == 0 {
-				continue
-			}
-			buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
+	// Files
+	buf.WriteString("---\n\n")
+	buf.WriteString("## Files\n\n")
+	for _, file := range data.Files {
+		buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
 
-			// Group imports and exports
+		// Imports & Exports (within file block)
+		if file.Error == nil && data.IncludeImports && len(file.Imports) > 0 {
 			var imports, exports []string
 			for _, imp := range file.Imports {
 				if imp.Type == "import" {
@@ -73,13 +70,6 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 				buf.WriteString("\n")
 			}
 		}
-	}
-
-	// Files
-	buf.WriteString("---\n\n")
-	buf.WriteString("## Files\n\n")
-	for _, file := range data.Files {
-		buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
 
 		if file.Error != nil {
 			buf.WriteString("> **Error:** ")
@@ -116,12 +106,3 @@ func escapeMarkdown(s string) string {
 	return s
 }
 
-// hasImportsForMarkdown checks if any file has imports.
-func hasImportsForMarkdown(files []FileData) bool {
-	for _, f := range files {
-		if len(f.Imports) > 0 {
-			return true
-		}
-	}
-	return false
-}

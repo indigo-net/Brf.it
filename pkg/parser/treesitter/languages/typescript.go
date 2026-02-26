@@ -62,15 +62,13 @@ func (q *TypeScriptQuery) ImportQuery() []byte {
 
 // typeScriptImportQueryPattern is the Tree-sitter query for extracting TypeScript imports/exports.
 const typeScriptImportQueryPattern = `
-; Import statements with source
-(import_statement
-  source: (string) @import_path
-)
+; Import statements (capture full statement)
+(import_statement) @import_path
 
 ; Export statements with source (re-exports)
 (export_statement
-  source: (string) @import_path
-) @export_type
+  source: (string)
+) @import_path @export_type
 
 ; Named exports without source (local exports)
 (export_statement

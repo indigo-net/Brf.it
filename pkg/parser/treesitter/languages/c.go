@@ -61,15 +61,8 @@ func (q *CQuery) ImportQuery() []byte {
 
 // cImportQueryPattern is the Tree-sitter query for extracting C #include directives.
 const cImportQueryPattern = `
-; #include "header.h"
-(preproc_include
-  path: (string_literal) @import_path
-)
-
-; #include <header.h>
-(preproc_include
-  path: (system_lib_string) @import_path
-)
+; #include directives (capture full statement)
+(preproc_include) @import_path
 `
 
 // cQueryPattern is the Tree-sitter query for extracting C signatures.

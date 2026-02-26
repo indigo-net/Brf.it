@@ -685,7 +685,19 @@ func (p *TreeSitterParser) extractImports(
 }
 
 // cleanImportPath removes quotes and normalizes import paths.
+// If the input is a full import statement, it returns as-is.
 func cleanImportPath(path string) string {
+	// If it's a full import statement, return as-is
+	trimmed := strings.TrimSpace(path)
+	if strings.HasPrefix(trimmed, "import ") ||
+		strings.HasPrefix(trimmed, "from ") ||
+		strings.HasPrefix(trimmed, "#include") {
+		return trimmed
+	}
+	// Go import_spec: "path" or alias "path" - prefix with "import "
+	if strings.HasPrefix(trimmed, "\"") || strings.Contains(trimmed, " \"") {
+		return "import " + trimmed
+	}
 	// Remove surrounding quotes (", ', `)
 	path = strings.Trim(path, "\"'`")
 	// Remove angle brackets for C system includes

@@ -68,19 +68,15 @@ func (q *GoQuery) ImportQuery() []byte {
 
 // goImportQueryPattern is the Tree-sitter query for extracting Go imports.
 const goImportQueryPattern = `
-; Single import
+; Single import (capture full spec including alias)
 (import_declaration
-  (import_spec
-    path: (interpreted_string_literal) @import_path
-  )
+  (import_spec) @import_path
 )
 
-; Multi-line imports
+; Multi-line imports (capture each spec)
 (import_declaration
   (import_spec_list
-    (import_spec
-      path: (interpreted_string_literal) @import_path
-    )
+    (import_spec) @import_path
   )
 )
 `

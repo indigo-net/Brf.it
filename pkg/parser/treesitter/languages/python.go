@@ -56,20 +56,11 @@ func (q *PythonQuery) ImportQuery() []byte {
 
 // pythonImportQueryPattern is the Tree-sitter query for extracting Python imports.
 const pythonImportQueryPattern = `
-; import module
-(import_statement
-  name: (dotted_name) @import_path
-)
+; import module (capture full statement)
+(import_statement) @import_path
 
-; from module import ...
-(import_from_statement
-  module_name: (dotted_name) @import_path
-)
-
-; from . import ... (relative imports)
-(import_from_statement
-  module_name: (relative_import) @import_path
-)
+; from module import ... (capture full statement)
+(import_from_statement) @import_path
 `
 
 // pythonQueryPattern is the Tree-sitter query for extracting Python signatures.
