@@ -15,6 +15,7 @@ $ErrorActionPreference = "Stop"
 $repo = "indigo-net/Brf.it"
 $installDir = if ($env:BRFIT_INSTALL_DIR) { $env:BRFIT_INSTALL_DIR } else { "$env:ProgramFiles\brfit" }
 $binaryName = "brfit.exe"
+$archivePrefix = "Brf.it"
 
 function Write-Info($msg) {
     Write-Host "==> " -NoNewline -ForegroundColor Green
@@ -60,7 +61,7 @@ Write-Info "Installing brfit $Version"
 
 # Build download URLs
 $versionNum = $Version.TrimStart('v')
-$filename = "brfit_${versionNum}_windows_amd64.zip"
+$filename = "${archivePrefix}_${versionNum}_windows_amd64.zip"
 $url = "https://github.com/$repo/releases/download/$Version/$filename"
 $checksumUrl = "https://github.com/$repo/releases/download/$Version/checksums.txt"
 

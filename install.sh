@@ -8,6 +8,7 @@ set -e
 REPO="indigo-net/Brf.it"
 INSTALL_DIR="${BRFIT_INSTALL_DIR:-/usr/local/bin}"
 BINARY_NAME="brfit"
+ARCHIVE_PREFIX="Brf.it"
 
 # Colors for output
 RED='\033[0;31m'
@@ -155,7 +156,7 @@ main() {
 
     # Build download URLs
     VERSION_NUM="${VERSION#v}"
-    ARCHIVE_NAME="${BINARY_NAME}_${VERSION_NUM}_${OS}_${ARCH}.tar.gz"
+    ARCHIVE_NAME="${ARCHIVE_PREFIX}_${VERSION_NUM}_${OS}_${ARCH}.tar.gz"
     DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ARCHIVE_NAME}"
     CHECKSUM_URL="https://github.com/${REPO}/releases/download/${VERSION}/checksums.txt"
 
