@@ -171,3 +171,9 @@ if fileSize > maxFileSize {
   </files>
 </brfit>
 ```
+
+### 다국어 문서
+
+- 파일명 suffix 방식: `README.ko.md`, `docs/languages/go.ja.md`
+- 지원 언어: EN (기본), KO, JA, HI, DE
+- 모든 문서 상단에 언어 선택 링크 추가: `🌐 [English](file.md) | [한국어](file.ko.md) | ...`
