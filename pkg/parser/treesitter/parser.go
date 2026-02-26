@@ -19,6 +19,7 @@ func init() {
 	parser.RegisterParser("javascript", NewTreeSitterParser())
 	parser.RegisterParser("jsx", NewTreeSitterParser())
 	parser.RegisterParser("python", NewTreeSitterParser())
+	parser.RegisterParser("c", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -36,6 +37,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"javascript": languages.NewTypeScriptQuery(), // JS uses TypeScript grammar (subset)
 			"jsx":        languages.NewTypeScriptQuery(), // JSX uses TypeScript grammar
 			"python":     languages.NewPythonQuery(),
+			"c":          languages.NewCQuery(),
 		},
 	}
 }
@@ -220,6 +222,9 @@ func isExported(name, language string) bool {
 	case "python":
 		// Python: all elements are considered public (no private filtering)
 		return true
+	case "c":
+		// C: all functions are considered exported (static functions handled separately)
+		return true
 	default:
 		return false
 	}
@@ -235,6 +240,8 @@ func stripBody(text, kind, language string) string {
 		return stripTypeScriptBody(text, kind)
 	case "python":
 		return stripPythonBody(text, kind)
+	case "c":
+		return stripCBody(text, kind)
 	default:
 		return text
 	}
@@ -428,6 +435,22 @@ func findPythonBodyStart(text string) int {
 		}
 	}
 	return -1
+}
+
+// stripCBody removes the body from C function declarations.
+func stripCBody(text, kind string) string {
+	switch kind {
+	case "function":
+		// Function: remove everything after {
+		braceIdx := strings.Index(text, "{")
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "struct", "enum", "typedef", "macro":
+		// Type definitions and macros: keep full text
+		return text
+	}
+	return text
 }
 
 // isPythonMethod checks if a Python function is actually a method
