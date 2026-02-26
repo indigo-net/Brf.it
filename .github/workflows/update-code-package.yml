@@ -1,0 +1,37 @@
+name: Update CODE_PACKAGE
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'CODE_PACKAGE.md'
+      - 'CODE_PACKAGE.xml'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install brfit
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/indigo-net/Brf.it/main/install.sh | bash
+
+      - name: Generate CODE_PACKAGE files
+        run: |
+          brfit . -f md --no-tokens --include-imports --no-tree -o CODE_PACKAGE.md
+          brfit . -f xml --no-tokens --include-imports --no-tree -o CODE_PACKAGE.xml
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CODE_PACKAGE.md CODE_PACKAGE.xml
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: CODE_PACKAGE 자동 갱신"
+            git push
+          fi

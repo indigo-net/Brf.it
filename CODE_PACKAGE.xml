@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+  </metadata>
+  <files>
+    <file path="cmd/brfit/main.go" language="go">
+    </file>
+    <file path="cmd/brfit/root.go" language="go">
+      <imports>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/internal/config&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/internal/context&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
+        <import>import &quot;github.com/spf13/cobra&quot;</import>
+        <import>import _ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;</import>
+      </imports>
+      <signature>Version = &quot;dev&quot;</signature>
+      <signature>Commit  = &quot;none&quot;</signature>
+      <signature>Date    = &quot;unknown&quot;</signature>
+      <signature>func SetBuildInfo(v, c, d string)</signature>
+      <signature>func Execute()</signature>
+      <signature>func NewRootCommand() *cobra.Command</signature>
+    </file>
+    <file path="cmd/brfit/root_test.go" language="go">
+      <imports>
+        <import>import &quot;bytes&quot;</import>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;strings&quot;</import>
+        <import>import &quot;testing&quot;</import>
+        <import>import &quot;time&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/internal/config&quot;</import>
+        <import>import _ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;</import>
+      </imports>
+      <signature>func TestExecuteHelp(t *testing.T)</signature>
+      <signature>func TestExecuteVersion(t *testing.T)</signature>
+      <signature>func TestNewRootCommand(t *testing.T)</signature>
+      <signature>func TestParseFlags(t *testing.T)</signature>
+      <signature>func TestRootCommandIntegration(t *testing.T)</signature>
+      <signature>func TestRootCommandIntegrationMarkdown(t *testing.T)</signature>
+      <signature>func TestRootCommandPathNotFound(t *testing.T)</signature>
+      <signature>func TestWriteToFile(t *testing.T)</signature>
+    </file>
+    <file path="internal/config/config.go" language="go">
+      <imports>
+        <import>import &quot;errors&quot;</import>
+        <import>import &quot;fmt&quot;</import>
+        <import>import pkgcontext &quot;github.com/indigo-net/Brf.it/internal/context&quot;</import>
+      </imports>
+      <signature>type Config struct {
+	// Path is the root directory or file to process.
+	Path string
+
+	// Mode determines what to extract. Currently only &quot;sig&quot; (signature) is supported.
+	Mode string
+
+	// Format specifies the output format: &quot;xml&quot; or &quot;md&quot;.
+	Format string
+
+	// Output is the file path to write output. Empty means stdout.
+	Output string
+
+	// IgnoreFile is the path to the ignore file (default: .gitignore).
+	IgnoreFile string
+
+	// IncludeHidden determines whether to include hidden files (dotfiles).
+	IncludeHidden bool
+
+	// IncludeBody determines whether to include function/method bodies.
+	// When false (default), only signatures are extracted.
+	IncludeBody bool
+
+	// IncludeImports determines whether to include import/export statements.
+	IncludeImports bool
+
+	// NoTree skips directory tree generation in output.
+	NoTree bool
+
+	// NoTokens disables token count calculation.
+	NoTokens bool
+
+	// MaxFileSize is the maximum file size in bytes to process.
+	MaxFileSize int64
+}</signature>
+      <signature>func DefaultConfig() *Config</signature>
+      <signature>func (c *Config) Validate() error</signature>
+      <signature>func (c *Config) SupportedExtensions() map[string]string</signature>
+      <signature>func (c *Config) ToOptions() *pkgcontext.Options</signature>
+    </file>
+    <file path="internal/config/config_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+      </imports>
+      <signature>func TestDefaultConfig(t *testing.T)</signature>
+      <signature>func TestConfigValidate(t *testing.T)</signature>
+      <signature>func TestConfigSupportedLanguages(t *testing.T)</signature>
+    </file>
+    <file path="internal/context/context.go" language="go">
+      <imports>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;</import>
+      </imports>
+      <signature>type Options struct {
+	// Path is the target path to scan.
+	Path string
+
+	// Format is the output format (&quot;xml&quot; or &quot;md&quot;).
+	Format string
+
+	// Output is the output file path (empty = stdout).
+	Output string
+
+	// IgnoreFile is the custom ignore file path.
+	IgnoreFile string
+
+	// IncludeHidden determines whether to include hidden files.
+	IncludeHidden bool
+
+	// IncludeBody determines whether to include function/method bodies.
+	IncludeBody bool
+
+	// IncludeImports determines whether to include import/export statements.
+	IncludeImports bool
+
+	// IncludeTree determines whether to include directory tree.
+	IncludeTree bool
+
+	// IncludePrivate determines whether to include private symbols.
+	IncludePrivate bool
+
+	// MaxFileSize is the maximum file size in bytes.
+	MaxFileSize int64
+}</signature>
+      <signature>func DefaultOptions() *Options</signature>
+      <signature>type Result struct {
+	// Content is the formatted output bytes.
+	Content []byte
+
+	// TotalSignatures is the total number of signatures.
+	TotalSignatures int
+
+	// TotalFiles is the number of processed files.
+	TotalFiles int
+
+	// TotalSize is the total size of processed files.
+	TotalSize int64
+
+	// TokenCount is the number of tokens in the output.
+	// Returns 0 if token counting is disabled or tokenizer is not set.
+	TokenCount int
+}</signature>
+      <signature>type Packager struct {
+	scanner    scanner.Scanner
+	extractor  extractor.Extractor
+	formatters map[string]formatter.Formatter
+	tokenizer  tokenizer.Tokenizer
+}</signature>
+      <signature>func NewPackager(
+	s scanner.Scanner,
+	e extractor.Extractor,
+	f map[string]formatter.Formatter,
+) *Packager</signature>
+      <signature>func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)</signature>
+      <signature>func (p *Packager) Package(opts *Options) (*Result, error)</signature>
+      <signature>func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)</signature>
+    </file>
+    <file path="internal/context/context_test.go" language="go">
+      <imports>
+        <import>import &quot;strings&quot;</import>
+        <import>import &quot;testing&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;</import>
+      </imports>
+      <signature>func (m *mockScanner) Scan() (*scanner.ScanResult, error)</signature>
+      <signature>func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)</signature>
+      <signature>func TestPackagerPackage(t *testing.T)</signature>
+      <signature>func TestPackagerPackageMarkdown(t *testing.T)</signature>
+      <signature>func TestPackagerPackageMarkdownFull(t *testing.T)</signature>
+      <signature>func TestPackagerUnknownFormat(t *testing.T)</signature>
+      <signature>func TestPackagerSetTokenizer(t *testing.T)</signature>
+      <signature>func TestPackagerWithTiktokenTokenizer(t *testing.T)</signature>
+      <signature>func TestPackagerTokenizerConsistency(t *testing.T)</signature>
+      <signature>func TestBuildTree(t *testing.T)</signature>
+      <signature>func TestBuildTreeStructure(t *testing.T)</signature>
+      <signature>func TestDefaultOptions(t *testing.T)</signature>
+      <signature>func TestNormalizeFormat(t *testing.T)</signature>
+    </file>
+    <file path="internal/context/tree.go" language="go">
+      <imports>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;sort&quot;</import>
+        <import>import &quot;strings&quot;</import>
+      </imports>
+      <signature>func BuildTree(root string, paths []string) string</signature>
+    </file>
+    <file path="pkg/extractor/extractor.go" language="go">
+      <imports>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
+      </imports>
+      <signature>type ExtractedFile struct {
+	// Path is the file path.
+	Path string
+
+	// Language is the detected language.
+	Language string
+
+	// Signatures is the list of extracted signatures.
+	Signatures []parser.Signature
+
+	// Imports is the list of extracted import/export statements.
+	Imports []parser.ImportExport
+
+	// Size is the file size in bytes.
+	Size int64
+
+	// Error is any error that occurred during extraction.
+	Error error
+}</signature>
+      <signature>type ExtractResult struct {
+	// Files is the list of extracted files.
+	Files []ExtractedFile
+
+	// TotalSignatures is the total number of signatures extracted.
+	TotalSignatures int
+
+	// TotalSize is the total size of processed files.
+	TotalSize int64
+
+	// ErrorCount is the number of files that had errors.
+	ErrorCount int
+}</signature>
+      <signature>type ExtractOptions struct {
+	// IncludePrivate whether to include non-exported/private signatures.
+	IncludePrivate bool
+
+	// IncludeBody whether to include function/method bodies.
+	IncludeBody bool
+
+	// IncludeImports whether to include import/export statements.
+	IncludeImports bool
+
+	// Concurrency is the number of concurrent workers (0 = sequential).
+	Concurrency int
+}</signature>
+      <signature>type Extractor interface {
+	// Extract extracts signatures from the given scan result.
+	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+}</signature>
+      <signature>type FileExtractor struct {
+	registry *parser.Registry
+}</signature>
+      <signature>func NewFileExtractor(registry *parser.Registry) *FileExtractor</signature>
+      <signature>func NewDefaultFileExtractor() *FileExtractor</signature>
+      <signature>func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</signature>
+    </file>
+    <file path="pkg/extractor/extractor_test.go" language="go">
+      <imports>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;testing&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+        <import>import _ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
+      </imports>
+      <signature>func TestFileExtractorImplementsExtractor(t *testing.T)</signature>
+      <signature>func TestFileExtractorExtract(t *testing.T)</signature>
+      <signature>func TestFileExtractorUnsupportedLanguage(t *testing.T)</signature>
+    </file>
+    <file path="pkg/formatter/formatter.go" language="go">
+      <imports>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+      </imports>
+      <signature>type FileData struct {
+	// Path is the file path.
+	Path string
+
+	// Language is the detected language.
+	Language string
+
+	// Signatures is the list of extracted signatures.
+	Signatures []parser.Signature
+
+	// Imports is the list of extracted import/export statements.
+	Imports []parser.ImportExport
+
+	// Error is any error that occurred during extraction.
+	Error error
+}</signature>
+      <signature>type PackageData struct {
+	// Tree is the directory tree string.
+	Tree string
+
+	// Files is the list of file data.
+	Files []FileData
+
+	// TotalSignatures is the total number of signatures.
+	TotalSignatures int
+
+	// TotalSize is the total size of processed files.
+	TotalSize int64
+
+	// IncludeImports indicates whether imports should be rendered.
+	IncludeImports bool
+}</signature>
+      <signature>type Formatter interface {
+	// Format formats the package data and returns the output bytes.
+	Format(data *PackageData) ([]byte, error)
+
+	// Name returns the formatter name (e.g., &quot;xml&quot;, &quot;markdown&quot;).
+	Name() string
+}</signature>
+    </file>
+    <file path="pkg/formatter/formatter_test.go" language="go">
+      <imports>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;strings&quot;</import>
+        <import>import &quot;testing&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+      </imports>
+      <signature>func TestXMLFormatterImplementsFormatter(t *testing.T)</signature>
+      <signature>func TestMarkdownFormatterImplementsFormatter(t *testing.T)</signature>
+      <signature>func TestXMLFormatterFormat(t *testing.T)</signature>
+      <signature>func TestXMLFormatterFormatWithError(t *testing.T)</signature>
+      <signature>func TestMarkdownFormatterFormat(t *testing.T)</signature>
+      <signature>func TestFormatterNames(t *testing.T)</signature>
+      <signature>func TestXMLFormatterEscapeXML(t *testing.T)</signature>
+      <signature>func TestMarkdownFormatterEscapeMarkdown(t *testing.T)</signature>
+      <signature>func TestXMLFormatterEmptyData(t *testing.T)</signature>
+      <signature>func TestMarkdownFormatterEmptyData(t *testing.T)</signature>
+    </file>
+    <file path="pkg/formatter/markdown.go" language="go">
+      <imports>
+        <import>import &quot;bytes&quot;</import>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;strings&quot;</import>
+      </imports>
+      <signature>type MarkdownFormatter struct{}</signature>
+      <signature>func NewMarkdownFormatter() *MarkdownFormatter</signature>
+      <signature>func (f *MarkdownFormatter) Name() string</signature>
+      <signature>func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)</signature>
+    </file>
+    <file path="pkg/formatter/xml.go" language="go">
+      <imports>
+        <import>import &quot;bytes&quot;</import>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;strings&quot;</import>
+      </imports>
+      <signature>type XMLFormatter struct{}</signature>
+      <signature>func NewXMLFormatter() *XMLFormatter</signature>
+      <signature>func (f *XMLFormatter) Name() string</signature>
+      <signature>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</signature>
+    </file>
+    <file path="pkg/parser/parser.go" language="go">
+      <imports>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;sync&quot;</import>
+      </imports>
+      <signature>type ImportExport struct {
+	// Type is &quot;import&quot; or &quot;export&quot;.
+	Type string
+
+	// Path is the module path (e.g., &quot;fmt&quot;, &quot;react&quot;, &quot;./utils&quot;).
+	Path string
+
+	// Name is the export name (for named exports).
+	Name string
+
+	// Line is the line number (1-indexed).
+	Line int
+}</signature>
+      <signature>type Signature struct {
+	// Name is the identifier name (e.g., &quot;Scan&quot;, &quot;FileScanner&quot;).
+	Name string
+
+	// Kind is the type of signature (e.g., &quot;function&quot;, &quot;method&quot;, &quot;class&quot;, &quot;interface&quot;).
+	Kind string
+
+	// Text is the full signature text including parameters and return type.
+	Text string
+
+	// Doc is the documentation comment (if any).
+	Doc string
+
+	// Line is the starting line number (1-indexed).
+	Line int
+
+	// EndLine is the ending line number (1-indexed).
+	EndLine int
+
+	// Language is the source language (e.g., &quot;go&quot;, &quot;typescript&quot;).
+	Language string
+
+	// Exported indicates whether the signature is exported/public.
+	Exported bool
+}</signature>
+      <signature>type Node struct {
+	// Type is the node type (e.g., &quot;function_declaration&quot;, &quot;class_definition&quot;).
+	Type string
+
+	// StartRow is the starting row (0-indexed).
+	StartRow int
+
+	// EndRow is the ending row (0-indexed).
+	EndRow int
+
+	// StartColumn is the starting column.
+	StartColumn int
+
+	// EndColumn is the ending column.
+	EndColumn int
+
+	// Text is the source text of the node.
+	Text string
+
+	// Children are child nodes.
+	Children []Node
+}</signature>
+      <signature>type ParseResult struct {
+	// FilePath is the path to the parsed file.
+	FilePath string
+
+	// Language is the detected language.
+	Language string
+
+	// Signatures is the list of extracted signatures.
+	Signatures []Signature
+
+	// Imports is the list of extracted import/export statements.
+	Imports []ImportExport
+
+	// AST is the root node of the parsed AST (optional).
+	AST *Node
+
+	// Error is any error that occurred during parsing.
+	Error error
+}</signature>
+      <signature>type Options struct {
+	// Language forces a specific language (auto-detected if empty).
+	Language string
+
+	// IncludeAST whether to include the full AST in the result.
+	IncludeAST bool
+
+	// IncludePrivate whether to include non-exported/private signatures.
+	IncludePrivate bool
+
+	// IncludeBody whether to include function/method bodies in the signature text.
+	// When false (default), only the signature line is extracted.
+	// When true, the full declaration including the body is extracted.
+	IncludeBody bool
+
+	// IncludeImports whether to include import/export statements in the result.
+	IncludeImports bool
+}</signature>
+      <signature>type Parser interface {
+	// Parse parses the given content and returns extracted signatures.
+	Parse(content string, opts *Options) (*ParseResult, error)
+
+	// Languages returns the list of supported languages.
+	Languages() []string
+}</signature>
+      <signature>type Registry struct {
+	mu      sync.RWMutex
+	parsers map[string]Parser
+}</signature>
+      <signature>func NewRegistry() *Registry</signature>
+      <signature>func DefaultRegistry() *Registry</signature>
+      <signature>func (r *Registry) Register(lang string, parser Parser)</signature>
+      <signature>func (r *Registry) Get(lang string) (Parser, bool)</signature>
+      <signature>func (r *Registry) Languages() []string</signature>
+      <signature>func RegisterParser(lang string, parser Parser)</signature>
+      <signature>func GetParser(lang string) (Parser, bool)</signature>
+      <signature>LanguageMapping = map[string]string{
+	&quot;.go&quot;:    &quot;go&quot;,
+	&quot;.ts&quot;:    &quot;typescript&quot;,
+	&quot;.tsx&quot;:   &quot;tsx&quot;,
+	&quot;.js&quot;:    &quot;javascript&quot;,
+	&quot;.jsx&quot;:   &quot;jsx&quot;,
+	&quot;.py&quot;:    &quot;python&quot;,
+	&quot;.java&quot;:  &quot;java&quot;,
+	&quot;.rs&quot;:    &quot;rust&quot;,
+	&quot;.rb&quot;:    &quot;ruby&quot;,
+	&quot;.php&quot;:   &quot;php&quot;,
+	&quot;.c&quot;:     &quot;c&quot;,
+	&quot;.cpp&quot;:   &quot;cpp&quot;,
+	&quot;.h&quot;:     &quot;c&quot;,
+	&quot;.hpp&quot;:   &quot;cpp&quot;,
+	&quot;.cs&quot;:    &quot;csharp&quot;,
+	&quot;.swift&quot;: &quot;swift&quot;,
+	&quot;.kt&quot;:    &quot;kotlin&quot;,
+}</signature>
+      <signature>func DetectLanguage(path string) string</signature>
+    </file>
+    <file path="pkg/parser/parser_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+      </imports>
+      <signature>func TestSignatureDefaults(t *testing.T)</signature>
+      <signature>func TestParseResultDefaults(t *testing.T)</signature>
+      <signature>func TestNodeKind(t *testing.T)</signature>
+      <signature>func TestParserInterface(t *testing.T)</signature>
+      <signature>type MockParser struct {
+	signatures []Signature
+	err        error
+}</signature>
+      <signature>func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error)</signature>
+      <signature>func (m *MockParser) Languages() []string</signature>
+      <signature>func TestMockParser(t *testing.T)</signature>
+      <signature>func TestRegistry(t *testing.T)</signature>
+      <signature>func TestDefaultRegistry(t *testing.T)</signature>
+      <signature>func TestDetectLanguage(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/c.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_c &quot;github.com/tree-sitter/tree-sitter-c/bindings/go&quot;</import>
+      </imports>
+      <signature>type CQuery struct {
+	language *sitter.Language
+	query    []byte
+}</signature>
+      <signature>func NewCQuery() *CQuery</signature>
+      <signature>func (q *CQuery) Language() *sitter.Language</signature>
+      <signature>func (q *CQuery) Query() []byte</signature>
+      <signature>func (q *CQuery) Captures() []string</signature>
+      <signature>func (q *CQuery) KindMapping() map[string]string</signature>
+      <signature>func (q *CQuery) ImportQuery() []byte</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/c_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_c &quot;github.com/tree-sitter/tree-sitter-c/bindings/go&quot;</import>
+      </imports>
+      <signature>func TestCQueryLanguage(t *testing.T)</signature>
+      <signature>func TestCQueryPattern(t *testing.T)</signature>
+      <signature>func TestCQueryExtractFunction(t *testing.T)</signature>
+      <signature>func TestCQueryExtractStruct(t *testing.T)</signature>
+      <signature>func TestCQueryExtractMacro(t *testing.T)</signature>
+      <signature>func TestCQueryExtractEnum(t *testing.T)</signature>
+      <signature>func TestCQueryExtractTypedef(t *testing.T)</signature>
+      <signature>func TestCQueryExtractGlobalVariables(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/go.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_go &quot;github.com/tree-sitter/tree-sitter-go/bindings/go&quot;</import>
+      </imports>
+      <signature>type GoQuery struct {
+	language *sitter.Language
+	query    []byte
+}</signature>
+      <signature>func NewGoQuery() *GoQuery</signature>
+      <signature>func (q *GoQuery) Language() *sitter.Language</signature>
+      <signature>func (q *GoQuery) Query() []byte</signature>
+      <signature>func (q *GoQuery) Captures() []string</signature>
+      <signature>func (q *GoQuery) KindMapping() map[string]string</signature>
+      <signature>func (q *GoQuery) ImportQuery() []byte</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/go_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_go &quot;github.com/tree-sitter/tree-sitter-go/bindings/go&quot;</import>
+      </imports>
+      <signature>func TestGoQueryLanguage(t *testing.T)</signature>
+      <signature>func TestGoQueryPattern(t *testing.T)</signature>
+      <signature>func TestGoQueryExtractFunction(t *testing.T)</signature>
+      <signature>func TestGoQueryExtractConstAndVar(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/java.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_java &quot;github.com/tree-sitter/tree-sitter-java/bindings/go&quot;</import>
+      </imports>
+      <signature>type JavaQuery struct {
+	language *sitter.Language
+	query    []byte
+}</signature>
+      <signature>func NewJavaQuery() *JavaQuery</signature>
+      <signature>func (q *JavaQuery) Language() *sitter.Language</signature>
+      <signature>func (q *JavaQuery) Query() []byte</signature>
+      <signature>func (q *JavaQuery) Captures() []string</signature>
+      <signature>func (q *JavaQuery) KindMapping() map[string]string</signature>
+      <signature>func (q *JavaQuery) ImportQuery() []byte</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/java_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_java &quot;github.com/tree-sitter/tree-sitter-java/bindings/go&quot;</import>
+      </imports>
+      <signature>func TestJavaQueryLanguage(t *testing.T)</signature>
+      <signature>func TestJavaQueryPattern(t *testing.T)</signature>
+      <signature>func TestJavaQueryKindMapping(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractClass(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractInterface(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractEnum(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractAnnotationType(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractRecord(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractGenerics(t *testing.T)</signature>
+      <signature>func TestJavaQueryExtractFieldDeclarations(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/python.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_python &quot;github.com/tree-sitter/tree-sitter-python/bindings/go&quot;</import>
+      </imports>
+      <signature>type PythonQuery struct {
+	language *sitter.Language
+	query    []byte
+}</signature>
+      <signature>func NewPythonQuery() *PythonQuery</signature>
+      <signature>func (q *PythonQuery) Language() *sitter.Language</signature>
+      <signature>func (q *PythonQuery) Query() []byte</signature>
+      <signature>func (q *PythonQuery) Captures() []string</signature>
+      <signature>func (q *PythonQuery) KindMapping() map[string]string</signature>
+      <signature>func (q *PythonQuery) ImportQuery() []byte</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/python_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_python &quot;github.com/tree-sitter/tree-sitter-python/bindings/go&quot;</import>
+      </imports>
+      <signature>func TestPythonQueryLanguage(t *testing.T)</signature>
+      <signature>func TestPythonQueryPattern(t *testing.T)</signature>
+      <signature>func TestPythonQueryExtractFunction(t *testing.T)</signature>
+      <signature>func TestPythonQueryExtractClass(t *testing.T)</signature>
+      <signature>func TestPythonQueryExtractAsyncFunction(t *testing.T)</signature>
+      <signature>func TestPythonQueryExtractModuleLevelVariables(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/typescript.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_typescript &quot;github.com/tree-sitter/tree-sitter-typescript/bindings/go&quot;</import>
+      </imports>
+      <signature>type TypeScriptQuery struct {
+	language *sitter.Language
+	query    []byte
+}</signature>
+      <signature>func NewTypeScriptQuery() *TypeScriptQuery</signature>
+      <signature>func (q *TypeScriptQuery) Language() *sitter.Language</signature>
+      <signature>func (q *TypeScriptQuery) Query() []byte</signature>
+      <signature>func (q *TypeScriptQuery) Captures() []string</signature>
+      <signature>func (q *TypeScriptQuery) KindMapping() map[string]string</signature>
+      <signature>func (q *TypeScriptQuery) ImportQuery() []byte</signature>
+    </file>
+    <file path="pkg/parser/treesitter/languages/typescript_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_typescript &quot;github.com/tree-sitter/tree-sitter-typescript/bindings/go&quot;</import>
+      </imports>
+      <signature>func TestTypeScriptQueryLanguage(t *testing.T)</signature>
+      <signature>func TestTypeScriptQueryPattern(t *testing.T)</signature>
+      <signature>func TestTypeScriptQueryExtractFunction(t *testing.T)</signature>
+      <signature>func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/parser.go" language="go">
+      <imports>
+        <import>import &quot;fmt&quot;</import>
+        <import>import &quot;regexp&quot;</import>
+        <import>import &quot;strings&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages&quot;</import>
+      </imports>
+      <signature>type TreeSitterParser struct {
+	queries map[string]LanguageQuery
+}</signature>
+      <signature>func NewTreeSitterParser() *TreeSitterParser</signature>
+      <signature>func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error)</signature>
+      <signature>func (p *TreeSitterParser) Languages() []string</signature>
+    </file>
+    <file path="pkg/parser/treesitter/parser_test.go" language="go">
+      <imports>
+        <import>import &quot;strings&quot;</import>
+        <import>import &quot;testing&quot;</import>
+        <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
+      </imports>
+      <signature>func TestTreeSitterParserImplementsParser(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserLanguages(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserParseGo(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserParseTypeScript(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserUnsupportedLanguage(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserAutoRegistration(t *testing.T)</signature>
+      <signature>func TestGoSignatureOnlyExtraction(t *testing.T)</signature>
+      <signature>func TestGoIncludeBodyExtraction(t *testing.T)</signature>
+      <signature>func TestTypeScriptSignatureOnlyExtraction(t *testing.T)</signature>
+      <signature>func TestTypeScriptArrowFunctionSignature(t *testing.T)</signature>
+      <signature>func TestTreeSitterParserParseJava(t *testing.T)</signature>
+      <signature>func TestJavaSignatureOnlyExtraction(t *testing.T)</signature>
+      <signature>func TestJavaGenericsExtraction(t *testing.T)</signature>
+      <signature>func TestJavaAutoRegistration(t *testing.T)</signature>
+      <signature>func TestGoVariableExtraction(t *testing.T)</signature>
+      <signature>func TestTypeScriptVariableExtraction(t *testing.T)</signature>
+      <signature>func TestPythonVariableExtraction(t *testing.T)</signature>
+      <signature>func TestJavaStaticFieldExtraction(t *testing.T)</signature>
+      <signature>func TestCGlobalVariableExtraction(t *testing.T)</signature>
+      <signature>func TestVariableSignaturePreservesValue(t *testing.T)</signature>
+    </file>
+    <file path="pkg/parser/treesitter/query.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+      </imports>
+      <signature>type LanguageQuery interface {
+	// Language returns the Tree-sitter language for parsing.
+	Language() *sitter.Language
+
+	// Query returns the Tree-sitter query pattern for signature extraction.
+	Query() []byte
+
+	// ImportQuery returns the Tree-sitter query pattern for import/export extraction.
+	// Returns nil if the language doesn&apos;t support import extraction.
+	ImportQuery() []byte
+
+	// Captures returns the list of capture names used in the query.
+	Captures() []string
+
+	// KindMapping maps Tree-sitter node types to Signature kinds.
+	KindMapping() map[string]string
+}</signature>
+      <signature>CaptureName      = &quot;name&quot;</signature>
+      <signature>CaptureSignature = &quot;signature&quot;</signature>
+      <signature>CaptureDoc       = &quot;doc&quot;</signature>
+      <signature>CaptureKind      = &quot;kind&quot;</signature>
+      <signature>CaptureImportPath = &quot;import_path&quot;</signature>
+      <signature>CaptureExportName = &quot;export_name&quot;</signature>
+      <signature>CaptureImportType = &quot;import_type&quot;</signature>
+      <signature>DefaultKindMapping = map[string]string{
+	&quot;function_declaration&quot;: &quot;function&quot;,
+	&quot;method_declaration&quot;:   &quot;method&quot;,
+	&quot;type_declaration&quot;:     &quot;type&quot;,
+	&quot;struct_type&quot;:          &quot;struct&quot;,
+	&quot;interface_type&quot;:       &quot;interface&quot;,
+	&quot;class_declaration&quot;:    &quot;class&quot;,
+	&quot;arrow_function&quot;:       &quot;function&quot;,
+	&quot;function_expression&quot;:  &quot;function&quot;,
+	&quot;method_definition&quot;:    &quot;method&quot;,
+}</signature>
+    </file>
+    <file path="pkg/parser/treesitter/query_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+      </imports>
+      <signature>func TestCaptureDefinitions(t *testing.T)</signature>
+    </file>
+    <file path="pkg/scanner/scanner.go" language="go">
+      <imports>
+        <import>import &quot;io/fs&quot;</import>
+        <import>import &quot;log&quot;</import>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;strings&quot;</import>
+        <import>import ignore &quot;github.com/sabhiram/go-gitignore&quot;</import>
+      </imports>
+      <signature>type FileEntry struct {
+	// Path is the absolute or relative path to the file.
+	Path string
+
+	// Language is the detected programming language (e.g., &quot;go&quot;, &quot;typescript&quot;).
+	Language string
+
+	// Size is the file size in bytes.
+	Size int64
+}</signature>
+      <signature>type ScanResult struct {
+	// Files is the list of matched files.
+	Files []FileEntry
+
+	// TotalSize is the sum of all matched file sizes.
+	TotalSize int64
+
+	// SkippedCount is the number of files skipped (too large, unsupported, etc.).
+	SkippedCount int
+}</signature>
+      <signature>type ScanOptions struct {
+	// RootPath is the directory or file to scan.
+	RootPath string
+
+	// SupportedExtensions maps file extensions to language names.
+	SupportedExtensions map[string]string
+
+	// IgnoreFile is the path to the gitignore file (default: .gitignore).
+	IgnoreFile string
+
+	// IncludeHidden determines whether to include hidden files (dotfiles).
+	IncludeHidden bool
+
+	// MaxFileSize is the maximum file size in bytes to include.
+	MaxFileSize int64
+}</signature>
+      <signature>func DefaultScanOptions() *ScanOptions</signature>
+      <signature>func (o *ScanOptions) GetLanguage(path string) (string, bool)</signature>
+      <signature>func IsHidden(name string) bool</signature>
+      <signature>type Scanner interface {
+	// Scan performs the scan and returns scan results.
+	Scan() (*ScanResult, error)
+}</signature>
+      <signature>type FileScanner struct {
+	opts       *ScanOptions
+	ignorer    *ignore.GitIgnore
+	ignorerErr error
+	logger     *log.Logger
+}</signature>
+      <signature>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</signature>
+      <signature>func (s *FileScanner) Scan() (*ScanResult, error)</signature>
+    </file>
+    <file path="pkg/scanner/scanner_test.go" language="go">
+      <imports>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;testing&quot;</import>
+      </imports>
+      <signature>func TestNewFileScanner(t *testing.T)</signature>
+      <signature>func TestNewFileScannerNilOptions(t *testing.T)</signature>
+      <signature>func TestFileEntryDefaults(t *testing.T)</signature>
+      <signature>func TestScanOptionsDefaults(t *testing.T)</signature>
+      <signature>func TestScanOptionsWithExtensions(t *testing.T)</signature>
+      <signature>func TestScannerInterface(t *testing.T)</signature>
+      <signature>func TestScanEmptyDirectory(t *testing.T)</signature>
+      <signature>func TestScanSingleFile(t *testing.T)</signature>
+      <signature>func TestScanFilterByExtension(t *testing.T)</signature>
+      <signature>func TestScanExcludeHidden(t *testing.T)</signature>
+      <signature>func TestScanIncludeHidden(t *testing.T)</signature>
+      <signature>func TestScanMaxFileSize(t *testing.T)</signature>
+      <signature>func TestScanGitignore(t *testing.T)</signature>
+      <signature>func TestScanNestedDirectories(t *testing.T)</signature>
+    </file>
+    <file path="pkg/tokenizer/tiktoken.go" language="go">
+      <imports>
+        <import>import &quot;github.com/pkoukk/tiktoken-go&quot;</import>
+      </imports>
+      <signature>type TiktokenTokenizer struct {
+	encoding string
+	tke      *tiktoken.Tiktoken
+}</signature>
+      <signature>func NewTiktokenTokenizer() (*TiktokenTokenizer, error)</signature>
+      <signature>func (t *TiktokenTokenizer) Count(text string) (int, error)</signature>
+      <signature>func (t *TiktokenTokenizer) Name() string</signature>
+    </file>
+    <file path="pkg/tokenizer/tokenizer.go" language="go">
+      <signature>type Tokenizer interface {
+	// Count returns the number of tokens in the given text.
+	// Returns 0 and error if counting fails.
+	Count(text string) (int, error)
+
+	// Name returns the tokenizer name (e.g., &quot;tiktoken-cl100k&quot;, &quot;noop&quot;).
+	Name() string
+}</signature>
+      <signature>type NoOpTokenizer struct{}</signature>
+      <signature>func NewNoOpTokenizer() *NoOpTokenizer</signature>
+      <signature>func (t *NoOpTokenizer) Count(_ string) (int, error)</signature>
+      <signature>func (t *NoOpTokenizer) Name() string</signature>
+    </file>
+    <file path="pkg/tokenizer/tokenizer_test.go" language="go">
+      <imports>
+        <import>import &quot;strings&quot;</import>
+        <import>import &quot;testing&quot;</import>
+      </imports>
+      <signature>func TestNoOpTokenizerImplementsTokenizer(t *testing.T)</signature>
+      <signature>func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)</signature>
+      <signature>func TestNoOpTokenizerCount(t *testing.T)</signature>
+      <signature>func TestNoOpTokenizerName(t *testing.T)</signature>
+      <signature>func TestTiktokenTokenizerCount(t *testing.T)</signature>
+      <signature>func TestTiktokenTokenizerName(t *testing.T)</signature>
+      <signature>func TestTiktokenTokenizerConsistency(t *testing.T)</signature>
+      <signature>func TestTiktokenTokenizerSpecialCharacters(t *testing.T)</signature>
+    </file>
+  </files>
+</brfit>
