@@ -87,6 +87,8 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".js":  "javascript",
 		".jsx": "javascript",
 		".py":  "python",
+		".c":   "c",
+		".h":   "c",
 	}
 }
 

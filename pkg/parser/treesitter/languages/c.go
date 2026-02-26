@@ -55,17 +55,35 @@ func (q *CQuery) KindMapping() map[string]string {
 
 // cQueryPattern is the Tree-sitter query for extracting C signatures.
 const cQueryPattern = `
-; Function definitions
+; Function definitions - direct declarator
 (function_definition
   declarator: (function_declarator
     declarator: (identifier) @name
   )
 ) @signature @kind
 
-; Function declarations (prototypes)
+; Function definitions - pointer return type
+(function_definition
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - direct declarator
 (declaration
   declarator: (function_declarator
     declarator: (identifier) @name
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - pointer return type
+(declaration
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
   )
 ) @signature @kind
 
