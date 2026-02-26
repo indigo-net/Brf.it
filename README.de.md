@@ -132,6 +132,7 @@ brfit . --no-tree
 | TypeScript | `.ts`, `.tsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
 | JavaScript | `.js`, `.jsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
 | Python | `.py` | [Python-Leitfaden](docs/languages/python.de.md) |
+| C | `.c`, `.h` | [C-Leitfaden](docs/languages/c.de.md) |
 
 ---
 

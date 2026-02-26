@@ -132,6 +132,7 @@ brfit . --no-tree
 | TypeScript | `.ts`, `.tsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
 | JavaScript | `.js`, `.jsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
 | Python | `.py` | [Python 가이드](docs/languages/python.ko.md) |
+| C | `.c`, `.h` | [C 가이드](docs/languages/c.ko.md) |
 
 ---
 

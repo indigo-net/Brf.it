@@ -132,6 +132,7 @@ brfit . --no-tree
 | TypeScript | `.ts`、`.tsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
 | JavaScript | `.js`、`.jsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
 | Python | `.py` | [Pythonガイド](docs/languages/python.ja.md) |
+| C | `.c`、`.h` | [Cガイド](docs/languages/c.ja.md) |
 
 ---
 

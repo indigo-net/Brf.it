@@ -132,6 +132,7 @@ brfit . --no-tree
 | TypeScript | `.ts`, `.tsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
 | JavaScript | `.js`, `.jsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
 | Python | `.py` | [Python गाइड](docs/languages/python.hi.md) |
+| C | `.c`, `.h` | [C गाइड](docs/languages/c.hi.md) |
 
 ---
 
