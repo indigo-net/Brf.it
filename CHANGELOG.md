@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-02-26
+
+### Added
+- C language support (`.c`, `.h`)
+  - Function definitions and declarations extraction
+  - Struct and enum extraction
+  - Typedef extraction
+  - Object-like and function-like macro extraction
+  - Pointer return type support for functions
+  - Multi-line macro support
+- C language documentation in 5 languages (EN, KO, JA, HI, DE)
+- Updated Supported Languages table in all README versions
+
 ## [0.4.0] - 2026-02-26
 
 ### Added
@@ -49,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.5.0]: https://github.com/indigo-net/Brf.it/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/indigo-net/Brf.it/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/indigo-net/Brf.it/compare/v0.2.7...v0.3.0
 [0.2.7]: https://github.com/indigo-net/Brf.it/compare/v0.2.6...v0.2.7
