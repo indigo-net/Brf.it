@@ -177,3 +177,30 @@ if fileSize > maxFileSize {
 - 파일명 suffix 방식: `README.ko.md`, `docs/languages/go.ja.md`
 - 지원 언어: EN (기본), KO, JA, HI, DE
 - 모든 문서 상단에 언어 선택 링크 추가: `🌐 [English](file.md) | [한국어](file.ko.md) | ...`
+
+### 새 언어 추가 체크리스트
+
+새 프로그래밍 언어 지원 추가 시 반드시 확인:
+
+1. `pkg/parser/treesitter/languages/[lang].go` - LanguageQuery 구현
+2. `pkg/parser/treesitter/parser.go` - init()에 파서 등록, queries 맵에 추가, isExported(), stripBody() 케이스 추가
+3. `pkg/scanner/scanner.go` - DefaultScanOptions()에 확장자 추가
+4. `internal/config/config.go` - SupportedExtensions()에 확장자 추가 (CLI에서 사용)
+5. `docs/languages/[lang].md` + 다국어 버전 생성
+6. `README*.md` Supported Languages 테이블 업데이트
+
+### Tree-sitter AST 디버깅
+
+새 쿼리 패턴 작성 시 AST 구조 확인이 필요하면:
+
+```go
+// 임시 디버그 코드로 AST 출력
+func printTree(node *sitter.Node, code []byte, indent int) {
+    fmt.Printf("%s%s\n", strings.Repeat("  ", indent), node.Kind())
+    for i := uint(0); i < uint(node.ChildCount()); i++ {
+        printTree(node.Child(i), code, indent+1)
+    }
+}
+```
+
+**포인터 반환 타입 주의**: `User* func()` 형태는 declarator가 `pointer_declarator` 안에 중첩됨
