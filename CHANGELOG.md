@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-02-26
+
+### Changed
+- Imports now rendered inside each file block (not separate section)
+- Full import statement output instead of path-only
+  - TypeScript: `import { useState } from 'react';`
+  - Go: `import "fmt"` / `import alias "path"`
+  - Python: `import os` / `from pathlib import Path`
+  - Java: `import java.util.List;`
+  - C: `#include <stdio.h>`
+
 ## [0.9.0] - 2026-02-26
 
 ### Added
