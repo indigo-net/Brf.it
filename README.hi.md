@@ -124,6 +124,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | JavaScript | `.js`, `.jsx` | [TypeScript गाइड](docs/languages/typescript.hi.md) |
 | Python | `.py` | [Python गाइड](docs/languages/python.hi.md) |
 | C | `.c`, `.h` | [C गाइड](docs/languages/c.hi.md) |
+| Java | `.java` | [Java गाइड](docs/languages/java.hi.md) |
 
 ---
 

@@ -124,6 +124,7 @@ brfit . -o briefing.xml    # Save to file
 | JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
 | Python | `.py` | [Python Guide](docs/languages/python.md) |
 | C | `.c`, `.h` | [C Guide](docs/languages/c.md) |
+| Java | `.java` | [Java Guide](docs/languages/java.md) |
 
 ---
 

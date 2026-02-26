@@ -57,14 +57,15 @@ type ScanOptions struct {
 func DefaultScanOptions() *ScanOptions {
 	return &ScanOptions{
 		SupportedExtensions: map[string]string{
-			".go":  "go",
-			".ts":  "typescript",
-			".tsx": "typescript",
-			".js":  "javascript",
-			".jsx": "javascript",
-			".py":  "python",
-			".c":   "c",
-			".h":   "c",
+			".go":   "go",
+			".ts":   "typescript",
+			".tsx":  "typescript",
+			".js":   "javascript",
+			".jsx":  "javascript",
+			".py":   "python",
+			".c":    "c",
+			".h":    "c",
+			".java": "java",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

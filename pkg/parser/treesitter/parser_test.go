@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx"}
+	expected := []string{"go", "typescript", "tsx", "java"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -308,4 +308,196 @@ const double = (n: number): number => n * 2;
 // contains checks if s contains substr
 func contains(s, substr string) bool {
 	return strings.Contains(s, substr)
+}
+
+func TestTreeSitterParserParseJava(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example;
+
+/**
+ * User class represents a user in the system.
+ */
+public class User {
+    private String name;
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private void internalMethod() {
+        // Private method - should be filtered
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "java"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	// Should have: User class, User constructor, getName method
+	// Should NOT have: internalMethod (private)
+	if len(result.Signatures) < 3 {
+		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
+	}
+
+	var foundClass, foundConstructor, foundMethod bool
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "User":
+			if sig.Kind == "class" {
+				foundClass = true
+			} else if sig.Kind == "constructor" {
+				foundConstructor = true
+			}
+		case "getName":
+			foundMethod = true
+			if sig.Kind != "method" {
+				t.Errorf("expected kind 'method', got '%s'", sig.Kind)
+			}
+		case "internalMethod":
+			t.Error("private method 'internalMethod' should be filtered out")
+		}
+	}
+
+	if !foundClass {
+		t.Error("expected to find 'User' class")
+	}
+	if !foundConstructor {
+		t.Error("expected to find 'User' constructor")
+	}
+	if !foundMethod {
+		t.Error("expected to find 'getName' method")
+	}
+}
+
+func TestJavaSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example;
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+}
+
+public interface Repository<T> {
+    T findById(String id);
+    void save(T entity);
+}
+
+public enum Status {
+    PENDING, ACTIVE, COMPLETED
+}
+
+public record Point(int x, int y) {
+    public double distance() {
+        return Math.sqrt(x * x + y * y);
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "java", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Calculator":
+			// Class should not contain body
+			if contains(sig.Text, "public int add") {
+				t.Errorf("class signature should not contain methods, got '%s'", sig.Text)
+			}
+			expected := "public class Calculator"
+			if sig.Text != expected {
+				t.Errorf("expected '%s', got '%s'", expected, sig.Text)
+			}
+		case "add":
+			// Method should not contain body
+			if contains(sig.Text, "return") {
+				t.Errorf("method signature should not contain body, got '%s'", sig.Text)
+			}
+		case "Repository":
+			// Interface should not contain methods
+			if contains(sig.Text, "findById") {
+				t.Errorf("interface signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "Status":
+			if sig.Kind != "enum" {
+				t.Errorf("expected kind 'enum', got '%s'", sig.Kind)
+			}
+		case "Point":
+			if sig.Kind != "record" {
+				t.Errorf("expected kind 'record', got '%s'", sig.Kind)
+			}
+			// Record should preserve component parameters
+			if !contains(sig.Text, "int x, int y") {
+				t.Errorf("record signature should contain components, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+func TestJavaGenericsExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example;
+
+public class Box<T extends Comparable<T>> {
+    private T value;
+
+    public <U> U transform(Function<T, U> fn) {
+        return fn.apply(value);
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "java", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	var foundClass, foundMethod bool
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Box":
+			foundClass = true
+			// Generic type parameter should be preserved
+			if !contains(sig.Text, "<T extends Comparable<T>>") {
+				t.Errorf("class signature should contain generics, got '%s'", sig.Text)
+			}
+		case "transform":
+			foundMethod = true
+			// Method type parameter should be preserved
+			if !contains(sig.Text, "<U>") {
+				t.Errorf("method signature should contain type parameter, got '%s'", sig.Text)
+			}
+		}
+	}
+
+	if !foundClass {
+		t.Error("expected to find 'Box' class")
+	}
+	if !foundMethod {
+		t.Error("expected to find 'transform' method")
+	}
+}
+
+func TestJavaAutoRegistration(t *testing.T) {
+	registry := parser.DefaultRegistry()
+
+	p, ok := registry.Get("java")
+	if !ok {
+		t.Error("expected parser for 'java' to be registered")
+	}
+	if p == nil {
+		t.Error("expected non-nil parser for 'java'")
+	}
 }

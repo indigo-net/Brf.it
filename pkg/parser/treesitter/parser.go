@@ -20,6 +20,7 @@ func init() {
 	parser.RegisterParser("jsx", NewTreeSitterParser())
 	parser.RegisterParser("python", NewTreeSitterParser())
 	parser.RegisterParser("c", NewTreeSitterParser())
+	parser.RegisterParser("java", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -38,6 +39,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"jsx":        languages.NewTypeScriptQuery(), // JSX uses TypeScript grammar
 			"python":     languages.NewPythonQuery(),
 			"c":          languages.NewCQuery(),
+			"java":       languages.NewJavaQuery(),
 		},
 	}
 }
@@ -170,8 +172,13 @@ func (p *TreeSitterParser) extractSignatures(
 		// Only add if we have a name and signature
 		if sig.Name != "" && sig.Text != "" {
 			// Filter private if needed
-			if !opts.IncludePrivate && !isExported(sig.Name, opts.Language) {
-				continue
+			if !opts.IncludePrivate {
+				// Java: check for private modifier in signature text
+				if opts.Language == "java" && isJavaPrivate(sig.Text) {
+					continue
+				} else if !isExported(sig.Name, opts.Language) {
+					continue
+				}
 			}
 
 			// Strip body if IncludeBody is false (default)
@@ -225,6 +232,10 @@ func isExported(name, language string) bool {
 	case "c":
 		// C: all functions are considered exported (static functions handled separately)
 		return true
+	case "java":
+		// Java: visibility is determined by modifiers, not name
+		// Private filtering is done in extractSignatures using isJavaPrivate()
+		return true
 	default:
 		return false
 	}
@@ -242,6 +253,8 @@ func stripBody(text, kind, language string) string {
 		return stripPythonBody(text, kind)
 	case "c":
 		return stripCBody(text, kind)
+	case "java":
+		return stripJavaBody(text, kind)
 	default:
 		return text
 	}
@@ -471,4 +484,68 @@ func isPythonMethod(signature string) bool {
 	}
 
 	return firstParam == "self" || firstParam == "cls"
+}
+
+// stripJavaBody removes the body from Java declarations.
+func stripJavaBody(text, kind string) string {
+	switch kind {
+	case "method", "constructor":
+		// Abstract methods end with ; (no body)
+		if strings.HasSuffix(strings.TrimSpace(text), ";") {
+			return text
+		}
+		braceIdx := findJavaBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "interface", "enum", "annotation", "record":
+		braceIdx := findJavaBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	}
+	return text
+}
+
+// findJavaBodyStart finds the index where the Java body starts.
+// Handles nested angle brackets for generics.
+func findJavaBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// isJavaPrivate checks if a Java signature has private visibility.
+func isJavaPrivate(signature string) bool {
+	words := strings.Fields(signature)
+	for _, word := range words {
+		if word == "private" {
+			return true
+		}
+		// Stop after modifiers (hit declaration keyword)
+		if word == "class" || word == "interface" || word == "enum" ||
+			word == "void" || word == "@interface" || word == "record" {
+			break
+		}
+	}
+	return false
 }

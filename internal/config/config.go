@@ -81,14 +81,15 @@ func (c *Config) Validate() error {
 // SupportedExtensions returns a map of file extensions to language names.
 func (c *Config) SupportedExtensions() map[string]string {
 	return map[string]string{
-		".go":  "go",
-		".ts":  "typescript",
-		".tsx": "typescript",
-		".js":  "javascript",
-		".jsx": "javascript",
-		".py":  "python",
-		".c":   "c",
-		".h":   "c",
+		".go":   "go",
+		".ts":   "typescript",
+		".tsx":  "typescript",
+		".js":   "javascript",
+		".jsx":  "javascript",
+		".py":   "python",
+		".c":    "c",
+		".h":    "c",
+		".java": "java",
 	}
 }
 

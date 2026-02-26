@@ -124,6 +124,7 @@ brfit . -o briefing.xml    # ファイルに保存
 | JavaScript | `.js`、`.jsx` | [TypeScriptガイド](docs/languages/typescript.ja.md) |
 | Python | `.py` | [Pythonガイド](docs/languages/python.ja.md) |
 | C | `.c`、`.h` | [Cガイド](docs/languages/c.ja.md) |
+| Java | `.java` | [Javaガイド](docs/languages/java.ja.md) |
 
 ---
 

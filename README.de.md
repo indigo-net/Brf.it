@@ -124,6 +124,7 @@ brfit . -o briefing.xml    # In Datei speichern
 | JavaScript | `.js`, `.jsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
 | Python | `.py` | [Python-Leitfaden](docs/languages/python.de.md) |
 | C | `.c`, `.h` | [C-Leitfaden](docs/languages/c.de.md) |
+| Java | `.java` | [Java-Leitfaden](docs/languages/java.de.md) |
 
 ---
 
