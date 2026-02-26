@@ -6,20 +6,20 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Brief your code for AI assistants.**
+**AI 어시스턴트를 위한 코드 브리핑 도구**
 
-Brf.it extracts function signatures from your codebase, removing implementation details to dramatically reduce token usage while preserving the essential information AI needs.
+Brf.it은 코드베이스에서 함수 시그니처를 추출하여, 구현 세부사항을 제거하고 AI가 필요로 하는 핵심 정보만 남깁니다. 토큰 사용량을 획기적으로 줄일 수 있습니다.
 
 ---
 
-## What It Does
+## 주요 기능
 
-Instead of feeding raw code to AI assistants:
+AI 어시스턴트에 원본 코드를 전달하는 대신:
 
 <table>
 <tr>
-<th>Before (50+ tokens)</th>
-<th>After with brfit (8 tokens)</th>
+<th>Before (50+ 토큰)</th>
+<th>After with brfit (8 토큰)</th>
 </tr>
 <tr>
 <td>
@@ -61,7 +61,7 @@ export async function fetchUser(
 
 ---
 
-## Installation
+## 설치
 
 ### macOS (Homebrew)
 
@@ -69,11 +69,11 @@ export async function fetchUser(
 brew install indigo-net/tap/brfit
 ```
 
-### From Release
+### 릴리즈에서 다운로드
 
-Download the latest binary from [Releases](https://github.com/indigo-net/Brf.it/releases).
+[Releases](https://github.com/indigo-net/Brf.it/releases)에서 최신 바이너리를 다운로드하세요.
 
-### From Source
+### 소스에서 빌드
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -83,61 +83,61 @@ go build -o brfit ./cmd/brfit
 
 ---
 
-## Usage
+## 사용법
 
 ```bash
-brfit [path] [options]
+brfit [경로] [옵션]
 ```
 
-### Quick Examples
+### 빠른 예제
 
 ```bash
-# Extract signatures from current directory
+# 현재 디렉토리에서 시그니처 추출
 brfit .
 
-# Output in Markdown format
+# Markdown 형식으로 출력
 brfit . -f md
 
-# Save to file
+# 파일로 저장
 brfit . -o output.xml
 
-# Include function bodies (full code)
+# 함수 본문 포함 (전체 코드)
 brfit . --include-body
 
-# Skip directory tree
+# 디렉토리 트리 생략
 brfit . --no-tree
 ```
 
-### CLI Options
+### CLI 옵션
 
-| Option | Short | Description | Default |
-|--------|-------|-------------|---------|
-| `--format` | `-f` | Output format (`xml`, `md`) | `xml` |
-| `--output` | `-o` | Output file path | stdout |
-| `--include-body` | | Include function bodies | `false` |
-| `--ignore` | `-i` | Ignore file path | `.gitignore` |
-| `--include-hidden` | | Include hidden files | `false` |
-| `--no-tree` | | Skip directory tree | `false` |
-| `--no-tokens` | | Disable token counting | `false` |
-| `--max-size` | | Max file size (bytes) | `512000` |
-| `--version` | `-v` | Show version | |
-
----
-
-## Supported Languages
-
-| Language | Extensions | Documentation |
-|----------|------------|---------------|
-| Go | `.go` | [Go Guide](docs/languages/go.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| Python | `.py` | [Python Guide](docs/languages/python.md) |
+| 옵션 | 단축 | 설명 | 기본값 |
+|------|------|------|--------|
+| `--format` | `-f` | 출력 형식 (`xml`, `md`) | `xml` |
+| `--output` | `-o` | 출력 파일 경로 | stdout |
+| `--include-body` | | 함수 본문 포함 | `false` |
+| `--ignore` | `-i` | ignore 파일 경로 | `.gitignore` |
+| `--include-hidden` | | 숨김 파일 포함 | `false` |
+| `--no-tree` | | 디렉토리 트리 생략 | `false` |
+| `--no-tokens` | | 토큰 수 계산 비활성화 | `false` |
+| `--max-size` | | 최대 파일 크기 (바이트) | `512000` |
+| `--version` | `-v` | 버전 표시 | |
 
 ---
 
-## Output Examples
+## 지원 언어
 
-### XML (default)
+| 언어 | 확장자 | 문서 |
+|------|--------|------|
+| Go | `.go` | [Go 가이드](docs/languages/go.ko.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript 가이드](docs/languages/typescript.ko.md) |
+| Python | `.py` | [Python 가이드](docs/languages/python.ko.md) |
+
+---
+
+## 출력 예제
+
+### XML (기본)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -180,6 +180,6 @@ func Scan(root string) (*Result, error)
 
 ---
 
-## License
+## 라이선스
 
 MIT

@@ -1,29 +1,29 @@
-# TypeScript Support
+# TypeScript 지원
 
 🌐 [English](typescript.md) | [한국어](typescript.ko.md) | [日本語](typescript.ja.md) | [हिन्दी](typescript.hi.md) | [Deutsch](typescript.de.md)
 
-## Supported Extensions
+## 지원 확장자
 
 - `.ts`
 - `.tsx`
 - `.js` (JavaScript)
 - `.jsx` (JSX)
 
-## Extraction Targets
+## 추출 대상
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Function declaration | `function` | `function greet()` |
-| Arrow function | `arrow` | `const greet = () => {}` |
-| Method | `method` | `class A { method() {} }` |
-| Class | `class` | `class User {}` |
-| Interface | `interface` | `interface Props {}` |
-| Type alias | `type` | `type ID = string` |
-| Comment | `doc` | `// Comment` |
+| 요소 | Kind | 예시 |
+|------|------|------|
+| 함수 선언 | `function` | `function greet()` |
+| 화살표 함수 | `arrow` | `const greet = () => {}` |
+| 메서드 | `method` | `class A { method() {} }` |
+| 클래스 | `class` | `class User {}` |
+| 인터페이스 | `interface` | `interface Props {}` |
+| 타입 별칭 | `type` | `type ID = string` |
+| 주석 | `doc` | `// Comment` |
 
-## Example
+## 예시
 
-### Input
+### 입력
 
 ```typescript
 /**
@@ -61,7 +61,7 @@ const formatName = (user: User): string => {
 };
 ```
 
-### Output (XML)
+### 출력 (XML)
 
 ```xml
 <file path="user.ts" language="typescript">
@@ -93,33 +93,33 @@ const formatName = (user: User): string => {
 </file>
 ```
 
-## Notes
+## 특이사항
 
-### Export Detection
+### Export 판별
 
-- Only elements with `export` keyword are extracted (default)
-- For JavaScript files, all elements are extracted
+- `export` 키워드가 있는 요소만 추출 (기본값)
+- JavaScript 파일의 경우 모든 요소 추출
 
-### Arrow Functions
+### 화살표 함수
 
-- Arrow functions declared with `const`/`let`/`var` are captured
-- Variable name is used as function name
-- `export const` format is also supported
+- `const`/`let`/`var`로 선언된 화살표 함수 캡처
+- 변수명을 함수명으로 사용
+- `export const` 형태도 지원
 
-### Body Removal
+### 본문 제거
 
-When `--include-body` flag is not used:
+`--include-body` 플래그 미사용 시:
 
-- Functions/Methods: body removed after opening brace `{`
-- Arrow functions: body removed after `=>`
-- Classes/Interfaces: content removed after opening brace `{`
+- 함수/메서드: 중괄호 `{` 이후 본문 제거
+- 화살표 함수: `=>` 이후 본문 제거
+- 클래스/인터페이스: 중괄호 `{` 이후 내용 제거
 
-### JSDoc Support
+### JSDoc 지원
 
-- `/** ... */` style JSDoc comments are automatically linked
-- Comments immediately before functions/classes are captured as doc
+- `/** ... */` 형태의 JSDoc 주석 자동 연결
+- 함수/클래스 직전 주석이 doc으로 캡처됨
 
-### JavaScript Compatibility
+### JavaScript 호환
 
-- `.js`, `.jsx` files are processed with TypeScript parser
-- Functions/classes can be extracted even without type information
+- `.js`, `.jsx` 파일은 TypeScript 파서로 처리
+- 타입 정보가 없어도 함수/클래스 추출 가능

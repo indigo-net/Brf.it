@@ -1,29 +1,29 @@
-# TypeScript Support
+# TypeScript サポート
 
 🌐 [English](typescript.md) | [한국어](typescript.ko.md) | [日本語](typescript.ja.md) | [हिन्दी](typescript.hi.md) | [Deutsch](typescript.de.md)
 
-## Supported Extensions
+## サポート拡張子
 
 - `.ts`
 - `.tsx`
-- `.js` (JavaScript)
-- `.jsx` (JSX)
+- `.js`（JavaScript）
+- `.jsx`（JSX）
 
-## Extraction Targets
+## 抽出対象
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Function declaration | `function` | `function greet()` |
-| Arrow function | `arrow` | `const greet = () => {}` |
-| Method | `method` | `class A { method() {} }` |
-| Class | `class` | `class User {}` |
-| Interface | `interface` | `interface Props {}` |
-| Type alias | `type` | `type ID = string` |
-| Comment | `doc` | `// Comment` |
+| 要素 | Kind | 例 |
+|------|------|-----|
+| 関数宣言 | `function` | `function greet()` |
+| アロー関数 | `arrow` | `const greet = () => {}` |
+| メソッド | `method` | `class A { method() {} }` |
+| クラス | `class` | `class User {}` |
+| インターフェース | `interface` | `interface Props {}` |
+| 型エイリアス | `type` | `type ID = string` |
+| コメント | `doc` | `// Comment` |
 
-## Example
+## 例
 
-### Input
+### 入力
 
 ```typescript
 /**
@@ -61,7 +61,7 @@ const formatName = (user: User): string => {
 };
 ```
 
-### Output (XML)
+### 出力（XML）
 
 ```xml
 <file path="user.ts" language="typescript">
@@ -93,33 +93,33 @@ const formatName = (user: User): string => {
 </file>
 ```
 
-## Notes
+## 注意事項
 
-### Export Detection
+### エクスポート判定
 
-- Only elements with `export` keyword are extracted (default)
-- For JavaScript files, all elements are extracted
+- `export`キーワードがある要素のみ抽出（デフォルト）
+- JavaScriptファイルの場合はすべての要素を抽出
 
-### Arrow Functions
+### アロー関数
 
-- Arrow functions declared with `const`/`let`/`var` are captured
-- Variable name is used as function name
-- `export const` format is also supported
+- `const`/`let`/`var`で宣言されたアロー関数をキャプチャ
+- 変数名を関数名として使用
+- `export const`形式もサポート
 
-### Body Removal
+### 本体削除
 
-When `--include-body` flag is not used:
+`--include-body`フラグ未使用時：
 
-- Functions/Methods: body removed after opening brace `{`
-- Arrow functions: body removed after `=>`
-- Classes/Interfaces: content removed after opening brace `{`
+- 関数/メソッド：中括弧`{`以降の本体を削除
+- アロー関数：`=>`以降の本体を削除
+- クラス/インターフェース：中括弧`{`以降の内容を削除
 
-### JSDoc Support
+### JSDocサポート
 
-- `/** ... */` style JSDoc comments are automatically linked
-- Comments immediately before functions/classes are captured as doc
+- `/** ... */`形式のJSDocコメントを自動リンク
+- 関数/クラス直前のコメントがdocとしてキャプチャされる
 
-### JavaScript Compatibility
+### JavaScript互換性
 
-- `.js`, `.jsx` files are processed with TypeScript parser
-- Functions/classes can be extracted even without type information
+- `.js`、`.jsx`ファイルはTypeScriptパーサーで処理
+- 型情報がなくても関数/クラスを抽出可能

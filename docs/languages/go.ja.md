@@ -1,23 +1,23 @@
-# Go Support
+# Go サポート
 
 🌐 [English](go.md) | [한국어](go.ko.md) | [日本語](go.ja.md) | [हिन्दी](go.hi.md) | [Deutsch](go.de.md)
 
-## Supported Extensions
+## サポート拡張子
 
 - `.go`
 
-## Extraction Targets
+## 抽出対象
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Function | `function` | `func DoSomething()` |
-| Method | `method` | `func (s *Server) Start()` |
-| Type (struct, interface, etc.) | `type` | `type User struct {...}` |
-| Comment | `doc` | `// Comment` |
+| 要素 | Kind | 例 |
+|------|------|-----|
+| 関数 | `function` | `func DoSomething()` |
+| メソッド | `method` | `func (s *Server) Start()` |
+| 型（struct、interfaceなど） | `type` | `type User struct {...}` |
+| コメント | `doc` | `// Comment` |
 
-## Example
+## 例
 
-### Input
+### 入力
 
 ```go
 // Server handles HTTP requests.
@@ -36,7 +36,7 @@ func (s *Server) Start() error {
 }
 ```
 
-### Output (XML)
+### 出力（XML）
 
 ```xml
 <file path="server.go" language="go">
@@ -58,27 +58,27 @@ func (s *Server) Start() error {
 </file>
 ```
 
-## Notes
+## 注意事項
 
-### Export Detection
+### エクスポート判定
 
-- Go export rules applied: only identifiers starting with uppercase are extracted
-- Private functions/types starting with lowercase are excluded by default
+- Goのエクスポートルール適用：大文字で始まる識別子のみ抽出
+- 小文字で始まるプライベート関数/型はデフォルトで除外
 
-### Method vs Function
+### メソッド vs 関数
 
-- Declarations with receiver are classified as `method`
-- Declarations without receiver are classified as `function`
+- receiverがある宣言は`method`に分類
+- receiverがない宣言は`function`に分類
 
-### Body Removal
+### 本体削除
 
-When `--include-body` flag is not used:
+`--include-body`フラグ未使用時：
 
-- Functions/Methods: body removed after opening brace `{`
-- Types: only `struct` or `interface` keyword is preserved
+- 関数/メソッド：中括弧`{`以降の本体を削除
+- 型：`struct`または`interface`キーワードまで保持
 
-### Unsupported Elements
+### サポートされていない要素
 
-- Package-level variables (`var`)
-- Constants (`const`)
-- Embedded functions (functions inside functions)
+- パッケージレベル変数（`var`）
+- 定数（`const`）
+- 埋め込み関数（関数内の関数）

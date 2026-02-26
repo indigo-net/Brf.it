@@ -1,29 +1,29 @@
-# TypeScript Support
+# TypeScript Unterstützung
 
 🌐 [English](typescript.md) | [한국어](typescript.ko.md) | [日本語](typescript.ja.md) | [हिन्दी](typescript.hi.md) | [Deutsch](typescript.de.md)
 
-## Supported Extensions
+## Unterstützte Erweiterungen
 
 - `.ts`
 - `.tsx`
 - `.js` (JavaScript)
 - `.jsx` (JSX)
 
-## Extraction Targets
+## Extraktionsziele
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Function declaration | `function` | `function greet()` |
-| Arrow function | `arrow` | `const greet = () => {}` |
-| Method | `method` | `class A { method() {} }` |
-| Class | `class` | `class User {}` |
+| Element | Kind | Beispiel |
+|---------|------|----------|
+| Funktionsdeklaration | `function` | `function greet()` |
+| Arrow-Funktion | `arrow` | `const greet = () => {}` |
+| Methode | `method` | `class A { method() {} }` |
+| Klasse | `class` | `class User {}` |
 | Interface | `interface` | `interface Props {}` |
-| Type alias | `type` | `type ID = string` |
-| Comment | `doc` | `// Comment` |
+| Typ-Alias | `type` | `type ID = string` |
+| Kommentar | `doc` | `// Comment` |
 
-## Example
+## Beispiel
 
-### Input
+### Eingabe
 
 ```typescript
 /**
@@ -61,7 +61,7 @@ const formatName = (user: User): string => {
 };
 ```
 
-### Output (XML)
+### Ausgabe (XML)
 
 ```xml
 <file path="user.ts" language="typescript">
@@ -93,33 +93,33 @@ const formatName = (user: User): string => {
 </file>
 ```
 
-## Notes
+## Hinweise
 
-### Export Detection
+### Export-Erkennung
 
-- Only elements with `export` keyword are extracted (default)
-- For JavaScript files, all elements are extracted
+- Nur Elemente mit `export`-Schlüsselwort werden extrahiert (Standard)
+- Bei JavaScript-Dateien werden alle Elemente extrahiert
 
-### Arrow Functions
+### Arrow-Funktionen
 
-- Arrow functions declared with `const`/`let`/`var` are captured
-- Variable name is used as function name
-- `export const` format is also supported
+- Mit `const`/`let`/`var` deklarierte Arrow-Funktionen werden erfasst
+- Variablenname wird als Funktionsname verwendet
+- `export const`-Format wird ebenfalls unterstützt
 
-### Body Removal
+### Body-Entfernung
 
-When `--include-body` flag is not used:
+Wenn `--include-body` Flag nicht verwendet wird:
 
-- Functions/Methods: body removed after opening brace `{`
-- Arrow functions: body removed after `=>`
-- Classes/Interfaces: content removed after opening brace `{`
+- Funktionen/Methoden: Body nach öffnender Klammer `{` entfernt
+- Arrow-Funktionen: Body nach `=>` entfernt
+- Klassen/Interfaces: Inhalt nach öffnender Klammer `{` entfernt
 
-### JSDoc Support
+### JSDoc-Unterstützung
 
-- `/** ... */` style JSDoc comments are automatically linked
-- Comments immediately before functions/classes are captured as doc
+- `/** ... */` Stil JSDoc-Kommentare werden automatisch verknüpft
+- Kommentare direkt vor Funktionen/Klassen werden als doc erfasst
 
-### JavaScript Compatibility
+### JavaScript-Kompatibilität
 
-- `.js`, `.jsx` files are processed with TypeScript parser
-- Functions/classes can be extracted even without type information
+- `.js`, `.jsx` Dateien werden mit TypeScript-Parser verarbeitet
+- Funktionen/Klassen können auch ohne Typinformationen extrahiert werden

@@ -1,23 +1,23 @@
-# Go Support
+# Go 지원
 
 🌐 [English](go.md) | [한국어](go.ko.md) | [日本語](go.ja.md) | [हिन्दी](go.hi.md) | [Deutsch](go.de.md)
 
-## Supported Extensions
+## 지원 확장자
 
 - `.go`
 
-## Extraction Targets
+## 추출 대상
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Function | `function` | `func DoSomething()` |
-| Method | `method` | `func (s *Server) Start()` |
-| Type (struct, interface, etc.) | `type` | `type User struct {...}` |
-| Comment | `doc` | `// Comment` |
+| 요소 | Kind | 예시 |
+|------|------|------|
+| 함수 | `function` | `func DoSomething()` |
+| 메서드 | `method` | `func (s *Server) Start()` |
+| 타입 (struct, interface 등) | `type` | `type User struct {...}` |
+| 주석 | `doc` | `// Comment` |
 
-## Example
+## 예시
 
-### Input
+### 입력
 
 ```go
 // Server handles HTTP requests.
@@ -36,7 +36,7 @@ func (s *Server) Start() error {
 }
 ```
 
-### Output (XML)
+### 출력 (XML)
 
 ```xml
 <file path="server.go" language="go">
@@ -58,27 +58,27 @@ func (s *Server) Start() error {
 </file>
 ```
 
-## Notes
+## 특이사항
 
-### Export Detection
+### Export 판별
 
-- Go export rules applied: only identifiers starting with uppercase are extracted
-- Private functions/types starting with lowercase are excluded by default
+- Go의 export 규칙 적용: 대문자로 시작하는 식별자만 추출
+- 소문자로 시작하는 private 함수/타입은 기본적으로 제외됨
 
-### Method vs Function
+### 메서드 vs 함수
 
-- Declarations with receiver are classified as `method`
-- Declarations without receiver are classified as `function`
+- receiver가 있는 선언은 `method`로 분류
+- receiver가 없는 선언은 `function`으로 분류
 
-### Body Removal
+### 본문 제거
 
-When `--include-body` flag is not used:
+`--include-body` 플래그 미사용 시:
 
-- Functions/Methods: body removed after opening brace `{`
-- Types: only `struct` or `interface` keyword is preserved
+- 함수/메서드: 중괄호 `{` 이후 본문 제거
+- 타입: `struct` 또는 `interface` 키워드까지만 유지
 
-### Unsupported Elements
+### 지원하지 않는 요소
 
-- Package-level variables (`var`)
-- Constants (`const`)
-- Embedded functions (functions inside functions)
+- 패키지 레벨 변수 (`var`)
+- 상수 (`const`)
+- 임베디드 함수 (함수 내부 함수)

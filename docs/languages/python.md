@@ -1,23 +1,25 @@
 # Python Support
 
-## 지원 확장자
+🌐 [English](python.md) | [한국어](python.ko.md) | [日本語](python.ja.md) | [हिन्दी](python.hi.md) | [Deutsch](python.de.md)
+
+## Supported Extensions
 
 - `.py`
 
-## 추출 대상
+## Extraction Targets
 
-| 요소 | Kind | 예시 |
-|------|------|------|
-| 함수 | `function` | `def greet():` |
-| Async 함수 | `function` | `async def fetch():` |
-| 클래스 | `class` | `class User:` |
-| 메서드 | `method` | `def __init__(self):` |
-| 클래스 메서드 | `method` | `def method(cls):` |
-| 주석 | `doc` | `# Comment` |
+| Element | Kind | Example |
+|---------|------|---------|
+| Function | `function` | `def greet():` |
+| Async function | `function` | `async def fetch():` |
+| Class | `class` | `class User:` |
+| Method | `method` | `def __init__(self):` |
+| Class method | `method` | `def method(cls):` |
+| Comment | `doc` | `# Comment` |
 
-## 예시
+## Example
 
-### 입력
+### Input
 
 ```python
 # User model for the application.
@@ -45,7 +47,7 @@ async def fetch_user(user_id: int) -> User:
     pass
 ```
 
-### 출력 (XML)
+### Output (XML)
 
 ```xml
 <file path="user.py" language="python">
@@ -74,55 +76,55 @@ async def fetch_user(user_id: int) -> User:
 </file>
 ```
 
-## 특이사항
+## Notes
 
-### Export 판별
+### Export Detection
 
-- Python은 모든 요소를 public으로 취급
-- `_private` 또는 `__mangled` 네이밍도 포함됨
+- Python treats all elements as public
+- `_private` or `__mangled` naming conventions are also included
 
-### 메서드 vs 함수 판별
+### Method vs Function Detection
 
-- 첫 번째 파라미터가 `self` 또는 `cls`이면 `method`로 분류
-- 그 외의 경우 `function`으로 분류
-- `@staticmethod` 데코레이터가 붙은 메서드는 `function`으로 분류됨 (self 없음)
+- If first parameter is `self` or `cls`, classified as `method`
+- Otherwise classified as `function`
+- Methods with `@staticmethod` decorator are classified as `function` (no self)
 
-### Async 처리
+### Async Handling
 
-- `async def`는 `function` kind로 통일
-- 시그니처 텍스트에 `async` 키워드 포함
+- `async def` is unified as `function` kind
+- `async` keyword is included in signature text
 
-### 본문 제거
+### Body Removal
 
-`--include-body` 플래그 미사용 시:
+When `--include-body` flag is not used:
 
-- 함수/메서드: 시그니처 끝 콜론(`:`) 이후 본문 제거
-- 클래스: 클래스명과 상속 정보까지만 유지
+- Functions/Methods: body removed after signature-ending colon (`:`)
+- Classes: only class name and inheritance info are preserved
 
-### 타입 힌트 내 콜론 처리
+### Colon Handling in Type Hints
 
-복잡한 타입 힌트(예: `Dict[str, int]`)의 콜론은 함수 끝 콜론과 구분됨:
+Colons in complex type hints (e.g., `Dict[str, int]`) are distinguished from function-ending colons:
 
 ```python
-def func(x: Dict[str, List[int]]) -> str:  # 마지막 콜론만 함수 끝
+def func(x: Dict[str, List[int]]) -> str:  # Only the last colon ends the function
 ```
 
-### Docstring (향후 지원)
+### Docstring (Future Support)
 
-- 현재 버전: 함수/클래스 위의 `#` 주석만 doc으로 캡처
-- 향후 버전: triple-quoted docstring (`"""..."""`) 지원 예정
+- Current version: only `#` comments above functions/classes are captured as doc
+- Future version: triple-quoted docstring (`"""..."""`) support planned
 
-### 데코레이터
+### Decorators
 
-데코레이터는 시그니처에 포함되지 않음:
+Decorators are not included in signatures:
 
 ```python
 @decorator
-def func():  # 시그니처: "def func()"
+def func():  # Signature: "def func()"
 ```
 
-### 지원하지 않는 요소
+### Unsupported Elements
 
-- Lambda 표현식
-- 중첩 함수 (외부 함수만 캡처)
-- 모듈 레벨 변수
+- Lambda expressions
+- Nested functions (only outer function is captured)
+- Module-level variables

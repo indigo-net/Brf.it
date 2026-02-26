@@ -6,20 +6,20 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Brief your code for AI assistants.**
+**Code-Briefing-Tool für KI-Assistenten**
 
-Brf.it extracts function signatures from your codebase, removing implementation details to dramatically reduce token usage while preserving the essential information AI needs.
+Brf.it extrahiert Funktionssignaturen aus Ihrer Codebasis, entfernt Implementierungsdetails und reduziert den Token-Verbrauch drastisch, während die wesentlichen Informationen für KI erhalten bleiben.
 
 ---
 
-## What It Does
+## Was es macht
 
-Instead of feeding raw code to AI assistants:
+Anstatt rohen Code an KI-Assistenten zu übergeben:
 
 <table>
 <tr>
-<th>Before (50+ tokens)</th>
-<th>After with brfit (8 tokens)</th>
+<th>Vorher (50+ Token)</th>
+<th>Nachher mit brfit (8 Token)</th>
 </tr>
 <tr>
 <td>
@@ -69,11 +69,11 @@ export async function fetchUser(
 brew install indigo-net/tap/brfit
 ```
 
-### From Release
+### Von Release herunterladen
 
-Download the latest binary from [Releases](https://github.com/indigo-net/Brf.it/releases).
+Laden Sie die neueste Binary von [Releases](https://github.com/indigo-net/Brf.it/releases) herunter.
 
-### From Source
+### Aus Quellcode bauen
 
 ```bash
 git clone https://github.com/indigo-net/Brf.it.git
@@ -83,61 +83,61 @@ go build -o brfit ./cmd/brfit
 
 ---
 
-## Usage
+## Verwendung
 
 ```bash
-brfit [path] [options]
+brfit [Pfad] [Optionen]
 ```
 
-### Quick Examples
+### Schnelle Beispiele
 
 ```bash
-# Extract signatures from current directory
+# Signaturen aus dem aktuellen Verzeichnis extrahieren
 brfit .
 
-# Output in Markdown format
+# Ausgabe im Markdown-Format
 brfit . -f md
 
-# Save to file
+# In Datei speichern
 brfit . -o output.xml
 
-# Include function bodies (full code)
+# Funktionskörper einschließen (vollständiger Code)
 brfit . --include-body
 
-# Skip directory tree
+# Verzeichnisbaum überspringen
 brfit . --no-tree
 ```
 
-### CLI Options
+### CLI-Optionen
 
-| Option | Short | Description | Default |
-|--------|-------|-------------|---------|
-| `--format` | `-f` | Output format (`xml`, `md`) | `xml` |
-| `--output` | `-o` | Output file path | stdout |
-| `--include-body` | | Include function bodies | `false` |
-| `--ignore` | `-i` | Ignore file path | `.gitignore` |
-| `--include-hidden` | | Include hidden files | `false` |
-| `--no-tree` | | Skip directory tree | `false` |
-| `--no-tokens` | | Disable token counting | `false` |
-| `--max-size` | | Max file size (bytes) | `512000` |
-| `--version` | `-v` | Show version | |
-
----
-
-## Supported Languages
-
-| Language | Extensions | Documentation |
-|----------|------------|---------------|
-| Go | `.go` | [Go Guide](docs/languages/go.md) |
-| TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
-| Python | `.py` | [Python Guide](docs/languages/python.md) |
+| Option | Kurz | Beschreibung | Standard |
+|--------|------|--------------|----------|
+| `--format` | `-f` | Ausgabeformat (`xml`, `md`) | `xml` |
+| `--output` | `-o` | Ausgabedateipfad | stdout |
+| `--include-body` | | Funktionskörper einschließen | `false` |
+| `--ignore` | `-i` | Ignore-Dateipfad | `.gitignore` |
+| `--include-hidden` | | Versteckte Dateien einschließen | `false` |
+| `--no-tree` | | Verzeichnisbaum überspringen | `false` |
+| `--no-tokens` | | Token-Zählung deaktivieren | `false` |
+| `--max-size` | | Maximale Dateigröße (Bytes) | `512000` |
+| `--version` | `-v` | Version anzeigen | |
 
 ---
 
-## Output Examples
+## Unterstützte Sprachen
 
-### XML (default)
+| Sprache | Erweiterungen | Dokumentation |
+|---------|---------------|---------------|
+| Go | `.go` | [Go-Leitfaden](docs/languages/go.de.md) |
+| TypeScript | `.ts`, `.tsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
+| JavaScript | `.js`, `.jsx` | [TypeScript-Leitfaden](docs/languages/typescript.de.md) |
+| Python | `.py` | [Python-Leitfaden](docs/languages/python.de.md) |
+
+---
+
+## Ausgabebeispiele
+
+### XML (Standard)
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -180,6 +180,6 @@ func Scan(root string) (*Result, error)
 
 ---
 
-## License
+## Lizenz
 
 MIT
