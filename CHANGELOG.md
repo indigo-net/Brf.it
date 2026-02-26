@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-02-26
+
+### Added
+- Module-level constant/variable extraction for all supported languages
+  - Go: `const` and `var` declarations (including grouped declarations)
+  - TypeScript/JavaScript: module-level `const`, `let`, `var` (local variables excluded)
+  - Python: module-level assignments (class/function-level excluded)
+  - Java: `static` fields only (instance fields excluded)
+  - C: global variable declarations (local variables excluded)
+- Variables are output with their values preserved (not stripped like function bodies)
+- New "variable" kind for extracted constants/variables
+
+### Changed
+- Improved duplicate detection for TypeScript arrow functions
+
 ## [0.7.0] - 2026-02-26
 
 ### Added
@@ -83,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.8.0]: https://github.com/indigo-net/Brf.it/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/indigo-net/Brf.it/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/indigo-net/Brf.it/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/indigo-net/Brf.it/compare/v0.4.0...v0.5.0

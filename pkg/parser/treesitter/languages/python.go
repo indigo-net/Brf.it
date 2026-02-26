@@ -42,8 +42,10 @@ func (q *PythonQuery) Captures() []string {
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *PythonQuery) KindMapping() map[string]string {
 	return map[string]string{
-		"function_definition": "function",
-		"class_definition":    "class",
+		"function_definition":  "function",
+		"class_definition":     "class",
+		"expression_statement": "variable",
+		"assignment":           "variable",
 	}
 }
 
@@ -58,6 +60,15 @@ const pythonQueryPattern = `
 (class_definition
   name: (identifier) @name
 ) @signature @kind
+
+; Module-level assignments (simple and with type annotations)
+(module
+  (expression_statement
+    (assignment
+      left: (identifier) @name
+    )
+  ) @signature @kind
+)
 
 ; Comments
 (comment) @doc

@@ -54,6 +54,10 @@ func (q *GoQuery) KindMapping() map[string]string {
 		"function_declaration": "function",
 		"method_declaration":   "method",
 		"type_declaration":     "type",
+		"const_declaration":    "variable",
+		"var_declaration":      "variable",
+		"const_spec":           "variable",
+		"var_spec":             "variable",
 	}
 }
 
@@ -80,6 +84,16 @@ const goQueryPattern = `
   (type_spec
     name: (type_identifier) @name
   )
+) @signature @kind
+
+; Package-level const specs (captures each const individually)
+(const_spec
+  name: (identifier) @name
+) @signature @kind
+
+; Package-level var specs (captures each var individually)
+(var_spec
+  name: (identifier) @name
 ) @signature @kind
 
 ; Comments (documentation)

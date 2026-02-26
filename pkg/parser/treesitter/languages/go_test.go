@@ -107,3 +107,67 @@ func Add(a, b int) int {
 		t.Errorf("expected kind 'function_declaration', got '%s'", funcKindNode.Kind())
 	}
 }
+
+func TestGoQueryExtractConstAndVar(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_go.Language())
+	parser.SetLanguage(lang)
+
+	code := []byte(`package main
+
+const MaxSize = 100
+
+var DefaultConfig = Config{}
+
+const (
+	MinValue = 0
+	MaxValue = 1000
+)
+
+var (
+	GlobalCounter int
+	GlobalBuffer  []byte
+)
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewGoQuery()
+	q, err := sitter.NewQuery(lang, string(query.Query()))
+	if err != nil {
+		t.Fatalf("failed to create query: %v", err)
+	}
+	defer q.Close()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	captureNames := q.CaptureNames()
+	foundNames := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		for _, c := range match.Captures {
+			name := captureNames[c.Index]
+			if name == "name" {
+				foundNames[string(code[c.Node.StartByte():c.Node.EndByte()])] = true
+			}
+		}
+	}
+
+	expectedNames := []string{"MaxSize", "DefaultConfig", "MinValue", "MaxValue", "GlobalCounter", "GlobalBuffer"}
+	for _, expected := range expectedNames {
+		if !foundNames[expected] {
+			t.Errorf("expected to find '%s'", expected)
+		}
+	}
+}

@@ -44,12 +44,13 @@ func (q *CQuery) Captures() []string {
 func (q *CQuery) KindMapping() map[string]string {
 	return map[string]string{
 		"function_definition":  "function",
-		"declaration":          "function",
+		"declaration":          "function", // function prototypes
 		"struct_specifier":     "struct",
 		"enum_specifier":       "enum",
 		"type_definition":      "typedef",
 		"preproc_function_def": "macro",
 		"preproc_def":          "macro",
+		"global_variable":      "variable", // mapped from declaration patterns
 	}
 }
 
@@ -111,6 +112,42 @@ const cQueryPattern = `
 (preproc_def
   name: (identifier) @name
 ) @signature @kind
+
+; Global variable declarations (with initializer)
+(translation_unit
+  (declaration
+    declarator: (init_declarator
+      declarator: (identifier) @name
+    )
+  ) @signature @kind
+)
+
+; Global variable declarations (simple identifier, e.g., extern)
+(translation_unit
+  (declaration
+    declarator: (identifier) @name
+  ) @signature @kind
+)
+
+; Global pointer variable declarations
+(translation_unit
+  (declaration
+    declarator: (pointer_declarator
+      declarator: (identifier) @name
+    )
+  ) @signature @kind
+)
+
+; Global pointer variable declarations (with initializer)
+(translation_unit
+  (declaration
+    declarator: (init_declarator
+      declarator: (pointer_declarator
+        declarator: (identifier) @name
+      )
+    )
+  ) @signature @kind
+)
 
 ; Comments
 (comment) @doc

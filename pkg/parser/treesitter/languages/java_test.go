@@ -404,3 +404,61 @@ public class Box<T extends Comparable<T>> {
 		t.Error("expected to find method 'transform'")
 	}
 }
+
+func TestJavaQueryExtractFieldDeclarations(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_java.Language())
+	parser.SetLanguage(lang)
+
+	code := []byte(`package com.example;
+
+public class Config {
+    public static final String API_URL = "https://api.example.com";
+    public static int MAX_RETRIES = 3;
+    private String instanceField = "value";
+}
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewJavaQuery()
+	q, err := sitter.NewQuery(lang, string(query.Query()))
+	if err != nil {
+		t.Fatalf("failed to create query: %v", err)
+	}
+	defer q.Close()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	captureNames := q.CaptureNames()
+	foundNames := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		for _, c := range match.Captures {
+			name := captureNames[c.Index]
+			if name == "name" {
+				foundNames[string(code[c.Node.StartByte():c.Node.EndByte()])] = true
+			}
+		}
+	}
+
+	// All field declarations should be found at query level
+	// (static filtering happens in parser.go)
+	expectedNames := []string{"API_URL", "MAX_RETRIES", "instanceField", "Config"}
+	for _, expected := range expectedNames {
+		if !foundNames[expected] {
+			t.Errorf("expected to find '%s'", expected)
+		}
+	}
+}

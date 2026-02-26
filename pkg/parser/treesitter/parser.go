@@ -124,6 +124,10 @@ func (p *TreeSitterParser) extractSignatures(
 	kindMapping := langQuery.KindMapping()
 	captureNames := query.CaptureNames()
 
+	// Track seen signatures by line number to avoid duplicates
+	// (e.g., TypeScript arrow functions can be captured by multiple patterns)
+	seenLines := make(map[int]bool)
+
 	for {
 		match := matches.Next()
 		if match == nil {
@@ -167,10 +171,36 @@ func (p *TreeSitterParser) extractSignatures(
 					sig.Kind = "method"
 				}
 			}
+
+			// Java: filter out non-static fields (only keep static fields as "variable")
+			if opts.Language == "java" && sig.Kind == "field" {
+				if !strings.Contains(sig.Text, "static") {
+					continue // skip non-static instance fields
+				}
+				sig.Kind = "variable" // remap to variable for consistency
+			}
+
+			// C: distinguish between function prototypes and variable declarations
+			// Both are "declaration" node type, but function prototypes have ()
+			if opts.Language == "c" && kind == "declaration" {
+				if strings.Contains(sig.Text, "(") && strings.Contains(sig.Text, ")") {
+					// It's a function prototype - keep as "function"
+					sig.Kind = "function"
+				} else {
+					// It's a variable declaration
+					sig.Kind = "variable"
+				}
+			}
 		}
 
 		// Only add if we have a name and signature
 		if sig.Name != "" && sig.Text != "" {
+			// Skip duplicates (same line already captured by another pattern)
+			if seenLines[sig.Line] {
+				continue
+			}
+			seenLines[sig.Line] = true
+
 			// Filter private if needed
 			if !opts.IncludePrivate {
 				// Java: check for private modifier in signature text
@@ -276,6 +306,9 @@ func stripGoBody(text, kind string) string {
 		// Actually for signatures, we might want to keep the structure
 		// but for v0.3.0, let's keep type declarations as-is for now
 		return text
+	case "variable":
+		// Variables: keep full text with value
+		return text
 	}
 	return text
 }
@@ -309,8 +342,15 @@ func stripTypeScriptBody(text, kind string) string {
 	case "interface", "type":
 		// Keep interface/type declarations as-is (they define structure)
 		return text
-	case "variable", "arrow":
+	case "arrow":
 		// Arrow functions in variable declarations
+		if strings.Contains(text, "=>") {
+			return stripTSFunctionBody(text)
+		}
+		return text
+	case "variable":
+		// Module-level variables: keep full text with value
+		// But if it's an arrow function, strip the body
 		if strings.Contains(text, "=>") {
 			return stripTSFunctionBody(text)
 		}
@@ -420,6 +460,9 @@ func stripPythonBody(text, kind string) string {
 		if colonIdx > 0 {
 			return strings.TrimSpace(text[:colonIdx])
 		}
+	case "variable":
+		// Variables: keep full text with value
+		return text
 	}
 	return text
 }
@@ -462,6 +505,9 @@ func stripCBody(text, kind string) string {
 	case "struct", "enum", "typedef", "macro":
 		// Type definitions and macros: keep full text
 		return text
+	case "variable":
+		// Variables: keep full text with value
+		return text
 	}
 	return text
 }
@@ -503,6 +549,9 @@ func stripJavaBody(text, kind string) string {
 		if braceIdx > 0 {
 			return strings.TrimSpace(text[:braceIdx])
 		}
+	case "field":
+		// Fields: keep full text with value
+		return text
 	}
 	return text
 }

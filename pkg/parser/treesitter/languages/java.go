@@ -50,6 +50,7 @@ func (q *JavaQuery) KindMapping() map[string]string {
 		"enum_declaration":            "enum",
 		"annotation_type_declaration": "annotation",
 		"record_declaration":          "record",
+		"field_declaration":           "field",
 	}
 }
 
@@ -94,6 +95,13 @@ const javaQueryPattern = `
 ; Record declarations (Java 14+)
 (record_declaration
   name: (identifier) @name
+) @signature @kind
+
+; Field declarations (static fields filtered in parser.go)
+(field_declaration
+  (variable_declarator
+    name: (identifier) @name
+  )
 ) @signature @kind
 
 ; Comments (Javadoc and regular)

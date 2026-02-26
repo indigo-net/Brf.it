@@ -93,3 +93,66 @@ export function add(a: number, b: number): number {
 		t.Errorf("expected name 'add', got '%s'", funcCaptures["name"])
 	}
 }
+
+func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_typescript.LanguageTypescript())
+	parser.SetLanguage(lang)
+
+	code := []byte(`const API_URL = "https://api.example.com";
+export const MAX_RETRIES = 3;
+let counter = 0;
+const arrowFn = () => {};
+
+function test() {
+    const localVar = 1;
+}
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewTypeScriptQuery()
+	q, err := sitter.NewQuery(lang, string(query.Query()))
+	if err != nil {
+		t.Fatalf("failed to create query: %v", err)
+	}
+	defer q.Close()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	captureNames := q.CaptureNames()
+	foundNames := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		for _, c := range match.Captures {
+			name := captureNames[c.Index]
+			if name == "name" {
+				foundNames[string(code[c.Node.StartByte():c.Node.EndByte()])] = true
+			}
+		}
+	}
+
+	// Module-level variables should be found
+	expectedNames := []string{"API_URL", "MAX_RETRIES", "counter", "arrowFn", "test"}
+	for _, expected := range expectedNames {
+		if !foundNames[expected] {
+			t.Errorf("expected to find '%s'", expected)
+		}
+	}
+
+	// Local variable should NOT be found (filtered by program wrapper)
+	if foundNames["localVar"] {
+		t.Error("should not find local variable 'localVar'")
+	}
+}

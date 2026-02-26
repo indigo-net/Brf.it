@@ -77,6 +77,51 @@ const typeScriptQueryPattern = `
   )
 ) @signature @kind
 
+; Module-level const/let declarations with values (captures all module-level)
+; Deduplication for arrow functions is handled in parser.go
+(program
+  (lexical_declaration
+    (variable_declarator
+      name: (identifier) @name
+      value: (_)
+    )
+  ) @signature @kind
+)
+
+; Module-level const/let without initial value (TypeScript declares)
+(program
+  (lexical_declaration
+    (variable_declarator
+      name: (identifier) @name
+      !value
+    )
+  ) @signature @kind
+)
+
+; Exported module-level const/let declarations with values
+(program
+  (export_statement
+    declaration: (lexical_declaration
+      (variable_declarator
+        name: (identifier) @name
+        value: (_)
+      )
+    )
+  ) @signature @kind
+)
+
+; Exported module-level const/let without initial value
+(program
+  (export_statement
+    declaration: (lexical_declaration
+      (variable_declarator
+        name: (identifier) @name
+        !value
+      )
+    )
+  ) @signature @kind
+)
+
 ; Method definitions
 (method_definition
   name: (property_identifier) @name

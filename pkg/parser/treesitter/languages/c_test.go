@@ -287,3 +287,69 @@ func TestCQueryExtractTypedef(t *testing.T) {
 		t.Fatal("expected to find typedef 'Point'")
 	}
 }
+
+func TestCQueryExtractGlobalVariables(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_c.Language())
+	parser.SetLanguage(lang)
+
+	code := []byte(`int global_count = 0;
+static char* buffer;
+extern int shared_value;
+const int MAX_SIZE = 100;
+char* initialized_ptr = "hello";
+
+int add(int a, int b);
+
+void test() {
+    int local_var = 1;
+}
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewCQuery()
+	q, err := sitter.NewQuery(lang, string(query.Query()))
+	if err != nil {
+		t.Fatalf("failed to create query: %v", err)
+	}
+	defer q.Close()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	captureNames := q.CaptureNames()
+	foundNames := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		for _, c := range match.Captures {
+			name := captureNames[c.Index]
+			if name == "name" {
+				foundNames[string(code[c.Node.StartByte():c.Node.EndByte()])] = true
+			}
+		}
+	}
+
+	// Global variables should be found
+	expectedNames := []string{"global_count", "buffer", "shared_value", "MAX_SIZE", "initialized_ptr", "test", "add"}
+	for _, expected := range expectedNames {
+		if !foundNames[expected] {
+			t.Errorf("expected to find '%s'", expected)
+		}
+	}
+
+	// Local variable should NOT be found
+	if foundNames["local_var"] {
+		t.Error("should not find local variable 'local_var'")
+	}
+}

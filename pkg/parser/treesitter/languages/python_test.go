@@ -200,3 +200,69 @@ func TestPythonQueryExtractAsyncFunction(t *testing.T) {
 		t.Errorf("expected name 'fetch_data', got '%s'", funcCaptures["name"])
 	}
 }
+
+func TestPythonQueryExtractModuleLevelVariables(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_python.Language())
+	parser.SetLanguage(lang)
+
+	code := []byte(`API_URL = "https://api.example.com"
+MAX_RETRIES: int = 3
+
+def test():
+    local_var = 1
+
+class Config:
+    CLASS_VAR = "value"
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewPythonQuery()
+	q, err := sitter.NewQuery(lang, string(query.Query()))
+	if err != nil {
+		t.Fatalf("failed to create query: %v", err)
+	}
+	defer q.Close()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	captureNames := q.CaptureNames()
+	foundNames := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		for _, c := range match.Captures {
+			name := captureNames[c.Index]
+			if name == "name" {
+				foundNames[string(code[c.Node.StartByte():c.Node.EndByte()])] = true
+			}
+		}
+	}
+
+	// Module-level variables should be found
+	expectedNames := []string{"API_URL", "MAX_RETRIES", "test", "Config"}
+	for _, expected := range expectedNames {
+		if !foundNames[expected] {
+			t.Errorf("expected to find '%s'", expected)
+		}
+	}
+
+	// Local and class-level variables should NOT be found
+	unexpectedNames := []string{"local_var", "CLASS_VAR"}
+	for _, unexpected := range unexpectedNames {
+		if foundNames[unexpected] {
+			t.Errorf("should not find '%s'", unexpected)
+		}
+	}
+}

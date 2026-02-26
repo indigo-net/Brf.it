@@ -501,3 +501,285 @@ func TestJavaAutoRegistration(t *testing.T) {
 		t.Error("expected non-nil parser for 'java'")
 	}
 }
+
+// === Module-level variable extraction tests ===
+
+func TestGoVariableExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package main
+
+const MaxSize = 100
+
+var DefaultConfig = Config{}
+
+const (
+	MinValue = 0
+	MaxValue = 1000
+)
+
+func Add(a, b int) int {
+	return a + b
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "go"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Variables should be found
+	expectedVars := []string{"MaxSize", "DefaultConfig", "MinValue", "MaxValue"}
+	for _, name := range expectedVars {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find variable '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+
+	// Function should still be found
+	if kind, ok := foundNames["Add"]; !ok {
+		t.Error("expected to find function 'Add'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'Add', got '%s'", kind)
+	}
+}
+
+func TestTypeScriptVariableExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `const API_URL = "https://api.example.com";
+export const MAX_RETRIES = 3;
+let counter = 0;
+const arrowFn = (x: number) => x * 2;
+
+export function add(a: number, b: number): number {
+  const localVar = 1;
+  return a + b;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "typescript"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Module-level variables should be found
+	moduleVars := []string{"API_URL", "MAX_RETRIES", "counter"}
+	for _, name := range moduleVars {
+		if _, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find module-level variable '%s'", name)
+		}
+	}
+
+	// Arrow function should be found (either as arrow or variable)
+	if _, ok := foundNames["arrowFn"]; !ok {
+		t.Error("expected to find arrow function 'arrowFn'")
+	}
+
+	// Function should still be found
+	if _, ok := foundNames["add"]; !ok {
+		t.Error("expected to find function 'add'")
+	}
+
+	// Local variable should NOT be found
+	if _, ok := foundNames["localVar"]; ok {
+		t.Error("should not find local variable 'localVar'")
+	}
+}
+
+func TestPythonVariableExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `API_URL = "https://api.example.com"
+MAX_RETRIES: int = 3
+
+def test():
+    local_var = 1
+    return local_var
+
+class Config:
+    CLASS_VAR = "value"
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "python"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Module-level variables should be found
+	moduleVars := []string{"API_URL", "MAX_RETRIES"}
+	for _, name := range moduleVars {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find module-level variable '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+
+	// Function and class should still be found
+	if _, ok := foundNames["test"]; !ok {
+		t.Error("expected to find function 'test'")
+	}
+	if _, ok := foundNames["Config"]; !ok {
+		t.Error("expected to find class 'Config'")
+	}
+
+	// Local and class variables should NOT be found
+	if _, ok := foundNames["local_var"]; ok {
+		t.Error("should not find local variable 'local_var'")
+	}
+	if _, ok := foundNames["CLASS_VAR"]; ok {
+		t.Error("should not find class variable 'CLASS_VAR'")
+	}
+}
+
+func TestJavaStaticFieldExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example;
+
+public class Config {
+    public static final String API_URL = "https://api.example.com";
+    public static int MAX_RETRIES = 3;
+    private String instanceField = "value";
+
+    public void method() {
+        int localVar = 1;
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "java"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Static fields should be found as "variable"
+	staticFields := []string{"API_URL", "MAX_RETRIES"}
+	for _, name := range staticFields {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find static field '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+
+	// Class and method should still be found
+	if _, ok := foundNames["Config"]; !ok {
+		t.Error("expected to find class 'Config'")
+	}
+	if _, ok := foundNames["method"]; !ok {
+		t.Error("expected to find method 'method'")
+	}
+
+	// Non-static instance field should NOT be found (private is filtered, non-static is filtered)
+	if _, ok := foundNames["instanceField"]; ok {
+		t.Error("should not find non-static instance field 'instanceField'")
+	}
+}
+
+func TestCGlobalVariableExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `int global_count = 0;
+static char* buffer;
+extern int shared_value;
+const int MAX_SIZE = 100;
+
+int add(int a, int b);
+
+void test() {
+    int local_var = 1;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "c"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Global variables should be found as "variable"
+	globalVars := []string{"global_count", "buffer", "shared_value", "MAX_SIZE"}
+	for _, name := range globalVars {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find global variable '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+
+	// Function prototype and definition should still be found as "function"
+	if kind, ok := foundNames["add"]; !ok {
+		t.Error("expected to find function prototype 'add'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'add', got '%s'", kind)
+	}
+
+	if kind, ok := foundNames["test"]; !ok {
+		t.Error("expected to find function 'test'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'test', got '%s'", kind)
+	}
+
+	// Local variable should NOT be found
+	if _, ok := foundNames["local_var"]; ok {
+		t.Error("should not find local variable 'local_var'")
+	}
+}
+
+func TestVariableSignaturePreservesValue(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package main
+
+const MaxSize = 100
+var DefaultTimeout = 30 * time.Second
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "MaxSize":
+			// Variable signature should preserve the value
+			if !contains(sig.Text, "100") {
+				t.Errorf("expected variable signature to contain value '100', got '%s'", sig.Text)
+			}
+		case "DefaultTimeout":
+			// Variable signature should preserve the value expression
+			if !contains(sig.Text, "30 * time.Second") {
+				t.Errorf("expected variable signature to contain value, got '%s'", sig.Text)
+			}
+		}
+	}
+}
