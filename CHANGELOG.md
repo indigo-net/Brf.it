@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-02-26
+
+### Added
+- Java language support (`.java`)
+  - Class, interface, method, constructor extraction
+  - Enum, annotation (`@interface`), record (Java 14+) extraction
+  - Private member filtering (excluded by default)
+  - Generic type parameter preservation
+  - Inner/nested class support
+- Java language documentation in 5 languages (EN, KO, JA, HI, DE)
+- Updated Supported Languages table in all README versions
+
+## [0.6.0] - 2026-02-26
+
+### Added
+- Cross-platform install scripts (Bash and PowerShell)
+- MIT License
+
+### Changed
+- Improved CLAUDE.md with new language addition checklist and debugging tips
+
 ## [0.5.0] - 2026-02-26
 
 ### Added
@@ -62,6 +83,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.7.0]: https://github.com/indigo-net/Brf.it/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/indigo-net/Brf.it/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/indigo-net/Brf.it/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/indigo-net/Brf.it/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/indigo-net/Brf.it/compare/v0.2.7...v0.3.0
