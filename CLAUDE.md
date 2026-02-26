@@ -262,3 +262,13 @@ func printTree(node *sitter.Node, code []byte, indent int) {
 ```
 
 **포인터 반환 타입 주의**: `User* func()` 형태는 declarator가 `pointer_declarator` 안에 중첩됨
+
+### Import 쿼리 패턴 작성
+
+전체 import 문을 캡처하려면 노드 전체를 캡처:
+```scheme
+; 경로만: (import_statement source: (string) @import_path)
+; 전체 문: (import_statement) @import_path
+```
+
+**Go 예외**: `import_spec`은 `"fmt"` 형태라 `cleanImportPath()`에서 `import ` prefix 추가 처리
