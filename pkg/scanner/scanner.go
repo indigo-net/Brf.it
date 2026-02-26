@@ -63,6 +63,8 @@ func DefaultScanOptions() *ScanOptions {
 			".js":  "javascript",
 			".jsx": "javascript",
 			".py":  "python",
+			".c":   "c",
+			".h":   "c",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
