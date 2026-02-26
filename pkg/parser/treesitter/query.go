@@ -13,6 +13,10 @@ type LanguageQuery interface {
 	// Query returns the Tree-sitter query pattern for signature extraction.
 	Query() []byte
 
+	// ImportQuery returns the Tree-sitter query pattern for import/export extraction.
+	// Returns nil if the language doesn't support import extraction.
+	ImportQuery() []byte
+
 	// Captures returns the list of capture names used in the query.
 	Captures() []string
 
@@ -26,6 +30,13 @@ const (
 	CaptureSignature = "signature"
 	CaptureDoc       = "doc"
 	CaptureKind      = "kind"
+)
+
+// Capture names for import queries.
+const (
+	CaptureImportPath = "import_path"
+	CaptureExportName = "export_name"
+	CaptureImportType = "import_type"
 )
 
 // DefaultKindMapping provides default kind mappings (can be overridden per language).

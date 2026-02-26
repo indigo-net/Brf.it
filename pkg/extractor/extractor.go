@@ -20,6 +20,9 @@ type ExtractedFile struct {
 	// Signatures is the list of extracted signatures.
 	Signatures []parser.Signature
 
+	// Imports is the list of extracted import/export statements.
+	Imports []parser.ImportExport
+
 	// Size is the file size in bytes.
 	Size int64
 
@@ -49,6 +52,9 @@ type ExtractOptions struct {
 
 	// IncludeBody whether to include function/method bodies.
 	IncludeBody bool
+
+	// IncludeImports whether to include import/export statements.
+	IncludeImports bool
 
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
@@ -126,6 +132,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 		Language:       entry.Language,
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
+		IncludeImports: opts.IncludeImports,
 	})
 	if err != nil {
 		extracted.Error = fmt.Errorf("failed to parse: %w", err)
@@ -133,5 +140,6 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	}
 
 	extracted.Signatures = parseResult.Signatures
+	extracted.Imports = parseResult.Imports
 	return extracted
 }

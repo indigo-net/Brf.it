@@ -6,6 +6,21 @@ import (
 	"sync"
 )
 
+// ImportExport represents an import or export statement.
+type ImportExport struct {
+	// Type is "import" or "export".
+	Type string
+
+	// Path is the module path (e.g., "fmt", "react", "./utils").
+	Path string
+
+	// Name is the export name (for named exports).
+	Name string
+
+	// Line is the line number (1-indexed).
+	Line int
+}
+
 // Signature represents an extracted code signature (function, class, method, etc.).
 type Signature struct {
 	// Name is the identifier name (e.g., "Scan", "FileScanner").
@@ -68,6 +83,9 @@ type ParseResult struct {
 	// Signatures is the list of extracted signatures.
 	Signatures []Signature
 
+	// Imports is the list of extracted import/export statements.
+	Imports []ImportExport
+
 	// AST is the root node of the parsed AST (optional).
 	AST *Node
 
@@ -90,6 +108,9 @@ type Options struct {
 	// When false (default), only the signature line is extracted.
 	// When true, the full declaration including the body is extracted.
 	IncludeBody bool
+
+	// IncludeImports whether to include import/export statements in the result.
+	IncludeImports bool
 }
 
 // Parser defines the interface for code parsers.

@@ -61,6 +61,30 @@ func (q *GoQuery) KindMapping() map[string]string {
 	}
 }
 
+// ImportQuery returns the Go import query pattern.
+func (q *GoQuery) ImportQuery() []byte {
+	return []byte(goImportQueryPattern)
+}
+
+// goImportQueryPattern is the Tree-sitter query for extracting Go imports.
+const goImportQueryPattern = `
+; Single import
+(import_declaration
+  (import_spec
+    path: (interpreted_string_literal) @import_path
+  )
+)
+
+; Multi-line imports
+(import_declaration
+  (import_spec_list
+    (import_spec
+      path: (interpreted_string_literal) @import_path
+    )
+  )
+)
+`
+
 // goQueryPattern is the Tree-sitter query for extracting Go signatures.
 //
 // Tree-sitter query syntax:

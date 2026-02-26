@@ -109,6 +109,7 @@ Options:
   -i, --ignore <file>     커스텀 ignore 파일 (기본값: .gitignore)
   --include-hidden        숨김 파일 포함
   --include-body          함수 본문 포함 (기본값: 시그니처만)
+  --include-imports       import/export 문 포함 (기본값: 미포함)
   --no-tree               디렉토리 트리 생략
   --no-tokens             토큰 수 계산 비활성화
   --max-size <bytes>      최대 파일 크기 (기본값: 512000 = 500KB)

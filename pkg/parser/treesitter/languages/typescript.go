@@ -55,6 +55,40 @@ func (q *TypeScriptQuery) KindMapping() map[string]string {
 	}
 }
 
+// ImportQuery returns the TypeScript import query pattern.
+func (q *TypeScriptQuery) ImportQuery() []byte {
+	return []byte(typeScriptImportQueryPattern)
+}
+
+// typeScriptImportQueryPattern is the Tree-sitter query for extracting TypeScript imports/exports.
+const typeScriptImportQueryPattern = `
+; Import statements with source
+(import_statement
+  source: (string) @import_path
+)
+
+; Export statements with source (re-exports)
+(export_statement
+  source: (string) @import_path
+) @export_type
+
+; Named exports without source (local exports)
+(export_statement
+  declaration: (_
+    name: (identifier) @export_name
+  )
+)
+
+; Export clause (export { foo, bar })
+(export_statement
+  (export_clause
+    (export_specifier
+      name: (identifier) @export_name
+    )
+  )
+)
+`
+
 // typeScriptQueryPattern is the Tree-sitter query for extracting TypeScript signatures.
 const typeScriptQueryPattern = `
 ; Function declarations

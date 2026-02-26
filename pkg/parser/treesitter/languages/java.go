@@ -54,6 +54,25 @@ func (q *JavaQuery) KindMapping() map[string]string {
 	}
 }
 
+// ImportQuery returns the Java import query pattern.
+func (q *JavaQuery) ImportQuery() []byte {
+	return []byte(javaImportQueryPattern)
+}
+
+// javaImportQueryPattern is the Tree-sitter query for extracting Java imports.
+const javaImportQueryPattern = `
+; import statements
+(import_declaration
+  (scoped_identifier) @import_path
+)
+
+; static imports
+(import_declaration
+  "static"
+  (scoped_identifier) @import_path
+)
+`
+
 // javaQueryPattern is the Tree-sitter query for extracting Java signatures.
 //
 // Tree-sitter query syntax:

@@ -54,6 +54,24 @@ func (q *CQuery) KindMapping() map[string]string {
 	}
 }
 
+// ImportQuery returns the C import query pattern.
+func (q *CQuery) ImportQuery() []byte {
+	return []byte(cImportQueryPattern)
+}
+
+// cImportQueryPattern is the Tree-sitter query for extracting C #include directives.
+const cImportQueryPattern = `
+; #include "header.h"
+(preproc_include
+  path: (string_literal) @import_path
+)
+
+; #include <header.h>
+(preproc_include
+  path: (system_lib_string) @import_path
+)
+`
+
 // cQueryPattern is the Tree-sitter query for extracting C signatures.
 const cQueryPattern = `
 ; Function definitions - direct declarator

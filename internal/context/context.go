@@ -28,6 +28,9 @@ type Options struct {
 	// IncludeBody determines whether to include function/method bodies.
 	IncludeBody bool
 
+	// IncludeImports determines whether to include import/export statements.
+	IncludeImports bool
+
 	// IncludeTree determines whether to include directory tree.
 	IncludeTree bool
 
@@ -117,6 +120,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 	extractOpts := &extractor.ExtractOptions{
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
+		IncludeImports: opts.IncludeImports,
 	}
 	extractResult, err := p.extractor.Extract(scanResult, extractOpts)
 	if err != nil {
@@ -140,6 +144,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 			Path:       ef.Path,
 			Language:   ef.Language,
 			Signatures: ef.Signatures,
+			Imports:    ef.Imports,
 			Error:      ef.Error,
 		}
 	}
@@ -150,6 +155,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		Files:           files,
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalSize:       extractResult.TotalSize,
+		IncludeImports:  opts.IncludeImports,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)

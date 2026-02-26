@@ -83,9 +83,16 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.
 	// Extract signatures
 	signatures := p.extractSignatures(tree.RootNode(), []byte(content), query, opts)
 
+	// Extract imports if requested
+	var imports []parser.ImportExport
+	if opts.IncludeImports {
+		imports = p.extractImports(tree.RootNode(), []byte(content), query, opts)
+	}
+
 	return &parser.ParseResult{
 		Language:   lang,
 		Signatures: signatures,
+		Imports:    imports,
 	}, nil
 }
 
@@ -597,4 +604,91 @@ func isJavaPrivate(signature string) bool {
 		}
 	}
 	return false
+}
+
+// extractImports extracts import/export statements from the AST.
+func (p *TreeSitterParser) extractImports(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+) []parser.ImportExport {
+	var imports []parser.ImportExport
+
+	importQueryBytes := langQuery.ImportQuery()
+	if importQueryBytes == nil || len(importQueryBytes) == 0 {
+		return imports
+	}
+
+	// Create query
+	query, err := sitter.NewQuery(langQuery.Language(), string(importQueryBytes))
+	if err != nil {
+		return imports
+	}
+	defer query.Close()
+
+	// Execute query
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(query, root, content)
+	captureNames := query.CaptureNames()
+
+	// Track seen imports to avoid duplicates
+	seenPaths := make(map[string]bool)
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		var imp parser.ImportExport
+		var hasExportType bool
+
+		for _, capture := range match.Captures {
+			name := captureNames[capture.Index]
+			node := capture.Node
+			text := string(content[node.StartByte():node.EndByte()])
+
+			switch name {
+			case CaptureImportPath:
+				imp.Path = cleanImportPath(text)
+				imp.Line = int(node.StartPosition().Row) + 1
+				imp.Type = "import"
+			case CaptureExportName:
+				imp.Name = text
+				imp.Line = int(node.StartPosition().Row) + 1
+				imp.Type = "export"
+			case "export_type":
+				hasExportType = true
+			}
+		}
+
+		// Re-export (export with source) is marked as export
+		if hasExportType && imp.Path != "" {
+			imp.Type = "export"
+		}
+
+		// Only add if we have a path or name
+		if imp.Path != "" || imp.Name != "" {
+			// Deduplicate by path+name
+			key := imp.Type + ":" + imp.Path + ":" + imp.Name
+			if !seenPaths[key] {
+				seenPaths[key] = true
+				imports = append(imports, imp)
+			}
+		}
+	}
+
+	return imports
+}
+
+// cleanImportPath removes quotes and normalizes import paths.
+func cleanImportPath(path string) string {
+	// Remove surrounding quotes (", ', `)
+	path = strings.Trim(path, "\"'`")
+	// Remove angle brackets for C system includes
+	path = strings.Trim(path, "<>")
+	return path
 }

@@ -32,6 +32,9 @@ type Config struct {
 	// When false (default), only signatures are extracted.
 	IncludeBody bool
 
+	// IncludeImports determines whether to include import/export statements.
+	IncludeImports bool
+
 	// NoTree skips directory tree generation in output.
 	NoTree bool
 
@@ -45,15 +48,16 @@ type Config struct {
 // DefaultConfig returns a Config with all default values set.
 func DefaultConfig() *Config {
 	return &Config{
-		Mode:          "sig",
-		Format:        "xml",
-		Output:        "",
-		IgnoreFile:    ".gitignore",
-		IncludeHidden: false,
-		IncludeBody:   false,
-		NoTree:        false,
-		NoTokens:      false,
-		MaxFileSize:   512000, // 500KB
+		Mode:           "sig",
+		Format:         "xml",
+		Output:         "",
+		IgnoreFile:     ".gitignore",
+		IncludeHidden:  false,
+		IncludeBody:    false,
+		IncludeImports: false,
+		NoTree:         false,
+		NoTokens:       false,
+		MaxFileSize:    512000, // 500KB
 	}
 }
 
@@ -102,6 +106,7 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IgnoreFile:     c.IgnoreFile,
 		IncludeHidden:  c.IncludeHidden,
 		IncludeBody:    c.IncludeBody,
+		IncludeImports: c.IncludeImports,
 		IncludeTree:    !c.NoTree,
 		IncludePrivate: false, // Future: add --include-private flag
 		MaxFileSize:    c.MaxFileSize,

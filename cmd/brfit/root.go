@@ -101,6 +101,9 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.IncludeBody, "include-body", c.IncludeBody,
 		"include function/method bodies (default: signatures only)")
 
+	cmd.Flags().BoolVar(&c.IncludeImports, "include-imports", c.IncludeImports,
+		"include import/export statements in output")
+
 	cmd.Flags().BoolVar(&c.NoTree, "no-tree", c.NoTree,
 		"skip directory tree in output")
 
