@@ -16,6 +16,7 @@
 | Struct | `struct` | `struct User { ... };` |
 | Enum | `enum` | `enum Color { RED, GREEN, BLUE };` |
 | Typedef | `typedef` | `typedef struct { ... } User;` |
+| Globale Variable | `variable` | `int global_count = 0;` |
 | Objekt-Makro | `macro` | `#define MAX_SIZE 100` |
 | Funktions-Makro | `macro` | `#define MIN(a, b) ((a) < (b) ? (a) : (b))` |
 | Kommentar | `doc` | `// Comment` |
@@ -96,6 +97,5 @@ User* create_user();    // Pointer-Rückgabetyp
 
 ### Nicht unterstützte Elemente
 
-- Globale Variablen
 - Funktionszeiger (als Variablen)
 - Verschachtelte Strukturen (nur oberste Ebene wird extrahiert)

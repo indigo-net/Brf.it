@@ -15,6 +15,7 @@
 | 클래스 | `class` | `class User:` |
 | 메서드 | `method` | `def __init__(self):` |
 | 클래스 메서드 | `method` | `def method(cls):` |
+| 모듈 레벨 변수 | `variable` | `API_URL = "..."` |
 | 주석 | `doc` | `# Comment` |
 
 ## 예시
@@ -127,4 +128,3 @@ def func():  # 시그니처: "def func()"
 
 - Lambda 표현식
 - 중첩 함수 (외부 함수만 캡처)
-- 모듈 레벨 변수

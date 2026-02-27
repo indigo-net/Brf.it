@@ -17,6 +17,7 @@
 | Enum | `enum` | `public enum Status { ... }` |
 | 어노테이션 | `annotation` | `public @interface Inject { ... }` |
 | Record (Java 14+) | `record` | `public record Point(int x, int y) { ... }` |
+| 필드 | `field` | `public static final String API = "..."` |
 | 주석 | `doc` | `// Comment` 또는 `/* Block */` |
 
 ## 예시
@@ -165,7 +166,6 @@ interface Foo {
 
 ### 지원하지 않는 요소
 
-- 필드 선언
 - static 초기화 블록
 - 익명 클래스
 - Lambda 표현식

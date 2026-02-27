@@ -17,6 +17,7 @@
 | Enum | `enum` | `public enum Status { ... }` |
 | アノテーション | `annotation` | `public @interface Inject { ... }` |
 | Record (Java 14+) | `record` | `public record Point(int x, int y) { ... }` |
+| フィールド | `field` | `public static final String API = "..."` |
 | コメント | `doc` | `// Comment` または `/* Block */` |
 
 ## 例
@@ -165,7 +166,6 @@ interface Foo {
 
 ### サポートされていない要素
 
-- フィールド宣言
 - staticイニシャライザブロック
 - 匿名クラス
 - Lambda式

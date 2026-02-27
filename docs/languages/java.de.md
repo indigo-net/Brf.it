@@ -17,6 +17,7 @@
 | Enum | `enum` | `public enum Status { ... }` |
 | Annotation | `annotation` | `public @interface Inject { ... }` |
 | Record (Java 14+) | `record` | `public record Point(int x, int y) { ... }` |
+| Feld | `field` | `public static final String API = "..."` |
 | Kommentar | `doc` | `// Comment` oder `/* Block */` |
 
 ## Beispiel
@@ -165,7 +166,6 @@ Wenn das `--include-body`-Flag nicht verwendet wird:
 
 ### Nicht unterstützte Elemente
 
-- Felddeklarationen
 - Statische Initialisierungsblöcke
 - Anonyme Klassen
 - Lambda-Ausdrücke

@@ -13,6 +13,7 @@
 | 関数 | `function` | `func DoSomething()` |
 | メソッド | `method` | `func (s *Server) Start()` |
 | 型（struct、interfaceなど） | `type` | `type User struct {...}` |
+| 定数/変数 | `variable` | `const MaxSize = 100` |
 | コメント | `doc` | `// Comment` |
 
 ## 例
@@ -79,6 +80,4 @@ func (s *Server) Start() error {
 
 ### サポートされていない要素
 
-- パッケージレベル変数（`var`）
-- 定数（`const`）
 - 埋め込み関数（関数内の関数）

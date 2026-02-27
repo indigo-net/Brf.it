@@ -15,6 +15,7 @@
 | クラス | `class` | `class User:` |
 | メソッド | `method` | `def __init__(self):` |
 | クラスメソッド | `method` | `def method(cls):` |
+| モジュールレベル変数 | `variable` | `API_URL = "..."` |
 | コメント | `doc` | `# Comment` |
 
 ## 例
@@ -127,4 +128,3 @@ def func():  # シグネチャ: "def func()"
 
 - Lambda式
 - ネストされた関数（外側の関数のみキャプチャ）
-- モジュールレベル変数

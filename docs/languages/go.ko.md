@@ -13,6 +13,7 @@
 | 함수 | `function` | `func DoSomething()` |
 | 메서드 | `method` | `func (s *Server) Start()` |
 | 타입 (struct, interface 등) | `type` | `type User struct {...}` |
+| 상수/변수 | `variable` | `const MaxSize = 100` |
 | 주석 | `doc` | `// Comment` |
 
 ## 예시
@@ -79,6 +80,4 @@ func (s *Server) Start() error {
 
 ### 지원하지 않는 요소
 
-- 패키지 레벨 변수 (`var`)
-- 상수 (`const`)
 - 임베디드 함수 (함수 내부 함수)

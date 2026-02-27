@@ -16,6 +16,7 @@
 | Struct | `struct` | `struct User { ... };` |
 | Enum | `enum` | `enum Color { RED, GREEN, BLUE };` |
 | Typedef | `typedef` | `typedef struct { ... } User;` |
+| Global Variable | `variable` | `int global_count = 0;` |
 | Object-like Macro | `macro` | `#define MAX_SIZE 100` |
 | Function-like Macro | `macro` | `#define MIN(a, b) ((a) < (b) ? (a) : (b))` |
 | Comment | `doc` | `// Comment` |
@@ -96,6 +97,5 @@ User* create_user();    // Pointer return type
 
 ### Unsupported Elements
 
-- Global variables
 - Function pointers (as variables)
 - Nested structs (only top-level extracted)

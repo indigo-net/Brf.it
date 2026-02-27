@@ -19,6 +19,7 @@
 | Class | `class` | `class User {}` |
 | Interface | `interface` | `interface Props {}` |
 | Type alias | `type` | `type ID = string` |
+| Module-level const/let | `variable` | `const API_URL = "..."` |
 | Comment | `doc` | `// Comment` |
 
 ## Example

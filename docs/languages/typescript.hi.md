@@ -19,6 +19,7 @@
 | क्लास | `class` | `class User {}` |
 | इंटरफेस | `interface` | `interface Props {}` |
 | टाइप एलियास | `type` | `type ID = string` |
+| मॉड्यूल-लेवल const/let | `variable` | `const API_URL = "..."` |
 | कमेंट | `doc` | `// Comment` |
 
 ## उदाहरण

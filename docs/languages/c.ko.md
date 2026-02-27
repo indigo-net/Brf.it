@@ -16,6 +16,7 @@
 | 구조체 | `struct` | `struct User { ... };` |
 | 열거형 | `enum` | `enum Color { RED, GREEN, BLUE };` |
 | Typedef | `typedef` | `typedef struct { ... } User;` |
+| 전역 변수 | `variable` | `int global_count = 0;` |
 | 객체 매크로 | `macro` | `#define MAX_SIZE 100` |
 | 함수 매크로 | `macro` | `#define MIN(a, b) ((a) < (b) ? (a) : (b))` |
 | 주석 | `doc` | `// Comment` |
@@ -96,6 +97,5 @@ User* create_user();    // 포인터 반환 타입
 
 ### 지원되지 않는 요소
 
-- 전역 변수
 - 함수 포인터 (변수로서)
 - 중첩 구조체 (최상위 레벨만 추출)

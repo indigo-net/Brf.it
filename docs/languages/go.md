@@ -13,6 +13,7 @@
 | Function | `function` | `func DoSomething()` |
 | Method | `method` | `func (s *Server) Start()` |
 | Type (struct, interface, etc.) | `type` | `type User struct {...}` |
+| Const/Var | `variable` | `const MaxSize = 100` |
 | Comment | `doc` | `// Comment` |
 
 ## Example
@@ -79,6 +80,4 @@ When `--include-body` flag is not used:
 
 ### Unsupported Elements
 
-- Package-level variables (`var`)
-- Constants (`const`)
 - Embedded functions (functions inside functions)

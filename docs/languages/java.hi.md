@@ -17,6 +17,7 @@
 | Enum | `enum` | `public enum Status { ... }` |
 | एनोटेशन | `annotation` | `public @interface Inject { ... }` |
 | Record (Java 14+) | `record` | `public record Point(int x, int y) { ... }` |
+| फील्ड | `field` | `public static final String API = "..."` |
 | कमेंट | `doc` | `// Comment` या `/* Block */` |
 
 ## उदाहरण
@@ -165,7 +166,6 @@ interface Foo {
 
 ### असमर्थित तत्व
 
-- फील्ड डिक्लेरेशन
 - स्टैटिक इनिशियलाइज़र ब्लॉक
 - एनोनिमस क्लास
 - Lambda एक्सप्रेशन

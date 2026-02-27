@@ -19,6 +19,7 @@
 | 클래스 | `class` | `class User {}` |
 | 인터페이스 | `interface` | `interface Props {}` |
 | 타입 별칭 | `type` | `type ID = string` |
+| 모듈 레벨 const/let | `variable` | `const API_URL = "..."` |
 | 주석 | `doc` | `// Comment` |
 
 ## 예시

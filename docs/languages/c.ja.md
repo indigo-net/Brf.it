@@ -16,6 +16,7 @@
 | 構造体 | `struct` | `struct User { ... };` |
 | 列挙型 | `enum` | `enum Color { RED, GREEN, BLUE };` |
 | Typedef | `typedef` | `typedef struct { ... } User;` |
+| グローバル変数 | `variable` | `int global_count = 0;` |
 | オブジェクトマクロ | `macro` | `#define MAX_SIZE 100` |
 | 関数マクロ | `macro` | `#define MIN(a, b) ((a) < (b) ? (a) : (b))` |
 | コメント | `doc` | `// Comment` |
@@ -96,6 +97,5 @@ User* create_user();    // ポインタ戻り型
 
 ### サポートされない要素
 
-- グローバル変数
 - 関数ポインタ（変数として）
 - ネストされた構造体（トップレベルのみ抽出）

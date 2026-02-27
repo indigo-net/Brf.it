@@ -15,6 +15,7 @@
 | Klasse | `class` | `class User:` |
 | Methode | `method` | `def __init__(self):` |
 | Klassenmethode | `method` | `def method(cls):` |
+| Modul-Level-Variable | `variable` | `API_URL = "..."` |
 | Kommentar | `doc` | `# Comment` |
 
 ## Beispiel
@@ -127,4 +128,3 @@ def func():  # Signatur: "def func()"
 
 - Lambda-Ausdrücke
 - Verschachtelte Funktionen (nur äußere Funktion wird erfasst)
-- Modul-Level-Variablen

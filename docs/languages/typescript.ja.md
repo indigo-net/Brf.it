@@ -19,6 +19,7 @@
 | クラス | `class` | `class User {}` |
 | インターフェース | `interface` | `interface Props {}` |
 | 型エイリアス | `type` | `type ID = string` |
+| モジュールレベルconst/let | `variable` | `const API_URL = "..."` |
 | コメント | `doc` | `// Comment` |
 
 ## 例

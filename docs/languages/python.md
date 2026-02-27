@@ -15,6 +15,7 @@
 | Class | `class` | `class User:` |
 | Method | `method` | `def __init__(self):` |
 | Class method | `method` | `def method(cls):` |
+| Module-level variable | `variable` | `API_URL = "..."` |
 | Comment | `doc` | `# Comment` |
 
 ## Example
@@ -127,4 +128,3 @@ def func():  # Signature: "def func()"
 
 - Lambda expressions
 - Nested functions (only outer function is captured)
-- Module-level variables

@@ -16,6 +16,7 @@
 | Struct | `struct` | `struct User { ... };` |
 | Enum | `enum` | `enum Color { RED, GREEN, BLUE };` |
 | Typedef | `typedef` | `typedef struct { ... } User;` |
+| ग्लोबल वेरिएबल | `variable` | `int global_count = 0;` |
 | ऑब्जेक्ट मैक्रो | `macro` | `#define MAX_SIZE 100` |
 | फंक्शन मैक्रो | `macro` | `#define MIN(a, b) ((a) < (b) ? (a) : (b))` |
 | कमेंट | `doc` | `// Comment` |
@@ -96,6 +97,5 @@ User* create_user();    // पॉइंटर रिटर्न टाइप
 
 ### असमर्थित एलिमेंट
 
-- ग्लोबल वेरिएबल
 - फंक्शन पॉइंटर (वेरिएबल के रूप में)
 - नेस्टेड स्ट्रक्चर (केवल टॉप-लेवल एक्सट्रैक्ट होते हैं)

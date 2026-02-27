@@ -13,6 +13,7 @@
 | फंक्शन | `function` | `func DoSomething()` |
 | मेथड | `method` | `func (s *Server) Start()` |
 | टाइप (struct, interface आदि) | `type` | `type User struct {...}` |
+| कॉन्स्ट/वार | `variable` | `const MaxSize = 100` |
 | कमेंट | `doc` | `// Comment` |
 
 ## उदाहरण
@@ -79,6 +80,4 @@ func (s *Server) Start() error {
 
 ### असमर्थित तत्व
 
-- पैकेज-लेवल वेरिएबल्स (`var`)
-- कॉन्स्टेंट्स (`const`)
 - एम्बेडेड फंक्शन (फंक्शन के अंदर फंक्शन)
