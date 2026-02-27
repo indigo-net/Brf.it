@@ -257,8 +257,9 @@ func isExported(name, language string) bool {
 
 	switch language {
 	case "go":
-		// Go: first letter uppercase
-		return name[0] >= 'A' && name[0] <= 'Z'
+		// Go: module-level symbols are always included
+		// (Tree-sitter query already captures only package-level declarations)
+		return true
 	case "typescript", "tsx", "javascript", "jsx":
 		// TypeScript/JavaScript: assume all found signatures are exported
 		// (since we query for export_statement patterns)

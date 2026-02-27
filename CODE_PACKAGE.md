@@ -7,6 +7,10 @@
 ### cmd/brfit/main.go
 
 ```go
+version = "dev"
+commit  = "none"
+date    = "unknown"
+func main()
 ```
 
 ---
@@ -28,8 +32,16 @@ Version = "dev"
 Commit  = "none"
 Date    = "unknown"
 func SetBuildInfo(v, c, d string)
+cfg *config.Config
+rootCmd *cobra.Command
+func init()
 func Execute()
 func NewRootCommand() *cobra.Command
+func newRootCommandWithConfig(c *config.Config) *cobra.Command
+func addFlags(cmd *cobra.Command, c *config.Config)
+func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
+func writeOutput(result *context.Result, c *config.Config) error
+func writeToFile(path string, content []byte) error
 ```
 
 ---
@@ -49,10 +61,13 @@ func NewRootCommand() *cobra.Command
 ```go
 func TestExecuteHelp(t *testing.T)
 func TestExecuteVersion(t *testing.T)
+buf bytes.Buffer
 func TestNewRootCommand(t *testing.T)
 func TestParseFlags(t *testing.T)
 func TestRootCommandIntegration(t *testing.T)
+buf bytes.Buffer
 func TestRootCommandIntegrationMarkdown(t *testing.T)
+buf bytes.Buffer
 func TestRootCommandPathNotFound(t *testing.T)
 func TestWriteToFile(t *testing.T)
 ```
@@ -117,8 +132,11 @@ func (c *Config) ToOptions() *pkgcontext.Options
 
 ```go
 func TestDefaultConfig(t *testing.T)
+expectedMaxSize = 512000
 func TestConfigValidate(t *testing.T)
 func TestConfigSupportedLanguages(t *testing.T)
+func containsString(s, substr string) bool
+func containsSubstring(s, substr string) bool
 ```
 
 ---
@@ -194,7 +212,9 @@ func NewPackager(
 ) *Packager
 func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
 func (p *Packager) Package(opts *Options) (*Result, error)
+treeStr string
 func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
+func normalizeFormat(format string) string
 ```
 
 ---
@@ -211,7 +231,15 @@ func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
 - `import "github.com/indigo-net/Brf.it/pkg/tokenizer"`
 
 ```go
+type mockScanner struct {
+	result *scanner.ScanResult
+	err    error
+}
 func (m *mockScanner) Scan() (*scanner.ScanResult, error)
+type mockExtractor struct {
+	result *extractor.ExtractResult
+	err    error
+}
 func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
 func TestPackagerPackage(t *testing.T)
 func TestPackagerPackageMarkdown(t *testing.T)
@@ -236,7 +264,13 @@ func TestNormalizeFormat(t *testing.T)
 - `import "strings"`
 
 ```go
+type treeNode struct {
+	children map[string]*treeNode
+}
 func BuildTree(root string, paths []string) string
+buf strings.Builder
+func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
+newPrefix string
 ```
 
 ---
@@ -305,6 +339,7 @@ type FileExtractor struct {
 func NewFileExtractor(registry *parser.Registry) *FileExtractor
 func NewDefaultFileExtractor() *FileExtractor
 func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
 ```
 
 ---
@@ -321,7 +356,9 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 
 ```go
 func TestFileExtractorImplementsExtractor(t *testing.T)
+_ Extractor = (*FileExtractor)(nil)
 func TestFileExtractorExtract(t *testing.T)
+foundAdd bool
 func TestFileExtractorUnsupportedLanguage(t *testing.T)
 ```
 
@@ -386,7 +423,9 @@ type Formatter interface {
 
 ```go
 func TestXMLFormatterImplementsFormatter(t *testing.T)
+_ Formatter = (*XMLFormatter)(nil)
 func TestMarkdownFormatterImplementsFormatter(t *testing.T)
+_ Formatter = (*MarkdownFormatter)(nil)
 func TestXMLFormatterFormat(t *testing.T)
 func TestXMLFormatterFormatWithError(t *testing.T)
 func TestMarkdownFormatterFormat(t *testing.T)
@@ -395,6 +434,28 @@ func TestXMLFormatterEscapeXML(t *testing.T)
 func TestMarkdownFormatterEscapeMarkdown(t *testing.T)
 func TestXMLFormatterEmptyData(t *testing.T)
 func TestMarkdownFormatterEmptyData(t *testing.T)
+func TestMarkdownFormatterEmptyFile(t *testing.T)
+func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)
+func TestXMLFormatterEmptyFile(t *testing.T)
+```
+
+---
+
+### pkg/formatter/helpers.go
+
+```go
+func getEmptyComment(lang string) string
+```
+
+---
+
+### pkg/formatter/helpers_test.go
+
+**Imports:**
+- `import "testing"`
+
+```go
+func TestGetEmptyComment(t *testing.T)
 ```
 
 ---
@@ -411,6 +472,9 @@ type MarkdownFormatter struct{}
 func NewMarkdownFormatter() *MarkdownFormatter
 func (f *MarkdownFormatter) Name() string
 func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)
+buf bytes.Buffer
+imports, exports []string
+func escapeMarkdown(s string) string
 ```
 
 ---
@@ -427,6 +491,8 @@ type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
 func (f *XMLFormatter) Name() string
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
+buf bytes.Buffer
+func escapeXML(s string) string
 ```
 
 ---
@@ -547,6 +613,7 @@ type Registry struct {
 	parsers map[string]Parser
 }
 func NewRegistry() *Registry
+defaultRegistry = NewRegistry()
 func DefaultRegistry() *Registry
 func (r *Registry) Register(lang string, parser Parser)
 func (r *Registry) Get(lang string) (Parser, bool)
@@ -587,6 +654,7 @@ func TestSignatureDefaults(t *testing.T)
 func TestParseResultDefaults(t *testing.T)
 func TestNodeKind(t *testing.T)
 func TestParserInterface(t *testing.T)
+_ Parser = (*MockParser)(nil)
 type MockParser struct {
 	signatures []Signature
 	err        error
@@ -618,6 +686,107 @@ func (q *CQuery) Query() []byte
 func (q *CQuery) Captures() []string
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
+cImportQueryPattern = `
+; #include directives (capture full statement)
+(preproc_include) @import_path
+`
+cQueryPattern = `
+; Function definitions - direct declarator
+(function_definition
+  declarator: (function_declarator
+    declarator: (identifier) @name
+  )
+) @signature @kind
+
+; Function definitions - pointer return type
+(function_definition
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - direct declarator
+(declaration
+  declarator: (function_declarator
+    declarator: (identifier) @name
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - pointer return type
+(declaration
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Struct specifiers
+(struct_specifier
+  name: (type_identifier) @name
+) @signature @kind
+
+; Enum specifiers
+(enum_specifier
+  name: (type_identifier) @name
+) @signature @kind
+
+; Typedef
+(type_definition
+  declarator: (type_identifier) @name
+) @signature @kind
+
+; Function-like macros
+(preproc_function_def
+  name: (identifier) @name
+) @signature @kind
+
+; Object-like macros
+(preproc_def
+  name: (identifier) @name
+) @signature @kind
+
+; Global variable declarations (with initializer)
+(translation_unit
+  (declaration
+    declarator: (init_declarator
+      declarator: (identifier) @name
+    )
+  ) @signature @kind
+)
+
+; Global variable declarations (simple identifier, e.g., extern)
+(translation_unit
+  (declaration
+    declarator: (identifier) @name
+  ) @signature @kind
+)
+
+; Global pointer variable declarations
+(translation_unit
+  (declaration
+    declarator: (pointer_declarator
+      declarator: (identifier) @name
+    )
+  ) @signature @kind
+)
+
+; Global pointer variable declarations (with initializer)
+(translation_unit
+  (declaration
+    declarator: (init_declarator
+      declarator: (pointer_declarator
+        declarator: (identifier) @name
+      )
+    )
+  ) @signature @kind
+)
+
+; Comments
+(comment) @doc
+`
 ```
 
 ---
@@ -633,6 +802,7 @@ func (q *CQuery) ImportQuery() []byte
 func TestCQueryLanguage(t *testing.T)
 func TestCQueryPattern(t *testing.T)
 func TestCQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
 func TestCQueryExtractStruct(t *testing.T)
 func TestCQueryExtractMacro(t *testing.T)
 func TestCQueryExtractEnum(t *testing.T)
@@ -649,6 +819,10 @@ func TestCQueryExtractGlobalVariables(t *testing.T)
 - `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
 
 ```go
+captureName      = "name"
+captureSignature = "signature"
+captureDoc       = "doc"
+captureKind      = "kind"
 type GoQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -659,6 +833,50 @@ func (q *GoQuery) Query() []byte
 func (q *GoQuery) Captures() []string
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
+goImportQueryPattern = `
+; Single import (capture full spec including alias)
+(import_declaration
+  (import_spec) @import_path
+)
+
+; Multi-line imports (capture each spec)
+(import_declaration
+  (import_spec_list
+    (import_spec) @import_path
+  )
+)
+`
+goQueryPattern = `
+; Function declarations
+(function_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Method declarations
+(method_declaration
+  name: (field_identifier) @name
+) @signature @kind
+
+; Type declarations (struct, interface, etc.)
+(type_declaration
+  (type_spec
+    name: (type_identifier) @name
+  )
+) @signature @kind
+
+; Package-level const specs (captures each const individually)
+(const_spec
+  name: (identifier) @name
+) @signature @kind
+
+; Package-level var specs (captures each var individually)
+(var_spec
+  name: (identifier) @name
+) @signature @kind
+
+; Comments (documentation)
+(comment) @doc
+`
 ```
 
 ---
@@ -674,6 +892,9 @@ func (q *GoQuery) ImportQuery() []byte
 func TestGoQueryLanguage(t *testing.T)
 func TestGoQueryPattern(t *testing.T)
 func TestGoQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+funcKindNode *sitter.Node
+kindNode *sitter.Node
 func TestGoQueryExtractConstAndVar(t *testing.T)
 ```
 
@@ -696,6 +917,57 @@ func (q *JavaQuery) Query() []byte
 func (q *JavaQuery) Captures() []string
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
+javaImportQueryPattern = `
+; import statements (capture full declaration)
+(import_declaration) @import_path
+`
+javaQueryPattern = `
+; Class declarations (includes inner classes)
+(class_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Interface declarations
+(interface_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Method declarations
+(method_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Constructor declarations
+(constructor_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Enum declarations
+(enum_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Annotation type declarations (@interface)
+(annotation_type_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Record declarations (Java 14+)
+(record_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Field declarations (static fields filtered in parser.go)
+(field_declaration
+  (variable_declarator
+    name: (identifier) @name
+  )
+) @signature @kind
+
+; Comments (Javadoc and regular)
+(line_comment) @doc
+(block_comment) @doc
+`
 ```
 
 ---
@@ -712,9 +984,12 @@ func TestJavaQueryLanguage(t *testing.T)
 func TestJavaQueryPattern(t *testing.T)
 func TestJavaQueryKindMapping(t *testing.T)
 func TestJavaQueryExtractClass(t *testing.T)
+foundClass, foundMethod bool
 func TestJavaQueryExtractInterface(t *testing.T)
 func TestJavaQueryExtractEnum(t *testing.T)
+foundEnum bool
 func TestJavaQueryExtractAnnotationType(t *testing.T)
+foundAnnotation bool
 func TestJavaQueryExtractRecord(t *testing.T)
 func TestJavaQueryExtractGenerics(t *testing.T)
 func TestJavaQueryExtractFieldDeclarations(t *testing.T)
@@ -739,6 +1014,36 @@ func (q *PythonQuery) Query() []byte
 func (q *PythonQuery) Captures() []string
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
+pythonImportQueryPattern = `
+; import module (capture full statement)
+(import_statement) @import_path
+
+; from module import ... (capture full statement)
+(import_from_statement) @import_path
+`
+pythonQueryPattern = `
+; Function definitions (includes async def, methods)
+(function_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Class definitions
+(class_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Module-level assignments (simple and with type annotations)
+(module
+  (expression_statement
+    (assignment
+      left: (identifier) @name
+    )
+  ) @signature @kind
+)
+
+; Comments
+(comment) @doc
+`
 ```
 
 ---
@@ -754,8 +1059,10 @@ func (q *PythonQuery) ImportQuery() []byte
 func TestPythonQueryLanguage(t *testing.T)
 func TestPythonQueryPattern(t *testing.T)
 func TestPythonQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
 func TestPythonQueryExtractClass(t *testing.T)
 func TestPythonQueryExtractAsyncFunction(t *testing.T)
+funcCaptures map[string]string
 func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
@@ -778,6 +1085,120 @@ func (q *TypeScriptQuery) Query() []byte
 func (q *TypeScriptQuery) Captures() []string
 func (q *TypeScriptQuery) KindMapping() map[string]string
 func (q *TypeScriptQuery) ImportQuery() []byte
+typeScriptImportQueryPattern = `
+; Import statements (capture full statement)
+(import_statement) @import_path
+
+; Export statements with source (re-exports)
+(export_statement
+  source: (string)
+) @import_path @export_type
+
+; Named exports without source (local exports)
+(export_statement
+  declaration: (_
+    name: (identifier) @export_name
+  )
+)
+
+; Export clause (export { foo, bar })
+(export_statement
+  (export_clause
+    (export_specifier
+      name: (identifier) @export_name
+    )
+  )
+)
+`
+typeScriptQueryPattern = `
+; Function declarations
+(function_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Exported function declarations
+(export_statement
+  (function_declaration
+    name: (identifier) @name
+  )
+) @signature @kind
+
+; Arrow functions in variable declarations (capture full declaration with const/let/var)
+(lexical_declaration
+  (variable_declarator
+    name: (identifier) @name
+    value: (arrow_function)
+  )
+) @signature @kind
+
+; Module-level const/let declarations with values (captures all module-level)
+; Deduplication for arrow functions is handled in parser.go
+(program
+  (lexical_declaration
+    (variable_declarator
+      name: (identifier) @name
+      value: (_)
+    )
+  ) @signature @kind
+)
+
+; Module-level const/let without initial value (TypeScript declares)
+(program
+  (lexical_declaration
+    (variable_declarator
+      name: (identifier) @name
+      !value
+    )
+  ) @signature @kind
+)
+
+; Exported module-level const/let declarations with values
+(program
+  (export_statement
+    declaration: (lexical_declaration
+      (variable_declarator
+        name: (identifier) @name
+        value: (_)
+      )
+    )
+  ) @signature @kind
+)
+
+; Exported module-level const/let without initial value
+(program
+  (export_statement
+    declaration: (lexical_declaration
+      (variable_declarator
+        name: (identifier) @name
+        !value
+      )
+    )
+  ) @signature @kind
+)
+
+; Method definitions
+(method_definition
+  name: (property_identifier) @name
+) @signature @kind
+
+; Class declarations
+(class_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Interface declarations
+(interface_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Type alias declarations
+(type_alias_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Comments (documentation)
+(comment) @doc
+`
 ```
 
 ---
@@ -793,6 +1214,7 @@ func (q *TypeScriptQuery) ImportQuery() []byte
 func TestTypeScriptQueryLanguage(t *testing.T)
 func TestTypeScriptQueryPattern(t *testing.T)
 func TestTypeScriptQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
 func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
@@ -809,12 +1231,50 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 - `import "github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"`
 
 ```go
+func init()
 type TreeSitterParser struct {
 	queries map[string]LanguageQuery
 }
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error)
+imports []parser.ImportExport
 func (p *TreeSitterParser) Languages() []string
+func (p *TreeSitterParser) extractSignatures(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+) []parser.Signature
+signatures []parser.Signature
+kindNode *sitter.Node
+func cleanComment(text string) string
+func isExported(name, language string) bool
+func stripBody(text, kind, language string) string
+func stripGoBody(text, kind string) string
+tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
+tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+func stripTypeScriptBody(text, kind string) string
+func stripTSFunctionBody(text string) string
+func findFunctionBodyStart(text string) int
+func findTSClassBodyStart(text string) int
+func stripPythonBody(text, kind string) string
+func findPythonBodyStart(text string) int
+func stripCBody(text, kind string) string
+func isPythonMethod(signature string) bool
+func stripJavaBody(text, kind string) string
+func findJavaBodyStart(text string) int
+func isJavaPrivate(signature string) bool
+func (p *TreeSitterParser) extractImports(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+) []parser.ImportExport
+imports []parser.ImportExport
+imp parser.ImportExport
+hasExportType bool
+func cleanImportPath(path string) string
 ```
 
 ---
@@ -828,18 +1288,25 @@ func (p *TreeSitterParser) Languages() []string
 
 ```go
 func TestTreeSitterParserImplementsParser(t *testing.T)
+_ parser.Parser = (*TreeSitterParser)(nil)
 func TestTreeSitterParserLanguages(t *testing.T)
 func TestTreeSitterParserParseGo(t *testing.T)
+foundAdd bool
 func TestTreeSitterParserParseTypeScript(t *testing.T)
+foundAdd bool
 func TestTreeSitterParserUnsupportedLanguage(t *testing.T)
 func TestTreeSitterParserAutoRegistration(t *testing.T)
 func TestGoSignatureOnlyExtraction(t *testing.T)
 func TestGoIncludeBodyExtraction(t *testing.T)
+foundAdd bool
 func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
 func TestTypeScriptArrowFunctionSignature(t *testing.T)
+func contains(s, substr string) bool
 func TestTreeSitterParserParseJava(t *testing.T)
+foundClass, foundConstructor, foundMethod bool
 func TestJavaSignatureOnlyExtraction(t *testing.T)
 func TestJavaGenericsExtraction(t *testing.T)
+foundClass, foundMethod bool
 func TestJavaAutoRegistration(t *testing.T)
 func TestGoVariableExtraction(t *testing.T)
 func TestTypeScriptVariableExtraction(t *testing.T)
@@ -969,6 +1436,7 @@ type FileScanner struct {
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
 func (s *FileScanner) Scan() (*ScanResult, error)
+func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
 
 ---
@@ -985,8 +1453,10 @@ func TestNewFileScanner(t *testing.T)
 func TestNewFileScannerNilOptions(t *testing.T)
 func TestFileEntryDefaults(t *testing.T)
 func TestScanOptionsDefaults(t *testing.T)
+expectedMaxSize = 512000
 func TestScanOptionsWithExtensions(t *testing.T)
 func TestScannerInterface(t *testing.T)
+_ Scanner = (*FileScanner)(nil)
 func TestScanEmptyDirectory(t *testing.T)
 func TestScanSingleFile(t *testing.T)
 func TestScanFilterByExtension(t *testing.T)
@@ -1009,6 +1479,7 @@ type TiktokenTokenizer struct {
 	encoding string
 	tke      *tiktoken.Tiktoken
 }
+_ Tokenizer = (*TiktokenTokenizer)(nil)
 func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
 func (t *TiktokenTokenizer) Count(text string) (int, error)
 func (t *TiktokenTokenizer) Name() string
@@ -1028,6 +1499,7 @@ type Tokenizer interface {
 	Name() string
 }
 type NoOpTokenizer struct{}
+_ Tokenizer = (*NoOpTokenizer)(nil)
 func NewNoOpTokenizer() *NoOpTokenizer
 func (t *NoOpTokenizer) Count(_ string) (int, error)
 func (t *NoOpTokenizer) Name() string
@@ -1043,7 +1515,9 @@ func (t *NoOpTokenizer) Name() string
 
 ```go
 func TestNoOpTokenizerImplementsTokenizer(t *testing.T)
+_ Tokenizer = (*NoOpTokenizer)(nil)
 func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)
+_ Tokenizer = (*TiktokenTokenizer)(nil)
 func TestNoOpTokenizerCount(t *testing.T)
 func TestNoOpTokenizerName(t *testing.T)
 func TestTiktokenTokenizerCount(t *testing.T)
