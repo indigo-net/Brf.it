@@ -21,6 +21,7 @@ func init() {
 	parser.RegisterParser("python", NewTreeSitterParser())
 	parser.RegisterParser("c", NewTreeSitterParser())
 	parser.RegisterParser("java", NewTreeSitterParser())
+	parser.RegisterParser("cpp", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -40,6 +41,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"python":     languages.NewPythonQuery(),
 			"c":          languages.NewCQuery(),
 			"java":       languages.NewJavaQuery(),
+			"cpp":        languages.NewCppQuery(),
 		},
 	}
 }
@@ -209,13 +211,8 @@ func (p *TreeSitterParser) extractSignatures(
 			seenLines[sig.Line] = true
 
 			// Filter private if needed
-			if !opts.IncludePrivate {
-				// Java: check for private modifier in signature text
-				if opts.Language == "java" && isJavaPrivate(sig.Text) {
-					continue
-				} else if !isExported(sig.Name, opts.Language) {
-					continue
-				}
+			if !opts.IncludePrivate && !isExported(sig.Name, opts.Language) {
+				continue
 			}
 
 			// Strip body if IncludeBody is false (default)
@@ -270,9 +267,11 @@ func isExported(name, language string) bool {
 	case "c":
 		// C: all functions are considered exported (static functions handled separately)
 		return true
+	case "cpp":
+		// C++: all elements are considered exported (access control in class context is complex)
+		return true
 	case "java":
-		// Java: visibility is determined by modifiers, not name
-		// Private filtering is done in extractSignatures using isJavaPrivate()
+		// Java: all elements are considered exported (visibility modifiers not filtered)
 		return true
 	default:
 		return false
@@ -291,6 +290,8 @@ func stripBody(text, kind, language string) string {
 		return stripPythonBody(text, kind)
 	case "c":
 		return stripCBody(text, kind)
+	case "cpp":
+		return stripCppBody(text, kind)
 	case "java":
 		return stripJavaBody(text, kind)
 	default:
@@ -520,6 +521,61 @@ func stripCBody(text, kind string) string {
 	return text
 }
 
+// stripCppBody removes the body from C++ declarations.
+func stripCppBody(text, kind string) string {
+	switch kind {
+	case "function", "method", "constructor", "destructor":
+		// Remove everything after {
+		braceIdx := findCppBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "struct", "namespace":
+		// For classes/structs/namespaces, remove the body
+		braceIdx := findCppBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "template":
+		// Templates: find the underlying declaration and strip its body
+		braceIdx := findCppBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "enum", "typedef", "macro":
+		// Keep full text
+		return text
+	}
+	return text
+}
+
+// findCppBodyStart finds the index where the C++ body starts.
+// Handles nested angle brackets for templates.
+func findCppBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
 // isPythonMethod checks if a Python function is actually a method
 // by looking for self or cls as the first parameter.
 func isPythonMethod(signature string) bool {
@@ -589,22 +645,6 @@ func findJavaBodyStart(text string) int {
 		}
 	}
 	return -1
-}
-
-// isJavaPrivate checks if a Java signature has private visibility.
-func isJavaPrivate(signature string) bool {
-	words := strings.Fields(signature)
-	for _, word := range words {
-		if word == "private" {
-			return true
-		}
-		// Stop after modifiers (hit declaration keyword)
-		if word == "class" || word == "interface" || word == "enum" ||
-			word == "void" || word == "@interface" || word == "record" {
-			break
-		}
-	}
-	return false
 }
 
 // extractImports extracts import/export statements from the AST.

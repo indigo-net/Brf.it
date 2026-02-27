@@ -123,7 +123,8 @@ brfit . -o briefing.xml    # Save to file
 | TypeScript | `.ts`, `.tsx` | [TypeScript Guide](docs/languages/typescript.md) |
 | JavaScript | `.js`, `.jsx` | [TypeScript Guide](docs/languages/typescript.md) |
 | Python | `.py` | [Python Guide](docs/languages/python.md) |
-| C | `.c`, `.h` | [C Guide](docs/languages/c.md) |
+| C | `.c` | [C Guide](docs/languages/c.md) |
+| C++ | `.cpp`, `.hpp`, `.h` | [C++ Guide](docs/languages/cpp.md) |
 | Java | `.java` | [Java Guide](docs/languages/java.md) |
 
 ---

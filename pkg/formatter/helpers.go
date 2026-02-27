@@ -7,6 +7,8 @@ func getEmptyComment(lang string) string {
 		return "# (empty)"
 	case "html", "xml":
 		return "<!-- (empty) -->"
+	case "go", "c", "cpp", "java", "javascript", "typescript":
+		return "// (empty)"
 	default:
 		return "// (empty)"
 	}

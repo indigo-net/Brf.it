@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -330,7 +330,7 @@ public class User {
     }
 
     private void internalMethod() {
-        // Private method - should be filtered
+        // Private method - now included (no private filtering)
     }
 }
 `
@@ -340,13 +340,13 @@ public class User {
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	// Should have: User class, User constructor, getName method
-	// Should NOT have: internalMethod (private)
-	if len(result.Signatures) < 3 {
-		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
+	// Should have: User class, User constructor, getName method, internalMethod
+	// Private methods are now included (no private filtering)
+	if len(result.Signatures) < 4 {
+		t.Errorf("expected at least 4 signatures, got %d", len(result.Signatures))
 	}
 
-	var foundClass, foundConstructor, foundMethod bool
+	var foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
 	for _, sig := range result.Signatures {
 		switch sig.Name {
 		case "User":
@@ -356,12 +356,15 @@ public class User {
 				foundConstructor = true
 			}
 		case "getName":
-			foundMethod = true
+			foundPublicMethod = true
 			if sig.Kind != "method" {
 				t.Errorf("expected kind 'method', got '%s'", sig.Kind)
 			}
 		case "internalMethod":
-			t.Error("private method 'internalMethod' should be filtered out")
+			foundPrivateMethod = true
+			if sig.Kind != "method" {
+				t.Errorf("expected kind 'method', got '%s'", sig.Kind)
+			}
 		}
 	}
 
@@ -371,8 +374,11 @@ public class User {
 	if !foundConstructor {
 		t.Error("expected to find 'User' constructor")
 	}
-	if !foundMethod {
+	if !foundPublicMethod {
 		t.Error("expected to find 'getName' method")
+	}
+	if !foundPrivateMethod {
+		t.Error("expected to find 'internalMethod' (private methods now included)")
 	}
 }
 
@@ -499,6 +505,163 @@ func TestJavaAutoRegistration(t *testing.T) {
 	}
 	if p == nil {
 		t.Error("expected non-nil parser for 'java'")
+	}
+}
+
+func TestTreeSitterParserParseCpp(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `#include <iostream>
+
+// Simple class without constructor (to avoid name collision)
+class SimpleClass {
+public:
+    void doSomething();
+};
+
+namespace utils {
+    int helper(int x);
+}
+
+template<typename T>
+T getMax(T a, T b) {
+    return (a > b) ? a : b;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "cpp"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Signatures) < 3 {
+		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Check for class
+	if kind, ok := foundNames["SimpleClass"]; !ok {
+		t.Error("expected to find class 'SimpleClass'")
+	} else if kind != "class" {
+		t.Errorf("expected kind 'class' for SimpleClass, got '%s'", kind)
+	}
+
+	// Check for namespace
+	if kind, ok := foundNames["utils"]; !ok {
+		t.Error("expected to find namespace 'utils'")
+	} else if kind != "namespace" {
+		t.Errorf("expected kind 'namespace' for utils, got '%s'", kind)
+	}
+}
+
+func TestCppSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `class Calculator {
+public:
+    int add(int a, int b) {
+        return a + b;
+    }
+};
+
+int multiply(int a, int b) {
+    return a * b;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Calculator":
+			// Class should not contain body
+			if contains(sig.Text, "int add") {
+				t.Errorf("class signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "multiply":
+			// Function should not contain body
+			if contains(sig.Text, "return") {
+				t.Errorf("function signature should not contain body, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+func TestCppTemplateExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `template<typename T>
+class Box {
+    T value;
+public:
+    T getValue() const;
+};
+
+template<typename T, typename U>
+T convert(U input) {
+    return static_cast<T>(input);
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Check for template class
+	if _, ok := foundNames["Box"]; !ok {
+		t.Error("expected to find template class 'Box'")
+	}
+
+	// Check for template function
+	if _, ok := foundNames["convert"]; !ok {
+		t.Error("expected to find template function 'convert'")
+	}
+}
+
+func TestCppAutoRegistration(t *testing.T) {
+	registry := parser.DefaultRegistry()
+
+	p, ok := registry.Get("cpp")
+	if !ok {
+		t.Error("expected parser for 'cpp' to be registered")
+	}
+	if p == nil {
+		t.Error("expected non-nil parser for 'cpp'")
+	}
+}
+
+func TestCppImportExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `#include <iostream>
+#include <vector>
+#include "myheader.h"
+
+int main() {
+    return 0;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Imports) != 3 {
+		t.Errorf("expected 3 imports, got %d", len(result.Imports))
 	}
 }
 
