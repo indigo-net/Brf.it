@@ -89,7 +89,8 @@ release:
     name: Brf.it
 
 brews:
-  - repository:
+  - name: brfit
+    repository:
       owner: indigo-net
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
