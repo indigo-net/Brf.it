@@ -87,3 +87,17 @@ release:
   github:
     owner: indigo-net
     name: Brf.it
+
+brews:
+  - repository:
+      owner: indigo-net
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: https://github.com/indigo-net/Brf.it
+    description: "AI 코딩 어시스턴트를 위한 코드 브리핑 도구"
+    license: MIT
+    install: |
+      bin.install "brfit"
+    test: |
+      system "#{bin}/brfit", "--version"
