@@ -36,5 +36,6 @@ jobs:
             -v "$PWD":/go/src/github.com/indigo-net/Brf.it \
             -w /go/src/github.com/indigo-net/Brf.it \
             -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -e HOMEBREW_TAP_GITHUB_TOKEN=${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }} \
             ghcr.io/goreleaser/goreleaser-cross:v1.22 \
             release --clean
