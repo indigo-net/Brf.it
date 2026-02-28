@@ -277,12 +277,12 @@ func printTree(node *sitter.Node, code []byte, indent int) {
 
 **Go 예외**: `import_spec`은 `"fmt"` 형태라 `cleanImportPath()`에서 `import ` prefix 추가 처리
 
-### CODE_PACKAGE 생성
+### SAMPLE 파일 생성
 
 프로젝트 코드베이스 요약 파일 생성:
 ```bash
-brfit . -f md --no-tokens --include-imports --no-tree -o CODE_PACKAGE.md
-brfit . -f xml --no-tokens --include-imports --no-tree -o CODE_PACKAGE.xml
+brfit . -f md --no-tokens --include-imports --no-tree -o SAMPLE.md
+brfit . -f xml --no-tokens --include-imports --no-tree -o SAMPLE.xml
 ```
 
 **자동 갱신**: `.github/workflows/update-code-package.yml`이 main push 시 자동 실행 (paths-ignore로 무한 루프 방지)

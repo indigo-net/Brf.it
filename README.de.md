@@ -103,6 +103,14 @@ brfit . -o briefing.xml    # In Datei speichern
 
 ---
 
+## In Aktion sehen
+
+**[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
+
+Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch generiert.
+
+---
+
 ## Funktionen
 
 | Funktion | Beschreibung |
@@ -215,4 +223,6 @@ func Scan(root string) (*Result, error)
 
 ## Lizenz
 
-[MIT](LICENSE)
+MIT-Lizenz — Frei verwendbar in persönlichen und kommerziellen Projekten.
+
+Siehe [LICENSE](LICENSE) für Details.

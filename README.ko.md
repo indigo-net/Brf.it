@@ -103,6 +103,14 @@ brfit . -o briefing.xml    # 파일로 저장
 
 ---
 
+## 실제 사용 예시
+
+**[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
+
+brfit으로 패키징한 이 프로젝트 자체입니다. 커밋마다 자동 생성됩니다.
+
+---
+
 ## 주요 기능
 
 | 기능 | 설명 |
@@ -215,4 +223,6 @@ func Scan(root string) (*Result, error)
 
 ## 라이선스
 
-[MIT](LICENSE)
+MIT 라이선스 — 개인 및 상업 프로젝트에서 자유롭게 사용 가능합니다.
+
+자세한 내용은 [LICENSE](LICENSE)를 참조하세요.
