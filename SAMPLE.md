@@ -812,6 +812,241 @@ func TestCQueryExtractGlobalVariables(t *testing.T)
 
 ---
 
+### pkg/parser/treesitter/languages/cpp.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
+
+```go
+type CppQuery struct {
+	language *sitter.Language
+	query    []byte
+}
+func NewCppQuery() *CppQuery
+func (q *CppQuery) Language() *sitter.Language
+func (q *CppQuery) Query() []byte
+func (q *CppQuery) Captures() []string
+func (q *CppQuery) KindMapping() map[string]string
+func (q *CppQuery) ImportQuery() []byte
+cppImportQueryPattern = `
+; #include directives (capture full statement)
+(preproc_include) @import_path
+`
+cppQueryPattern = `
+; Function definitions - direct declarator
+(function_definition
+  declarator: (function_declarator
+    declarator: (identifier) @name
+  )
+) @signature @kind
+
+; Function definitions - pointer return type
+(function_definition
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Function definitions - reference return type
+(function_definition
+  declarator: (reference_declarator
+    (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - direct declarator
+(declaration
+  declarator: (function_declarator
+    declarator: (identifier) @name
+  )
+) @signature @kind
+
+; Function declarations (prototypes) - pointer return type
+(declaration
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Class definitions
+(class_specifier
+  name: (type_identifier) @name
+) @signature @kind
+
+; Struct specifiers
+(struct_specifier
+  name: (type_identifier) @name
+) @signature @kind
+
+; Enum specifiers
+(enum_specifier
+  name: (type_identifier) @name
+) @signature @kind
+
+; Typedef
+(type_definition
+  declarator: (type_identifier) @name
+) @signature @kind
+
+; Function-like macros
+(preproc_function_def
+  name: (identifier) @name
+) @signature @kind
+
+; Object-like macros
+(preproc_def
+  name: (identifier) @name
+) @signature @kind
+
+; Method declarations in class (regular methods)
+(field_declaration
+  declarator: (function_declarator
+    declarator: (field_identifier) @name
+  )
+) @signature @kind
+
+; Method declarations with pointer return type
+(field_declaration
+  declarator: (pointer_declarator
+    declarator: (function_declarator
+      declarator: (field_identifier) @name
+    )
+  )
+) @signature @kind
+
+; Method declarations with reference return type
+(field_declaration
+  declarator: (reference_declarator
+    (function_declarator
+      declarator: (field_identifier) @name
+    )
+  )
+) @signature @kind
+
+; Constructor declarations (in class body)
+(function_definition
+  declarator: (function_declarator
+    declarator: (qualified_identifier
+      name: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Destructor definitions (outside class)
+(function_definition
+  declarator: (function_declarator
+    declarator: (destructor_name
+      (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Destructor declarations in class (captured via declaration node)
+(declaration
+  declarator: (function_declarator
+    declarator: (destructor_name
+      (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Namespace definitions
+(namespace_definition
+  name: (namespace_identifier) @name
+) @signature @kind
+
+; Template function definitions
+(template_declaration
+  (function_definition
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Template function definitions - pointer return type
+(template_declaration
+  (function_definition
+    declarator: (pointer_declarator
+      declarator: (function_declarator
+        declarator: (identifier) @name
+      )
+    )
+  )
+) @signature @kind
+
+; Template class definitions
+(template_declaration
+  (class_specifier
+    name: (type_identifier) @name
+  )
+) @signature @kind
+
+; Template struct definitions
+(template_declaration
+  (struct_specifier
+    name: (type_identifier) @name
+  )
+) @signature @kind
+
+; Template declarations (standalone)
+(template_declaration
+  (declaration
+    declarator: (function_declarator
+      declarator: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Comments
+(comment) @doc
+`
+```
+
+---
+
+### pkg/parser/treesitter/languages/cpp_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
+
+```go
+func TestCppQueryLanguage(t *testing.T)
+func TestCppQueryPattern(t *testing.T)
+func TestCppQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+func TestCppQueryExtractClass(t *testing.T)
+func TestCppQueryExtractMethod(t *testing.T)
+func TestCppQueryExtractConstructorDestructor(t *testing.T)
+func TestCppQueryExtractNamespace(t *testing.T)
+func TestCppQueryExtractTemplate(t *testing.T)
+func TestCppQueryExtractStruct(t *testing.T)
+func TestCppQueryExtractEnum(t *testing.T)
+func TestCppQueryExtractMacro(t *testing.T)
+func TestCppQueryExtractTypedef(t *testing.T)
+func TestCppQueryExtractIncludes(t *testing.T)
+imports []string
+func TestCppQueryNestedNamespaces(t *testing.T)
+func TestCppQueryMultipleInheritance(t *testing.T)
+func TestCppQueryEmptyFile(t *testing.T)
+func TestCppQueryOnlyComments(t *testing.T)
+nameCount int
+docCount int
+func TestCppQueryKindMapping(t *testing.T)
+func TestCppQueryCaptures(t *testing.T)
+```
+
+---
+
 ### pkg/parser/treesitter/languages/go.go
 
 **Imports:**
@@ -1261,10 +1496,11 @@ func findTSClassBodyStart(text string) int
 func stripPythonBody(text, kind string) string
 func findPythonBodyStart(text string) int
 func stripCBody(text, kind string) string
+func stripCppBody(text, kind string) string
+func findCppBodyStart(text string) int
 func isPythonMethod(signature string) bool
 func stripJavaBody(text, kind string) string
 func findJavaBodyStart(text string) int
-func isJavaPrivate(signature string) bool
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -1303,11 +1539,16 @@ func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
 func TestTypeScriptArrowFunctionSignature(t *testing.T)
 func contains(s, substr string) bool
 func TestTreeSitterParserParseJava(t *testing.T)
-foundClass, foundConstructor, foundMethod bool
+foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
 func TestJavaSignatureOnlyExtraction(t *testing.T)
 func TestJavaGenericsExtraction(t *testing.T)
 foundClass, foundMethod bool
 func TestJavaAutoRegistration(t *testing.T)
+func TestTreeSitterParserParseCpp(t *testing.T)
+func TestCppSignatureOnlyExtraction(t *testing.T)
+func TestCppTemplateExtraction(t *testing.T)
+func TestCppAutoRegistration(t *testing.T)
+func TestCppImportExtraction(t *testing.T)
 func TestGoVariableExtraction(t *testing.T)
 func TestTypeScriptVariableExtraction(t *testing.T)
 func TestPythonVariableExtraction(t *testing.T)
