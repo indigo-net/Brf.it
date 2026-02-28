@@ -504,19 +504,6 @@ func escapeMarkdown(s string) string
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
 func (f *XMLFormatter) Name() string
-xmlSchemaComment = `<!--
-Schema:
-| Tag       | Description                              |
-|-----------|------------------------------------------|
-| file      | Source file (path, language attributes)  |
-| signature | Function, type, or variable declaration  |
-| imports   | Import statements container              |
-| import    | Single import statement                  |
-| export    | Single export statement                  |
-| doc       | Documentation comment                    |
-| error     | Parse error message                      |
--->
-`
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
 buf bytes.Buffer
 func escapeXML(s string) string

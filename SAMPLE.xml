@@ -437,19 +437,6 @@ Schema:
       <signature>type XMLFormatter struct{}</signature>
       <signature>func NewXMLFormatter() *XMLFormatter</signature>
       <signature>func (f *XMLFormatter) Name() string</signature>
-      <signature>xmlSchemaComment = `&lt;!--
-Schema:
-| Tag       | Description                              |
-|-----------|------------------------------------------|
-| file      | Source file (path, language attributes)  |
-| signature | Function, type, or variable declaration  |
-| imports   | Import statements container              |
-| import    | Single import statement                  |
-| export    | Single export statement                  |
-| doc       | Documentation comment                    |
-| error     | Parse error message                      |
---&gt;
-`</signature>
       <signature>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</signature>
       <signature>buf bytes.Buffer</signature>
       <signature>func escapeXML(s string) string</signature>
