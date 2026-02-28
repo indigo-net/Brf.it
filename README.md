@@ -1,6 +1,6 @@
 # Brf.it
 
-🌐 [English](README.md) | [한국어](README.ko.md) | [日本語](README.ja.md) | [हिन्दी](README.hi.md) | [Deutsch](README.de.md)
+🌐 [English](README.md) | [한국어](docs/ko/README.md) | [日本語](docs/ja/README.md) | [हिन्दी](docs/hi/README.md) | [Deutsch](docs/de/README.md)
 
 [![Release](https://img.shields.io/github/v/release/indigo-net/Brf.it)](https://github.com/indigo-net/Brf.it/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)

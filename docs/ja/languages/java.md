@@ -1,6 +1,6 @@
 # Java サポート
 
-🌐 [English](java.md) | [한국어](java.ko.md) | [日本語](java.ja.md) | [हिन्दी](java.hi.md) | [Deutsch](java.de.md)
+🌐 [English](../../languages/java.md) | [한국어](../../ko/languages/java.md) | [日本語](java.md) | [हिन्दी](../../hi/languages/java.md) | [Deutsch](../../de/languages/java.md)
 
 ## サポート拡張子
 

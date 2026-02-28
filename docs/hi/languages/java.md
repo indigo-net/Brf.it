@@ -1,6 +1,6 @@
 # Java सपोर्ट
 
-🌐 [English](java.md) | [한국어](java.ko.md) | [日本語](java.ja.md) | [हिन्दी](java.hi.md) | [Deutsch](java.de.md)
+🌐 [English](../../languages/java.md) | [한국어](../../ko/languages/java.md) | [日本語](../../ja/languages/java.md) | [हिन्दी](java.md) | [Deutsch](../../de/languages/java.md)
 
 ## समर्थित एक्सटेंशन
 

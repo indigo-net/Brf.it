@@ -1,6 +1,6 @@
 # Python Support
 
-🌐 [English](python.md) | [한국어](python.ko.md) | [日本語](python.ja.md) | [हिन्दी](python.hi.md) | [Deutsch](python.de.md)
+🌐 [English](python.md) | [한국어](../ko/languages/python.md) | [日本語](../ja/languages/python.md) | [हिन्दी](../hi/languages/python.md) | [Deutsch](../de/languages/python.md)
 
 ## Supported Extensions
 

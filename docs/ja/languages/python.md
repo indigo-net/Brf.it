@@ -1,6 +1,6 @@
 # Python サポート
 
-🌐 [English](python.md) | [한국어](python.ko.md) | [日本語](python.ja.md) | [हिन्दी](python.hi.md) | [Deutsch](python.de.md)
+🌐 [English](../../languages/python.md) | [한국어](../../ko/languages/python.md) | [日本語](python.md) | [हिन्दी](../../hi/languages/python.md) | [Deutsch](../../de/languages/python.md)
 
 ## サポート拡張子
 

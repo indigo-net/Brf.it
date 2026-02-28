@@ -1,6 +1,6 @@
 # C サポート
 
-🌐 [English](c.md) | [한국어](c.ko.md) | [日本語](c.ja.md) | [हिन्दी](c.hi.md) | [Deutsch](c.de.md)
+🌐 [English](../../languages/c.md) | [한국어](../../ko/languages/c.md) | [日本語](c.md) | [हिन्दी](../../hi/languages/c.md) | [Deutsch](../../de/languages/c.md)
 
 ## サポートされる拡張子
 

@@ -1,6 +1,6 @@
 # Go सपोर्ट
 
-🌐 [English](go.md) | [한국어](go.ko.md) | [日本語](go.ja.md) | [हिन्दी](go.hi.md) | [Deutsch](go.de.md)
+🌐 [English](../../languages/go.md) | [한국어](../../ko/languages/go.md) | [日本語](../../ja/languages/go.md) | [हिन्दी](go.md) | [Deutsch](../../de/languages/go.md)
 
 ## समर्थित एक्सटेंशन
 

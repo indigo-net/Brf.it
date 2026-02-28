@@ -234,9 +234,11 @@ if fileSize > maxFileSize {
 
 ### 다국어 문서
 
-- 파일명 suffix 방식: `README.ko.md`, `docs/languages/go.ja.md`
+- 국가별 디렉토리 방식: `docs/ko/README.md`, `docs/ja/languages/go.md`
 - 지원 언어: EN (기본), KO, JA, HI, DE
-- 모든 문서 상단에 언어 선택 링크 추가: `🌐 [English](file.md) | [한국어](file.ko.md) | ...`
+- 영어 원본: `README.md` (루트), `docs/languages/*.md`
+- 번역본: `docs/{ko,ja,hi,de}/README.md`, `docs/{ko,ja,hi,de}/languages/*.md`
+- 모든 문서 상단에 언어 선택 링크 추가: `🌐 [English](../../README.md) | [한국어](README.md) | ...`
 
 ### 새 언어 추가 체크리스트
 

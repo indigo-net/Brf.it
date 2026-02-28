@@ -1,6 +1,6 @@
 # TypeScript 지원
 
-🌐 [English](typescript.md) | [한국어](typescript.ko.md) | [日本語](typescript.ja.md) | [हिन्दी](typescript.hi.md) | [Deutsch](typescript.de.md)
+🌐 [English](../../languages/typescript.md) | [한국어](typescript.md) | [日本語](../../ja/languages/typescript.md) | [हिन्दी](../../hi/languages/typescript.md) | [Deutsch](../../de/languages/typescript.md)
 
 ## 지원 확장자
 

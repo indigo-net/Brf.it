@@ -1,6 +1,6 @@
 # C++ Support
 
-🌐 [English](cpp.md) | [한국어](cpp.ko.md) | [日本語](cpp.ja.md) | [हिन्दी](cpp.hi.md) | [Deutsch](cpp.de.md)
+🌐 [English](cpp.md) | [한국어](../ko/languages/cpp.md) | [日本語](../ja/languages/cpp.md) | [हिन्दी](../hi/languages/cpp.md) | [Deutsch](../de/languages/cpp.md)
 
 ## Supported Extensions
 
