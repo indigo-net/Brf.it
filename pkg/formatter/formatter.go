@@ -25,6 +25,12 @@ type FileData struct {
 
 // PackageData contains all data needed for formatting output.
 type PackageData struct {
+	// RootPath is the root path being packaged.
+	RootPath string
+
+	// Version is the brf.it version string.
+	Version string
+
 	// Tree is the directory tree string.
 	Tree string
 

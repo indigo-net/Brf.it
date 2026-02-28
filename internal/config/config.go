@@ -13,6 +13,9 @@ type Config struct {
 	// Path is the root directory or file to process.
 	Path string
 
+	// Version is the brf.it version string.
+	Version string
+
 	// Mode determines what to extract. Currently only "sig" (signature) is supported.
 	Mode string
 
@@ -103,6 +106,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 func (c *Config) ToOptions() *pkgcontext.Options {
 	return &pkgcontext.Options{
 		Path:           c.Path,
+		Version:        c.Version,
 		Format:         c.Format,
 		Output:         c.Output,
 		IgnoreFile:     c.IgnoreFile,

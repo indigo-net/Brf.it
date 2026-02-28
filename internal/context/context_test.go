@@ -140,7 +140,7 @@ func TestPackagerPackageMarkdown(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(string(result.Content), "# Brf.it Output") {
+	if !strings.Contains(string(result.Content), "# Code Summary") {
 		t.Error("expected markdown header")
 	}
 }
@@ -184,7 +184,7 @@ func TestPackagerPackageMarkdownFull(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !strings.Contains(string(result.Content), "# Brf.it Output") {
+	if !strings.Contains(string(result.Content), "# Code Summary") {
 		t.Error("expected markdown header")
 	}
 }

@@ -13,6 +13,9 @@ type Options struct {
 	// Path is the target path to scan.
 	Path string
 
+	// Version is the brf.it version string.
+	Version string
+
 	// Format is the output format ("xml" or "md").
 	Format string
 
@@ -151,6 +154,8 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 
 	// 5. Create PackageData
 	packageData := &formatter.PackageData{
+		RootPath:        opts.Path,
+		Version:         opts.Version,
 		Tree:            treeStr,
 		Files:           files,
 		TotalSignatures: extractResult.TotalSignatures,

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- brf.it dev | Code Summary: /Users/jefflee/projects/Brf.it -->
+<!--
+Schema:
+| Tag       | Description                              |
+|-----------|------------------------------------------|
+| file      | Source file (path, language attributes)  |
+| signature | Function, type, or variable declaration  |
+| imports   | Import statements container              |
+| import    | Single import statement                  |
+| export    | Single export statement                  |
+| doc       | Documentation comment                    |
+| error     | Parse error message                      |
+-->
 <brfit>
   <metadata>
   </metadata>
   <files>
-    <file path="cmd/brfit/main.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/cmd/brfit/main.go" language="go">
       <signature>version = &quot;dev&quot;</signature>
       <signature>commit  = &quot;none&quot;</signature>
       <signature>date    = &quot;unknown&quot;</signature>
       <signature>func main()</signature>
     </file>
-    <file path="cmd/brfit/root.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/cmd/brfit/root.go" language="go">
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;os&quot;</import>
@@ -35,7 +48,7 @@
       <signature>func writeOutput(result *context.Result, c *config.Config) error</signature>
       <signature>func writeToFile(path string, content []byte) error</signature>
     </file>
-    <file path="cmd/brfit/root_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/cmd/brfit/root_test.go" language="go">
       <imports>
         <import>import &quot;bytes&quot;</import>
         <import>import &quot;os&quot;</import>
@@ -58,7 +71,7 @@
       <signature>func TestRootCommandPathNotFound(t *testing.T)</signature>
       <signature>func TestWriteToFile(t *testing.T)</signature>
     </file>
-    <file path="internal/config/config.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/internal/config/config.go" language="go">
       <imports>
         <import>import &quot;errors&quot;</import>
         <import>import &quot;fmt&quot;</import>
@@ -67,6 +80,9 @@
       <signature>type Config struct {
 	// Path is the root directory or file to process.
 	Path string
+
+	// Version is the brf.it version string.
+	Version string
 
 	// Mode determines what to extract. Currently only &quot;sig&quot; (signature) is supported.
 	Mode string
@@ -104,7 +120,7 @@
       <signature>func (c *Config) SupportedExtensions() map[string]string</signature>
       <signature>func (c *Config) ToOptions() *pkgcontext.Options</signature>
     </file>
-    <file path="internal/config/config_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/internal/config/config_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
       </imports>
@@ -115,7 +131,7 @@
       <signature>func containsString(s, substr string) bool</signature>
       <signature>func containsSubstring(s, substr string) bool</signature>
     </file>
-    <file path="internal/context/context.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/internal/context/context.go" language="go">
       <imports>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;</import>
@@ -125,6 +141,9 @@
       <signature>type Options struct {
 	// Path is the target path to scan.
 	Path string
+
+	// Version is the brf.it version string.
+	Version string
 
 	// Format is the output format (&quot;xml&quot; or &quot;md&quot;).
 	Format string
@@ -188,7 +207,7 @@
       <signature>func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)</signature>
       <signature>func normalizeFormat(format string) string</signature>
     </file>
-    <file path="internal/context/context_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/internal/context/context_test.go" language="go">
       <imports>
         <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>
@@ -220,7 +239,7 @@
       <signature>func TestDefaultOptions(t *testing.T)</signature>
       <signature>func TestNormalizeFormat(t *testing.T)</signature>
     </file>
-    <file path="internal/context/tree.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/internal/context/tree.go" language="go">
       <imports>
         <import>import &quot;path/filepath&quot;</import>
         <import>import &quot;sort&quot;</import>
@@ -234,7 +253,7 @@
       <signature>func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</signature>
       <signature>newPrefix string</signature>
     </file>
-    <file path="pkg/extractor/extractor.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/extractor/extractor.go" language="go">
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;os&quot;</import>
@@ -298,7 +317,7 @@
       <signature>func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</signature>
       <signature>func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</signature>
     </file>
-    <file path="pkg/extractor/extractor_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/extractor/extractor_test.go" language="go">
       <imports>
         <import>import &quot;os&quot;</import>
         <import>import &quot;path/filepath&quot;</import>
@@ -313,7 +332,7 @@
       <signature>foundAdd bool</signature>
       <signature>func TestFileExtractorUnsupportedLanguage(t *testing.T)</signature>
     </file>
-    <file path="pkg/formatter/formatter.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/formatter.go" language="go">
       <imports>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
       </imports>
@@ -334,6 +353,12 @@
 	Error error
 }</signature>
       <signature>type PackageData struct {
+	// RootPath is the root path being packaged.
+	RootPath string
+
+	// Version is the brf.it version string.
+	Version string
+
 	// Tree is the directory tree string.
 	Tree string
 
@@ -357,7 +382,7 @@
 	Name() string
 }</signature>
     </file>
-    <file path="pkg/formatter/formatter_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/formatter_test.go" language="go">
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;strings&quot;</import>
@@ -380,16 +405,16 @@
       <signature>func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)</signature>
       <signature>func TestXMLFormatterEmptyFile(t *testing.T)</signature>
     </file>
-    <file path="pkg/formatter/helpers.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/helpers.go" language="go">
       <signature>func getEmptyComment(lang string) string</signature>
     </file>
-    <file path="pkg/formatter/helpers_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/helpers_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
       </imports>
       <signature>func TestGetEmptyComment(t *testing.T)</signature>
     </file>
-    <file path="pkg/formatter/markdown.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/markdown.go" language="go">
       <imports>
         <import>import &quot;bytes&quot;</import>
         <import>import &quot;fmt&quot;</import>
@@ -403,7 +428,7 @@
       <signature>imports, exports []string</signature>
       <signature>func escapeMarkdown(s string) string</signature>
     </file>
-    <file path="pkg/formatter/xml.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/formatter/xml.go" language="go">
       <imports>
         <import>import &quot;bytes&quot;</import>
         <import>import &quot;fmt&quot;</import>
@@ -412,11 +437,24 @@
       <signature>type XMLFormatter struct{}</signature>
       <signature>func NewXMLFormatter() *XMLFormatter</signature>
       <signature>func (f *XMLFormatter) Name() string</signature>
+      <signature>xmlSchemaComment = `&lt;!--
+Schema:
+| Tag       | Description                              |
+|-----------|------------------------------------------|
+| file      | Source file (path, language attributes)  |
+| signature | Function, type, or variable declaration  |
+| imports   | Import statements container              |
+| import    | Single import statement                  |
+| export    | Single export statement                  |
+| doc       | Documentation comment                    |
+| error     | Parse error message                      |
+--&gt;
+`</signature>
       <signature>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</signature>
       <signature>buf bytes.Buffer</signature>
       <signature>func escapeXML(s string) string</signature>
     </file>
-    <file path="pkg/parser/parser.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/parser.go" language="go">
       <imports>
         <import>import &quot;path/filepath&quot;</import>
         <import>import &quot;sync&quot;</import>
@@ -558,7 +596,7 @@
 }</signature>
       <signature>func DetectLanguage(path string) string</signature>
     </file>
-    <file path="pkg/parser/parser_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/parser_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
       </imports>
@@ -578,7 +616,7 @@
       <signature>func TestDefaultRegistry(t *testing.T)</signature>
       <signature>func TestDetectLanguage(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/c.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_c &quot;github.com/tree-sitter/tree-sitter-c/bindings/go&quot;</import>
@@ -695,7 +733,7 @@
 (comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/c_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/c_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -711,7 +749,7 @@
       <signature>func TestCQueryExtractTypedef(t *testing.T)</signature>
       <signature>func TestCQueryExtractGlobalVariables(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/cpp.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/cpp.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_cpp &quot;github.com/tree-sitter/tree-sitter-cpp/bindings/go&quot;</import>
@@ -906,7 +944,7 @@
 (comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/cpp_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/cpp_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -936,7 +974,7 @@
       <signature>func TestCppQueryKindMapping(t *testing.T)</signature>
       <signature>func TestCppQueryCaptures(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/go.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/go.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_go &quot;github.com/tree-sitter/tree-sitter-go/bindings/go&quot;</import>
@@ -1000,7 +1038,7 @@
 (comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/go_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/go_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1014,7 +1052,7 @@
       <signature>kindNode *sitter.Node</signature>
       <signature>func TestGoQueryExtractConstAndVar(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/java.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/java.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_java &quot;github.com/tree-sitter/tree-sitter-java/bindings/go&quot;</import>
@@ -1081,7 +1119,7 @@
 (block_comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/java_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/java_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1101,7 +1139,7 @@
       <signature>func TestJavaQueryExtractGenerics(t *testing.T)</signature>
       <signature>func TestJavaQueryExtractFieldDeclarations(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/python.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/python.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_python &quot;github.com/tree-sitter/tree-sitter-python/bindings/go&quot;</import>
@@ -1147,7 +1185,7 @@
 (comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/python_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/python_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1162,7 +1200,7 @@
       <signature>funcCaptures map[string]string</signature>
       <signature>func TestPythonQueryExtractModuleLevelVariables(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/typescript.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/typescript.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import tree_sitter_typescript &quot;github.com/tree-sitter/tree-sitter-typescript/bindings/go&quot;</import>
@@ -1292,7 +1330,7 @@
 (comment) @doc
 `</signature>
     </file>
-    <file path="pkg/parser/treesitter/languages/typescript_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/typescript_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1304,7 +1342,7 @@
       <signature>funcCaptures map[string]string</signature>
       <signature>func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/parser.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/parser.go" language="go">
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;regexp&quot;</import>
@@ -1359,7 +1397,7 @@
       <signature>hasExportType bool</signature>
       <signature>func cleanImportPath(path string) string</signature>
     </file>
-    <file path="pkg/parser/treesitter/parser_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/parser_test.go" language="go">
       <imports>
         <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>
@@ -1398,7 +1436,7 @@
       <signature>func TestCGlobalVariableExtraction(t *testing.T)</signature>
       <signature>func TestVariableSignaturePreservesValue(t *testing.T)</signature>
     </file>
-    <file path="pkg/parser/treesitter/query.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
       </imports>
@@ -1438,13 +1476,13 @@
 	&quot;method_definition&quot;:    &quot;method&quot;,
 }</signature>
     </file>
-    <file path="pkg/parser/treesitter/query_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/parser/treesitter/query_test.go" language="go">
       <imports>
         <import>import &quot;testing&quot;</import>
       </imports>
       <signature>func TestCaptureDefinitions(t *testing.T)</signature>
     </file>
-    <file path="pkg/scanner/scanner.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/scanner/scanner.go" language="go">
       <imports>
         <import>import &quot;io/fs&quot;</import>
         <import>import &quot;log&quot;</import>
@@ -1506,7 +1544,7 @@
       <signature>func (s *FileScanner) Scan() (*ScanResult, error)</signature>
       <signature>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</signature>
     </file>
-    <file path="pkg/scanner/scanner_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/scanner/scanner_test.go" language="go">
       <imports>
         <import>import &quot;os&quot;</import>
         <import>import &quot;path/filepath&quot;</import>
@@ -1529,7 +1567,7 @@
       <signature>func TestScanGitignore(t *testing.T)</signature>
       <signature>func TestScanNestedDirectories(t *testing.T)</signature>
     </file>
-    <file path="pkg/tokenizer/tiktoken.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/tokenizer/tiktoken.go" language="go">
       <imports>
         <import>import &quot;github.com/pkoukk/tiktoken-go&quot;</import>
       </imports>
@@ -1542,7 +1580,7 @@
       <signature>func (t *TiktokenTokenizer) Count(text string) (int, error)</signature>
       <signature>func (t *TiktokenTokenizer) Name() string</signature>
     </file>
-    <file path="pkg/tokenizer/tokenizer.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/tokenizer/tokenizer.go" language="go">
       <signature>type Tokenizer interface {
 	// Count returns the number of tokens in the given text.
 	// Returns 0 and error if counting fails.
@@ -1557,7 +1595,7 @@
       <signature>func (t *NoOpTokenizer) Count(_ string) (int, error)</signature>
       <signature>func (t *NoOpTokenizer) Name() string</signature>
     </file>
-    <file path="pkg/tokenizer/tokenizer_test.go" language="go">
+    <file path="/Users/jefflee/projects/Brf.it/pkg/tokenizer/tokenizer_test.go" language="go">
       <imports>
         <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>

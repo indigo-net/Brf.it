@@ -19,12 +19,41 @@ func (f *XMLFormatter) Name() string {
 	return "xml"
 }
 
+// xmlSchemaComment provides schema documentation for the XML output.
+const xmlSchemaComment = `<!--
+Schema:
+| Tag       | Description                              |
+|-----------|------------------------------------------|
+| file      | Source file (path, language attributes)  |
+| signature | Function, type, or variable declaration  |
+| imports   | Import statements container              |
+| import    | Single import statement                  |
+| export    | Single export statement                  |
+| doc       | Documentation comment                    |
+| error     | Parse error message                      |
+-->
+`
+
 // Format implements Formatter interface.
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	var buf bytes.Buffer
 
 	buf.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
 	buf.WriteByte('\n')
+
+	// Header comment with version and path
+	if data.Version != "" && data.RootPath != "" {
+		buf.WriteString(fmt.Sprintf("<!-- brf.it %s | Code Summary: %s -->\n",
+			data.Version, data.RootPath))
+	} else if data.Version != "" {
+		buf.WriteString(fmt.Sprintf("<!-- brf.it %s -->\n", data.Version))
+	} else if data.RootPath != "" {
+		buf.WriteString(fmt.Sprintf("<!-- Code Summary: %s -->\n", data.RootPath))
+	}
+
+	// Schema documentation
+	buf.WriteString(xmlSchemaComment)
+
 	buf.WriteString("<brfit>\n")
 
 	// Metadata section

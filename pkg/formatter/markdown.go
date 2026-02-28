@@ -23,7 +23,17 @@ func (f *MarkdownFormatter) Name() string {
 func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 	var buf bytes.Buffer
 
-	buf.WriteString("# Brf.it Output\n\n")
+	// Header with path
+	if data.RootPath != "" {
+		buf.WriteString(fmt.Sprintf("# Code Summary: %s\n\n", data.RootPath))
+	} else {
+		buf.WriteString("# Code Summary\n\n")
+	}
+
+	// Version info
+	if data.Version != "" {
+		buf.WriteString(fmt.Sprintf("*brf.it %s*\n\n", data.Version))
+	}
 
 	// Directory Tree
 	if data.Tree != "" {

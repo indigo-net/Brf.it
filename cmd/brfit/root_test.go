@@ -287,7 +287,7 @@ func TestRootCommandIntegrationMarkdown(t *testing.T) {
 	}
 
 	// Verify output contains expected Markdown
-	if !strings.Contains(output, "# Brf.it Output") {
+	if !strings.Contains(output, "# Code Summary") {
 		t.Error("expected Markdown header")
 	}
 	if !strings.Contains(output, "func Subtract(a, b int) int") {

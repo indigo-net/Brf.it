@@ -130,7 +130,7 @@ func TestMarkdownFormatterFormat(t *testing.T) {
 
 	outputStr := string(output)
 
-	if !strings.Contains(outputStr, "# Brf.it Output") {
+	if !strings.Contains(outputStr, "# Code Summary") {
 		t.Error("expected header")
 	}
 
@@ -243,7 +243,7 @@ func TestMarkdownFormatterEmptyData(t *testing.T) {
 
 	outputStr := string(output)
 
-	if !strings.Contains(outputStr, "# Brf.it Output") {
+	if !strings.Contains(outputStr, "# Code Summary") {
 		t.Error("expected header")
 	}
 

@@ -138,6 +138,15 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		return fmt.Errorf("path not found: %s", c.Path)
 	}
 
+	// Convert to absolute path for display
+	absPath, err := filepath.Abs(c.Path)
+	if err == nil {
+		c.Path = absPath
+	}
+
+	// Set version
+	c.Version = Version
+
 	// Validate configuration
 	if err := c.Validate(); err != nil {
 		return fmt.Errorf("configuration error: %w", err)
