@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- brf.it 0.11.0 | Code Summary: /home/runner/work/Brf.it/Brf.it -->
-<!--
-Schema:
-| Tag       | Description                              |
-|-----------|------------------------------------------|
-| file      | Source file (path, language attributes)  |
-| signature | Function, type, or variable declaration  |
-| imports   | Import statements container              |
-| import    | Single import statement                  |
-| export    | Single export statement                  |
-| doc       | Documentation comment                    |
-| error     | Parse error message                      |
--->
 <brfit>
   <metadata>
+    <version>0.12.0</version>
+    <path>/home/runner/work/Brf.it/Brf.it</path>
+    <schema>
+      <tag name="metadata" description="Project metadata container" />
+      <tag name="version" description="brf.it version" />
+      <tag name="path" description="Root path of the scanned project" />
+      <tag name="tree" description="Directory tree structure" />
+      <tag name="files" description="Source files container" />
+      <tag name="file" description="Source file (path, language attributes)" />
+      <tag name="signature" description="Function, type, or variable declaration" />
+      <tag name="imports" description="Import statements container" />
+      <tag name="import" description="Single import statement" />
+      <tag name="export" description="Single export statement" />
+      <tag name="doc" description="Documentation comment" />
+      <tag name="error" description="Parse error message" />
+    </schema>
   </metadata>
   <files>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/main.go" language="go">
