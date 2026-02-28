@@ -19,45 +19,26 @@ func (f *XMLFormatter) Name() string {
 	return "xml"
 }
 
-// xmlSchemaComment provides schema documentation for the XML output.
-const xmlSchemaComment = `<!--
-Schema:
-| Tag       | Description                              |
-|-----------|------------------------------------------|
-| file      | Source file (path, language attributes)  |
-| signature | Function, type, or variable declaration  |
-| imports   | Import statements container              |
-| import    | Single import statement                  |
-| export    | Single export statement                  |
-| doc       | Documentation comment                    |
-| error     | Parse error message                      |
--->
-`
-
 // Format implements Formatter interface.
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	var buf bytes.Buffer
 
 	buf.WriteString(`<?xml version="1.0" encoding="UTF-8"?>`)
 	buf.WriteByte('\n')
-
-	// Header comment with version and path
-	if data.Version != "" && data.RootPath != "" {
-		buf.WriteString(fmt.Sprintf("<!-- brf.it %s | Code Summary: %s -->\n",
-			data.Version, data.RootPath))
-	} else if data.Version != "" {
-		buf.WriteString(fmt.Sprintf("<!-- brf.it %s -->\n", data.Version))
-	} else if data.RootPath != "" {
-		buf.WriteString(fmt.Sprintf("<!-- Code Summary: %s -->\n", data.RootPath))
-	}
-
-	// Schema documentation
-	buf.WriteString(xmlSchemaComment)
-
 	buf.WriteString("<brfit>\n")
 
 	// Metadata section
 	buf.WriteString("  <metadata>\n")
+
+	// Version
+	if data.Version != "" {
+		buf.WriteString(fmt.Sprintf("    <version>%s</version>\n", escapeXML(data.Version)))
+	}
+
+	// Path
+	if data.RootPath != "" {
+		buf.WriteString(fmt.Sprintf("    <path>%s</path>\n", escapeXML(data.RootPath)))
+	}
 
 	// Tree
 	if data.Tree != "" {
@@ -65,6 +46,22 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString(escapeXML(data.Tree))
 		buf.WriteString("</tree>\n")
 	}
+
+	// Schema
+	buf.WriteString("    <schema>\n")
+	buf.WriteString(`      <tag name="metadata" description="Project metadata container" />` + "\n")
+	buf.WriteString(`      <tag name="version" description="brf.it version" />` + "\n")
+	buf.WriteString(`      <tag name="path" description="Root path of the scanned project" />` + "\n")
+	buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
+	buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
+	buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
+	buf.WriteString(`      <tag name="signature" description="Function, type, or variable declaration" />` + "\n")
+	buf.WriteString(`      <tag name="imports" description="Import statements container" />` + "\n")
+	buf.WriteString(`      <tag name="import" description="Single import statement" />` + "\n")
+	buf.WriteString(`      <tag name="export" description="Single export statement" />` + "\n")
+	buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
+	buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
+	buf.WriteString("    </schema>\n")
 
 	buf.WriteString("  </metadata>\n")
 

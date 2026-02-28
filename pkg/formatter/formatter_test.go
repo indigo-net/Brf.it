@@ -20,7 +20,9 @@ func TestXMLFormatterFormat(t *testing.T) {
 	formatter := NewXMLFormatter()
 
 	data := &PackageData{
-		Tree: "pkg/\n└── test.go",
+		Version:  "v0.12.0",
+		RootPath: "/path/to/project",
+		Tree:     "pkg/\n└── test.go",
 		Files: []FileData{
 			{
 				Path:     "pkg/test.go",
@@ -59,6 +61,27 @@ func TestXMLFormatterFormat(t *testing.T) {
 
 	if !strings.Contains(outputStr, "<metadata>") {
 		t.Error("expected <metadata> element")
+	}
+
+	// Verify metadata contains version, path, and schema
+	if !strings.Contains(outputStr, "<version>v0.12.0</version>") {
+		t.Error("expected <version> element in metadata")
+	}
+
+	if !strings.Contains(outputStr, "<path>/path/to/project</path>") {
+		t.Error("expected <path> element in metadata")
+	}
+
+	if !strings.Contains(outputStr, "<schema>") {
+		t.Error("expected <schema> element in metadata")
+	}
+
+	if !strings.Contains(outputStr, `<tag name="metadata" description="Project metadata container" />`) {
+		t.Error("expected metadata tag in schema")
+	}
+
+	if !strings.Contains(outputStr, `<tag name="file" description="Source file (path, language attributes)" />`) {
+		t.Error("expected file tag in schema")
 	}
 
 	if !strings.Contains(outputStr, `<file path="pkg/test.go" language="go"`) {
