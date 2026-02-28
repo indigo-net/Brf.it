@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-02-28
+
+### Changed
+- XML metadata restructured: `version`, `path`, `schema` moved inside `<metadata>` section
+- XML schema now uses `<tag name="..." description="..." />` format inside `<schema>` element
+- Removed XML header comments (version/path info now in structured elements)
+
 ## [0.11.0] - 2026-02-28
 
 ### Added
