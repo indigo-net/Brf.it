@@ -1,10 +1,12 @@
-# Brf.it Output
+# Code Summary: /Users/jefflee/projects/Brf.it
+
+*brf.it dev*
 
 ---
 
 ## Files
 
-### cmd/brfit/main.go
+### /Users/jefflee/projects/Brf.it/cmd/brfit/main.go
 
 ```go
 version = "dev"
@@ -15,7 +17,7 @@ func main()
 
 ---
 
-### cmd/brfit/root.go
+### /Users/jefflee/projects/Brf.it/cmd/brfit/root.go
 
 **Imports:**
 - `import "fmt"`
@@ -46,7 +48,7 @@ func writeToFile(path string, content []byte) error
 
 ---
 
-### cmd/brfit/root_test.go
+### /Users/jefflee/projects/Brf.it/cmd/brfit/root_test.go
 
 **Imports:**
 - `import "bytes"`
@@ -74,7 +76,7 @@ func TestWriteToFile(t *testing.T)
 
 ---
 
-### internal/config/config.go
+### /Users/jefflee/projects/Brf.it/internal/config/config.go
 
 **Imports:**
 - `import "errors"`
@@ -128,7 +130,7 @@ func (c *Config) ToOptions() *pkgcontext.Options
 
 ---
 
-### internal/config/config_test.go
+### /Users/jefflee/projects/Brf.it/internal/config/config_test.go
 
 **Imports:**
 - `import "testing"`
@@ -144,7 +146,7 @@ func containsSubstring(s, substr string) bool
 
 ---
 
-### internal/context/context.go
+### /Users/jefflee/projects/Brf.it/internal/context/context.go
 
 **Imports:**
 - `import "github.com/indigo-net/Brf.it/pkg/extractor"`
@@ -225,7 +227,7 @@ func normalizeFormat(format string) string
 
 ---
 
-### internal/context/context_test.go
+### /Users/jefflee/projects/Brf.it/internal/context/context_test.go
 
 **Imports:**
 - `import "strings"`
@@ -262,7 +264,7 @@ func TestNormalizeFormat(t *testing.T)
 
 ---
 
-### internal/context/tree.go
+### /Users/jefflee/projects/Brf.it/internal/context/tree.go
 
 **Imports:**
 - `import "path/filepath"`
@@ -281,7 +283,7 @@ newPrefix string
 
 ---
 
-### pkg/extractor/extractor.go
+### /Users/jefflee/projects/Brf.it/pkg/extractor/extractor.go
 
 **Imports:**
 - `import "fmt"`
@@ -350,7 +352,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 
 ---
 
-### pkg/extractor/extractor_test.go
+### /Users/jefflee/projects/Brf.it/pkg/extractor/extractor_test.go
 
 **Imports:**
 - `import "os"`
@@ -370,7 +372,7 @@ func TestFileExtractorUnsupportedLanguage(t *testing.T)
 
 ---
 
-### pkg/formatter/formatter.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/formatter.go
 
 **Imports:**
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
@@ -425,7 +427,7 @@ type Formatter interface {
 
 ---
 
-### pkg/formatter/formatter_test.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/formatter_test.go
 
 **Imports:**
 - `import "fmt"`
@@ -453,7 +455,7 @@ func TestXMLFormatterEmptyFile(t *testing.T)
 
 ---
 
-### pkg/formatter/helpers.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/helpers.go
 
 ```go
 func getEmptyComment(lang string) string
@@ -461,7 +463,7 @@ func getEmptyComment(lang string) string
 
 ---
 
-### pkg/formatter/helpers_test.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/helpers_test.go
 
 **Imports:**
 - `import "testing"`
@@ -472,7 +474,7 @@ func TestGetEmptyComment(t *testing.T)
 
 ---
 
-### pkg/formatter/markdown.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/markdown.go
 
 **Imports:**
 - `import "bytes"`
@@ -491,7 +493,7 @@ func escapeMarkdown(s string) string
 
 ---
 
-### pkg/formatter/xml.go
+### /Users/jefflee/projects/Brf.it/pkg/formatter/xml.go
 
 **Imports:**
 - `import "bytes"`
@@ -522,7 +524,7 @@ func escapeXML(s string) string
 
 ---
 
-### pkg/parser/parser.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/parser.go
 
 **Imports:**
 - `import "path/filepath"`
@@ -669,7 +671,7 @@ func DetectLanguage(path string) string
 
 ---
 
-### pkg/parser/parser_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/parser_test.go
 
 **Imports:**
 - `import "testing"`
@@ -694,7 +696,7 @@ func TestDetectLanguage(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/c.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/c.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -816,7 +818,7 @@ cQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/c_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/c_test.go
 
 **Imports:**
 - `import "testing"`
@@ -837,7 +839,7 @@ func TestCQueryExtractGlobalVariables(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/cpp.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/cpp.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1037,7 +1039,7 @@ cppQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/cpp_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/cpp_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1072,7 +1074,7 @@ func TestCppQueryCaptures(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/go.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/go.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1141,7 +1143,7 @@ goQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/go_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/go_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1160,7 +1162,7 @@ func TestGoQueryExtractConstAndVar(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/java.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/java.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1232,7 +1234,7 @@ javaQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/java_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/java_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1257,7 +1259,7 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/python.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/python.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1308,7 +1310,7 @@ pythonQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/python_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/python_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1328,7 +1330,7 @@ func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/languages/typescript.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/typescript.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1463,7 +1465,7 @@ typeScriptQueryPattern = `
 
 ---
 
-### pkg/parser/treesitter/languages/typescript_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/languages/typescript_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1480,7 +1482,7 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/parser.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/parser.go
 
 **Imports:**
 - `import "fmt"`
@@ -1540,7 +1542,7 @@ func cleanImportPath(path string) string
 
 ---
 
-### pkg/parser/treesitter/parser_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/parser_test.go
 
 **Imports:**
 - `import "strings"`
@@ -1584,7 +1586,7 @@ func TestVariableSignaturePreservesValue(t *testing.T)
 
 ---
 
-### pkg/parser/treesitter/query.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/query.go
 
 **Imports:**
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
@@ -1629,7 +1631,7 @@ DefaultKindMapping = map[string]string{
 
 ---
 
-### pkg/parser/treesitter/query_test.go
+### /Users/jefflee/projects/Brf.it/pkg/parser/treesitter/query_test.go
 
 **Imports:**
 - `import "testing"`
@@ -1640,7 +1642,7 @@ func TestCaptureDefinitions(t *testing.T)
 
 ---
 
-### pkg/scanner/scanner.go
+### /Users/jefflee/projects/Brf.it/pkg/scanner/scanner.go
 
 **Imports:**
 - `import "io/fs"`
@@ -1707,7 +1709,7 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 
 ---
 
-### pkg/scanner/scanner_test.go
+### /Users/jefflee/projects/Brf.it/pkg/scanner/scanner_test.go
 
 **Imports:**
 - `import "os"`
@@ -1735,7 +1737,7 @@ func TestScanNestedDirectories(t *testing.T)
 
 ---
 
-### pkg/tokenizer/tiktoken.go
+### /Users/jefflee/projects/Brf.it/pkg/tokenizer/tiktoken.go
 
 **Imports:**
 - `import "github.com/pkoukk/tiktoken-go"`
@@ -1753,7 +1755,7 @@ func (t *TiktokenTokenizer) Name() string
 
 ---
 
-### pkg/tokenizer/tokenizer.go
+### /Users/jefflee/projects/Brf.it/pkg/tokenizer/tokenizer.go
 
 ```go
 type Tokenizer interface {
@@ -1773,7 +1775,7 @@ func (t *NoOpTokenizer) Name() string
 
 ---
 
-### pkg/tokenizer/tokenizer_test.go
+### /Users/jefflee/projects/Brf.it/pkg/tokenizer/tokenizer_test.go
 
 **Imports:**
 - `import "strings"`
