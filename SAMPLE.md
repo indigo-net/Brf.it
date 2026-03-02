@@ -451,6 +451,9 @@ func TestMarkdownFormatterEmptyData(t *testing.T)
 func TestMarkdownFormatterEmptyFile(t *testing.T)
 func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)
 func TestXMLFormatterEmptyFile(t *testing.T)
+func TestKindToTag(t *testing.T)
+func TestXMLFormatterKindTags(t *testing.T)
+func TestMarkdownFormatterKindComment(t *testing.T)
 ```
 
 ---
@@ -507,6 +510,7 @@ func (f *XMLFormatter) Name() string
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
 buf bytes.Buffer
 func escapeXML(s string) string
+func kindToTag(kind string) string
 ```
 
 ---

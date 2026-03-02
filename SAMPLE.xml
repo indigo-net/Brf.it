@@ -407,6 +407,9 @@
       <signature>func TestMarkdownFormatterEmptyFile(t *testing.T)</signature>
       <signature>func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)</signature>
       <signature>func TestXMLFormatterEmptyFile(t *testing.T)</signature>
+      <signature>func TestKindToTag(t *testing.T)</signature>
+      <signature>func TestXMLFormatterKindTags(t *testing.T)</signature>
+      <signature>func TestMarkdownFormatterKindComment(t *testing.T)</signature>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
       <signature>func getEmptyComment(lang string) string</signature>
@@ -443,6 +446,7 @@
       <signature>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</signature>
       <signature>buf bytes.Buffer</signature>
       <signature>func escapeXML(s string) string</signature>
+      <signature>func kindToTag(kind string) string</signature>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
       <imports>
