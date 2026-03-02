@@ -1197,6 +1197,138 @@
       <variable>funcCaptures map[string]string</variable>
       <function>func TestPythonQueryExtractModuleLevelVariables(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_rust &quot;github.com/tree-sitter/tree-sitter-rust/bindings/go&quot;</import>
+      </imports>
+      <type>type RustQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewRustQuery() *RustQuery</function>
+      <function>func (q *RustQuery) Language() *sitter.Language</function>
+      <function>func (q *RustQuery) Query() []byte</function>
+      <function>func (q *RustQuery) Captures() []string</function>
+      <function>func (q *RustQuery) KindMapping() map[string]string</function>
+      <function>func (q *RustQuery) ImportQuery() []byte</function>
+      <variable>rustImportQueryPattern = `
+; Use declarations (capture full statement)
+(use_declaration) @import_path
+
+; Extern crate declarations
+(extern_crate_declaration) @import_path
+`</variable>
+      <variable>rustQueryPattern = `
+; Functions (including async, unsafe, const, extern)
+(function_item
+  name: (identifier) @name
+) @signature @kind
+
+; Struct declarations
+(struct_item
+  name: (type_identifier) @name
+) @signature @kind
+
+; Enum declarations
+(enum_item
+  name: (type_identifier) @name
+) @signature @kind
+
+; Trait declarations
+(trait_item
+  name: (type_identifier) @name
+) @signature @kind
+
+; Type aliases
+(type_item
+  name: (type_identifier) @name
+) @signature @kind
+
+; Impl blocks (capture the whole impl signature)
+(impl_item
+  type: (type_identifier) @name
+) @signature @kind
+
+; Impl blocks for generic types
+(impl_item
+  type: (generic_type
+    type: (type_identifier) @name
+  )
+) @signature @kind
+
+; Trait impl blocks (impl Trait for Type)
+(impl_item
+  trait: (type_identifier)
+  type: (type_identifier) @name
+) @signature @kind
+
+; Constants
+(const_item
+  name: (identifier) @name
+) @signature @kind
+
+; Statics
+(static_item
+  name: (identifier) @name
+) @signature @kind
+
+; Modules
+(mod_item
+  name: (identifier) @name
+) @signature @kind
+
+; Macro definitions (macro_rules!)
+(macro_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Union declarations
+(union_item
+  name: (type_identifier) @name
+) @signature @kind
+
+; Foreign mod (extern &quot;C&quot; blocks)
+(foreign_mod_item) @signature @kind
+
+; Associated types in traits
+(associated_type
+  name: (type_identifier) @name
+) @signature @kind
+
+; Function signatures in traits (without body)
+(function_signature_item
+  name: (identifier) @name
+) @signature @kind
+
+; Doc comments (/// and //!)
+(line_comment) @doc
+
+; Block doc comments (/** and /*!)
+(block_comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_rust &quot;github.com/tree-sitter/tree-sitter-rust/bindings/go&quot;</import>
+      </imports>
+      <function>func TestRustQueryLanguage(t *testing.T)</function>
+      <function>func TestRustQueryPattern(t *testing.T)</function>
+      <function>func TestRustQueryImportPattern(t *testing.T)</function>
+      <function>func TestRustQueryExtractFunction(t *testing.T)</function>
+      <function>func TestRustQueryExtractTypes(t *testing.T)</function>
+      <function>func TestRustQueryExtractImplAndMethods(t *testing.T)</function>
+      <function>func TestRustQueryExtractConstAndStatic(t *testing.T)</function>
+      <function>func TestRustQueryExtractMacro(t *testing.T)</function>
+      <function>func TestRustQueryExtractModule(t *testing.T)</function>
+      <function>func TestRustQueryExtractUse(t *testing.T)</function>
+      <function>func TestRustQueryExtractGenericsAndLifetimes(t *testing.T)</function>
+      <function>func TestRustQueryEmptyFile(t *testing.T)</function>
+      <function>func TestRustQueryKindMapping(t *testing.T)</function>
+      <function>func TestRustQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1383,6 +1515,8 @@
       <function>func isPythonMethod(signature string) bool</function>
       <function>func stripJavaBody(text, kind string) string</function>
       <function>func findJavaBodyStart(text string) int</function>
+      <function>func stripRustBody(text, kind string) string</function>
+      <function>func findRustBodyStart(text string) int</function>
       <function>func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -1432,6 +1566,13 @@
       <function>func TestJavaStaticFieldExtraction(t *testing.T)</function>
       <function>func TestCGlobalVariableExtraction(t *testing.T)</function>
       <function>func TestVariableSignaturePreservesValue(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseRust(t *testing.T)</function>
+      <function>func TestRustSignatureOnlyExtraction(t *testing.T)</function>
+      <function>func TestRustImportExtraction(t *testing.T)</function>
+      <function>func TestRustAutoRegistration(t *testing.T)</function>
+      <function>func TestRustConstAndStaticExtraction(t *testing.T)</function>
+      <function>func TestRustMacroExtraction(t *testing.T)</function>
+      <function>func TestRustGenericsAndLifetimes(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>
