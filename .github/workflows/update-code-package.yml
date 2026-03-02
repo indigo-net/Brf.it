@@ -9,6 +9,7 @@ on:
       - 'SAMPLE.xml'
   release:
     types: [published, edited]
+  workflow_dispatch:  # 수동 트리거
 
 permissions:
   contents: write
