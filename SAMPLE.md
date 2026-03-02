@@ -1,6 +1,6 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.12.0*
+*brf.it 0.13.0*
 
 ---
 
@@ -9,10 +9,10 @@
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/main.go
 
 ```go
-version = "dev"
-commit  = "none"
-date    = "unknown"
-func main()
+version = "dev" // variable
+commit  = "none" // variable
+date    = "unknown" // variable
+func main() // function
 ```
 
 ---
@@ -30,20 +30,20 @@ func main()
 - `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
 
 ```go
-Version = "dev"
-Commit  = "none"
-Date    = "unknown"
-func SetBuildInfo(v, c, d string)
-cfg *config.Config
-rootCmd *cobra.Command
-func init()
-func Execute()
-func NewRootCommand() *cobra.Command
-func newRootCommandWithConfig(c *config.Config) *cobra.Command
-func addFlags(cmd *cobra.Command, c *config.Config)
-func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
-func writeOutput(result *context.Result, c *config.Config) error
-func writeToFile(path string, content []byte) error
+Version = "dev" // variable
+Commit  = "none" // variable
+Date    = "unknown" // variable
+func SetBuildInfo(v, c, d string) // function
+cfg *config.Config // variable
+rootCmd *cobra.Command // variable
+func init() // function
+func Execute() // function
+func NewRootCommand() *cobra.Command // function
+func newRootCommandWithConfig(c *config.Config) *cobra.Command // function
+func addFlags(cmd *cobra.Command, c *config.Config) // function
+func runRoot(cmd *cobra.Command, args []string, c *config.Config) error // function
+func writeOutput(result *context.Result, c *config.Config) error // function
+func writeToFile(path string, content []byte) error // function
 ```
 
 ---
@@ -61,17 +61,17 @@ func writeToFile(path string, content []byte) error
 - `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
 
 ```go
-func TestExecuteHelp(t *testing.T)
-func TestExecuteVersion(t *testing.T)
-buf bytes.Buffer
-func TestNewRootCommand(t *testing.T)
-func TestParseFlags(t *testing.T)
-func TestRootCommandIntegration(t *testing.T)
-buf bytes.Buffer
-func TestRootCommandIntegrationMarkdown(t *testing.T)
-buf bytes.Buffer
-func TestRootCommandPathNotFound(t *testing.T)
-func TestWriteToFile(t *testing.T)
+func TestExecuteHelp(t *testing.T) // function
+func TestExecuteVersion(t *testing.T) // function
+buf bytes.Buffer // variable
+func TestNewRootCommand(t *testing.T) // function
+func TestParseFlags(t *testing.T) // function
+func TestRootCommandIntegration(t *testing.T) // function
+buf bytes.Buffer // variable
+func TestRootCommandIntegrationMarkdown(t *testing.T) // function
+buf bytes.Buffer // variable
+func TestRootCommandPathNotFound(t *testing.T) // function
+func TestWriteToFile(t *testing.T) // function
 ```
 
 ---
@@ -121,11 +121,11 @@ type Config struct {
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
-}
-func DefaultConfig() *Config
-func (c *Config) Validate() error
-func (c *Config) SupportedExtensions() map[string]string
-func (c *Config) ToOptions() *pkgcontext.Options
+} // type
+func DefaultConfig() *Config // function
+func (c *Config) Validate() error // method
+func (c *Config) SupportedExtensions() map[string]string // method
+func (c *Config) ToOptions() *pkgcontext.Options // method
 ```
 
 ---
@@ -136,12 +136,12 @@ func (c *Config) ToOptions() *pkgcontext.Options
 - `import "testing"`
 
 ```go
-func TestDefaultConfig(t *testing.T)
-expectedMaxSize = 512000
-func TestConfigValidate(t *testing.T)
-func TestConfigSupportedLanguages(t *testing.T)
-func containsString(s, substr string) bool
-func containsSubstring(s, substr string) bool
+func TestDefaultConfig(t *testing.T) // function
+expectedMaxSize = 512000 // variable
+func TestConfigValidate(t *testing.T) // function
+func TestConfigSupportedLanguages(t *testing.T) // function
+func containsString(s, substr string) bool // function
+func containsSubstring(s, substr string) bool // function
 ```
 
 ---
@@ -188,8 +188,8 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
-}
-func DefaultOptions() *Options
+} // type
+func DefaultOptions() *Options // function
 type Result struct {
 	// Content is the formatted output bytes.
 	Content []byte
@@ -206,23 +206,23 @@ type Result struct {
 	// TokenCount is the number of tokens in the output.
 	// Returns 0 if token counting is disabled or tokenizer is not set.
 	TokenCount int
-}
+} // type
 type Packager struct {
 	scanner    scanner.Scanner
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
 	tokenizer  tokenizer.Tokenizer
-}
+} // type
 func NewPackager(
 	s scanner.Scanner,
 	e extractor.Extractor,
 	f map[string]formatter.Formatter,
-) *Packager
-func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
-func (p *Packager) Package(opts *Options) (*Result, error)
-treeStr string
-func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
-func normalizeFormat(format string) string
+) *Packager // function
+func (p *Packager) SetTokenizer(t tokenizer.Tokenizer) // method
+func (p *Packager) Package(opts *Options) (*Result, error) // method
+treeStr string // variable
+func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error) // function
+func normalizeFormat(format string) string // function
 ```
 
 ---
@@ -242,24 +242,24 @@ func normalizeFormat(format string) string
 type mockScanner struct {
 	result *scanner.ScanResult
 	err    error
-}
-func (m *mockScanner) Scan() (*scanner.ScanResult, error)
+} // type
+func (m *mockScanner) Scan() (*scanner.ScanResult, error) // method
 type mockExtractor struct {
 	result *extractor.ExtractResult
 	err    error
-}
-func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
-func TestPackagerPackage(t *testing.T)
-func TestPackagerPackageMarkdown(t *testing.T)
-func TestPackagerPackageMarkdownFull(t *testing.T)
-func TestPackagerUnknownFormat(t *testing.T)
-func TestPackagerSetTokenizer(t *testing.T)
-func TestPackagerWithTiktokenTokenizer(t *testing.T)
-func TestPackagerTokenizerConsistency(t *testing.T)
-func TestBuildTree(t *testing.T)
-func TestBuildTreeStructure(t *testing.T)
-func TestDefaultOptions(t *testing.T)
-func TestNormalizeFormat(t *testing.T)
+} // type
+func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error) // method
+func TestPackagerPackage(t *testing.T) // function
+func TestPackagerPackageMarkdown(t *testing.T) // function
+func TestPackagerPackageMarkdownFull(t *testing.T) // function
+func TestPackagerUnknownFormat(t *testing.T) // function
+func TestPackagerSetTokenizer(t *testing.T) // function
+func TestPackagerWithTiktokenTokenizer(t *testing.T) // function
+func TestPackagerTokenizerConsistency(t *testing.T) // function
+func TestBuildTree(t *testing.T) // function
+func TestBuildTreeStructure(t *testing.T) // function
+func TestDefaultOptions(t *testing.T) // function
+func TestNormalizeFormat(t *testing.T) // function
 ```
 
 ---
@@ -274,11 +274,11 @@ func TestNormalizeFormat(t *testing.T)
 ```go
 type treeNode struct {
 	children map[string]*treeNode
-}
-func BuildTree(root string, paths []string) string
-buf strings.Builder
-func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
-newPrefix string
+} // type
+func BuildTree(root string, paths []string) string // function
+buf strings.Builder // variable
+func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) // function
+newPrefix string // variable
 ```
 
 ---
@@ -310,7 +310,7 @@ type ExtractedFile struct {
 
 	// Error is any error that occurred during extraction.
 	Error error
-}
+} // type
 type ExtractResult struct {
 	// Files is the list of extracted files.
 	Files []ExtractedFile
@@ -323,7 +323,7 @@ type ExtractResult struct {
 
 	// ErrorCount is the number of files that had errors.
 	ErrorCount int
-}
+} // type
 type ExtractOptions struct {
 	// IncludePrivate whether to include non-exported/private signatures.
 	IncludePrivate bool
@@ -336,18 +336,18 @@ type ExtractOptions struct {
 
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
-}
+} // type
 type Extractor interface {
 	// Extract extracts signatures from the given scan result.
 	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
-}
+} // type
 type FileExtractor struct {
 	registry *parser.Registry
-}
-func NewFileExtractor(registry *parser.Registry) *FileExtractor
-func NewDefaultFileExtractor() *FileExtractor
-func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
-func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
+} // type
+func NewFileExtractor(registry *parser.Registry) *FileExtractor // function
+func NewDefaultFileExtractor() *FileExtractor // function
+func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) // method
+func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile // method
 ```
 
 ---
@@ -363,11 +363,11 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 - `import "github.com/indigo-net/Brf.it/pkg/scanner"`
 
 ```go
-func TestFileExtractorImplementsExtractor(t *testing.T)
-_ Extractor = (*FileExtractor)(nil)
-func TestFileExtractorExtract(t *testing.T)
-foundAdd bool
-func TestFileExtractorUnsupportedLanguage(t *testing.T)
+func TestFileExtractorImplementsExtractor(t *testing.T) // function
+_ Extractor = (*FileExtractor)(nil) // variable
+func TestFileExtractorExtract(t *testing.T) // function
+foundAdd bool // variable
+func TestFileExtractorUnsupportedLanguage(t *testing.T) // function
 ```
 
 ---
@@ -393,7 +393,7 @@ type FileData struct {
 
 	// Error is any error that occurred during extraction.
 	Error error
-}
+} // type
 type PackageData struct {
 	// RootPath is the root path being packaged.
 	RootPath string
@@ -415,14 +415,14 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
-}
+} // type
 type Formatter interface {
 	// Format formats the package data and returns the output bytes.
 	Format(data *PackageData) ([]byte, error)
 
 	// Name returns the formatter name (e.g., "xml", "markdown").
 	Name() string
-}
+} // type
 ```
 
 ---
@@ -436,24 +436,24 @@ type Formatter interface {
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 
 ```go
-func TestXMLFormatterImplementsFormatter(t *testing.T)
-_ Formatter = (*XMLFormatter)(nil)
-func TestMarkdownFormatterImplementsFormatter(t *testing.T)
-_ Formatter = (*MarkdownFormatter)(nil)
-func TestXMLFormatterFormat(t *testing.T)
-func TestXMLFormatterFormatWithError(t *testing.T)
-func TestMarkdownFormatterFormat(t *testing.T)
-func TestFormatterNames(t *testing.T)
-func TestXMLFormatterEscapeXML(t *testing.T)
-func TestMarkdownFormatterEscapeMarkdown(t *testing.T)
-func TestXMLFormatterEmptyData(t *testing.T)
-func TestMarkdownFormatterEmptyData(t *testing.T)
-func TestMarkdownFormatterEmptyFile(t *testing.T)
-func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)
-func TestXMLFormatterEmptyFile(t *testing.T)
-func TestKindToTag(t *testing.T)
-func TestXMLFormatterKindTags(t *testing.T)
-func TestMarkdownFormatterKindComment(t *testing.T)
+func TestXMLFormatterImplementsFormatter(t *testing.T) // function
+_ Formatter = (*XMLFormatter)(nil) // variable
+func TestMarkdownFormatterImplementsFormatter(t *testing.T) // function
+_ Formatter = (*MarkdownFormatter)(nil) // variable
+func TestXMLFormatterFormat(t *testing.T) // function
+func TestXMLFormatterFormatWithError(t *testing.T) // function
+func TestMarkdownFormatterFormat(t *testing.T) // function
+func TestFormatterNames(t *testing.T) // function
+func TestXMLFormatterEscapeXML(t *testing.T) // function
+func TestMarkdownFormatterEscapeMarkdown(t *testing.T) // function
+func TestXMLFormatterEmptyData(t *testing.T) // function
+func TestMarkdownFormatterEmptyData(t *testing.T) // function
+func TestMarkdownFormatterEmptyFile(t *testing.T) // function
+func TestMarkdownFormatterEmptyFileWithImports(t *testing.T) // function
+func TestXMLFormatterEmptyFile(t *testing.T) // function
+func TestKindToTag(t *testing.T) // function
+func TestXMLFormatterKindTags(t *testing.T) // function
+func TestMarkdownFormatterKindComment(t *testing.T) // function
 ```
 
 ---
@@ -461,7 +461,7 @@ func TestMarkdownFormatterKindComment(t *testing.T)
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
 ```go
-func getEmptyComment(lang string) string
+func getEmptyComment(lang string) string // function
 ```
 
 ---
@@ -472,7 +472,7 @@ func getEmptyComment(lang string) string
 - `import "testing"`
 
 ```go
-func TestGetEmptyComment(t *testing.T)
+func TestGetEmptyComment(t *testing.T) // function
 ```
 
 ---
@@ -485,13 +485,13 @@ func TestGetEmptyComment(t *testing.T)
 - `import "strings"`
 
 ```go
-type MarkdownFormatter struct{}
-func NewMarkdownFormatter() *MarkdownFormatter
-func (f *MarkdownFormatter) Name() string
-func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)
-buf bytes.Buffer
-imports, exports []string
-func escapeMarkdown(s string) string
+type MarkdownFormatter struct{} // type
+func NewMarkdownFormatter() *MarkdownFormatter // function
+func (f *MarkdownFormatter) Name() string // method
+func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) // method
+buf bytes.Buffer // variable
+imports, exports []string // variable
+func escapeMarkdown(s string) string // function
 ```
 
 ---
@@ -504,13 +504,13 @@ func escapeMarkdown(s string) string
 - `import "strings"`
 
 ```go
-type XMLFormatter struct{}
-func NewXMLFormatter() *XMLFormatter
-func (f *XMLFormatter) Name() string
-func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
-buf bytes.Buffer
-func escapeXML(s string) string
-func kindToTag(kind string) string
+type XMLFormatter struct{} // type
+func NewXMLFormatter() *XMLFormatter // function
+func (f *XMLFormatter) Name() string // method
+func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) // method
+buf bytes.Buffer // variable
+func escapeXML(s string) string // function
+func kindToTag(kind string) string // function
 ```
 
 ---
@@ -534,7 +534,7 @@ type ImportExport struct {
 
 	// Line is the line number (1-indexed).
 	Line int
-}
+} // type
 type Signature struct {
 	// Name is the identifier name (e.g., "Scan", "FileScanner").
 	Name string
@@ -559,7 +559,7 @@ type Signature struct {
 
 	// Exported indicates whether the signature is exported/public.
 	Exported bool
-}
+} // type
 type Node struct {
 	// Type is the node type (e.g., "function_declaration", "class_definition").
 	Type string
@@ -581,7 +581,7 @@ type Node struct {
 
 	// Children are child nodes.
 	Children []Node
-}
+} // type
 type ParseResult struct {
 	// FilePath is the path to the parsed file.
 	FilePath string
@@ -600,7 +600,7 @@ type ParseResult struct {
 
 	// Error is any error that occurred during parsing.
 	Error error
-}
+} // type
 type Options struct {
 	// Language forces a specific language (auto-detected if empty).
 	Language string
@@ -618,26 +618,26 @@ type Options struct {
 
 	// IncludeImports whether to include import/export statements in the result.
 	IncludeImports bool
-}
+} // type
 type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
 	Parse(content string, opts *Options) (*ParseResult, error)
 
 	// Languages returns the list of supported languages.
 	Languages() []string
-}
+} // type
 type Registry struct {
 	mu      sync.RWMutex
 	parsers map[string]Parser
-}
-func NewRegistry() *Registry
-defaultRegistry = NewRegistry()
-func DefaultRegistry() *Registry
-func (r *Registry) Register(lang string, parser Parser)
-func (r *Registry) Get(lang string) (Parser, bool)
-func (r *Registry) Languages() []string
-func RegisterParser(lang string, parser Parser)
-func GetParser(lang string) (Parser, bool)
+} // type
+func NewRegistry() *Registry // function
+defaultRegistry = NewRegistry() // variable
+func DefaultRegistry() *Registry // function
+func (r *Registry) Register(lang string, parser Parser) // method
+func (r *Registry) Get(lang string) (Parser, bool) // method
+func (r *Registry) Languages() []string // method
+func RegisterParser(lang string, parser Parser) // function
+func GetParser(lang string) (Parser, bool) // function
 LanguageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
@@ -656,8 +656,8 @@ LanguageMapping = map[string]string{
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
-}
-func DetectLanguage(path string) string
+} // variable
+func DetectLanguage(path string) string // function
 ```
 
 ---
@@ -668,21 +668,21 @@ func DetectLanguage(path string) string
 - `import "testing"`
 
 ```go
-func TestSignatureDefaults(t *testing.T)
-func TestParseResultDefaults(t *testing.T)
-func TestNodeKind(t *testing.T)
-func TestParserInterface(t *testing.T)
-_ Parser = (*MockParser)(nil)
+func TestSignatureDefaults(t *testing.T) // function
+func TestParseResultDefaults(t *testing.T) // function
+func TestNodeKind(t *testing.T) // function
+func TestParserInterface(t *testing.T) // function
+_ Parser = (*MockParser)(nil) // variable
 type MockParser struct {
 	signatures []Signature
 	err        error
-}
-func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error)
-func (m *MockParser) Languages() []string
-func TestMockParser(t *testing.T)
-func TestRegistry(t *testing.T)
-func TestDefaultRegistry(t *testing.T)
-func TestDetectLanguage(t *testing.T)
+} // type
+func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error) // method
+func (m *MockParser) Languages() []string // method
+func TestMockParser(t *testing.T) // function
+func TestRegistry(t *testing.T) // function
+func TestDefaultRegistry(t *testing.T) // function
+func TestDetectLanguage(t *testing.T) // function
 ```
 
 ---
@@ -697,17 +697,17 @@ func TestDetectLanguage(t *testing.T)
 type CQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewCQuery() *CQuery
-func (q *CQuery) Language() *sitter.Language
-func (q *CQuery) Query() []byte
-func (q *CQuery) Captures() []string
-func (q *CQuery) KindMapping() map[string]string
-func (q *CQuery) ImportQuery() []byte
+} // type
+func NewCQuery() *CQuery // function
+func (q *CQuery) Language() *sitter.Language // method
+func (q *CQuery) Query() []byte // method
+func (q *CQuery) Captures() []string // method
+func (q *CQuery) KindMapping() map[string]string // method
+func (q *CQuery) ImportQuery() []byte // method
 cImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
-`
+` // variable
 cQueryPattern = `
 ; Function definitions - direct declarator
 (function_definition
@@ -804,7 +804,7 @@ cQueryPattern = `
 
 ; Comments
 (comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -817,15 +817,15 @@ cQueryPattern = `
 - `import tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"`
 
 ```go
-func TestCQueryLanguage(t *testing.T)
-func TestCQueryPattern(t *testing.T)
-func TestCQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-func TestCQueryExtractStruct(t *testing.T)
-func TestCQueryExtractMacro(t *testing.T)
-func TestCQueryExtractEnum(t *testing.T)
-func TestCQueryExtractTypedef(t *testing.T)
-func TestCQueryExtractGlobalVariables(t *testing.T)
+func TestCQueryLanguage(t *testing.T) // function
+func TestCQueryPattern(t *testing.T) // function
+func TestCQueryExtractFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+func TestCQueryExtractStruct(t *testing.T) // function
+func TestCQueryExtractMacro(t *testing.T) // function
+func TestCQueryExtractEnum(t *testing.T) // function
+func TestCQueryExtractTypedef(t *testing.T) // function
+func TestCQueryExtractGlobalVariables(t *testing.T) // function
 ```
 
 ---
@@ -840,17 +840,17 @@ func TestCQueryExtractGlobalVariables(t *testing.T)
 type CppQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewCppQuery() *CppQuery
-func (q *CppQuery) Language() *sitter.Language
-func (q *CppQuery) Query() []byte
-func (q *CppQuery) Captures() []string
-func (q *CppQuery) KindMapping() map[string]string
-func (q *CppQuery) ImportQuery() []byte
+} // type
+func NewCppQuery() *CppQuery // function
+func (q *CppQuery) Language() *sitter.Language // method
+func (q *CppQuery) Query() []byte // method
+func (q *CppQuery) Captures() []string // method
+func (q *CppQuery) KindMapping() map[string]string // method
+func (q *CppQuery) ImportQuery() []byte // method
 cppImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
-`
+` // variable
 cppQueryPattern = `
 ; Function definitions - direct declarator
 (function_definition
@@ -1025,7 +1025,7 @@ cppQueryPattern = `
 
 ; Comments
 (comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -1038,29 +1038,29 @@ cppQueryPattern = `
 - `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
 
 ```go
-func TestCppQueryLanguage(t *testing.T)
-func TestCppQueryPattern(t *testing.T)
-func TestCppQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-func TestCppQueryExtractClass(t *testing.T)
-func TestCppQueryExtractMethod(t *testing.T)
-func TestCppQueryExtractConstructorDestructor(t *testing.T)
-func TestCppQueryExtractNamespace(t *testing.T)
-func TestCppQueryExtractTemplate(t *testing.T)
-func TestCppQueryExtractStruct(t *testing.T)
-func TestCppQueryExtractEnum(t *testing.T)
-func TestCppQueryExtractMacro(t *testing.T)
-func TestCppQueryExtractTypedef(t *testing.T)
-func TestCppQueryExtractIncludes(t *testing.T)
-imports []string
-func TestCppQueryNestedNamespaces(t *testing.T)
-func TestCppQueryMultipleInheritance(t *testing.T)
-func TestCppQueryEmptyFile(t *testing.T)
-func TestCppQueryOnlyComments(t *testing.T)
-nameCount int
-docCount int
-func TestCppQueryKindMapping(t *testing.T)
-func TestCppQueryCaptures(t *testing.T)
+func TestCppQueryLanguage(t *testing.T) // function
+func TestCppQueryPattern(t *testing.T) // function
+func TestCppQueryExtractFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+func TestCppQueryExtractClass(t *testing.T) // function
+func TestCppQueryExtractMethod(t *testing.T) // function
+func TestCppQueryExtractConstructorDestructor(t *testing.T) // function
+func TestCppQueryExtractNamespace(t *testing.T) // function
+func TestCppQueryExtractTemplate(t *testing.T) // function
+func TestCppQueryExtractStruct(t *testing.T) // function
+func TestCppQueryExtractEnum(t *testing.T) // function
+func TestCppQueryExtractMacro(t *testing.T) // function
+func TestCppQueryExtractTypedef(t *testing.T) // function
+func TestCppQueryExtractIncludes(t *testing.T) // function
+imports []string // variable
+func TestCppQueryNestedNamespaces(t *testing.T) // function
+func TestCppQueryMultipleInheritance(t *testing.T) // function
+func TestCppQueryEmptyFile(t *testing.T) // function
+func TestCppQueryOnlyComments(t *testing.T) // function
+nameCount int // variable
+docCount int // variable
+func TestCppQueryKindMapping(t *testing.T) // function
+func TestCppQueryCaptures(t *testing.T) // function
 ```
 
 ---
@@ -1072,20 +1072,20 @@ func TestCppQueryCaptures(t *testing.T)
 - `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
 
 ```go
-captureName      = "name"
-captureSignature = "signature"
-captureDoc       = "doc"
-captureKind      = "kind"
+captureName      = "name" // variable
+captureSignature = "signature" // variable
+captureDoc       = "doc" // variable
+captureKind      = "kind" // variable
 type GoQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewGoQuery() *GoQuery
-func (q *GoQuery) Language() *sitter.Language
-func (q *GoQuery) Query() []byte
-func (q *GoQuery) Captures() []string
-func (q *GoQuery) KindMapping() map[string]string
-func (q *GoQuery) ImportQuery() []byte
+} // type
+func NewGoQuery() *GoQuery // function
+func (q *GoQuery) Language() *sitter.Language // method
+func (q *GoQuery) Query() []byte // method
+func (q *GoQuery) Captures() []string // method
+func (q *GoQuery) KindMapping() map[string]string // method
+func (q *GoQuery) ImportQuery() []byte // method
 goImportQueryPattern = `
 ; Single import (capture full spec including alias)
 (import_declaration
@@ -1098,7 +1098,7 @@ goImportQueryPattern = `
     (import_spec) @import_path
   )
 )
-`
+` // variable
 goQueryPattern = `
 ; Function declarations
 (function_declaration
@@ -1129,7 +1129,7 @@ goQueryPattern = `
 
 ; Comments (documentation)
 (comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -1142,13 +1142,13 @@ goQueryPattern = `
 - `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
 
 ```go
-func TestGoQueryLanguage(t *testing.T)
-func TestGoQueryPattern(t *testing.T)
-func TestGoQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-funcKindNode *sitter.Node
-kindNode *sitter.Node
-func TestGoQueryExtractConstAndVar(t *testing.T)
+func TestGoQueryLanguage(t *testing.T) // function
+func TestGoQueryPattern(t *testing.T) // function
+func TestGoQueryExtractFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+funcKindNode *sitter.Node // variable
+kindNode *sitter.Node // variable
+func TestGoQueryExtractConstAndVar(t *testing.T) // function
 ```
 
 ---
@@ -1163,17 +1163,17 @@ func TestGoQueryExtractConstAndVar(t *testing.T)
 type JavaQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewJavaQuery() *JavaQuery
-func (q *JavaQuery) Language() *sitter.Language
-func (q *JavaQuery) Query() []byte
-func (q *JavaQuery) Captures() []string
-func (q *JavaQuery) KindMapping() map[string]string
-func (q *JavaQuery) ImportQuery() []byte
+} // type
+func NewJavaQuery() *JavaQuery // function
+func (q *JavaQuery) Language() *sitter.Language // method
+func (q *JavaQuery) Query() []byte // method
+func (q *JavaQuery) Captures() []string // method
+func (q *JavaQuery) KindMapping() map[string]string // method
+func (q *JavaQuery) ImportQuery() []byte // method
 javaImportQueryPattern = `
 ; import statements (capture full declaration)
 (import_declaration) @import_path
-`
+` // variable
 javaQueryPattern = `
 ; Class declarations (includes inner classes)
 (class_declaration
@@ -1220,7 +1220,7 @@ javaQueryPattern = `
 ; Comments (Javadoc and regular)
 (line_comment) @doc
 (block_comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -1233,19 +1233,19 @@ javaQueryPattern = `
 - `import tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"`
 
 ```go
-func TestJavaQueryLanguage(t *testing.T)
-func TestJavaQueryPattern(t *testing.T)
-func TestJavaQueryKindMapping(t *testing.T)
-func TestJavaQueryExtractClass(t *testing.T)
-foundClass, foundMethod bool
-func TestJavaQueryExtractInterface(t *testing.T)
-func TestJavaQueryExtractEnum(t *testing.T)
-foundEnum bool
-func TestJavaQueryExtractAnnotationType(t *testing.T)
-foundAnnotation bool
-func TestJavaQueryExtractRecord(t *testing.T)
-func TestJavaQueryExtractGenerics(t *testing.T)
-func TestJavaQueryExtractFieldDeclarations(t *testing.T)
+func TestJavaQueryLanguage(t *testing.T) // function
+func TestJavaQueryPattern(t *testing.T) // function
+func TestJavaQueryKindMapping(t *testing.T) // function
+func TestJavaQueryExtractClass(t *testing.T) // function
+foundClass, foundMethod bool // variable
+func TestJavaQueryExtractInterface(t *testing.T) // function
+func TestJavaQueryExtractEnum(t *testing.T) // function
+foundEnum bool // variable
+func TestJavaQueryExtractAnnotationType(t *testing.T) // function
+foundAnnotation bool // variable
+func TestJavaQueryExtractRecord(t *testing.T) // function
+func TestJavaQueryExtractGenerics(t *testing.T) // function
+func TestJavaQueryExtractFieldDeclarations(t *testing.T) // function
 ```
 
 ---
@@ -1260,20 +1260,20 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 type PythonQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewPythonQuery() *PythonQuery
-func (q *PythonQuery) Language() *sitter.Language
-func (q *PythonQuery) Query() []byte
-func (q *PythonQuery) Captures() []string
-func (q *PythonQuery) KindMapping() map[string]string
-func (q *PythonQuery) ImportQuery() []byte
+} // type
+func NewPythonQuery() *PythonQuery // function
+func (q *PythonQuery) Language() *sitter.Language // method
+func (q *PythonQuery) Query() []byte // method
+func (q *PythonQuery) Captures() []string // method
+func (q *PythonQuery) KindMapping() map[string]string // method
+func (q *PythonQuery) ImportQuery() []byte // method
 pythonImportQueryPattern = `
 ; import module (capture full statement)
 (import_statement) @import_path
 
 ; from module import ... (capture full statement)
 (import_from_statement) @import_path
-`
+` // variable
 pythonQueryPattern = `
 ; Function definitions (includes async def, methods)
 (function_definition
@@ -1296,7 +1296,7 @@ pythonQueryPattern = `
 
 ; Comments
 (comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -1309,14 +1309,14 @@ pythonQueryPattern = `
 - `import tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"`
 
 ```go
-func TestPythonQueryLanguage(t *testing.T)
-func TestPythonQueryPattern(t *testing.T)
-func TestPythonQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-func TestPythonQueryExtractClass(t *testing.T)
-func TestPythonQueryExtractAsyncFunction(t *testing.T)
-funcCaptures map[string]string
-func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
+func TestPythonQueryLanguage(t *testing.T) // function
+func TestPythonQueryPattern(t *testing.T) // function
+func TestPythonQueryExtractFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+func TestPythonQueryExtractClass(t *testing.T) // function
+func TestPythonQueryExtractAsyncFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+func TestPythonQueryExtractModuleLevelVariables(t *testing.T) // function
 ```
 
 ---
@@ -1331,13 +1331,13 @@ func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 type TypeScriptQuery struct {
 	language *sitter.Language
 	query    []byte
-}
-func NewTypeScriptQuery() *TypeScriptQuery
-func (q *TypeScriptQuery) Language() *sitter.Language
-func (q *TypeScriptQuery) Query() []byte
-func (q *TypeScriptQuery) Captures() []string
-func (q *TypeScriptQuery) KindMapping() map[string]string
-func (q *TypeScriptQuery) ImportQuery() []byte
+} // type
+func NewTypeScriptQuery() *TypeScriptQuery // function
+func (q *TypeScriptQuery) Language() *sitter.Language // method
+func (q *TypeScriptQuery) Query() []byte // method
+func (q *TypeScriptQuery) Captures() []string // method
+func (q *TypeScriptQuery) KindMapping() map[string]string // method
+func (q *TypeScriptQuery) ImportQuery() []byte // method
 typeScriptImportQueryPattern = `
 ; Import statements (capture full statement)
 (import_statement) @import_path
@@ -1362,7 +1362,7 @@ typeScriptImportQueryPattern = `
     )
   )
 )
-`
+` // variable
 typeScriptQueryPattern = `
 ; Function declarations
 (function_declaration
@@ -1451,7 +1451,7 @@ typeScriptQueryPattern = `
 
 ; Comments (documentation)
 (comment) @doc
-`
+` // variable
 ```
 
 ---
@@ -1464,11 +1464,11 @@ typeScriptQueryPattern = `
 - `import tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"`
 
 ```go
-func TestTypeScriptQueryLanguage(t *testing.T)
-func TestTypeScriptQueryPattern(t *testing.T)
-func TestTypeScriptQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
+func TestTypeScriptQueryLanguage(t *testing.T) // function
+func TestTypeScriptQueryPattern(t *testing.T) // function
+func TestTypeScriptQueryExtractFunction(t *testing.T) // function
+funcCaptures map[string]string // variable
+func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T) // function
 ```
 
 ---
@@ -1484,51 +1484,51 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 - `import "github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"`
 
 ```go
-func init()
+func init() // function
 type TreeSitterParser struct {
 	queries map[string]LanguageQuery
-}
-func NewTreeSitterParser() *TreeSitterParser
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error)
-imports []parser.ImportExport
-func (p *TreeSitterParser) Languages() []string
+} // type
+func NewTreeSitterParser() *TreeSitterParser // function
+func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error) // method
+imports []parser.ImportExport // variable
+func (p *TreeSitterParser) Languages() []string // method
 func (p *TreeSitterParser) extractSignatures(
 	root *sitter.Node,
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.Signature
-signatures []parser.Signature
-kindNode *sitter.Node
-func cleanComment(text string) string
-func isExported(name, language string) bool
-func stripBody(text, kind, language string) string
-func stripGoBody(text, kind string) string
-tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
-tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
-tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
-func stripTypeScriptBody(text, kind string) string
-func stripTSFunctionBody(text string) string
-func findFunctionBodyStart(text string) int
-func findTSClassBodyStart(text string) int
-func stripPythonBody(text, kind string) string
-func findPythonBodyStart(text string) int
-func stripCBody(text, kind string) string
-func stripCppBody(text, kind string) string
-func findCppBodyStart(text string) int
-func isPythonMethod(signature string) bool
-func stripJavaBody(text, kind string) string
-func findJavaBodyStart(text string) int
+) []parser.Signature // method
+signatures []parser.Signature // variable
+kindNode *sitter.Node // variable
+func cleanComment(text string) string // function
+func isExported(name, language string) bool // function
+func stripBody(text, kind, language string) string // function
+func stripGoBody(text, kind string) string // function
+tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`) // variable
+tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`) // variable
+tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`) // variable
+func stripTypeScriptBody(text, kind string) string // function
+func stripTSFunctionBody(text string) string // function
+func findFunctionBodyStart(text string) int // function
+func findTSClassBodyStart(text string) int // function
+func stripPythonBody(text, kind string) string // function
+func findPythonBodyStart(text string) int // function
+func stripCBody(text, kind string) string // function
+func stripCppBody(text, kind string) string // function
+func findCppBodyStart(text string) int // function
+func isPythonMethod(signature string) bool // function
+func stripJavaBody(text, kind string) string // function
+func findJavaBodyStart(text string) int // function
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.ImportExport
-imports []parser.ImportExport
-imp parser.ImportExport
-hasExportType bool
-func cleanImportPath(path string) string
+) []parser.ImportExport // method
+imports []parser.ImportExport // variable
+imp parser.ImportExport // variable
+hasExportType bool // variable
+func cleanImportPath(path string) string // function
 ```
 
 ---
@@ -1541,38 +1541,38 @@ func cleanImportPath(path string) string
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 
 ```go
-func TestTreeSitterParserImplementsParser(t *testing.T)
-_ parser.Parser = (*TreeSitterParser)(nil)
-func TestTreeSitterParserLanguages(t *testing.T)
-func TestTreeSitterParserParseGo(t *testing.T)
-foundAdd bool
-func TestTreeSitterParserParseTypeScript(t *testing.T)
-foundAdd bool
-func TestTreeSitterParserUnsupportedLanguage(t *testing.T)
-func TestTreeSitterParserAutoRegistration(t *testing.T)
-func TestGoSignatureOnlyExtraction(t *testing.T)
-func TestGoIncludeBodyExtraction(t *testing.T)
-foundAdd bool
-func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
-func TestTypeScriptArrowFunctionSignature(t *testing.T)
-func contains(s, substr string) bool
-func TestTreeSitterParserParseJava(t *testing.T)
-foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
-func TestJavaSignatureOnlyExtraction(t *testing.T)
-func TestJavaGenericsExtraction(t *testing.T)
-foundClass, foundMethod bool
-func TestJavaAutoRegistration(t *testing.T)
-func TestTreeSitterParserParseCpp(t *testing.T)
-func TestCppSignatureOnlyExtraction(t *testing.T)
-func TestCppTemplateExtraction(t *testing.T)
-func TestCppAutoRegistration(t *testing.T)
-func TestCppImportExtraction(t *testing.T)
-func TestGoVariableExtraction(t *testing.T)
-func TestTypeScriptVariableExtraction(t *testing.T)
-func TestPythonVariableExtraction(t *testing.T)
-func TestJavaStaticFieldExtraction(t *testing.T)
-func TestCGlobalVariableExtraction(t *testing.T)
-func TestVariableSignaturePreservesValue(t *testing.T)
+func TestTreeSitterParserImplementsParser(t *testing.T) // function
+_ parser.Parser = (*TreeSitterParser)(nil) // variable
+func TestTreeSitterParserLanguages(t *testing.T) // function
+func TestTreeSitterParserParseGo(t *testing.T) // function
+foundAdd bool // variable
+func TestTreeSitterParserParseTypeScript(t *testing.T) // function
+foundAdd bool // variable
+func TestTreeSitterParserUnsupportedLanguage(t *testing.T) // function
+func TestTreeSitterParserAutoRegistration(t *testing.T) // function
+func TestGoSignatureOnlyExtraction(t *testing.T) // function
+func TestGoIncludeBodyExtraction(t *testing.T) // function
+foundAdd bool // variable
+func TestTypeScriptSignatureOnlyExtraction(t *testing.T) // function
+func TestTypeScriptArrowFunctionSignature(t *testing.T) // function
+func contains(s, substr string) bool // function
+func TestTreeSitterParserParseJava(t *testing.T) // function
+foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool // variable
+func TestJavaSignatureOnlyExtraction(t *testing.T) // function
+func TestJavaGenericsExtraction(t *testing.T) // function
+foundClass, foundMethod bool // variable
+func TestJavaAutoRegistration(t *testing.T) // function
+func TestTreeSitterParserParseCpp(t *testing.T) // function
+func TestCppSignatureOnlyExtraction(t *testing.T) // function
+func TestCppTemplateExtraction(t *testing.T) // function
+func TestCppAutoRegistration(t *testing.T) // function
+func TestCppImportExtraction(t *testing.T) // function
+func TestGoVariableExtraction(t *testing.T) // function
+func TestTypeScriptVariableExtraction(t *testing.T) // function
+func TestPythonVariableExtraction(t *testing.T) // function
+func TestJavaStaticFieldExtraction(t *testing.T) // function
+func TestCGlobalVariableExtraction(t *testing.T) // function
+func TestVariableSignaturePreservesValue(t *testing.T) // function
 ```
 
 ---
@@ -1599,14 +1599,14 @@ type LanguageQuery interface {
 
 	// KindMapping maps Tree-sitter node types to Signature kinds.
 	KindMapping() map[string]string
-}
-CaptureName      = "name"
-CaptureSignature = "signature"
-CaptureDoc       = "doc"
-CaptureKind      = "kind"
-CaptureImportPath = "import_path"
-CaptureExportName = "export_name"
-CaptureImportType = "import_type"
+} // type
+CaptureName      = "name" // variable
+CaptureSignature = "signature" // variable
+CaptureDoc       = "doc" // variable
+CaptureKind      = "kind" // variable
+CaptureImportPath = "import_path" // variable
+CaptureExportName = "export_name" // variable
+CaptureImportType = "import_type" // variable
 DefaultKindMapping = map[string]string{
 	"function_declaration": "function",
 	"method_declaration":   "method",
@@ -1617,7 +1617,7 @@ DefaultKindMapping = map[string]string{
 	"arrow_function":       "function",
 	"function_expression":  "function",
 	"method_definition":    "method",
-}
+} // variable
 ```
 
 ---
@@ -1628,7 +1628,7 @@ DefaultKindMapping = map[string]string{
 - `import "testing"`
 
 ```go
-func TestCaptureDefinitions(t *testing.T)
+func TestCaptureDefinitions(t *testing.T) // function
 ```
 
 ---
@@ -1653,7 +1653,7 @@ type FileEntry struct {
 
 	// Size is the file size in bytes.
 	Size int64
-}
+} // type
 type ScanResult struct {
 	// Files is the list of matched files.
 	Files []FileEntry
@@ -1663,7 +1663,7 @@ type ScanResult struct {
 
 	// SkippedCount is the number of files skipped (too large, unsupported, etc.).
 	SkippedCount int
-}
+} // type
 type ScanOptions struct {
 	// RootPath is the directory or file to scan.
 	RootPath string
@@ -1679,23 +1679,23 @@ type ScanOptions struct {
 
 	// MaxFileSize is the maximum file size in bytes to include.
 	MaxFileSize int64
-}
-func DefaultScanOptions() *ScanOptions
-func (o *ScanOptions) GetLanguage(path string) (string, bool)
-func IsHidden(name string) bool
+} // type
+func DefaultScanOptions() *ScanOptions // function
+func (o *ScanOptions) GetLanguage(path string) (string, bool) // method
+func IsHidden(name string) bool // function
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	Scan() (*ScanResult, error)
-}
+} // type
 type FileScanner struct {
 	opts       *ScanOptions
 	ignorer    *ignore.GitIgnore
 	ignorerErr error
 	logger     *log.Logger
-}
-func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
-func (s *FileScanner) Scan() (*ScanResult, error)
-func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
+} // type
+func NewFileScanner(opts *ScanOptions) (*FileScanner, error) // function
+func (s *FileScanner) Scan() (*ScanResult, error) // method
+func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) // method
 ```
 
 ---
@@ -1708,22 +1708,22 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 - `import "testing"`
 
 ```go
-func TestNewFileScanner(t *testing.T)
-func TestNewFileScannerNilOptions(t *testing.T)
-func TestFileEntryDefaults(t *testing.T)
-func TestScanOptionsDefaults(t *testing.T)
-expectedMaxSize = 512000
-func TestScanOptionsWithExtensions(t *testing.T)
-func TestScannerInterface(t *testing.T)
-_ Scanner = (*FileScanner)(nil)
-func TestScanEmptyDirectory(t *testing.T)
-func TestScanSingleFile(t *testing.T)
-func TestScanFilterByExtension(t *testing.T)
-func TestScanExcludeHidden(t *testing.T)
-func TestScanIncludeHidden(t *testing.T)
-func TestScanMaxFileSize(t *testing.T)
-func TestScanGitignore(t *testing.T)
-func TestScanNestedDirectories(t *testing.T)
+func TestNewFileScanner(t *testing.T) // function
+func TestNewFileScannerNilOptions(t *testing.T) // function
+func TestFileEntryDefaults(t *testing.T) // function
+func TestScanOptionsDefaults(t *testing.T) // function
+expectedMaxSize = 512000 // variable
+func TestScanOptionsWithExtensions(t *testing.T) // function
+func TestScannerInterface(t *testing.T) // function
+_ Scanner = (*FileScanner)(nil) // variable
+func TestScanEmptyDirectory(t *testing.T) // function
+func TestScanSingleFile(t *testing.T) // function
+func TestScanFilterByExtension(t *testing.T) // function
+func TestScanExcludeHidden(t *testing.T) // function
+func TestScanIncludeHidden(t *testing.T) // function
+func TestScanMaxFileSize(t *testing.T) // function
+func TestScanGitignore(t *testing.T) // function
+func TestScanNestedDirectories(t *testing.T) // function
 ```
 
 ---
@@ -1737,11 +1737,11 @@ func TestScanNestedDirectories(t *testing.T)
 type TiktokenTokenizer struct {
 	encoding string
 	tke      *tiktoken.Tiktoken
-}
-_ Tokenizer = (*TiktokenTokenizer)(nil)
-func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
-func (t *TiktokenTokenizer) Count(text string) (int, error)
-func (t *TiktokenTokenizer) Name() string
+} // type
+_ Tokenizer = (*TiktokenTokenizer)(nil) // variable
+func NewTiktokenTokenizer() (*TiktokenTokenizer, error) // function
+func (t *TiktokenTokenizer) Count(text string) (int, error) // method
+func (t *TiktokenTokenizer) Name() string // method
 ```
 
 ---
@@ -1756,12 +1756,12 @@ type Tokenizer interface {
 
 	// Name returns the tokenizer name (e.g., "tiktoken-cl100k", "noop").
 	Name() string
-}
-type NoOpTokenizer struct{}
-_ Tokenizer = (*NoOpTokenizer)(nil)
-func NewNoOpTokenizer() *NoOpTokenizer
-func (t *NoOpTokenizer) Count(_ string) (int, error)
-func (t *NoOpTokenizer) Name() string
+} // type
+type NoOpTokenizer struct{} // type
+_ Tokenizer = (*NoOpTokenizer)(nil) // variable
+func NewNoOpTokenizer() *NoOpTokenizer // function
+func (t *NoOpTokenizer) Count(_ string) (int, error) // method
+func (t *NoOpTokenizer) Name() string // method
 ```
 
 ---
@@ -1773,16 +1773,16 @@ func (t *NoOpTokenizer) Name() string
 - `import "testing"`
 
 ```go
-func TestNoOpTokenizerImplementsTokenizer(t *testing.T)
-_ Tokenizer = (*NoOpTokenizer)(nil)
-func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)
-_ Tokenizer = (*TiktokenTokenizer)(nil)
-func TestNoOpTokenizerCount(t *testing.T)
-func TestNoOpTokenizerName(t *testing.T)
-func TestTiktokenTokenizerCount(t *testing.T)
-func TestTiktokenTokenizerName(t *testing.T)
-func TestTiktokenTokenizerConsistency(t *testing.T)
-func TestTiktokenTokenizerSpecialCharacters(t *testing.T)
+func TestNoOpTokenizerImplementsTokenizer(t *testing.T) // function
+_ Tokenizer = (*NoOpTokenizer)(nil) // variable
+func TestTiktokenTokenizerImplementsTokenizer(t *testing.T) // function
+_ Tokenizer = (*TiktokenTokenizer)(nil) // variable
+func TestNoOpTokenizerCount(t *testing.T) // function
+func TestNoOpTokenizerName(t *testing.T) // function
+func TestTiktokenTokenizerCount(t *testing.T) // function
+func TestTiktokenTokenizerName(t *testing.T) // function
+func TestTiktokenTokenizerConsistency(t *testing.T) // function
+func TestTiktokenTokenizerSpecialCharacters(t *testing.T) // function
 ```
 
 ---
