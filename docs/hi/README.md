@@ -143,6 +143,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Python | `.py` | [Python गाइड](languages/python.md) |
 | C | `.c`, `.h` | [C गाइड](languages/c.md) |
 | Java | `.java` | [Java गाइड](languages/java.md) |
+| Rust | `.rs` | [Rust गाइड](languages/rust.md) |
 
 ---
 

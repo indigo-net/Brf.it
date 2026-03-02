@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -122,9 +122,9 @@ export interface Point {
 func TestTreeSitterParserUnsupportedLanguage(t *testing.T) {
 	p := NewTreeSitterParser()
 
-	code := `fn main() { println!("hello"); }`
+	code := `puts "hello"`
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	result, err := p.Parse(code, &parser.Options{Language: "ruby"})
 	if err == nil {
 		t.Error("expected error for unsupported language")
 	}
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -943,6 +943,247 @@ var DefaultTimeout = 30 * time.Second
 			if !contains(sig.Text, "30 * time.Second") {
 				t.Errorf("expected variable signature to contain value, got '%s'", sig.Text)
 			}
+		}
+	}
+}
+
+// === Rust tests ===
+
+func TestTreeSitterParserParseRust(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `/// Adds two numbers together.
+pub fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+pub struct Point {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl Point {
+    pub fn new(x: f64, y: f64) -> Self {
+        Point { x, y }
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Signatures) < 3 {
+		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Check for function
+	if kind, ok := foundNames["add"]; !ok {
+		t.Error("expected to find function 'add'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'add', got '%s'", kind)
+	}
+
+	// Check for struct
+	if kind, ok := foundNames["Point"]; !ok {
+		t.Error("expected to find struct 'Point'")
+	} else if kind != "struct" && kind != "impl" {
+		t.Errorf("expected kind 'struct' or 'impl' for 'Point', got '%s'", kind)
+	}
+
+	// Check for method in impl block
+	if kind, ok := foundNames["new"]; !ok {
+		t.Error("expected to find method 'new'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'new', got '%s'", kind)
+	}
+}
+
+func TestRustSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `pub fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+
+pub struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    pub fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "add":
+			// Function should not contain body
+			if contains(sig.Text, "a + b") {
+				t.Errorf("function signature should not contain body, got '%s'", sig.Text)
+			}
+		case "Rectangle":
+			// Struct should not contain body
+			if contains(sig.Text, "width: u32") {
+				t.Errorf("struct signature should not contain body, got '%s'", sig.Text)
+			}
+		case "area":
+			// Method should not contain body
+			if contains(sig.Text, "self.width * self.height") {
+				t.Errorf("method signature should not contain body, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+func TestRustImportExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `use std::collections::HashMap;
+use std::io::{self, Read, Write};
+use crate::utils::*;
+
+pub fn main() {}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Imports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	}
+}
+
+func TestRustAutoRegistration(t *testing.T) {
+	registry := parser.DefaultRegistry()
+
+	p, ok := registry.Get("rust")
+	if !ok {
+		t.Error("expected parser for 'rust' to be registered")
+	}
+	if p == nil {
+		t.Error("expected non-nil parser for 'rust'")
+	}
+}
+
+func TestRustConstAndStaticExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `pub const MAX_SIZE: usize = 1024;
+const PRIVATE_CONST: i32 = 42;
+pub static GLOBAL_COUNTER: AtomicUsize = AtomicUsize::new(0);
+static mut MUTABLE_STATIC: i32 = 0;
+
+pub fn main() {}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Constants and statics should be found as "variable"
+	expectedVars := []string{"MAX_SIZE", "PRIVATE_CONST", "GLOBAL_COUNTER", "MUTABLE_STATIC"}
+	for _, name := range expectedVars {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+}
+
+func TestRustMacroExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `macro_rules! say_hello {
+    () => {
+        println!("Hello!");
+    };
+}
+
+pub fn main() {}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Macro should be found
+	if kind, ok := foundNames["say_hello"]; !ok {
+		t.Error("expected to find macro 'say_hello'")
+	} else if kind != "macro" {
+		t.Errorf("expected kind 'macro' for 'say_hello', got '%s'", kind)
+	}
+}
+
+func TestRustGenericsAndLifetimes(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `pub fn with_lifetime<'a>(s: &'a str) -> &'a str {
+    s
+}
+
+pub struct Container<T> {
+    value: T,
+}
+
+pub fn generic_fn<T: Clone>(item: T) -> T {
+    item.clone()
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = true
+		// Verify generics and lifetimes are preserved in signature
+		if sig.Name == "with_lifetime" && !contains(sig.Text, "'a") {
+			t.Errorf("expected lifetime to be preserved, got '%s'", sig.Text)
+		}
+		if sig.Name == "Container" && !contains(sig.Text, "<T>") {
+			t.Errorf("expected generic to be preserved, got '%s'", sig.Text)
+		}
+		if sig.Name == "generic_fn" && !contains(sig.Text, "T: Clone") {
+			t.Errorf("expected trait bound to be preserved, got '%s'", sig.Text)
+		}
+	}
+
+	expectedNames := []string{"with_lifetime", "Container", "generic_fn"}
+	for _, name := range expectedNames {
+		if !foundNames[name] {
+			t.Errorf("expected to find '%s'", name)
 		}
 	}
 }

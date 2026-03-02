@@ -143,6 +143,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Python | `.py` | [Python-Leitfaden](languages/python.md) |
 | C | `.c`, `.h` | [C-Leitfaden](languages/c.md) |
 | Java | `.java` | [Java-Leitfaden](languages/java.md) |
+| Rust | `.rs` | [Rust-Leitfaden](languages/rust.md) |
 
 ---
 

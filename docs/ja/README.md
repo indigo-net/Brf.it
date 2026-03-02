@@ -143,6 +143,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Python | `.py` | [Pythonガイド](languages/python.md) |
 | C | `.c`、`.h` | [Cガイド](languages/c.md) |
 | Java | `.java` | [Javaガイド](languages/java.md) |
+| Rust | `.rs` | [Rustガイド](languages/rust.md) |
 
 ---
 

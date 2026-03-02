@@ -22,6 +22,7 @@ func init() {
 	parser.RegisterParser("c", NewTreeSitterParser())
 	parser.RegisterParser("java", NewTreeSitterParser())
 	parser.RegisterParser("cpp", NewTreeSitterParser())
+	parser.RegisterParser("rust", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -42,6 +43,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"c":          languages.NewCQuery(),
 			"java":       languages.NewJavaQuery(),
 			"cpp":        languages.NewCppQuery(),
+			"rust":       languages.NewRustQuery(),
 		},
 	}
 }
@@ -273,6 +275,9 @@ func isExported(name, language string) bool {
 	case "java":
 		// Java: all elements are considered exported (visibility modifiers not filtered)
 		return true
+	case "rust":
+		// Rust: all elements are considered public (user requested private extraction too)
+		return true
 	default:
 		return false
 	}
@@ -294,6 +299,8 @@ func stripBody(text, kind, language string) string {
 		return stripCppBody(text, kind)
 	case "java":
 		return stripJavaBody(text, kind)
+	case "rust":
+		return stripRustBody(text, kind)
 	default:
 		return text
 	}
@@ -647,6 +654,55 @@ func findJavaBodyStart(text string) int {
 	return -1
 }
 
+// stripRustBody removes the body from Rust declarations.
+func stripRustBody(text, kind string) string {
+	switch kind {
+	case "function", "method":
+		// Remove everything after {
+		braceIdx := findRustBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "struct", "enum", "trait", "impl", "namespace":
+		// For types, remove the body
+		braceIdx := findRustBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "type", "variable", "macro":
+		// Type aliases, constants, statics, macros: keep full text
+		return text
+	}
+	return text
+}
+
+// findRustBodyStart finds the index where the Rust body starts.
+// Handles nested angle brackets for generics and lifetime annotations.
+func findRustBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
 // extractImports extracts import/export statements from the AST.
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
@@ -732,7 +788,9 @@ func cleanImportPath(path string) string {
 	trimmed := strings.TrimSpace(path)
 	if strings.HasPrefix(trimmed, "import ") ||
 		strings.HasPrefix(trimmed, "from ") ||
-		strings.HasPrefix(trimmed, "#include") {
+		strings.HasPrefix(trimmed, "#include") ||
+		strings.HasPrefix(trimmed, "use ") ||
+		strings.HasPrefix(trimmed, "extern crate") {
 		return trimmed
 	}
 	// Go import_spec: "path" or alias "path" - prefix with "import "

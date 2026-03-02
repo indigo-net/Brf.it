@@ -144,6 +144,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | C | `.c` | [C Guide](docs/languages/c.md) |
 | C++ | `.cpp`, `.hpp`, `.h` | [C++ Guide](docs/languages/cpp.md) |
 | Java | `.java` | [Java Guide](docs/languages/java.md) |
+| Rust | `.rs` | [Rust Guide](docs/languages/rust.md) |
 
 ---
 

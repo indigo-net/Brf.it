@@ -99,6 +99,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".hpp":  "cpp",
 		".h":    "cpp",
 		".java": "java",
+		".rs":   "rust",
 	}
 }
 

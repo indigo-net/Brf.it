@@ -68,6 +68,7 @@ func DefaultScanOptions() *ScanOptions {
 			".hpp":  "cpp",
 			".h":    "cpp",
 			".java": "java",
+			".rs":   "rust",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
