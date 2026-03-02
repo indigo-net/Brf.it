@@ -244,14 +244,16 @@ if fileSize > maxFileSize {
 
 새 프로그래밍 언어 지원 추가 시 반드시 확인:
 
-1. `pkg/parser/treesitter/languages/[lang].go` - LanguageQuery 구현
+1. `pkg/parser/treesitter/languages/[lang].go` - LanguageQuery 구현 (~170줄)
 2. `pkg/parser/treesitter/parser.go` - init()에 파서 등록, queries 맵에 추가, isExported(), stripBody() 케이스 추가
 3. `pkg/scanner/scanner.go` - DefaultScanOptions()에 확장자 추가
 4. `internal/config/config.go` - SupportedExtensions()에 확장자 추가 (CLI에서 사용)
 5. `docs/languages/[lang].md` + 다국어 버전 생성
 6. `README*.md` Supported Languages 테이블 업데이트
-7. `pkg/parser/treesitter/languages/[lang]_test.go` - 단위 테스트 작성
+7. `pkg/parser/treesitter/languages/[lang]_test.go` - 단위 테스트 작성 (~400줄, 14개 테스트)
 8. `pkg/parser/treesitter/parser_test.go` - TestTreeSitterParserLanguages, TestTreeSitterParserAutoRegistration에 언어 추가, 통합 테스트 함수 추가
+
+**참고 (Rust 구현 기준)**: 총 18개 파일, 약 1,700줄 (구현+테스트+문서)
 
 ### Tree-sitter AST 디버깅
 
