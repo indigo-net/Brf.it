@@ -287,4 +287,30 @@ brfit . -f md --no-tokens --include-imports --no-tree -o SAMPLE.md
 brfit . -f xml --no-tokens --include-imports --no-tree -o SAMPLE.xml
 ```
 
-**자동 갱신**: `.github/workflows/update-code-package.yml`이 main push 시 자동 실행 (paths-ignore로 무한 루프 방지)
+**자동 갱신**: `.github/workflows/update-code-package.yml`이 main push 또는 release 이벤트 시 자동 실행 (paths-ignore로 무한 루프 방지)
+
+**주의**: `gh release edit` CLI 명령은 GitHub의 `release edited` 웹훅 이벤트를 트리거하지 않음. 수동 트리거가 필요하면 `gh workflow run "Update SAMPLE"` 사용
+
+### Signature Kind-to-Tag 매핑
+
+XML 출력 시 `parser.Signature.Kind` 필드에 따라 태그가 결정됨:
+
+| 태그 | Kind 값 |
+|------|---------|
+| `<function>` | function, method, constructor, destructor, arrow |
+| `<type>` | class, interface, type, struct, enum, record, annotation, typedef, namespace, template |
+| `<variable>` | variable, field, macro, export |
+| `<signature>` | 빈 문자열 또는 알 수 없는 Kind (fallback) |
+
+매핑 로직: `pkg/formatter/xml.go`의 `kindToTag()` 함수
+
+### README 동기화
+
+README 수정 시 5개 파일을 모두 업데이트해야 함:
+- `README.md` (영어 원본, 루트)
+- `docs/ko/README.md` (한국어)
+- `docs/ja/README.md` (일본어)
+- `docs/de/README.md` (독일어)
+- `docs/hi/README.md` (힌디어)
+
+**팁**: 구조가 동일하므로 동일한 Edit 패턴을 5개 파일에 적용 가능
