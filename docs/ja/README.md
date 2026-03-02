@@ -14,6 +14,8 @@
 
 ---
 
+<br/>
+
 ## 動作原理
 
 AIアシスタントに生のコードを渡す代わりに：
@@ -63,6 +65,8 @@ export async function fetchUser(
 
 ---
 
+<br/>
+
 ## クイックスタート
 
 ### インストール
@@ -103,6 +107,8 @@ brfit . -o briefing.xml    # ファイルに保存
 
 ---
 
+<br/>
+
 ## 実際の使用例
 
 **[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
@@ -110,6 +116,8 @@ brfit . -o briefing.xml    # ファイルに保存
 brfit自体でパッケージングしたこのプロジェクトです。コミットごとに自動生成されます。
 
 ---
+
+<br/>
 
 ## 機能
 
@@ -123,6 +131,8 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 
 ---
 
+<br/>
+
 ## サポート言語
 
 | 言語 | 拡張子 | ドキュメント |
@@ -135,6 +145,8 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Java | `.java` | [Javaガイド](languages/java.md) |
 
 ---
+
+<br/>
 
 ## CLIリファレンス
 
@@ -176,50 +188,7 @@ brfit . --no-tree
 
 ---
 
-## 出力例
-
-### XML（デフォルト）
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<brfit>
-  <metadata>
-    <tree>pkg/
-└── scanner/
-    └── scanner.go</tree>
-  </metadata>
-  <files>
-    <file path="pkg/scanner/scanner.go" language="go">
-      <function>func Scan(root string) (*Result, error)</function>
-      <doc>Scan recursively scans the directory.</doc>
-    </file>
-  </files>
-</brfit>
-```
-
-### Markdown
-
-```markdown
-# Brf.it Output
-
-## Directory Tree
-
-pkg/
-└── scanner/
-    └── scanner.go
-
-## Files
-
-### pkg/scanner/scanner.go
-
-\`\`\`go
-func Scan(root string) (*Result, error)
-\`\`\`
-
-> Scan recursively scans the directory.
-```
-
----
+<br/>
 
 ## ライセンス
 

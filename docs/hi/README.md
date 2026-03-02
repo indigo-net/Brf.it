@@ -14,6 +14,8 @@
 
 ---
 
+<br/>
+
 ## यह कैसे काम करता है
 
 AI सहायकों को रॉ कोड देने की बजाय:
@@ -63,6 +65,8 @@ export async function fetchUser(
 
 ---
 
+<br/>
+
 ## क्विक स्टार्ट
 
 ### इंस्टॉलेशन
@@ -103,6 +107,8 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 
 ---
 
+<br/>
+
 ## इसे एक्शन में देखें
 
 **[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
@@ -110,6 +116,8 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 यह प्रोजेक्ट, brfit द्वारा स्वयं पैकेज किया गया। हर कमिट पर ऑटो-जेनरेट होता है।
 
 ---
+
+<br/>
 
 ## फीचर्स
 
@@ -123,6 +131,8 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 
 ---
 
+<br/>
+
 ## समर्थित भाषाएं
 
 | भाषा | एक्सटेंशन | डॉक्यूमेंटेशन |
@@ -135,6 +145,8 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Java | `.java` | [Java गाइड](languages/java.md) |
 
 ---
+
+<br/>
 
 ## CLI रेफरेंस
 
@@ -176,50 +188,7 @@ brfit . --no-tree
 
 ---
 
-## आउटपुट उदाहरण
-
-### XML (डिफ़ॉल्ट)
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<brfit>
-  <metadata>
-    <tree>pkg/
-└── scanner/
-    └── scanner.go</tree>
-  </metadata>
-  <files>
-    <file path="pkg/scanner/scanner.go" language="go">
-      <function>func Scan(root string) (*Result, error)</function>
-      <doc>Scan recursively scans the directory.</doc>
-    </file>
-  </files>
-</brfit>
-```
-
-### Markdown
-
-```markdown
-# Brf.it Output
-
-## Directory Tree
-
-pkg/
-└── scanner/
-    └── scanner.go
-
-## Files
-
-### pkg/scanner/scanner.go
-
-\`\`\`go
-func Scan(root string) (*Result, error)
-\`\`\`
-
-> Scan recursively scans the directory.
-```
-
----
+<br/>
 
 ## लाइसेंस
 

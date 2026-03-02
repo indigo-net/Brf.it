@@ -14,6 +14,8 @@
 
 ---
 
+<br/>
+
 ## How It Works
 
 Instead of feeding raw code to AI assistants:
@@ -63,6 +65,8 @@ export async function fetchUser(
 
 ---
 
+<br/>
+
 ## Quick Start
 
 ### Installation
@@ -103,6 +107,8 @@ brfit . -o briefing.xml    # Save to file
 
 ---
 
+<br/>
+
 ## See It In Action
 
 **[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
@@ -110,6 +116,8 @@ brfit . -o briefing.xml    # Save to file
 This project, packaged by brfit itself. Auto-generated on every commit.
 
 ---
+
+<br/>
 
 ## Features
 
@@ -122,6 +130,8 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Cross-Platform | Linux, macOS, and Windows support |
 
 ---
+
+<br/>
 
 ## Supported Languages
 
@@ -136,6 +146,8 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Java | `.java` | [Java Guide](docs/languages/java.md) |
 
 ---
+
+<br/>
 
 ## CLI Reference
 
@@ -177,50 +189,7 @@ brfit . --no-tree
 
 ---
 
-## Output Examples
-
-### XML (default)
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<brfit>
-  <metadata>
-    <tree>pkg/
-└── scanner/
-    └── scanner.go</tree>
-  </metadata>
-  <files>
-    <file path="pkg/scanner/scanner.go" language="go">
-      <function>func Scan(root string) (*Result, error)</function>
-      <doc>Scan recursively scans the directory.</doc>
-    </file>
-  </files>
-</brfit>
-```
-
-### Markdown
-
-```markdown
-# Brf.it Output
-
-## Directory Tree
-
-pkg/
-└── scanner/
-    └── scanner.go
-
-## Files
-
-### pkg/scanner/scanner.go
-
-\`\`\`go
-func Scan(root string) (*Result, error)
-\`\`\`
-
-> Scan recursively scans the directory.
-```
-
----
+<br/>
 
 ## License
 

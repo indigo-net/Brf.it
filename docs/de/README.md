@@ -14,6 +14,8 @@
 
 ---
 
+<br/>
+
 ## Wie es funktioniert
 
 Anstatt rohen Code an KI-Assistenten zu übergeben:
@@ -63,6 +65,8 @@ export async function fetchUser(
 
 ---
 
+<br/>
+
 ## Schnellstart
 
 ### Installation
@@ -103,6 +107,8 @@ brfit . -o briefing.xml    # In Datei speichern
 
 ---
 
+<br/>
+
 ## In Aktion sehen
 
 **[SAMPLE.md](SAMPLE.md)** | **[SAMPLE.xml](SAMPLE.xml)**
@@ -110,6 +116,8 @@ brfit . -o briefing.xml    # In Datei speichern
 Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch generiert.
 
 ---
+
+<br/>
 
 ## Funktionen
 
@@ -123,6 +131,8 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 
 ---
 
+<br/>
+
 ## Unterstützte Sprachen
 
 | Sprache | Erweiterungen | Dokumentation |
@@ -135,6 +145,8 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Java | `.java` | [Java-Leitfaden](languages/java.md) |
 
 ---
+
+<br/>
 
 ## CLI-Referenz
 
@@ -176,50 +188,7 @@ brfit . --no-tree
 
 ---
 
-## Ausgabebeispiele
-
-### XML (Standard)
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<brfit>
-  <metadata>
-    <tree>pkg/
-└── scanner/
-    └── scanner.go</tree>
-  </metadata>
-  <files>
-    <file path="pkg/scanner/scanner.go" language="go">
-      <function>func Scan(root string) (*Result, error)</function>
-      <doc>Scan recursively scans the directory.</doc>
-    </file>
-  </files>
-</brfit>
-```
-
-### Markdown
-
-```markdown
-# Brf.it Output
-
-## Directory Tree
-
-pkg/
-└── scanner/
-    └── scanner.go
-
-## Files
-
-### pkg/scanner/scanner.go
-
-\`\`\`go
-func Scan(root string) (*Result, error)
-\`\`\`
-
-> Scan recursively scans the directory.
-```
-
----
+<br/>
 
 ## Lizenz
 
