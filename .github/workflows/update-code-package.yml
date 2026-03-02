@@ -7,6 +7,8 @@ on:
     paths-ignore:
       - 'SAMPLE.md'
       - 'SAMPLE.xml'
+  release:
+    types: [published, edited]
 
 permissions:
   contents: write
@@ -17,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Install brfit
         run: |
