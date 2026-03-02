@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2026-03-02
+
+### Changed
+- **Breaking Change**: XML `<signature>` tag replaced with semantic tags
+  - `<function>`: function, method, constructor, destructor, arrow
+  - `<type>`: class, interface, type, struct, enum, record, annotation, typedef, namespace, template
+  - `<variable>`: variable, field, macro, export
+  - `<signature>`: fallback for unknown kinds
+- Markdown output now includes Kind as comment suffix (e.g., `func Add() // function`)
+- Schema section updated with new tag descriptions
+
+### Added
+- `kindToTag()` function for Kind-to-tag mapping
+- Comprehensive test coverage for all Kind values (19 kinds)
+- Language-specific edge case tests (TypeScript arrow/export, C++ constructor/destructor, etc.)
+
 ## [0.12.0] - 2026-02-28
 
 ### Changed
