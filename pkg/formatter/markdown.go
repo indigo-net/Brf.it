@@ -96,6 +96,9 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 			} else {
 				for _, sig := range file.Signatures {
 					buf.WriteString(sig.Text)
+					if sig.Kind != "" {
+						buf.WriteString(" // " + sig.Kind)
+					}
 					buf.WriteString("\n")
 				}
 			}
@@ -125,4 +128,3 @@ func escapeMarkdown(s string) string {
 	s = strings.ReplaceAll(s, "`", "\\`")
 	return s
 }
-

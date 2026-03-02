@@ -50,11 +50,11 @@ export async function fetchUser(
 <td>
 
 ```xml
-<signature>
+<function>
   export async function fetchUser(
     id: string
   ): Promise<User>
-</signature>
+</function>
 ```
 
 </td>
@@ -191,7 +191,7 @@ brfit . --no-tree
   </metadata>
   <files>
     <file path="pkg/scanner/scanner.go" language="go">
-      <signature>func Scan(root string) (*Result, error)</signature>
+      <function>func Scan(root string) (*Result, error)</function>
       <doc>Scan recursively scans the directory.</doc>
     </file>
   </files>

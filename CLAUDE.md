@@ -225,7 +225,7 @@ if fileSize > maxFileSize {
   </metadata>
   <files>
     <file path="src/scanner.go" language="go">
-      <signature>func ScanDirectory(root string) ([]FileEntry, error)</signature>
+      <function>func ScanDirectory(root string) ([]FileEntry, error)</function>
       <doc>Recursively scans directory and returns supported files.</doc>
     </file>
   </files>

@@ -88,8 +88,8 @@ func TestXMLFormatterFormat(t *testing.T) {
 		t.Error("expected file element with path and language attributes")
 	}
 
-	if !strings.Contains(outputStr, "<signature>func Add(a, b int) int</signature>") {
-		t.Error("expected signature element")
+	if !strings.Contains(outputStr, "<function>func Add(a, b int) int</function>") {
+		t.Error("expected function element for Kind='function'")
 	}
 
 	if !strings.Contains(outputStr, "<doc>Add returns the sum of two integers.</doc>") {
@@ -350,5 +350,169 @@ func TestXMLFormatterEmptyFile(t *testing.T) {
 	output := string(result)
 	if !strings.Contains(output, "<!-- empty -->") {
 		t.Errorf("Expected empty comment, got:\n%s", output)
+	}
+}
+
+func TestKindToTag(t *testing.T) {
+	tests := []struct {
+		kind     string
+		expected string
+	}{
+		// function 그룹
+		{"function", "function"},
+		{"method", "function"},
+		{"constructor", "function"},
+		{"destructor", "function"},
+		{"arrow", "function"},
+
+		// type 그룹
+		{"class", "type"},
+		{"interface", "type"},
+		{"type", "type"},
+		{"struct", "type"},
+		{"enum", "type"},
+		{"record", "type"},
+		{"annotation", "type"},
+		{"typedef", "type"},
+		{"namespace", "type"},
+		{"template", "type"},
+
+		// variable 그룹
+		{"variable", "variable"},
+		{"field", "variable"},
+		{"macro", "variable"},
+		{"export", "variable"},
+
+		// fallback
+		{"", "signature"},
+		{"unknown", "signature"},
+		{"custom_kind", "signature"},
+	}
+
+	for _, tt := range tests {
+		got := kindToTag(tt.kind)
+		if got != tt.expected {
+			t.Errorf("kindToTag(%q) = %q, want %q", tt.kind, got, tt.expected)
+		}
+	}
+}
+
+func TestXMLFormatterKindTags(t *testing.T) {
+	formatter := NewXMLFormatter()
+
+	tests := []struct {
+		name     string
+		kind     string
+		text     string
+		wantTag  string
+	}{
+		// TypeScript arrow function
+		{"ts_arrow", "arrow", "const add = (a, b) => a + b", "function"},
+		// TypeScript export
+		{"ts_export", "export", "export { foo }", "variable"},
+		// C++ constructor
+		{"cpp_constructor", "constructor", "MyClass::MyClass()", "function"},
+		// C++ destructor
+		{"cpp_destructor", "destructor", "MyClass::~MyClass()", "function"},
+		// Python method (런타임 판단 후)
+		{"py_method", "method", "def foo(self):", "function"},
+		// Java static field
+		{"java_variable", "variable", "public static final int X = 1", "variable"},
+		// Go type
+		{"go_type", "type", "type Config struct { Path string }", "type"},
+		// Go struct (direct)
+		{"go_struct", "struct", "struct { X int }", "type"},
+		// Java class
+		{"java_class", "class", "public class MyClass", "type"},
+		// Java interface
+		{"java_interface", "interface", "public interface MyInterface", "type"},
+		// C macro
+		{"c_macro", "macro", "#define MAX 100", "variable"},
+		// Empty kind fallback
+		{"empty_kind", "", "func foo()", "signature"},
+		// Unknown kind fallback
+		{"unknown_kind", "something_new", "unknown declaration", "signature"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data := &PackageData{
+				Files: []FileData{
+					{
+						Path:     "test.go",
+						Language: "go",
+						Signatures: []parser.Signature{
+							{
+								Name: "test",
+								Kind: tt.kind,
+								Text: tt.text,
+							},
+						},
+					},
+				},
+			}
+
+			output, err := formatter.Format(data)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			outputStr := string(output)
+			expectedOpen := fmt.Sprintf("<%s>", tt.wantTag)
+			expectedClose := fmt.Sprintf("</%s>", tt.wantTag)
+
+			if !strings.Contains(outputStr, expectedOpen) {
+				t.Errorf("expected opening tag %s in output:\n%s", expectedOpen, outputStr)
+			}
+			if !strings.Contains(outputStr, expectedClose) {
+				t.Errorf("expected closing tag %s in output:\n%s", expectedClose, outputStr)
+			}
+		})
+	}
+}
+
+func TestMarkdownFormatterKindComment(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+
+	tests := []struct {
+		name    string
+		kind    string
+		text    string
+		wantStr string
+	}{
+		{"function_kind", "function", "func Add(a, b int) int", "func Add(a, b int) int // function"},
+		{"method_kind", "method", "def foo(self):", "def foo(self): // method"},
+		{"type_kind", "type", "type Config struct", "type Config struct // type"},
+		{"empty_kind", "", "func foo()", "func foo()\n"}, // no comment for empty kind
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data := &PackageData{
+				Files: []FileData{
+					{
+						Path:     "test.go",
+						Language: "go",
+						Signatures: []parser.Signature{
+							{
+								Name: "test",
+								Kind: tt.kind,
+								Text: tt.text,
+							},
+						},
+					},
+				},
+			}
+
+			output, err := formatter.Format(data)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			outputStr := string(output)
+			if !strings.Contains(outputStr, tt.wantStr) {
+				t.Errorf("expected %q in output:\n%s", tt.wantStr, outputStr)
+			}
+		})
 	}
 }

@@ -55,7 +55,10 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
 	buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
 	buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
-	buf.WriteString(`      <tag name="signature" description="Function, type, or variable declaration" />` + "\n")
+	buf.WriteString(`      <tag name="function" description="Function, method, or constructor declaration" />` + "\n")
+	buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
+	buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
+	buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
 	buf.WriteString(`      <tag name="imports" description="Import statements container" />` + "\n")
 	buf.WriteString(`      <tag name="import" description="Single import statement" />` + "\n")
 	buf.WriteString(`      <tag name="export" description="Single export statement" />` + "\n")
@@ -105,9 +108,10 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 				buf.WriteString("      <!-- empty -->\n")
 			} else {
 				for _, sig := range file.Signatures {
-					buf.WriteString("      <signature>")
+					tag := kindToTag(sig.Kind)
+					buf.WriteString(fmt.Sprintf("      <%s>", tag))
 					buf.WriteString(escapeXML(sig.Text))
-					buf.WriteString("</signature>\n")
+					buf.WriteString(fmt.Sprintf("</%s>\n", tag))
 
 					if sig.Doc != "" {
 						buf.WriteString("      <doc>")
@@ -137,3 +141,16 @@ func escapeXML(s string) string {
 	return s
 }
 
+// kindToTag maps a signature Kind to the appropriate XML tag name.
+func kindToTag(kind string) string {
+	switch kind {
+	case "function", "method", "constructor", "destructor", "arrow":
+		return "function"
+	case "class", "interface", "type", "struct", "enum", "record", "annotation", "typedef", "namespace", "template":
+		return "type"
+	case "variable", "field", "macro", "export":
+		return "variable"
+	default:
+		return "signature" // fallback for empty or unknown kinds
+	}
+}
