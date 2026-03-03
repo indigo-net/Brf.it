@@ -1,40 +1,54 @@
 # PR 파일 경로 기반 자동 라벨링 설정
-# actions/labeler에서 사용
+# actions/labeler@v5 문법
 
 # Language labels
 language/go:
-  - "pkg/**/*.go"
-  - "cmd/**/*.go"
-  - "internal/**/*.go"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "pkg/**/*.go"
+          - "cmd/**/*.go"
+          - "internal/**/*.go"
 
 language/typescript:
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.js"
-  - "**/*.jsx"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.ts"
+          - "**/*.tsx"
+          - "**/*.js"
+          - "**/*.jsx"
 
 language/python:
-  - "**/*.py"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.py"
 
 language/rust:
-  - "**/*.rs"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.rs"
 
 # Type labels
 documentation:
-  - "README.md"
-  - "CHANGELOG.md"
-  - "docs/**/*"
-  - "**/*.md"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "README.md"
+          - "CHANGELOG.md"
+          - "docs/**/*"
+          - "**/*.md"
 
 testing:
-  - "**/*_test.go"
-  - "testdata/**/*"
-  - ".github/workflows/*test*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*_test.go"
+          - "testdata/**/*"
+          - ".github/workflows/*test*"
 
 chore:
-  - ".github/workflows/**/*"
-  - ".goreleaser.yml"
-  - "install.sh"
-  - "install.ps1"
-  - "go.mod"
-  - "go.sum"
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**/*"
+          - ".goreleaser.yml"
+          - "install.sh"
+          - "install.ps1"
+          - "go.mod"
+          - "go.sum"
