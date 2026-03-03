@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0] - 2026-03-03
+
+### Added
+- `--no-std-imports` flag to exclude standard library imports from output
+- `isStdLibImport()` function supporting 6 languages (Go, Python, JS/TS, C/C++, Java, Rust)
+- Python stdlib module list (~150 modules) and Node.js builtin module list
+- 35+ test cases for stdlib detection across all supported languages
+
 ## [0.13.0] - 2026-03-02
 
 ### Changed
