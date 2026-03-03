@@ -306,6 +306,18 @@ XML 출력 시 `parser.Signature.Kind` 필드에 따라 태그가 결정됨:
 
 매핑 로직: `pkg/formatter/xml.go`의 `kindToTag()` 함수
 
+### 포매터 isEmpty 판정 패턴
+
+`xml.go`, `markdown.go`에서 빈 파일 판정(`isEmpty`)은 import 필터링 **후** 실제 렌더링된 결과를 기준으로 해야 함. `hasRenderedImports` 변수를 import 블록 밖에 선언하고, 렌더링 후 설정하는 패턴 사용:
+
+```go
+hasRenderedImports := false
+if ... { // import 렌더링 블록
+    hasRenderedImports = len(importLines) > 0
+}
+isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
+```
+
 ### README 동기화
 
 README 수정 시 5개 파일을 모두 업데이트해야 함:
