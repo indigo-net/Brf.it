@@ -1,0 +1,91 @@
+# GitHub Labels Definition
+# 이 파일은 프로젝트에서 사용하는 라벨을 정의합니다.
+# 커밋 컨벤션(feat, fix, docs 등)과 연동됩니다.
+
+labels:
+  # Type Labels (커밋 타입과 연동)
+  - name: bug
+    description: 🐛 버그 리포트
+    color: d73a4a
+    commit_type: fix
+
+  - name: enhancement
+    description: ✨ 새로운 기능
+    color: a2eeef
+    commit_type: feat
+
+  - name: documentation
+    description: 📚 문서 개선
+    color: 0075ca
+    commit_type: docs
+
+  - name: refactor
+    description: 🔧 코드 리팩토링
+    color: 1d76db
+    commit_type: refactor
+
+  - name: testing
+    description: 🧪 테스트 관련
+    color: fbca04
+    commit_type: test
+
+  - name: chore
+    description: 📦 빌드/설정
+    color: cfd3d7
+    commit_type: chore
+
+  # Priority Labels
+  - name: priority/high
+    description: 🔴 높은 우선순위
+    color: b60205
+
+  - name: priority/medium
+    description: 🟡 중간 우선순위
+    color: ffb000
+
+  - name: priority/low
+    description: 🟢 낮은 우선순위
+    color: 0e8a16
+
+  # Status Labels
+  - name: in progress
+    description: 🔄 작업 중
+    color: fbca04
+
+  - name: blocked
+    description: 🚫 차단됨
+    color: e99695
+
+  - name: wontfix
+    description: ⛔ 수정하지 않음
+    color: ffffff
+
+  # Community Labels
+  - name: help wanted
+    description: 🆘 도움 요청
+    color: 008672
+
+  - name: good first issue
+    description: 👋 입문자용
+    color: 7057ff
+
+  - name: question
+    description: ❓ 질문
+    color: d876e3
+
+  # Language Labels
+  - name: language/go
+    description: 🔵 Go 관련
+    color: 00add8
+
+  - name: language/typescript
+    description: 🔵 TypeScript/JavaScript 관련
+    color: 3178c6
+
+  - name: language/python
+    description: 🔵 Python 관련
+    color: 3776ab
+
+  - name: language/rust
+    description: 🔵 Rust 관련
+    color: dea584
