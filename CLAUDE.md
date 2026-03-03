@@ -292,3 +292,24 @@ README 수정 시 5개 파일을 모두 업데이트해야 함:
 - `docs/hi/README.md` (힌디어)
 
 **팁**: 구조가 동일하므로 동일한 Edit 패턴을 5개 파일에 적용 가능
+
+### GitHub Pages 문서 사이트 동기화
+
+프로젝트 문서 변경 시 웹사이트(https://indigo-net.github.io/Brf.it/)에도 반영 필요:
+
+| 변경 대상 | 동기화할 웹사이트 파일 |
+|-----------|------------------------|
+| `README.md` 내용 | `index.md` (랜딩 페이지) |
+| CLI 옵션 추가/변경 | `docs/cli-reference.md` |
+| 새 언어 지원 추가 | `docs/languages/*.md`, `docs/languages/index.md` |
+| 설치 방법 변경 | `index.md`, `docs/getting-started.md` |
+| 기능 추가/변경 | `index.md`, `docs/getting-started.md` |
+
+**웹사이트 구조**:
+- `index.md` — 랜딩 페이지 (README.md 기반)
+- `docs/index.md` — 문서 홈
+- `docs/getting-started.md` — 설치 및 빠른 시작
+- `docs/cli-reference.md` — CLI 옵션 전체
+- `docs/languages/` — 언어별 가이드
+
+**배포**: main 브랜치 push 시 GitHub Actions(`.github/workflows/pages.yml`)가 자동 배포
