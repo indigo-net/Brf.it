@@ -1,3 +1,10 @@
+---
+layout: default
+title: Rust
+parent: Language Guides
+nav_order: 7
+---
+
 # Rust Support
 
 [English](rust.md) | [한국어](../ko/languages/rust.md) | [日本語](../ja/languages/rust.md) | [हिन्दी](../hi/languages/rust.md) | [Deutsch](../de/languages/rust.md)

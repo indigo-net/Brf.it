@@ -1,3 +1,10 @@
+---
+layout: default
+title: Python
+parent: Language Guides
+nav_order: 3
+---
+
 # Python Support
 
 🌐 [English](python.md) | [한국어](../ko/languages/python.md) | [日本語](../ja/languages/python.md) | [हिन्दी](../hi/languages/python.md) | [Deutsch](../de/languages/python.md)

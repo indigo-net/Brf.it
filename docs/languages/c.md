@@ -1,3 +1,10 @@
+---
+layout: default
+title: C
+parent: Language Guides
+nav_order: 5
+---
+
 # C Support
 
 🌐 [English](c.md) | [한국어](../ko/languages/c.md) | [日本語](../ja/languages/c.md) | [हिन्दी](../hi/languages/c.md) | [Deutsch](../de/languages/c.md)
