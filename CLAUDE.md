@@ -240,46 +240,9 @@ if fileSize > maxFileSize {
 - 번역본: `docs/{ko,ja,hi,de}/README.md`, `docs/{ko,ja,hi,de}/languages/*.md`
 - 모든 문서 상단에 언어 선택 링크 추가: `🌐 [English](../../README.md) | [한국어](README.md) | ...`
 
-### 새 언어 추가 체크리스트
+### 새 언어 추가
 
-새 프로그래밍 언어 지원 추가 시 반드시 확인:
-
-1. `pkg/parser/treesitter/languages/[lang].go` - LanguageQuery 구현 (~170줄)
-2. `pkg/parser/treesitter/parser.go` - init()에 파서 등록, queries 맵에 추가, isExported(), stripBody() 케이스 추가
-3. `pkg/scanner/scanner.go` - DefaultScanOptions()에 확장자 추가
-4. `internal/config/config.go` - SupportedExtensions()에 확장자 추가 (CLI에서 사용)
-5. `docs/languages/[lang].md` + 다국어 버전 생성
-6. `README*.md` Supported Languages 테이블 업데이트
-7. `pkg/parser/treesitter/languages/[lang]_test.go` - 단위 테스트 작성 (~400줄, 14개 테스트)
-8. `pkg/parser/treesitter/parser_test.go` - TestTreeSitterParserLanguages, TestTreeSitterParserAutoRegistration에 언어 추가, 통합 테스트 함수 추가
-
-**참고 (Rust 구현 기준)**: 총 18개 파일, 약 1,700줄 (구현+테스트+문서)
-
-### Tree-sitter AST 디버깅
-
-새 쿼리 패턴 작성 시 AST 구조 확인이 필요하면:
-
-```go
-// 임시 디버그 코드로 AST 출력
-func printTree(node *sitter.Node, code []byte, indent int) {
-    fmt.Printf("%s%s\n", strings.Repeat("  ", indent), node.Kind())
-    for i := uint(0); i < uint(node.ChildCount()); i++ {
-        printTree(node.Child(i), code, indent+1)
-    }
-}
-```
-
-**포인터 반환 타입 주의**: `User* func()` 형태는 declarator가 `pointer_declarator` 안에 중첩됨
-
-### Import 쿼리 패턴 작성
-
-전체 import 문을 캡처하려면 노드 전체를 캡처:
-```scheme
-; 경로만: (import_statement source: (string) @import_path)
-; 전체 문: (import_statement) @import_path
-```
-
-**Go 예외**: `import_spec`은 `"fmt"` 형태라 `cleanImportPath()`에서 `import ` prefix 추가 처리
+스킬 참조: `.claude/skills/add-language-support.md` (`/add-language-support`)
 
 ### SAMPLE 파일 생성
 
@@ -292,19 +255,6 @@ brfit . -f xml --no-tokens --include-imports --no-tree -o SAMPLE.xml
 **자동 갱신**: `.github/workflows/update-code-package.yml`이 main push 또는 release 이벤트 시 자동 실행 (paths-ignore로 무한 루프 방지)
 
 **주의**: `gh release edit` CLI 명령은 GitHub의 `release edited` 웹훅 이벤트를 트리거하지 않음. 수동 트리거가 필요하면 `gh workflow run "Update SAMPLE"` 사용
-
-### Signature Kind-to-Tag 매핑
-
-XML 출력 시 `parser.Signature.Kind` 필드에 따라 태그가 결정됨:
-
-| 태그 | Kind 값 |
-|------|---------|
-| `<function>` | function, method, constructor, destructor, arrow |
-| `<type>` | class, interface, type, struct, enum, record, annotation, typedef, namespace, template |
-| `<variable>` | variable, field, macro, export |
-| `<signature>` | 빈 문자열 또는 알 수 없는 Kind (fallback) |
-
-매핑 로직: `pkg/formatter/xml.go`의 `kindToTag()` 함수
 
 ### 포매터 isEmpty 판정 패턴
 
