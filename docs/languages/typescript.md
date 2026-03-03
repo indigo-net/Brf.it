@@ -1,3 +1,10 @@
+---
+layout: default
+title: TypeScript
+parent: Language Guides
+nav_order: 2
+---
+
 # TypeScript Support
 
 🌐 [English](typescript.md) | [한국어](../ko/languages/typescript.md) | [日本語](../ja/languages/typescript.md) | [हिन्दी](../hi/languages/typescript.md) | [Deutsch](../de/languages/typescript.md)

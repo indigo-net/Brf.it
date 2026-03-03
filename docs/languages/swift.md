@@ -1,3 +1,10 @@
+---
+layout: default
+title: Swift
+parent: Language Guides
+nav_order: 8
+---
+
 # Swift Support
 
 [English](swift.md) | [한국어](../ko/languages/swift.md) | [日本語](../ja/languages/swift.md) | [हिन्दी](../hi/languages/swift.md) | [Deutsch](../de/languages/swift.md)
