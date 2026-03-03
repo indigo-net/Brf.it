@@ -1,0 +1,70 @@
+name: ✨ 기능 요청 (Feature Request)
+description: 새로운 기능이나 개선사항을 제안하세요
+labels: [enhancement]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        기능 요청을 해주셔서 감사합니다! 🙌
+        Brf.it을 더 좋게 만드는 데 도움을 주세요.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 💡 기능 설명 (Feature Description)
+      description: 어떤 기능을 원하시나요?
+      placeholder: 예: Kotlin 언어 지원을 추가하고 싶습니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: ❓ 문제 상황 (Problem Statement)
+      description: 이 기능이 어떤 문제를 해결하나요?
+      placeholder: |
+        현재 Kotlin 프로젝트에서 brfit을 사용할 수 없습니다.
+        Kotlin은 JVM 기반 인기 언어로, 지원이 필요합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 🎯 제안 해결책 (Proposed Solution)
+      description: 어떻게 해결하면 좋을까요?
+      placeholder: |
+        Tree-sitter-kotlin 파서를 통합하여 Kotlin 소스 코드에서
+        함수 시그니처와 문서를 추출할 수 있도록 지원합니다.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: ⭐ 우선순위 (Priority)
+      description: 이 기능의 중요도를 선택해주세요
+      options:
+        - Low (있으면 좋음)
+        - Medium (있으면 편리함)
+        - High (필요함)
+        - Critical (없으면 사용 불가)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 대안 (Alternatives Considered)
+      description: 고려해본 다른 방법이 있나요?
+      placeholder: 예: 현재는 Java 파서를 사용하여 일부 추출 가능
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 📎 추가 정보 (Additional Context)
+      description: 참고할 만한 링크, 스크린샷, 예시 등
+      placeholder: |
+        - 참고: https://tree-sitter.github.io/tree-sitter/
+        - 유사 기능: gptme의 --lang 옵션

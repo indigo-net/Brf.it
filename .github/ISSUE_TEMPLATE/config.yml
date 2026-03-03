@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 문서 (Documentation)
+    url: https://github.com/indigo-net/Brf.it#readme
+    about: 사용법, 설치 가이드, 예시를 확인하세요
+  - name: 💬 질문 (Questions)
+    url: https://github.com/indigo-net/Brf.it/discussions
+    about: 사용 중 궁금한 점이 있으시면 Discussions를 이용하세요

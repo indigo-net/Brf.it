@@ -1,0 +1,40 @@
+# PR 파일 경로 기반 자동 라벨링 설정
+# actions/labeler에서 사용
+
+# Language labels
+language/go:
+  - "pkg/**/*.go"
+  - "cmd/**/*.go"
+  - "internal/**/*.go"
+
+language/typescript:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+
+language/python:
+  - "**/*.py"
+
+language/rust:
+  - "**/*.rs"
+
+# Type labels
+documentation:
+  - "README.md"
+  - "CHANGELOG.md"
+  - "docs/**/*"
+  - "**/*.md"
+
+testing:
+  - "**/*_test.go"
+  - "testdata/**/*"
+  - ".github/workflows/*test*"
+
+chore:
+  - ".github/workflows/**/*"
+  - ".goreleaser.yml"
+  - "install.sh"
+  - "install.ps1"
+  - "go.mod"
+  - "go.sum"
