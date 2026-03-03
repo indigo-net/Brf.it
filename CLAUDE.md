@@ -244,6 +244,20 @@ if fileSize > maxFileSize {
 
 스킬 참조: `.claude/skills/add-language-support.md` (`/add-language-support`)
 
+### GitHub Issue 기반 워크플로우
+
+모든 작업은 이슈 기반으로 진행합니다:
+
+1. **이슈 생성**: `gh issue create --assignee indigo-net --label "enhancement"`
+2. **브랜치 생성**: `git checkout -b feat/feature-name` (이슈 번호 제외, 기존 스타일 유지)
+3. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
+4. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
+5. **머지**: PR 머지 시 이슈 자동 닫힘
+
+**브랜치명 형식**: `{type}/{feature-name}` (예: `feat/github-workflow-setup`)
+
+**이슈/PR assignee**: 기본적으로 `indigo-net` 지정
+
 ### SAMPLE 파일 생성
 
 프로젝트 코드베이스 요약 파일 생성:
