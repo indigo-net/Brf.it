@@ -1559,6 +1559,117 @@ func TestRustQueryCaptures(t *testing.T) // function
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_swift "github.com/alex-pinkus/tree-sitter-swift/bindings/go"`
+
+```go
+type SwiftQuery struct {
+	language *sitter.Language
+	query    []byte
+} // type
+func NewSwiftQuery() *SwiftQuery // function
+func (q *SwiftQuery) Language() *sitter.Language // method
+func (q *SwiftQuery) Query() []byte // method
+func (q *SwiftQuery) Captures() []string // method
+func (q *SwiftQuery) KindMapping() map[string]string // method
+func (q *SwiftQuery) ImportQuery() []byte // method
+swiftImportQueryPattern = `
+; Import declarations (capture full statement)
+(import_declaration) @import_path
+` // variable
+swiftQueryPattern = `
+; Functions
+(function_declaration
+  name: (simple_identifier) @name
+) @signature @kind
+
+; Classes, Structs, Enums (all use class_declaration node type)
+(class_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Extensions (name is in user_type child)
+(class_declaration
+  name: (user_type
+    (type_identifier) @name
+  )
+) @signature @kind
+
+; Protocol declarations
+(protocol_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Type aliases
+(typealias_declaration
+  name: (type_identifier) @name
+) @signature @kind
+
+; Properties (let/var)
+(property_declaration
+  name: (pattern
+    (simple_identifier) @name
+  )
+) @signature @kind
+
+; Initializers
+(init_declaration) @signature @kind
+
+; Deinitializers
+(deinit_declaration) @signature @kind
+
+; Subscript declarations
+(subscript_declaration) @signature @kind
+
+; Operator declarations
+(operator_declaration
+  (custom_operator) @name
+) @signature @kind
+
+; Protocol function declarations (methods in protocol body)
+(protocol_function_declaration
+  name: (simple_identifier) @name
+) @signature @kind
+
+; Doc comments (/// style)
+(comment) @doc
+
+; Multiline comments (/** style)
+(multiline_comment) @doc
+` // variable
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_swift "github.com/alex-pinkus/tree-sitter-swift/bindings/go"`
+
+```go
+func TestSwiftQueryLanguage(t *testing.T) // function
+func TestSwiftQueryPattern(t *testing.T) // function
+func TestSwiftQueryImportPattern(t *testing.T) // function
+func TestSwiftQueryExtractFunction(t *testing.T) // function
+func TestSwiftQueryExtractTypes(t *testing.T) // function
+func TestSwiftQueryExtractProtocol(t *testing.T) // function
+func TestSwiftQueryExtractExtension(t *testing.T) // function
+func TestSwiftQueryExtractProperties(t *testing.T) // function
+func TestSwiftQueryExtractInitDeinit(t *testing.T) // function
+func TestSwiftQueryExtractSubscript(t *testing.T) // function
+func TestSwiftQueryExtractImport(t *testing.T) // function
+func TestSwiftQueryExtractGenerics(t *testing.T) // function
+func TestSwiftQueryKindMapping(t *testing.T) // function
+func TestSwiftQueryCaptures(t *testing.T) // function
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript.go
 
 **Imports:**
@@ -1759,6 +1870,9 @@ func stripJavaBody(text, kind string) string // function
 func findJavaBodyStart(text string) int // function
 func stripRustBody(text, kind string) string // function
 func findRustBodyStart(text string) int // function
+func refineSwiftClassKind(text string) string // function
+func stripSwiftBody(text, kind string) string // function
+func findSwiftBodyStart(text string) int // function
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -1820,6 +1934,7 @@ func TestRustAutoRegistration(t *testing.T) // function
 func TestRustConstAndStaticExtraction(t *testing.T) // function
 func TestRustMacroExtraction(t *testing.T) // function
 func TestRustGenericsAndLifetimes(t *testing.T) // function
+func TestTreeSitterParserParseSwift(t *testing.T) // function
 ```
 
 ---
