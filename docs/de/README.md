@@ -144,6 +144,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | C | `.c`, `.h` | [C-Leitfaden](languages/c.md) |
 | Java | `.java` | [Java-Leitfaden](languages/java.md) |
 | Rust | `.rs` | [Rust-Leitfaden](languages/rust.md) |
+| Swift | `.swift` | [Swift-Leitfaden](languages/swift.md) |
 
 ---
 
@@ -162,6 +163,8 @@ brfit [Pfad] [Optionen]
 | `--format` | `-f` | Ausgabeformat (`xml`, `md`) | `xml` |
 | `--output` | `-o` | Ausgabedateipfad | stdout |
 | `--include-body` | | Funktionskörper einschließen | `false` |
+| `--include-imports` | | Import-Anweisungen einschließen | `false` |
+| `--no-std-imports` | | Stdlib-Imports ausschließen | `false` |
 | `--ignore` | `-i` | Ignore-Dateipfad | `.gitignore` |
 | `--include-hidden` | | Versteckte Dateien einschließen | `false` |
 | `--no-tree` | | Verzeichnisbaum überspringen | `false` |
@@ -185,6 +188,9 @@ brfit . --include-body
 
 # Verzeichnisbaum-Ausgabe überspringen
 brfit . --no-tree
+
+# Imports einschließen (Stdlib ausschließen)
+brfit . --include-imports --no-std-imports
 ```
 
 ---

@@ -144,6 +144,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | C | `.c`, `.h` | [C गाइड](languages/c.md) |
 | Java | `.java` | [Java गाइड](languages/java.md) |
 | Rust | `.rs` | [Rust गाइड](languages/rust.md) |
+| Swift | `.swift` | [Swift गाइड](languages/swift.md) |
 
 ---
 
@@ -162,6 +163,8 @@ brfit [पथ] [विकल्प]
 | `--format` | `-f` | आउटपुट फॉर्मेट (`xml`, `md`) | `xml` |
 | `--output` | `-o` | आउटपुट फाइल पथ | stdout |
 | `--include-body` | | फंक्शन बॉडी शामिल करें | `false` |
+| `--include-imports` | | import स्टेटमेंट शामिल करें | `false` |
+| `--no-std-imports` | | स्टैंडर्ड लाइब्रेरी import हटाएं | `false` |
 | `--ignore` | `-i` | ignore फाइल पथ | `.gitignore` |
 | `--include-hidden` | | हिडन फाइल्स शामिल करें | `false` |
 | `--no-tree` | | डायरेक्टरी ट्री स्किप करें | `false` |
@@ -185,6 +188,9 @@ brfit . --include-body
 
 # डायरेक्टरी ट्री आउटपुट स्किप करें
 brfit . --no-tree
+
+# import शामिल करें (स्टैंडर्ड लाइब्रेरी हटाएं)
+brfit . --include-imports --no-std-imports
 ```
 
 ---

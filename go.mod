@@ -3,6 +3,7 @@ module github.com/indigo-net/Brf.it
 go 1.25.0
 
 require (
+	github.com/alex-pinkus/tree-sitter-swift v0.0.0-20260222060216-30e18c7b0210
 	github.com/pkoukk/tiktoken-go v0.1.8
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/spf13/cobra v1.10.2
@@ -23,3 +24,5 @@ require (
 	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/tree-sitter/tree-sitter-rust v0.24.0 // indirect
 )
+
+replace github.com/alex-pinkus/tree-sitter-swift => ../tree-sitter-swift-local

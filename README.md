@@ -145,6 +145,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | C++ | `.cpp`, `.hpp`, `.h` | [C++ Guide](docs/languages/cpp.md) |
 | Java | `.java` | [Java Guide](docs/languages/java.md) |
 | Rust | `.rs` | [Rust Guide](docs/languages/rust.md) |
+| Swift | `.swift` | [Swift Guide](docs/languages/swift.md) |
 
 ---
 
@@ -163,6 +164,8 @@ brfit [path] [options]
 | `--format` | `-f` | Output format (`xml`, `md`) | `xml` |
 | `--output` | `-o` | Output file path | stdout |
 | `--include-body` | | Include function bodies | `false` |
+| `--include-imports` | | Include import statements | `false` |
+| `--no-std-imports` | | Exclude stdlib imports | `false` |
 | `--ignore` | `-i` | Ignore file path | `.gitignore` |
 | `--include-hidden` | | Include hidden files | `false` |
 | `--no-tree` | | Skip directory tree | `false` |
@@ -186,6 +189,9 @@ brfit . --include-body
 
 # Skip directory tree output
 brfit . --no-tree
+
+# Include imports (exclude stdlib)
+brfit . --include-imports --no-std-imports
 ```
 
 ---

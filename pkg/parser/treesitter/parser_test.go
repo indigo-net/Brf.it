@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -1184,6 +1184,94 @@ pub fn generic_fn<T: Clone>(item: T) -> T {
 	for _, name := range expectedNames {
 		if !foundNames[name] {
 			t.Errorf("expected to find '%s'", name)
+		}
+	}
+}
+
+func TestTreeSitterParserParseSwift(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `/// A 2D point structure.
+public struct Point {
+    public let x: Double
+    public let y: Double
+
+    /// Calculate distance from origin.
+    public func distance() -> Double {
+        return sqrt(x * x + y * y)
+    }
+}
+
+public protocol Drawable {
+    func draw()
+}
+
+extension Point: Drawable {
+    func draw() {}
+}
+
+public func greet(name: String) -> String {
+    return "Hello"
+}
+
+public let PI = 3.14159
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "swift"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Signatures) < 4 {
+		t.Errorf("expected at least 4 signatures, got %d", len(result.Signatures))
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Check for struct
+	if kind, ok := foundNames["Point"]; !ok {
+		t.Error("expected to find struct 'Point'")
+	} else if kind != "struct" && kind != "type" {
+		t.Errorf("expected kind 'struct' or 'type' for 'Point', got '%s'", kind)
+	}
+
+	// Check for function
+	if kind, ok := foundNames["greet"]; !ok {
+		t.Error("expected to find function 'greet'")
+	} else if kind != "function" {
+		t.Errorf("expected kind 'function' for 'greet', got '%s'", kind)
+	}
+
+	// Check for protocol
+	if kind, ok := foundNames["Drawable"]; !ok {
+		t.Error("expected to find protocol 'Drawable'")
+	} else if kind != "interface" {
+		t.Errorf("expected kind 'interface' for 'Drawable', got '%s'", kind)
+	}
+
+	// Check for property
+	if kind, ok := foundNames["PI"]; !ok {
+		t.Error("expected to find property 'PI'")
+	} else if kind != "variable" {
+		t.Errorf("expected kind 'variable' for 'PI', got '%s'", kind)
+	}
+
+	// Verify body stripping (signature only mode)
+	for _, sig := range result.Signatures {
+		if sig.Name == "greet" {
+			expected := "public func greet(name: String) -> String"
+			if sig.Text != expected {
+				t.Errorf("expected signature '%s', got '%s'", expected, sig.Text)
+			}
+		}
+		if sig.Name == "distance" {
+			expected := "public func distance() -> Double"
+			if sig.Text != expected {
+				t.Errorf("expected signature '%s', got '%s'", expected, sig.Text)
+			}
 		}
 	}
 }

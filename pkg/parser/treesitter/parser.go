@@ -23,6 +23,7 @@ func init() {
 	parser.RegisterParser("java", NewTreeSitterParser())
 	parser.RegisterParser("cpp", NewTreeSitterParser())
 	parser.RegisterParser("rust", NewTreeSitterParser())
+	parser.RegisterParser("swift", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -44,6 +45,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"java":       languages.NewJavaQuery(),
 			"cpp":        languages.NewCppQuery(),
 			"rust":       languages.NewRustQuery(),
+			"swift":      languages.NewSwiftQuery(),
 		},
 	}
 }
@@ -191,6 +193,24 @@ func (p *TreeSitterParser) extractSignatures(
 				sig.Kind = "variable" // remap to variable for consistency
 			}
 
+			// Swift: class_declaration is used for struct, class, enum, and extension
+			// Refine kind based on the declaration keyword
+			if opts.Language == "swift" && kind == "class_declaration" {
+				sig.Kind = refineSwiftClassKind(sig.Text)
+			}
+
+			// Swift: init/deinit/subscript have no name capture, synthesize from kind
+			if opts.Language == "swift" && sig.Name == "" {
+				switch kind {
+				case "init_declaration":
+					sig.Name = "init"
+				case "deinit_declaration":
+					sig.Name = "deinit"
+				case "subscript_declaration":
+					sig.Name = "subscript"
+				}
+			}
+
 			// C: distinguish between function prototypes and variable declarations
 			// Both are "declaration" node type, but function prototypes have ()
 			if opts.Language == "c" && kind == "declaration" {
@@ -278,6 +298,9 @@ func isExported(name, language string) bool {
 	case "rust":
 		// Rust: all elements are considered public (user requested private extraction too)
 		return true
+	case "swift":
+		// Swift: all elements are considered public (visibility modifiers preserved in signature text)
+		return true
 	default:
 		return false
 	}
@@ -301,6 +324,8 @@ func stripBody(text, kind, language string) string {
 		return stripJavaBody(text, kind)
 	case "rust":
 		return stripRustBody(text, kind)
+	case "swift":
+		return stripSwiftBody(text, kind)
 	default:
 		return text
 	}
@@ -679,6 +704,88 @@ func stripRustBody(text, kind string) string {
 // findRustBodyStart finds the index where the Rust body starts.
 // Handles nested angle brackets for generics and lifetime annotations.
 func findRustBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// refineSwiftClassKind determines the specific kind of a Swift class_declaration
+// based on the declaration keyword (struct, class, enum, extension, actor).
+func refineSwiftClassKind(text string) string {
+	trimmed := strings.TrimSpace(text)
+	// Strip leading modifiers (public, private, internal, open, final, etc.)
+	for _, prefix := range []string{"public ", "private ", "internal ", "open ", "fileprivate ", "final ", "@objc "} {
+		for strings.HasPrefix(trimmed, prefix) {
+			trimmed = strings.TrimPrefix(trimmed, prefix)
+			trimmed = strings.TrimSpace(trimmed)
+		}
+	}
+	// Strip attributes like @available(...) etc.
+	for strings.HasPrefix(trimmed, "@") {
+		// Skip past the attribute
+		if idx := strings.Index(trimmed, " "); idx >= 0 {
+			trimmed = strings.TrimSpace(trimmed[idx:])
+		} else {
+			break
+		}
+	}
+
+	switch {
+	case strings.HasPrefix(trimmed, "struct "):
+		return "struct"
+	case strings.HasPrefix(trimmed, "enum "):
+		return "enum"
+	case strings.HasPrefix(trimmed, "extension "):
+		return "type"
+	case strings.HasPrefix(trimmed, "actor "):
+		return "class"
+	default:
+		return "class"
+	}
+}
+
+// stripSwiftBody removes the body from Swift declarations.
+func stripSwiftBody(text, kind string) string {
+	switch kind {
+	case "function", "method", "constructor", "destructor":
+		braceIdx := findSwiftBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "struct", "enum", "interface", "type":
+		braceIdx := findSwiftBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "variable":
+		// Properties: keep full text (includes type annotation and default value)
+		return text
+	}
+	return text
+}
+
+// findSwiftBodyStart finds the index where the Swift body starts.
+// Handles nested angle brackets for generics.
+func findSwiftBodyStart(text string) int {
 	parenDepth := 0
 	angleDepth := 0
 
