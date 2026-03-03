@@ -1,6 +1,6 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.14.0*
+*brf.it 0.15.0*
 
 ---
 
@@ -66,6 +66,7 @@ func TestExecuteVersion(t *testing.T) // function
 buf bytes.Buffer // variable
 func TestNewRootCommand(t *testing.T) // function
 func TestParseFlags(t *testing.T) // function
+func TestParseFlagsNoStdImports(t *testing.T) // function
 func TestRootCommandIntegration(t *testing.T) // function
 buf bytes.Buffer // variable
 func TestRootCommandIntegrationMarkdown(t *testing.T) // function
@@ -119,6 +120,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// NoStdImports excludes standard library imports from output.
+	NoStdImports bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 } // type
@@ -139,6 +143,7 @@ func (c *Config) ToOptions() *pkgcontext.Options // method
 func TestDefaultConfig(t *testing.T) // function
 expectedMaxSize = 512000 // variable
 func TestConfigValidate(t *testing.T) // function
+func TestConfigToOptionsNoStdImports(t *testing.T) // function
 func TestConfigSupportedLanguages(t *testing.T) // function
 func containsString(s, substr string) bool // function
 func containsSubstring(s, substr string) bool // function
@@ -185,6 +190,9 @@ type Options struct {
 
 	// IncludePrivate determines whether to include private symbols.
 	IncludePrivate bool
+
+	// NoStdImports excludes standard library imports from output.
+	NoStdImports bool
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
@@ -258,6 +266,7 @@ func TestPackagerWithTiktokenTokenizer(t *testing.T) // function
 func TestPackagerTokenizerConsistency(t *testing.T) // function
 func TestBuildTree(t *testing.T) // function
 func TestBuildTreeStructure(t *testing.T) // function
+func TestPackagerNoStdImportsPassthrough(t *testing.T) // function
 func TestDefaultOptions(t *testing.T) // function
 func TestNormalizeFormat(t *testing.T) // function
 ```
@@ -415,6 +424,9 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// NoStdImports excludes standard library imports from output.
+	NoStdImports bool
 } // type
 type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -454,13 +466,94 @@ func TestXMLFormatterEmptyFile(t *testing.T) // function
 func TestKindToTag(t *testing.T) // function
 func TestXMLFormatterKindTags(t *testing.T) // function
 func TestMarkdownFormatterKindComment(t *testing.T) // function
+func TestXMLFormatterNoStdImports(t *testing.T) // function
+func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T) // function
+func TestMarkdownFormatterNoStdImports(t *testing.T) // function
+func TestXMLFormatterNoStdImportsEmptyFile(t *testing.T) // function
+func TestMarkdownFormatterNoStdImportsEmptyFile(t *testing.T) // function
+func TestFormatterNoStdImportsDisabled(t *testing.T) // function
 ```
 
 ---
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
+**Imports:**
+- `import "strings"`
+
 ```go
+func isStdLibImport(language, importPath string) bool // function
+func isGoStdLib(importPath string) bool // function
+func isPythonStdLib(importPath string) bool // function
+func isJSStdLib(importPath string) bool // function
+func isCStdLib(importPath string) bool // function
+func isJavaStdLib(importPath string) bool // function
+func isRustStdLib(importPath string) bool // function
+pythonStdLibModules = map[string]struct{}{
+	"abc": {}, "aifc": {}, "argparse": {}, "array": {}, "ast": {},
+	"asynchat": {}, "asyncio": {}, "asyncore": {}, "atexit": {},
+	"base64": {}, "bdb": {}, "binascii": {}, "binhex": {}, "bisect": {},
+	"builtins": {}, "bz2": {},
+	"calendar": {}, "cgi": {}, "cgitb": {}, "chunk": {}, "cmath": {},
+	"cmd": {}, "code": {}, "codecs": {}, "codeop": {}, "collections": {},
+	"colorsys": {}, "compileall": {}, "concurrent": {}, "configparser": {},
+	"contextlib": {}, "contextvars": {}, "copy": {}, "copyreg": {},
+	"cProfile": {}, "crypt": {}, "csv": {}, "ctypes": {}, "curses": {},
+	"dataclasses": {}, "datetime": {}, "dbm": {}, "decimal": {}, "difflib": {},
+	"dis": {}, "distutils": {},
+	"email": {}, "encodings": {}, "enum": {}, "errno": {},
+	"faulthandler": {}, "fcntl": {}, "filecmp": {}, "fileinput": {},
+	"fnmatch": {}, "fractions": {}, "ftplib": {}, "functools": {},
+	"gc": {}, "getopt": {}, "getpass": {}, "gettext": {}, "glob": {},
+	"graphlib": {}, "grp": {}, "gzip": {},
+	"hashlib": {}, "heapq": {}, "hmac": {}, "html": {}, "http": {},
+	"idlelib": {}, "imaplib": {}, "imghdr": {}, "imp": {}, "importlib": {},
+	"inspect": {}, "io": {}, "ipaddress": {}, "itertools": {},
+	"json": {},
+	"keyword": {},
+	"lib2to3": {}, "linecache": {}, "locale": {}, "logging": {}, "lzma": {},
+	"mailbox": {}, "mailcap": {}, "marshal": {}, "math": {}, "mimetypes": {},
+	"mmap": {}, "modulefinder": {}, "multiprocessing": {},
+	"netrc": {}, "nis": {}, "nntplib": {}, "numbers": {},
+	"operator": {}, "optparse": {}, "os": {}, "ossaudiodev": {},
+	"parser": {}, "pathlib": {}, "pdb": {}, "pickle": {}, "pickletools": {},
+	"pipes": {}, "pkgutil": {}, "platform": {}, "plistlib": {}, "poplib": {},
+	"posix": {}, "posixpath": {}, "pprint": {}, "profile": {}, "pstats": {},
+	"pty": {}, "pwd": {}, "py_compile": {}, "pyclbr": {}, "pydoc": {},
+	"queue": {}, "quopri": {},
+	"random": {}, "re": {}, "readline": {}, "reprlib": {}, "resource": {},
+	"rlcompleter": {}, "runpy": {},
+	"sched": {}, "secrets": {}, "select": {}, "selectors": {}, "shelve": {},
+	"shlex": {}, "shutil": {}, "signal": {}, "site": {}, "smtpd": {},
+	"smtplib": {}, "sndhdr": {}, "socket": {}, "socketserver": {},
+	"sqlite3": {}, "ssl": {}, "stat": {}, "statistics": {}, "string": {},
+	"stringprep": {}, "struct": {}, "subprocess": {}, "sunau": {},
+	"symtable": {}, "sys": {}, "sysconfig": {}, "syslog": {},
+	"tabnanny": {}, "tarfile": {}, "telnetlib": {}, "tempfile": {},
+	"termios": {}, "test": {}, "textwrap": {}, "threading": {}, "time": {},
+	"timeit": {}, "tkinter": {}, "token": {}, "tokenize": {}, "tomllib": {},
+	"trace": {}, "traceback": {}, "tracemalloc": {}, "tty": {}, "turtle": {},
+	"turtledemo": {}, "types": {}, "typing": {},
+	"unicodedata": {}, "unittest": {}, "urllib": {}, "uu": {}, "uuid": {},
+	"venv": {},
+	"warnings": {}, "wave": {}, "weakref": {}, "webbrowser": {},
+	"winreg": {}, "winsound": {}, "wsgiref": {},
+	"xdrlib": {}, "xml": {}, "xmlrpc": {},
+	"zipapp": {}, "zipfile": {}, "zipimport": {}, "zlib": {},
+	"zoneinfo": {},
+	"_thread": {},
+} // variable
+nodeBuiltinModules = map[string]struct{}{
+	"assert": {}, "buffer": {}, "child_process": {}, "cluster": {},
+	"console": {}, "constants": {}, "crypto": {}, "dgram": {},
+	"diagnostics_channel": {}, "dns": {}, "domain": {}, "events": {},
+	"fs": {}, "http": {}, "http2": {}, "https": {}, "inspector": {},
+	"module": {}, "net": {}, "os": {}, "path": {}, "perf_hooks": {},
+	"process": {}, "punycode": {}, "querystring": {}, "readline": {},
+	"repl": {}, "stream": {}, "string_decoder": {}, "timers": {},
+	"tls": {}, "trace_events": {}, "tty": {}, "url": {}, "util": {},
+	"v8": {}, "vm": {}, "wasi": {}, "worker_threads": {}, "zlib": {},
+} // variable
 func getEmptyComment(lang string) string // function
 ```
 
@@ -469,9 +562,11 @@ func getEmptyComment(lang string) string // function
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go
 
 **Imports:**
+- `import "fmt"`
 - `import "testing"`
 
 ```go
+func TestIsStdLibImport(t *testing.T) // function
 func TestGetEmptyComment(t *testing.T) // function
 ```
 
@@ -509,6 +604,7 @@ func NewXMLFormatter() *XMLFormatter // function
 func (f *XMLFormatter) Name() string // method
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) // method
 buf bytes.Buffer // variable
+importLines []string // variable
 func escapeXML(s string) string // function
 func kindToTag(kind string) string // function
 ```
