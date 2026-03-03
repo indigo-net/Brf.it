@@ -45,6 +45,9 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// NoStdImports excludes standard library imports from output.
+	NoStdImports bool
 }
 
 // Formatter defines the interface for output formatting.

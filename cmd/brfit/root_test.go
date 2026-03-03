@@ -90,7 +90,7 @@ func TestNewRootCommand(t *testing.T) {
 	}
 
 	// Check flags exist
-	flags := []string{"mode", "format", "output", "ignore", "include-hidden", "no-tree", "no-tokens", "max-size"}
+	flags := []string{"mode", "format", "output", "ignore", "include-hidden", "no-tree", "no-tokens", "no-std-imports", "max-size"}
 	for _, flag := range flags {
 		f := cmd.Flags().Lookup(flag)
 		if f == nil {
@@ -211,6 +211,26 @@ func TestParseFlags(t *testing.T) {
 				t.Errorf("expected MaxFileSize %d, got %d", tt.expectedSize, testCfg.MaxFileSize)
 			}
 		})
+	}
+}
+
+func TestParseFlagsNoStdImports(t *testing.T) {
+	// Test --no-std-imports flag parsing
+	testCfg := config.DefaultConfig()
+	cmd := newRootCommandWithConfig(testCfg)
+
+	// Default: false
+	if testCfg.NoStdImports {
+		t.Error("expected NoStdImports to be false by default")
+	}
+
+	// With flag set
+	cmd.SetArgs([]string{"--no-std-imports"})
+	if err := cmd.ParseFlags([]string{"--no-std-imports"}); err != nil {
+		t.Fatalf("ParseFlags returned error: %v", err)
+	}
+	if !testCfg.NoStdImports {
+		t.Error("expected NoStdImports to be true after --no-std-imports flag")
 	}
 }
 

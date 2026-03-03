@@ -74,26 +74,31 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString(fmt.Sprintf("    <file path=%q language=%q>\n", file.Path, file.Language))
 
 		// Imports section (within file block)
+		hasRenderedImports := false
 		if file.Error == nil && data.IncludeImports && len(file.Imports) > 0 {
-			buf.WriteString("      <imports>\n")
+			var importLines []string
 			for _, imp := range file.Imports {
 				if imp.Type == "import" {
-					buf.WriteString("        <import>")
-					buf.WriteString(escapeXML(imp.Path))
-					buf.WriteString("</import>\n")
+					if data.NoStdImports && isStdLibImport(file.Language, imp.Path) {
+						continue
+					}
+					importLines = append(importLines, "        <import>"+escapeXML(imp.Path)+"</import>\n")
 				} else if imp.Type == "export" {
 					if imp.Name != "" {
-						buf.WriteString("        <export>")
-						buf.WriteString(escapeXML(imp.Name))
-						buf.WriteString("</export>\n")
+						importLines = append(importLines, "        <export>"+escapeXML(imp.Name)+"</export>\n")
 					} else if imp.Path != "" {
-						buf.WriteString("        <export>")
-						buf.WriteString(escapeXML(imp.Path))
-						buf.WriteString("</export>\n")
+						importLines = append(importLines, "        <export>"+escapeXML(imp.Path)+"</export>\n")
 					}
 				}
 			}
-			buf.WriteString("      </imports>\n")
+			if len(importLines) > 0 {
+				hasRenderedImports = true
+				buf.WriteString("      <imports>\n")
+				for _, line := range importLines {
+					buf.WriteString(line)
+				}
+				buf.WriteString("      </imports>\n")
+			}
 		}
 
 		if file.Error != nil {
@@ -102,7 +107,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString("</error>\n")
 		} else {
 			// 빈 파일 확인
-			isEmpty := len(file.Signatures) == 0 && (!data.IncludeImports || len(file.Imports) == 0)
+			isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
 
 			if isEmpty {
 				buf.WriteString("      <!-- empty -->\n")

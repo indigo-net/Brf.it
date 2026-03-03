@@ -35,6 +35,10 @@ func TestDefaultConfig(t *testing.T) {
 		t.Error("expected NoTokens to be false by default")
 	}
 
+	if cfg.NoStdImports {
+		t.Error("expected NoStdImports to be false by default")
+	}
+
 	const expectedMaxSize = 512000 // 500KB
 	if cfg.MaxFileSize != expectedMaxSize {
 		t.Errorf("expected max file size %d, got %d", expectedMaxSize, cfg.MaxFileSize)
@@ -129,6 +133,22 @@ func TestConfigValidate(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestConfigToOptionsNoStdImports(t *testing.T) {
+	cfg := DefaultConfig()
+	cfg.NoStdImports = true
+
+	opts := cfg.ToOptions()
+	if !opts.NoStdImports {
+		t.Error("expected ToOptions() to pass NoStdImports=true")
+	}
+
+	cfg2 := DefaultConfig()
+	opts2 := cfg2.ToOptions()
+	if opts2.NoStdImports {
+		t.Error("expected ToOptions() to pass NoStdImports=false by default")
 	}
 }
 

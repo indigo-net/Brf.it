@@ -426,6 +426,65 @@ func TestBuildTreeStructure(t *testing.T) {
 	}
 }
 
+func TestPackagerNoStdImportsPassthrough(t *testing.T) {
+	mockScan := &mockScanner{
+		result: &scanner.ScanResult{
+			Files: []scanner.FileEntry{
+				{Path: "main.go", Language: "go", Size: 100},
+			},
+			TotalSize: 100,
+		},
+	}
+
+	mockExt := &mockExtractor{
+		result: &extractor.ExtractResult{
+			Files: []extractor.ExtractedFile{
+				{
+					Path:     "main.go",
+					Language: "go",
+					Signatures: []parser.Signature{
+						{Name: "Main", Kind: "function", Text: "func Main()"},
+					},
+					Imports: []parser.ImportExport{
+						{Type: "import", Path: `import "fmt"`},
+						{Type: "import", Path: `import "github.com/spf13/cobra"`},
+					},
+					Size: 100,
+				},
+			},
+			TotalSignatures: 1,
+			TotalSize:       100,
+		},
+	}
+
+	formatters := map[string]formatter.Formatter{
+		"xml":      formatter.NewXMLFormatter(),
+		"markdown": formatter.NewMarkdownFormatter(),
+	}
+
+	p := NewPackager(mockScan, mockExt, formatters)
+
+	// With NoStdImports=true, stdlib imports should be filtered
+	result, err := p.Package(&Options{
+		Path:           ".",
+		Format:         "xml",
+		IncludeTree:    false,
+		IncludeImports: true,
+		NoStdImports:   true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output := string(result.Content)
+	if strings.Contains(output, "fmt") {
+		t.Error("expected stdlib import 'fmt' to be filtered out with NoStdImports=true")
+	}
+	if !strings.Contains(output, "cobra") {
+		t.Error("expected non-stdlib import 'cobra' to be present")
+	}
+}
+
 func TestDefaultOptions(t *testing.T) {
 	opts := DefaultOptions()
 
