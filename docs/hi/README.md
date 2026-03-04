@@ -145,6 +145,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Java | `.java` | [Java गाइड](languages/java.md) |
 | Rust | `.rs` | [Rust गाइड](languages/rust.md) |
 | Swift | `.swift` | [Swift गाइड](languages/swift.md) |
+| Kotlin | `.kt`, `.kts` | [Kotlin गाइड](languages/kotlin.md) |
 
 ---
 
