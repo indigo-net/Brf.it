@@ -1405,3 +1405,79 @@ func TestRefineKotlinClassKind(t *testing.T) {
 		}
 	}
 }
+
+func TestKotlinAutoRegistration(t *testing.T) {
+	registry := parser.DefaultRegistry()
+
+	p, ok := registry.Get("kotlin")
+	if !ok {
+		t.Error("expected parser for 'kotlin' to be registered")
+	}
+	if p == nil {
+		t.Error("expected non-nil parser for 'kotlin'")
+	}
+}
+
+func TestKotlinSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example
+
+class Calculator {
+    fun add(a: Int, b: Int): Int {
+        return a + b
+    }
+}
+
+interface Repository<T> {
+    fun findById(id: String): T?
+    fun save(entity: T)
+}
+
+enum class Status {
+    PENDING, ACTIVE, COMPLETED
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "kotlin", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Calculator":
+			if contains(sig.Text, "fun add") {
+				t.Errorf("class signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "add":
+			if contains(sig.Text, "return") {
+				t.Errorf("method signature should not contain body, got '%s'", sig.Text)
+			}
+		case "Repository":
+			if contains(sig.Text, "fun findById") {
+				t.Errorf("interface signature should not contain methods, got '%s'", sig.Text)
+			}
+		}
+	}
+}
+
+func TestKotlinImportExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `import kotlin.collections.List
+import kotlin.io.println
+import kotlinx.coroutines.launch
+
+fun main() {}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "kotlin", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Imports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	}
+}
