@@ -901,13 +901,22 @@ func refineKotlinClassKind(text string) string {
 			trimmed = strings.TrimSpace(trimmed)
 		}
 	}
-	// Strip annotations like @Serializable, @JvmStatic
+	// Strip annotations like @Serializable, @Retention(AnnotationRetention.RUNTIME)
 	for strings.HasPrefix(trimmed, "@") {
-		if idx := strings.Index(trimmed, " "); idx >= 0 {
-			trimmed = strings.TrimSpace(trimmed[idx:])
-		} else {
-			break
+		end := 1
+		depth := 0
+		for end < len(trimmed) {
+			c := trimmed[end]
+			if c == '(' {
+				depth++
+			} else if c == ')' {
+				depth--
+			} else if c == ' ' && depth == 0 {
+				break
+			}
+			end++
 		}
+		trimmed = strings.TrimSpace(trimmed[end:])
 	}
 	// Strip fun keyword for functional interfaces (fun interface)
 	trimmed = strings.TrimPrefix(trimmed, "fun ")

@@ -1393,6 +1393,8 @@ func TestRefineKotlinClassKind(t *testing.T) {
 		{"open class Vehicle", "class"},
 		{"fun interface Predicate", "interface"},
 		{"@Serializable data class User", "class"},
+		{"@Retention(AnnotationRetention.RUNTIME) interface Marker", "interface"},
+		{"@JvmField(name = \"x\") enum class Color", "enum"},
 		{"public sealed class State", "class"},
 	}
 
