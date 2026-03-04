@@ -105,6 +105,8 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".java": "java",
 		".rs":    "rust",
 		".swift": "swift",
+		".kt":    "kotlin",
+		".kts":   "kotlin",
 	}
 }
 

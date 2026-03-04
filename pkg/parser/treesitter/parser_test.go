@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -1272,6 +1272,134 @@ public let PI = 3.14159
 			if sig.Text != expected {
 				t.Errorf("expected signature '%s', got '%s'", expected, sig.Text)
 			}
+		}
+	}
+}
+
+func TestTreeSitterParserParseKotlin(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `package com.example
+
+/** User data class. */
+data class User(val id: Long, val name: String) {
+    fun isValid(): Boolean = name.isNotEmpty()
+}
+
+interface UserRepository {
+    fun getUser(id: Long): User?
+    fun save(user: User): Boolean
+}
+
+object AppConfig {
+    const val VERSION = "1.0.0"
+}
+
+fun <T : Any> requireNotNull(value: T?): T {
+    return value ?: throw IllegalArgumentException()
+}
+
+typealias UserCallback = (User) -> Unit
+
+enum class Role {
+    ADMIN,
+    USER,
+    GUEST;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "kotlin"})
+	if err != nil {
+		t.Fatalf("failed to parse Kotlin: %v", err)
+	}
+	if len(result.Signatures) == 0 {
+		t.Fatal("expected signatures but got none")
+	}
+
+	expectedNames := map[string]bool{
+		"User": true, "isValid": true,
+		"UserRepository": true, "getUser": true, "save": true,
+		"AppConfig": true, "VERSION": true,
+		"requireNotNull": true,
+		"UserCallback":   true,
+		"Role": true, "ADMIN": true, "USER": true, "GUEST": true,
+	}
+
+	foundNames := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = true
+	}
+
+	for name := range expectedNames {
+		if !foundNames[name] {
+			t.Errorf("expected to find '%s' in signatures", name)
+		}
+	}
+}
+
+func TestKotlinBodyStripping(t *testing.T) {
+	tests := []struct {
+		input    string
+		kind     string
+		expected string
+	}{
+		{
+			input:    "fun greet(name: String): String { return \"Hello\" }",
+			kind:     "function",
+			expected: "fun greet(name: String): String",
+		},
+		{
+			input:    "fun double(x: Int) = x * 2",
+			kind:     "function",
+			expected: "fun double(x: Int) = x * 2",
+		},
+		{
+			input:    "data class User(val name: String) { fun greet() = name }",
+			kind:     "class",
+			expected: "data class User(val name: String)",
+		},
+		{
+			input:    "sealed class Result<out T> { data class Success<T>(val d: T) : Result<T>() }",
+			kind:     "class",
+			expected: "sealed class Result<out T>",
+		},
+		{
+			input:    "interface Repository<T> { fun getAll(): List<T> }",
+			kind:     "interface",
+			expected: "interface Repository<T>",
+		},
+	}
+
+	for _, tt := range tests {
+		result := stripKotlinBody(tt.input, tt.kind)
+		if result != tt.expected {
+			t.Errorf("stripKotlinBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
+		}
+	}
+}
+
+func TestRefineKotlinClassKind(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"class User", "class"},
+		{"data class Point", "class"},
+		{"sealed class Result", "class"},
+		{"abstract class Base", "class"},
+		{"interface Repository", "interface"},
+		{"enum class Color", "enum"},
+		{"annotation class Api", "class"},
+		{"open class Vehicle", "class"},
+		{"fun interface Predicate", "interface"},
+		{"@Serializable data class User", "class"},
+		{"public sealed class State", "class"},
+	}
+
+	for _, tt := range tests {
+		result := refineKotlinClassKind(tt.input)
+		if result != tt.expected {
+			t.Errorf("refineKotlinClassKind(%q) = %q, want %q", tt.input, result, tt.expected)
 		}
 	}
 }
