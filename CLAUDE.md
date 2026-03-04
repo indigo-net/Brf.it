@@ -51,6 +51,8 @@ Claude, brf.it 프로젝트를 **Go(Golang)**로 구현할 때 준수해야 할 
 ### 3. CGO & Tree-sitter (중요)
 
 - **CGO Handling**: Go에서 Tree-sitter를 쓰려면 CGO 바인딩이 필요합니다. 런타임 의존성을 줄이기 위해 가능한 **정적 빌드(Static Build)**가 가능하도록 설계하세요.
+- **Third-party Grammar 통합**: 외부 tree-sitter 문법은 `go get`으로 사용 불가 (C 소스가 Go 모듈 경계 밖에 위치). **Vendor 방식**으로 C 소스를 `pkg/parser/treesitter/grammars/<lang>/`에 직접 복사하여 통합. Fork 방식 사용 금지.
+- **binding.go 작성 시**: CGO는 디렉토리 내 모든 `.c` 파일을 자동 컴파일하므로, `#include "parser.c"` 대신 `extern` 선언 사용 (중복 심볼 방지)
 - **Concurrency**: 파일 스캔(Scanner)과 분석(Extractor) 시 Go의 강력한 `Goroutine`과 `Channel`을 활용하여 성능을 극대화하세요. (단, 과도한 고루틴 생성을 방지하기 위해 Worker Pool 패턴 고려)
 
 ### 4. CLI & UX
@@ -244,7 +246,12 @@ if fileSize > maxFileSize {
 
 스킬 참조: `.claude/skills/add-language-support.md` (`/add-language-support`)
 
+- **Vendor 참조 구현**: `pkg/parser/treesitter/grammars/kotlin/` (binding.go + C sources)
+- **LanguageQuery 참조**: `pkg/parser/treesitter/languages/kotlin.go` (refineKind 패턴 포함)
+
 ### GitHub Issue 기반 워크플로우
+
+**주의**: 외부 저장소 fork, 새 저장소 생성 등 사용자 계정에 영향을 주는 작업은 반드시 **사전 승인** 필요
 
 모든 작업은 이슈 기반으로 진행합니다:
 
