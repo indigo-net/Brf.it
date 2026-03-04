@@ -92,13 +92,10 @@ const kotlinQueryPattern = `
   (type_identifier) @name
 ) @signature @kind
 
-; Companion object (may or may not have a name)
+; Companion object with explicit name (e.g., companion object Factory)
 (companion_object
   (type_identifier) @name
 ) @signature @kind
-
-; Companion object without name
-(companion_object) @signature @kind
 
 ; Property declarations (val/var, const val, lateinit, delegated)
 (property_declaration
