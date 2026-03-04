@@ -24,7 +24,7 @@ Thank you for your interest in contributing to **Brf.it** — a CLI tool that ex
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| **Go** | 1.25+ | Core language |
+| **Go** | 1.25.0 | Core language |
 | **C compiler** | gcc / clang | Required for CGO (Tree-sitter bindings) |
 | **Git** | any recent | Version control |
 | **goimports** | latest | Code formatting |
@@ -75,15 +75,14 @@ Brf.it/
 │   ├── scanner/                 # File system scanning & .gitignore filtering
 │   ├── parser/                  # Parser interface & registry
 │   │   └── treesitter/          # Tree-sitter implementation
-│   │       ├── languages/       # Per-language query definitions
-│   │       └── grammars/        # Vendored C grammar sources
+│   │       └── languages/       # Per-language query definitions
 │   ├── extractor/               # Signature extraction orchestration
 │   ├── formatter/               # Output formatters (XML, Markdown)
 │   └── tokenizer/               # Token counting
 ├── internal/
 │   ├── config/                  # CLI configuration & defaults
 │   ├── context/                 # Build context (directory tree)
-│   └── logger/                  # Logging utilities
+│   └── logger/                  # Logging utilities (placeholder)
 ├── docs/
 │   ├── languages/               # Per-language guides (English)
 │   ├── ko/                      # Korean translations
@@ -293,9 +292,8 @@ When writing query patterns, ensure **all declaration types** of the target lang
 
 ### Reference Implementation
 
-- **Vendored grammar**: `pkg/parser/treesitter/grammars/kotlin/binding.go`
-- **LanguageQuery**: `pkg/parser/treesitter/languages/kotlin.go`
-- **Detailed guide**: See the internal skill document (`.claude/skills/add-language-support.md`) for a complete step-by-step walkthrough with templates and test patterns.
+- **LanguageQuery**: `pkg/parser/treesitter/languages/swift.go` (complex example with refineKind patterns)
+- **Simple LanguageQuery**: `pkg/parser/treesitter/languages/rust.go`
 
 ### Verification
 
