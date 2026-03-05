@@ -1036,6 +1036,416 @@
     .type = TSParseActionTypeAccept \
   }}</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go" language="go">
+      <imports>
+        <import>import &quot;C&quot;</import>
+        <import>import &quot;unsafe&quot;</import>
+      </imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/scanner.c" language="c">
+      <imports>
+        <import>#include &quot;tree_sitter/parser.h&quot;</import>
+        <import>#include &lt;string.h&gt;</import>
+        <import>#include &lt;wctype.h&gt;</import>
+      </imports>
+      <variable>#define TOKEN_COUNT 33</variable>
+      <type>enum TokenType {
+    BLOCK_COMMENT,
+    RAW_STR_PART,
+    RAW_STR_CONTINUING_INDICATOR,
+    RAW_STR_END_PART,
+    IMPLICIT_SEMI,
+    EXPLICIT_SEMI,
+    ARROW_OPERATOR,
+    DOT_OPERATOR,
+    CONJUNCTION_OPERATOR,
+    DISJUNCTION_OPERATOR,
+    NIL_COALESCING_OPERATOR,
+    EQUAL_SIGN,
+    EQ_EQ,
+    PLUS_THEN_WS,
+    MINUS_THEN_WS,
+    BANG,
+    THROWS_KEYWORD,
+    RETHROWS_KEYWORD,
+    DEFAULT_KEYWORD,
+    WHERE_KEYWORD,
+    ELSE_KEYWORD,
+    CATCH_KEYWORD,
+    AS_KEYWORD,
+    AS_QUEST,
+    AS_BANG,
+    ASYNC_KEYWORD,
+    CUSTOM_OPERATOR,
+    HASH_SYMBOL,
+    DIRECTIVE_IF,
+    DIRECTIVE_ELSEIF,
+    DIRECTIVE_ELSE,
+    DIRECTIVE_ENDIF,
+    FAKE_TRY_BANG
+}</type>
+      <variable>#define OPERATOR_COUNT 20</variable>
+      <type>enum IllegalTerminatorGroup {
+    ALPHANUMERIC,
+    OPERATOR_SYMBOLS,
+    OPERATOR_OR_DOT,
+    NON_WHITESPACE
+}</type>
+      <type>enum IllegalTerminatorGroup</type>
+      <type>enum TokenType</type>
+      <variable>#define RESERVED_OP_COUNT 31</variable>
+      <function>static bool is_cross_semi_token(enum TokenType op)</function>
+      <variable>#define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3</variable>
+      <type>enum ParseDirective {
+    CONTINUE_PARSING_NOTHING_FOUND,
+    CONTINUE_PARSING_TOKEN_FOUND,
+    CONTINUE_PARSING_SLASH_CONSUMED,
+    STOP_PARSING_NOTHING_FOUND,
+    STOP_PARSING_TOKEN_FOUND,
+    STOP_PARSING_END_OF_FILE
+}</type>
+      <type>struct ScannerState {
+    uint32_t ongoing_raw_str_hash_count;
+}</type>
+      <function>void *tree_sitter_swift_external_scanner_create()</function>
+      <type>struct ScannerState</type>
+      <function>void tree_sitter_swift_external_scanner_destroy(void *payload)</function>
+      <function>void tree_sitter_swift_external_scanner_reset(void *payload)</function>
+      <type>struct ScannerState</type>
+      <function>unsigned tree_sitter_swift_external_scanner_serialize(void *payload, char *buffer)</function>
+      <type>struct ScannerState</type>
+      <function>void tree_sitter_swift_external_scanner_deserialize(
+    void *payload,
+    const char *buffer,
+    unsigned length
+)</function>
+      <type>struct ScannerState</type>
+      <function>static void advance(TSLexer *lexer)</function>
+      <function>static bool should_treat_as_wspace(int32_t character)</function>
+      <function>static int32_t encountered_op_count(bool *encountered_operator)</function>
+      <function>static bool any_reserved_ops(uint8_t *encountered_reserved_ops)</function>
+      <function>static bool is_legal_custom_operator(
+    int32_t char_idx,
+    int32_t first_char,
+    int32_t cur_char
+)</function>
+      <function>static bool eat_operators(
+    TSLexer *lexer,
+    const bool *valid_symbols,
+    bool mark_end,
+    const int32_t prior_char,
+    enum TokenType *symbol_result
+)</function>
+      <type>enum TokenType</type>
+      <type>enum IllegalTerminatorGroup</type>
+      <type>enum ParseDirective</type>
+      <type>enum TokenType</type>
+      <type>enum ParseDirective</type>
+      <type>enum TokenType</type>
+      <type>enum ParseDirective</type>
+      <type>enum ParseDirective</type>
+      <type>enum TokenType</type>
+      <type>enum TokenType</type>
+      <variable>#define DIRECTIVE_COUNT 4</variable>
+      <type>enum TokenType</type>
+      <type>enum TokenType</type>
+      <function>static bool eat_raw_str_part(
+    struct ScannerState *state,
+    TSLexer *lexer,
+    const bool *valid_symbols,
+    enum TokenType *symbol_result
+)</function>
+      <type>struct ScannerState</type>
+      <type>enum TokenType</type>
+      <function>bool tree_sitter_swift_external_scanner_scan(
+    void *payload,
+    TSLexer *lexer,
+    const bool *valid_symbols
+)</function>
+      <type>struct ScannerState</type>
+      <type>enum TokenType</type>
+      <type>enum ParseDirective</type>
+      <type>enum TokenType</type>
+      <type>enum ParseDirective</type>
+      <type>enum TokenType</type>
+      <type>enum TokenType</type>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/alloc.h" language="cpp">
+      <imports>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdio.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/array.h" language="cpp">
+      <imports>
+        <import>#include &quot;./alloc.h&quot;</import>
+        <import>#include &lt;assert.h&gt;</import>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdint.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+        <import>#include &lt;string.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)</variable>
+      <variable>#define array_delete(self) _array__delete((Array *)(self))</variable>
+      <variable>#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)-&gt;contents[(self)-&gt;size++] = (element))</variable>
+      <variable>#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count); \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other)                                       \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)-&gt;size, \
+    0, count,  contents                                        \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )</variable>
+      <variable>#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &amp;(element))</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))</variable>
+      <variable>#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__delete(Array *self)</function>
+      <function>static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)</function>
+      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
+      <function>static inline void _array__swap(Array *self, Array *other)</function>
+      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
+      <function>static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/parser.h" language="cpp">
+      <imports>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdint.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1844,7 +2254,7 @@
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
-        <import>import tree_sitter_swift &quot;github.com/alex-pinkus/tree-sitter-swift/bindings/go&quot;</import>
+        <import>import tree_sitter_swift &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift&quot;</import>
       </imports>
       <type>type SwiftQuery struct {
 	language *sitter.Language
@@ -1925,7 +2335,7 @@
       <imports>
         <import>import &quot;testing&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
-        <import>import tree_sitter_swift &quot;github.com/alex-pinkus/tree-sitter-swift/bindings/go&quot;</import>
+        <import>import tree_sitter_swift &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift&quot;</import>
       </imports>
       <function>func TestSwiftQueryLanguage(t *testing.T)</function>
       <function>func TestSwiftQueryPattern(t *testing.T)</function>
