@@ -176,6 +176,10 @@ func TestMarkdownFormatterFormat(t *testing.T) {
 	if !strings.Contains(outputStr, "func Add(a, b int) int") {
 		t.Error("expected signature in code block")
 	}
+
+	if strings.Contains(outputStr, "// function") {
+		t.Error("kind comment should not appear in markdown output")
+	}
 }
 
 func TestFormatterNames(t *testing.T) {
@@ -466,52 +470,6 @@ func TestXMLFormatterKindTags(t *testing.T) {
 			}
 			if !strings.Contains(outputStr, expectedClose) {
 				t.Errorf("expected closing tag %s in output:\n%s", expectedClose, outputStr)
-			}
-		})
-	}
-}
-
-func TestMarkdownFormatterKindComment(t *testing.T) {
-	formatter := NewMarkdownFormatter()
-
-	tests := []struct {
-		name    string
-		kind    string
-		text    string
-		wantStr string
-	}{
-		{"function_kind", "function", "func Add(a, b int) int", "func Add(a, b int) int // function"},
-		{"method_kind", "method", "def foo(self):", "def foo(self): // method"},
-		{"type_kind", "type", "type Config struct", "type Config struct // type"},
-		{"empty_kind", "", "func foo()", "func foo()\n"}, // no comment for empty kind
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			data := &PackageData{
-				Files: []FileData{
-					{
-						Path:     "test.go",
-						Language: "go",
-						Signatures: []parser.Signature{
-							{
-								Name: "test",
-								Kind: tt.kind,
-								Text: tt.text,
-							},
-						},
-					},
-				},
-			}
-
-			output, err := formatter.Format(data)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			outputStr := string(output)
-			if !strings.Contains(outputStr, tt.wantStr) {
-				t.Errorf("expected %q in output:\n%s", tt.wantStr, outputStr)
 			}
 		})
 	}
