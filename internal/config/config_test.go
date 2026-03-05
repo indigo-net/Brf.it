@@ -1,6 +1,9 @@
 package config
 
 import (
+	"bytes"
+	"os"
+	"strings"
 	"testing"
 )
 
@@ -171,6 +174,69 @@ func TestConfigSupportedLanguages(t *testing.T) {
 		} else if gotLang != lang {
 			t.Errorf("expected extension '%s' to map to '%s', got '%s'", ext, lang, gotLang)
 		}
+	}
+}
+
+func TestValidateMaxFileSizeUpperBound(t *testing.T) {
+	tests := []struct {
+		name        string
+		maxFileSize int64
+		wantWarning bool
+		wantError   bool
+	}{
+		{
+			name:        "within bound - no warning",
+			maxFileSize: 512000,
+			wantWarning: false,
+			wantError:   false,
+		},
+		{
+			name:        "at bound - no warning",
+			maxFileSize: MaxFileSizeUpperBound,
+			wantWarning: false,
+			wantError:   false,
+		},
+		{
+			name:        "exceeds bound - warning on stderr",
+			maxFileSize: MaxFileSizeUpperBound + 1,
+			wantWarning: true,
+			wantError:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			oldStderr := os.Stderr
+			r, w, _ := os.Pipe()
+			os.Stderr = w
+
+			cfg := Config{
+				Mode:        "sig",
+				Format:      "xml",
+				MaxFileSize: tt.maxFileSize,
+			}
+			err := cfg.Validate()
+
+			w.Close()
+			var buf bytes.Buffer
+			buf.ReadFrom(r)
+			os.Stderr = oldStderr
+
+			if tt.wantError && err == nil {
+				t.Error("expected error, got nil")
+			}
+			if !tt.wantError && err != nil {
+				t.Errorf("unexpected error: %v", err)
+			}
+
+			hasWarning := strings.Contains(buf.String(), "WARN")
+			if tt.wantWarning && !hasWarning {
+				t.Error("expected warning on stderr, got none")
+			}
+			if !tt.wantWarning && hasWarning {
+				t.Errorf("unexpected warning on stderr: %s", buf.String())
+			}
+		})
 	}
 }
 

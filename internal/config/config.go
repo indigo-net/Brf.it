@@ -4,9 +4,14 @@ package config
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
 )
+
+// MaxFileSizeUpperBound is the maximum allowed value for MaxFileSize (10MB).
+// Values above this threshold trigger a warning (not an error).
+const MaxFileSizeUpperBound = 10 * 1024 * 1024
 
 // Config holds all configuration options for the brfit CLI.
 type Config struct {
@@ -84,6 +89,12 @@ func (c *Config) Validate() error {
 	// Validate max file size
 	if c.MaxFileSize <= 0 {
 		return errors.New("max file size must be positive")
+	}
+
+	// Warn if max file size exceeds upper bound (not an error)
+	if c.MaxFileSize > MaxFileSizeUpperBound {
+		fmt.Fprintf(os.Stderr, "[brfit] WARN: max-size %d bytes exceeds recommended upper bound of %d bytes (10MB)\n",
+			c.MaxFileSize, MaxFileSizeUpperBound)
 	}
 
 	return nil
