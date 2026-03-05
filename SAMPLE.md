@@ -2731,7 +2731,7 @@ type TreeSitterParser struct {
 	queries map[string]LanguageQuery
 } // type
 func NewTreeSitterParser() *TreeSitterParser // function
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error) // method
+func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error) // method
 imports []parser.ImportExport // variable
 func (p *TreeSitterParser) Languages() []string // method
 func (p *TreeSitterParser) extractSignatures(
@@ -2837,6 +2837,8 @@ func TestRefineKotlinClassKind(t *testing.T) // function
 func TestKotlinAutoRegistration(t *testing.T) // function
 func TestKotlinSignatureOnlyExtraction(t *testing.T) // function
 func TestKotlinImportExtraction(t *testing.T) // function
+func TestParsePanicRecovery(t *testing.T) // function
+func TestParsePanicRecoveryMechanism(t *testing.T) // function
 ```
 
 ---

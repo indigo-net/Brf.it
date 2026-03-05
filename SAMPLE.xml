@@ -2515,7 +2515,7 @@
 	queries map[string]LanguageQuery
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
-      <function>func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error)</function>
+      <function>func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error)</function>
       <variable>imports []parser.ImportExport</variable>
       <function>func (p *TreeSitterParser) Languages() []string</function>
       <function>func (p *TreeSitterParser) extractSignatures(
@@ -2616,6 +2616,8 @@
       <function>func TestKotlinAutoRegistration(t *testing.T)</function>
       <function>func TestKotlinSignatureOnlyExtraction(t *testing.T)</function>
       <function>func TestKotlinImportExtraction(t *testing.T)</function>
+      <function>func TestParsePanicRecovery(t *testing.T)</function>
+      <function>func TestParsePanicRecoveryMechanism(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>
