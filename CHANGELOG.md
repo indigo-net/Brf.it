@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.0] - 2026-03-05
+
+### Added
+- Kotlin language support (#23)
+  - Functions, classes, interfaces, objects, properties, typealias, enum entries
+  - suspend, inline, data, sealed, annotation, value class keywords
+  - Import statement extraction, companion object, inner class
+- GitHub Pages documentation site (#14)
+- GitHub Issue-based development workflow (#12)
+- PR review automation skill and agent
+- CONTRIBUTING.md contribution guide (#37)
+- SECURITY.md security policy (#39)
+
+### Changed
+- Swift tree-sitter switched to vendor approach (#58)
+- Test code sitter.Query resource cleanup across all languages (#57)
+
+### Fixed
+- refineKotlinClassKind classification error with parenthesized annotations (#23)
+- companion_object duplicate query pattern removal (#23)
+- actions/labeler@v5 syntax fix (#14)
+
 ## [0.16.0] - 2026-03-03
 
 ### Added
