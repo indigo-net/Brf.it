@@ -207,26 +207,29 @@ func TestValidateMaxFileSizeUpperBound(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			oldStderr := os.Stderr
-			r, w, _ := os.Pipe()
+			r, w, err := os.Pipe()
+			if err != nil {
+				t.Fatalf("os.Pipe() failed: %v", err)
+			}
 			os.Stderr = w
+			t.Cleanup(func() { os.Stderr = oldStderr })
 
 			cfg := Config{
 				Mode:        "sig",
 				Format:      "xml",
 				MaxFileSize: tt.maxFileSize,
 			}
-			err := cfg.Validate()
+			validateErr := cfg.Validate()
 
 			w.Close()
 			var buf bytes.Buffer
 			buf.ReadFrom(r)
-			os.Stderr = oldStderr
 
-			if tt.wantError && err == nil {
+			if tt.wantError && validateErr == nil {
 				t.Error("expected error, got nil")
 			}
-			if !tt.wantError && err != nil {
-				t.Errorf("unexpected error: %v", err)
+			if !tt.wantError && validateErr != nil {
+				t.Errorf("unexpected error: %v", validateErr)
 			}
 
 			hasWarning := strings.Contains(buf.String(), "WARN")
