@@ -1481,3 +1481,36 @@ fun main() {}
 		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
 	}
 }
+
+func TestParsePanicRecovery(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	tests := []struct {
+		name     string
+		content  string
+		language string
+	}{
+		{
+			name:     "empty content",
+			content:  "",
+			language: "go",
+		},
+		{
+			name:     "binary-like content",
+			content:  string([]byte{0x00, 0x01, 0x02, 0xff, 0xfe}),
+			language: "go",
+		},
+		{
+			name:     "extremely nested braces",
+			content:  strings.Repeat("{", 1000) + strings.Repeat("}", 1000),
+			language: "go",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Should not panic regardless of input
+			_, _ = p.Parse(tt.content, &parser.Options{Language: tt.language})
+		})
+	}
+}

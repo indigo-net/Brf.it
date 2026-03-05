@@ -53,7 +53,14 @@ func NewTreeSitterParser() *TreeSitterParser {
 }
 
 // Parse parses the given content and returns extracted signatures.
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (*parser.ParseResult, error) {
+func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("tree-sitter panic recovered: %v", r)
+			result = nil
+		}
+	}()
+
 	if opts == nil {
 		opts = &parser.Options{}
 	}
