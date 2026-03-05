@@ -3,6 +3,7 @@ package scanner
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -34,6 +35,9 @@ type ScanResult struct {
 
 	// SkippedCount is the number of files skipped (too large, unsupported, etc.).
 	SkippedCount int
+
+	// Warnings contains non-fatal issues encountered during scanning.
+	Warnings []string
 }
 
 // ScanOptions configures the scanning behavior.
@@ -167,7 +171,28 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 	// Directory - walk recursively using WalkDir (more efficient than Walk)
 	err = filepath.WalkDir(s.opts.RootPath, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			// Skip files/directories we can't access
+			var warning string
+			switch {
+			case os.IsPermission(err):
+				warning = fmt.Sprintf("permission denied: %s", path)
+			case os.IsNotExist(err):
+				warning = fmt.Sprintf("file not found: %s", path)
+			default:
+				warning = fmt.Sprintf("skipping: %s: %v", path, err)
+			}
+			s.logger.Printf("WARN: %s\n", warning)
+			result.Warnings = append(result.Warnings, warning)
+			return nil
+		}
+
+		// Skip symlinks
+		if d.Type()&os.ModeSymlink != 0 {
+			warning := fmt.Sprintf("skipping symlink: %s", path)
+			s.logger.Printf("WARN: %s\n", warning)
+			result.Warnings = append(result.Warnings, warning)
+			if d.IsDir() {
+				return filepath.SkipDir
+			}
 			return nil
 		}
 
@@ -190,6 +215,9 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 		// Get file info for size check
 		info, err := d.Info()
 		if err != nil {
+			warning := fmt.Sprintf("skipping: %s: %v", path, err)
+			s.logger.Printf("WARN: %s\n", warning)
+			result.Warnings = append(result.Warnings, warning)
 			return nil
 		}
 
