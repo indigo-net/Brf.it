@@ -475,6 +475,115 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 	})
 }
 
+func TestScanWalkDirPermissionDenied(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	normalFile := filepath.Join(tmpDir, "normal.go")
+	if err := os.WriteFile(normalFile, []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	noAccessDir := filepath.Join(tmpDir, "noaccess")
+	if err := os.Mkdir(noAccessDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	innerFile := filepath.Join(noAccessDir, "inner.go")
+	if err := os.WriteFile(innerFile, []byte("package inner\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(noAccessDir, 0000); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Chmod(noAccessDir, 0755)
+
+	opts := DefaultScanOptions()
+	opts.RootPath = tmpDir
+
+	sc, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var buf bytes.Buffer
+	sc.logger = log.New(&buf, "[brfit] ", 0)
+
+	result, err := sc.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(result.Files) < 1 {
+		t.Error("expected at least 1 file")
+	}
+
+	hasWarning := false
+	for _, w := range result.Warnings {
+		if strings.Contains(w, "permission denied") {
+			hasWarning = true
+			break
+		}
+	}
+	if !hasWarning {
+		t.Errorf("expected permission denied warning in result.Warnings, got: %v", result.Warnings)
+	}
+}
+
+func TestScanSymlinkSkip(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	normalFile := filepath.Join(tmpDir, "normal.go")
+	if err := os.WriteFile(normalFile, []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	symlinkFile := filepath.Join(tmpDir, "link.go")
+	if err := os.Symlink(normalFile, symlinkFile); err != nil {
+		t.Skip("symlinks not supported on this platform")
+	}
+
+	opts := DefaultScanOptions()
+	opts.RootPath = tmpDir
+
+	sc, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var buf bytes.Buffer
+	sc.logger = log.New(&buf, "[brfit] ", 0)
+
+	result, err := sc.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(result.Files) != 1 {
+		t.Errorf("expected 1 file (symlink excluded), got %d", len(result.Files))
+		for _, f := range result.Files {
+			t.Logf("  - %s", f.Path)
+		}
+	}
+
+	hasSymlinkWarning := false
+	for _, w := range result.Warnings {
+		if strings.Contains(w, "symlink") {
+			hasSymlinkWarning = true
+			break
+		}
+	}
+	if !hasSymlinkWarning {
+		t.Errorf("expected symlink warning in result.Warnings, got: %v", result.Warnings)
+	}
+}
+
 func TestScanNestedDirectories(t *testing.T) {
 	// Create nested directory structure
 	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
