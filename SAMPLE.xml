@@ -453,7 +453,6 @@
       <function>func TestXMLFormatterEmptyFile(t *testing.T)</function>
       <function>func TestKindToTag(t *testing.T)</function>
       <function>func TestXMLFormatterKindTags(t *testing.T)</function>
-      <function>func TestMarkdownFormatterKindComment(t *testing.T)</function>
       <function>func TestXMLFormatterNoStdImports(t *testing.T)</function>
       <function>func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T)</function>
       <function>func TestMarkdownFormatterNoStdImports(t *testing.T)</function>

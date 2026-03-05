@@ -494,7 +494,6 @@ func TestMarkdownFormatterEmptyFileWithImports(t *testing.T) // function
 func TestXMLFormatterEmptyFile(t *testing.T) // function
 func TestKindToTag(t *testing.T) // function
 func TestXMLFormatterKindTags(t *testing.T) // function
-func TestMarkdownFormatterKindComment(t *testing.T) // function
 func TestXMLFormatterNoStdImports(t *testing.T) // function
 func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T) // function
 func TestMarkdownFormatterNoStdImports(t *testing.T) // function
