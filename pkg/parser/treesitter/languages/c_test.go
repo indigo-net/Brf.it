@@ -26,10 +26,11 @@ func TestCQueryPattern(t *testing.T) {
 
 	// Compile query to verify syntax
 	lang := sitter.NewLanguage(tree_sitter_c.Language())
-	_, err := sitter.NewQuery(lang, string(pattern))
+	q, err := sitter.NewQuery(lang, string(pattern))
 	if err != nil {
 		t.Fatalf("invalid query pattern: %v", err)
 	}
+	defer q.Close()
 }
 
 func TestCQueryExtractFunction(t *testing.T) {
