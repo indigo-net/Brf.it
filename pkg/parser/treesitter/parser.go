@@ -96,12 +96,18 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 	}
 
 	// Extract signatures
-	signatures := p.extractSignatures(tree.RootNode(), []byte(content), query, opts)
+	signatures, err := p.extractSignatures(tree.RootNode(), []byte(content), query, opts)
+	if err != nil {
+		return nil, fmt.Errorf("signature extraction failed: %w", err)
+	}
 
 	// Extract imports if requested
 	var imports []parser.ImportExport
 	if opts.IncludeImports {
-		imports = p.extractImports(tree.RootNode(), []byte(content), query, opts)
+		imports, err = p.extractImports(tree.RootNode(), []byte(content), query, opts)
+		if err != nil {
+			return nil, fmt.Errorf("import extraction failed: %w", err)
+		}
 	}
 
 	return &parser.ParseResult{
@@ -126,13 +132,13 @@ func (p *TreeSitterParser) extractSignatures(
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.Signature {
+) ([]parser.Signature, error) {
 	var signatures []parser.Signature
 
 	// Create query
 	query, err := sitter.NewQuery(langQuery.Language(), string(langQuery.Query()))
 	if err != nil {
-		return signatures
+		return nil, fmt.Errorf("failed to create signature query for %s: %w", opts.Language, err)
 	}
 	defer query.Close()
 
@@ -273,7 +279,7 @@ func (p *TreeSitterParser) extractSignatures(
 		}
 	}
 
-	return signatures
+	return signatures, nil
 }
 
 // cleanComment removes comment markers from the text.
@@ -945,18 +951,18 @@ func (p *TreeSitterParser) extractImports(
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.ImportExport {
+) ([]parser.ImportExport, error) {
 	var imports []parser.ImportExport
 
 	importQueryBytes := langQuery.ImportQuery()
 	if importQueryBytes == nil || len(importQueryBytes) == 0 {
-		return imports
+		return imports, nil
 	}
 
 	// Create query
 	query, err := sitter.NewQuery(langQuery.Language(), string(importQueryBytes))
 	if err != nil {
-		return imports
+		return nil, fmt.Errorf("failed to create import query for %s: %w", opts.Language, err)
 	}
 	defer query.Close()
 
@@ -1014,7 +1020,7 @@ func (p *TreeSitterParser) extractImports(
 		}
 	}
 
-	return imports
+	return imports, nil
 }
 
 // cleanImportPath removes quotes and normalizes import paths.
