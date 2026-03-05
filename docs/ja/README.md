@@ -146,6 +146,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Rust | `.rs` | [Rustガイド](languages/rust.md) |
 | Swift | `.swift` | [Swiftガイド](languages/swift.md) |
 | Kotlin | `.kt`, `.kts` | [Kotlinガイド](languages/kotlin.md) |
+| C# | `.cs` | [C#ガイド](languages/csharp.md) |
 
 ---
 
