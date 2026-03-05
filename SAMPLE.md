@@ -2903,6 +2903,7 @@ func TestCaptureDefinitions(t *testing.T) // function
 
 **Imports:**
 - `import "errors"`
+- `import "fmt"`
 - `import "io/fs"`
 - `import "log"`
 - `import "os"`
@@ -2930,6 +2931,9 @@ type ScanResult struct {
 
 	// SkippedCount is the number of files skipped (too large, unsupported, etc.).
 	SkippedCount int
+
+	// Warnings contains non-fatal issues encountered during scanning.
+	Warnings []string
 } // type
 type ScanOptions struct {
 	// RootPath is the directory or file to scan.
@@ -2963,6 +2967,7 @@ type FileScanner struct {
 } // type
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error) // function
 func (s *FileScanner) Scan() (*ScanResult, error) // method
+warning string // variable
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) // method
 ```
 
@@ -2997,6 +3002,10 @@ func TestScanGitignore(t *testing.T) // function
 func TestScanGitignoreLoadFailureWarning(t *testing.T) // function
 buf bytes.Buffer // variable
 buf bytes.Buffer // variable
+buf bytes.Buffer // variable
+func TestScanWalkDirPermissionDenied(t *testing.T) // function
+buf bytes.Buffer // variable
+func TestScanSymlinkSkip(t *testing.T) // function
 buf bytes.Buffer // variable
 func TestScanNestedDirectories(t *testing.T) // function
 ```

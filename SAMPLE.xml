@@ -2668,6 +2668,7 @@
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go" language="go">
       <imports>
         <import>import &quot;errors&quot;</import>
+        <import>import &quot;fmt&quot;</import>
         <import>import &quot;io/fs&quot;</import>
         <import>import &quot;log&quot;</import>
         <import>import &quot;os&quot;</import>
@@ -2694,6 +2695,9 @@
 
 	// SkippedCount is the number of files skipped (too large, unsupported, etc.).
 	SkippedCount int
+
+	// Warnings contains non-fatal issues encountered during scanning.
+	Warnings []string
 }</type>
       <type>type ScanOptions struct {
 	// RootPath is the directory or file to scan.
@@ -2727,6 +2731,7 @@
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
       <function>func (s *FileScanner) Scan() (*ScanResult, error)</function>
+      <variable>warning string</variable>
       <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go" language="go">
@@ -2756,6 +2761,10 @@
       <function>func TestScanGitignoreLoadFailureWarning(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
       <variable>buf bytes.Buffer</variable>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScanWalkDirPermissionDenied(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScanSymlinkSkip(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
       <function>func TestScanNestedDirectories(t *testing.T)</function>
     </file>
