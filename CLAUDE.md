@@ -248,6 +248,25 @@ if fileSize > maxFileSize {
 }
 ```
 
+### log.Logger Printf 주의사항
+
+`log.Logger`의 `Printf`는 자동으로 줄바꿈을 추가하므로 포맷 문자열 끝에 `\n`을 넣지 마세요:
+```go
+// Good
+s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)", path, size, limit)
+// Bad - 빈 줄 하나 더 출력됨
+s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)\n", path, size, limit)
+```
+
+### 다중 브랜치 병렬 작업 시 주의사항
+
+백그라운드 에이전트가 동일 워킹 디렉토리에서 브랜치를 전환하면 로컬 ref가 오염될 수 있음. rebase 전 항상 로컬/리모트 커밋 일치 확인:
+```bash
+git log --oneline <branch> | head -3        # 로컬 확인
+git log --oneline origin/<branch> | head -3  # 리모트 확인
+# 불일치 시: git reset --hard origin/<branch>
+```
+
 ### 출력 포맷 예시 (XML)
 
 ```xml
