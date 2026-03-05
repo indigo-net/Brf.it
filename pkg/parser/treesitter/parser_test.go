@@ -1481,3 +1481,58 @@ fun main() {}
 		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
 	}
 }
+
+func TestParsePanicRecovery(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	tests := []struct {
+		name     string
+		content  string
+		language string
+	}{
+		{
+			name:     "empty content",
+			content:  "",
+			language: "go",
+		},
+		{
+			name:     "binary-like content",
+			content:  string([]byte{0x00, 0x01, 0x02, 0xff, 0xfe}),
+			language: "go",
+		},
+		{
+			name:     "extremely nested braces",
+			content:  strings.Repeat("{", 1000) + strings.Repeat("}", 1000),
+			language: "go",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Should not panic regardless of input
+			_, _ = p.Parse(tt.content, &parser.Options{Language: tt.language})
+		})
+	}
+}
+
+func TestParsePanicRecoveryMechanism(t *testing.T) {
+	// Verify that if a panic occurs inside Parse, it returns an error
+	// rather than crashing. A nil LanguageQuery in the queries map causes
+	// a nil pointer dereference panic when query.Language() is called.
+	p := &TreeSitterParser{
+		queries: map[string]LanguageQuery{
+			"go": nil, // nil interface triggers panic on method call
+		},
+	}
+
+	result, err := p.Parse("package main", &parser.Options{Language: "go"})
+	if err == nil {
+		t.Fatal("expected error from recovered panic, got nil")
+	}
+	if result != nil {
+		t.Fatal("expected nil result from recovered panic")
+	}
+	if !strings.Contains(err.Error(), "panic recovered") {
+		t.Errorf("expected panic recovery error message, got: %v", err)
+	}
+}
