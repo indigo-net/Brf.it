@@ -23,6 +23,7 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | Rust | `.rs` | [Rust Guide](rust) |
 | Swift | `.swift` | [Swift Guide](swift) |
 | Kotlin | `.kt`, `.kts` | [Kotlin Guide](kotlin) |
+| C# | `.cs` | [C# Guide](csharp) |
 
 ## Extraction Capabilities
 

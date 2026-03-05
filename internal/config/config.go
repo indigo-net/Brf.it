@@ -118,6 +118,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".swift": "swift",
 		".kt":    "kotlin",
 		".kts":   "kotlin",
+		".cs":    "csharp",
 	}
 }
 

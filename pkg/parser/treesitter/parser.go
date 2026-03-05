@@ -25,6 +25,7 @@ func init() {
 	parser.RegisterParser("rust", NewTreeSitterParser())
 	parser.RegisterParser("swift", NewTreeSitterParser())
 	parser.RegisterParser("kotlin", NewTreeSitterParser())
+	parser.RegisterParser("csharp", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -48,6 +49,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"rust":       languages.NewRustQuery(),
 			"swift":      languages.NewSwiftQuery(),
 			"kotlin":     languages.NewKotlinQuery(),
+			"csharp":     languages.NewCSharpQuery(),
 		},
 	}
 }
@@ -242,6 +244,33 @@ func (p *TreeSitterParser) extractSignatures(
 				}
 			}
 
+			// C#: filter out non-static/non-const fields (like Java)
+			if opts.Language == "csharp" && sig.Kind == "field" {
+				if !strings.Contains(sig.Text, "static") && !strings.Contains(sig.Text, "const") {
+					continue // skip instance fields
+				}
+				sig.Kind = "variable" // remap to variable for consistency
+			}
+
+			// C#: synthesize names for indexer, operator, and conversion operator
+			if opts.Language == "csharp" && sig.Name == "" {
+				switch kind {
+				case "indexer_declaration":
+					sig.Name = "this"
+				case "operator_declaration":
+					sig.Name = extractCSharpOperatorName(sig.Text)
+				case "conversion_operator_declaration":
+					sig.Name = extractCSharpConversionOperatorName(sig.Text)
+				}
+			}
+
+			// C#: record struct → "struct" kind; record/record class → "record" kind (의도적)
+			if opts.Language == "csharp" && kind == "record_declaration" {
+				if strings.Contains(sig.Text, "record struct") {
+					sig.Kind = "struct"
+				}
+			}
+
 			// C: distinguish between function prototypes and variable declarations
 			// Both are "declaration" node type, but function prototypes have ()
 			if opts.Language == "c" && kind == "declaration" {
@@ -335,6 +364,9 @@ func isExported(name, language string) bool {
 	case "kotlin":
 		// Kotlin: default visibility is public, all elements are considered exported
 		return true
+	case "csharp":
+		// C#: all elements are considered exported (visibility modifiers preserved in signature text)
+		return true
 	default:
 		return false
 	}
@@ -362,6 +394,8 @@ func stripBody(text, kind, language string) string {
 		return stripSwiftBody(text, kind)
 	case "kotlin":
 		return stripKotlinBody(text, kind)
+	case "csharp":
+		return stripCSharpBody(text, kind)
 	default:
 		return text
 	}
@@ -945,6 +979,209 @@ func refineKotlinClassKind(text string) string {
 	}
 }
 
+// stripCSharpBody removes the body from C# declarations.
+func stripCSharpBody(text, kind string) string {
+	switch kind {
+	case "method", "constructor", "destructor", "function":
+		// Expression-bodied members: remove => expr
+		if isExpressionBodied(text) {
+			arrowIdx := findCSharpArrowIndex(text)
+			if arrowIdx > 0 {
+				return strings.TrimSpace(text[:arrowIdx])
+			}
+		}
+		// Abstract/interface methods end with ;
+		if strings.HasSuffix(strings.TrimSpace(text), ";") {
+			return text
+		}
+		braceIdx := findCSharpBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "struct", "interface", "enum", "record", "namespace":
+		braceIdx := findCSharpBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "variable":
+		// Properties: auto-properties ({ get; set; }) are kept as-is
+		// Expression-bodied properties: remove => expr
+		if isExpressionBodied(text) {
+			arrowIdx := findCSharpArrowIndex(text)
+			if arrowIdx > 0 {
+				return strings.TrimSpace(text[:arrowIdx])
+			}
+		}
+		// Auto-properties with accessor list — keep full text
+		return text
+	case "type":
+		// Delegate declarations: no body, return as-is
+		return text
+	case "field":
+		// Fields: keep full text
+		return text
+	}
+	return text
+}
+
+// findCSharpBodyStart finds the index where the C# body starts.
+// It handles nested angle brackets for generics, parentheses, and square brackets.
+func findCSharpBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+	bracketDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '[':
+			bracketDepth++
+		case ']':
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 && bracketDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// isExpressionBodied checks if a C# declaration uses expression body syntax (=>).
+// Distinguishes => from => inside lambda expressions by checking context.
+func isExpressionBodied(text string) bool {
+	// Look for => that is part of the member declaration (not inside a body)
+	parenDepth := 0
+	angleDepth := 0
+	bracketDepth := 0
+
+	for i := 0; i < len(text)-1; i++ {
+		ch := text[i]
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '[':
+			bracketDepth++
+		case ']':
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
+		case '{':
+			// If we hit { before =>, it's not expression-bodied
+			if parenDepth == 0 && angleDepth == 0 && bracketDepth == 0 {
+				return false
+			}
+		case '=':
+			if i+1 < len(text) && text[i+1] == '>' && parenDepth == 0 && angleDepth == 0 && bracketDepth == 0 {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// findCSharpArrowIndex finds the index of the => in an expression-bodied member.
+func findCSharpArrowIndex(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+	bracketDepth := 0
+
+	for i := 0; i < len(text)-1; i++ {
+		ch := text[i]
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '[':
+			bracketDepth++
+		case ']':
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
+		case '{':
+			if parenDepth == 0 && angleDepth == 0 && bracketDepth == 0 {
+				return -1
+			}
+		case '=':
+			if i+1 < len(text) && text[i+1] == '>' && parenDepth == 0 && angleDepth == 0 && bracketDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// extractCSharpOperatorName extracts the operator symbol from an operator declaration.
+// e.g., "public static int operator +(int a, int b) => ..." -> "operator+"
+func extractCSharpOperatorName(text string) string {
+	idx := strings.Index(text, "operator")
+	if idx < 0 {
+		return "operator"
+	}
+	rest := strings.TrimSpace(text[idx+len("operator"):])
+	// The operator symbol follows: +, -, *, /, ==, !=, etc.
+	// Find the first ( and take everything before it as the operator
+	parenIdx := strings.Index(rest, "(")
+	if parenIdx > 0 {
+		op := strings.TrimSpace(rest[:parenIdx])
+		return "operator" + op
+	}
+	return "operator"
+}
+
+// extractCSharpConversionOperatorName extracts the conversion operator name.
+// e.g., "public static implicit operator int(...)" -> "implicit operator int"
+// e.g., "public static explicit operator string(...)" -> "explicit operator string"
+func extractCSharpConversionOperatorName(text string) string {
+	// Find "implicit" or "explicit" keyword
+	keyword := ""
+	if strings.Contains(text, "implicit") {
+		keyword = "implicit"
+	} else if strings.Contains(text, "explicit") {
+		keyword = "explicit"
+	}
+
+	// Find "operator" keyword and extract the type after it
+	idx := strings.Index(text, "operator")
+	if idx < 0 {
+		return keyword + " operator"
+	}
+	rest := strings.TrimSpace(text[idx+len("operator"):])
+	// The target type is between "operator" and "("
+	parenIdx := strings.Index(rest, "(")
+	if parenIdx > 0 {
+		targetType := strings.TrimSpace(rest[:parenIdx])
+		return keyword + " operator " + targetType
+	}
+	return keyword + " operator"
+}
+
 // extractImports extracts import/export statements from the AST.
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
@@ -1032,6 +1269,7 @@ func cleanImportPath(path string) string {
 		strings.HasPrefix(trimmed, "from ") ||
 		strings.HasPrefix(trimmed, "#include") ||
 		strings.HasPrefix(trimmed, "use ") ||
+		strings.HasPrefix(trimmed, "using ") ||
 		strings.HasPrefix(trimmed, "extern crate") {
 		return trimmed
 	}

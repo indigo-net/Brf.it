@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -1512,6 +1512,405 @@ func TestParsePanicRecovery(t *testing.T) {
 			// Should not panic regardless of input
 			_, _ = p.Parse(tt.content, &parser.Options{Language: tt.language})
 		})
+	}
+}
+
+func TestTreeSitterParserParseCSharp(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `using System;
+
+namespace MyApp {
+    /// <summary>Calculator class.</summary>
+    public class Calculator {
+        public const int MaxValue = 100;
+        private int _count;
+
+        public Calculator() { _count = 0; }
+        ~Calculator() { }
+
+        public int Add(int a, int b) { return a + b; }
+        public string Title { get; set; }
+    }
+
+    public struct Point { }
+
+    public interface IDrawable {
+        void Draw();
+    }
+
+    public enum Color {
+        Red,
+        Green,
+        Blue
+    }
+
+    public record Person(string Name, int Age);
+    public delegate void Handler(string msg);
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	if err != nil {
+		t.Fatalf("failed to parse C#: %v", err)
+	}
+	if len(result.Signatures) == 0 {
+		t.Fatal("expected signatures but got none")
+	}
+
+	expectedNames := map[string]bool{
+		"MyApp": true, "Calculator": true, "MaxValue": true,
+		"Add": true, "Title": true,
+		"Point": true, "IDrawable": true, "Draw": true,
+		"Color": true, "Red": true, "Green": true, "Blue": true,
+		"Person": true, "Handler": true,
+	}
+
+	foundNames := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = true
+	}
+
+	for name := range expectedNames {
+		if !foundNames[name] {
+			t.Errorf("expected to find '%s' in signatures", name)
+		}
+	}
+
+	// Verify non-static field is excluded
+	if foundNames["_count"] {
+		t.Error("should not find non-static instance field '_count'")
+	}
+}
+
+func TestCSharpSignatureOnlyExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `using System;
+
+public class Calculator {
+    public int Add(int a, int b) {
+        return a + b;
+    }
+
+    public async Task<int> AddAsync(int a, int b) => a + b;
+}
+
+public interface IService {
+    void Execute();
+}
+
+public enum Status {
+    Active, Inactive
+}
+
+public record Person(string Name, int Age);
+public record struct Measurement(double Value);
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "csharp", IncludeBody: false})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "Calculator":
+			if contains(sig.Text, "public int Add") {
+				t.Errorf("class signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "Add":
+			if contains(sig.Text, "return") {
+				t.Errorf("method signature should not contain body, got '%s'", sig.Text)
+			}
+		case "AddAsync":
+			if contains(sig.Text, "a + b") {
+				t.Errorf("expression-bodied method should have body stripped, got '%s'", sig.Text)
+			}
+		case "IService":
+			if contains(sig.Text, "void Execute") {
+				t.Errorf("interface signature should not contain methods, got '%s'", sig.Text)
+			}
+		case "Status":
+			if sig.Kind != "enum" {
+				t.Errorf("expected kind 'enum', got '%s'", sig.Kind)
+			}
+		case "Person":
+			if sig.Kind != "record" {
+				t.Errorf("expected kind 'record', got '%s'", sig.Kind)
+			}
+		case "Measurement":
+			if sig.Kind != "struct" {
+				t.Errorf("expected kind 'struct' for record struct, got '%s'", sig.Kind)
+			}
+		}
+	}
+}
+
+func TestCSharpOperatorNameSynthesis(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `public class Vec {
+    public static Vec operator +(Vec a, Vec b) => a;
+    public static implicit operator int(Vec v) => 0;
+    public static explicit operator string(Vec v) => "";
+    public int this[int idx] => idx;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	expectedNames := map[string]bool{
+		"operator+":                true,
+		"implicit operator int":    true,
+		"explicit operator string": true,
+		"this":                     true,
+	}
+
+	foundNames := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = true
+	}
+
+	for name := range expectedNames {
+		if !foundNames[name] {
+			t.Errorf("expected to find synthesized name '%s', found: %v", name, foundNames)
+		}
+	}
+}
+
+func TestCSharpStaticFieldExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `public class Config {
+    public const int MAX = 100;
+    public static readonly string NAME = "cfg";
+    public static int Counter = 0;
+    private int _instanceField;
+    private readonly string _name;
+}
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	foundNames := make(map[string]string)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = sig.Kind
+	}
+
+	// Static/const fields should be found as "variable"
+	for _, name := range []string{"MAX", "NAME", "Counter"} {
+		if kind, ok := foundNames[name]; !ok {
+			t.Errorf("expected to find static/const field '%s'", name)
+		} else if kind != "variable" {
+			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
+		}
+	}
+
+	// Instance fields should NOT be found
+	if _, ok := foundNames["_instanceField"]; ok {
+		t.Error("should not find non-static instance field '_instanceField'")
+	}
+	if _, ok := foundNames["_name"]; ok {
+		t.Error("should not find non-static instance field '_name'")
+	}
+}
+
+func TestCSharpImportExtraction(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `using System;
+using System.Collections.Generic;
+using static System.Math;
+global using System.Linq;
+
+public class Foo { }
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "csharp", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Imports) < 4 {
+		t.Errorf("expected at least 4 imports, got %d", len(result.Imports))
+	}
+}
+
+func TestCSharpAutoRegistration(t *testing.T) {
+	registry := parser.DefaultRegistry()
+
+	p, ok := registry.Get("csharp")
+	if !ok {
+		t.Error("expected parser for 'csharp' to be registered")
+	}
+	if p == nil {
+		t.Error("expected non-nil parser for 'csharp'")
+	}
+}
+
+func TestCSharpBodyStripping(t *testing.T) {
+	tests := []struct {
+		input    string
+		kind     string
+		expected string
+	}{
+		{
+			input:    "public int Add(int a, int b) { return a + b; }",
+			kind:     "method",
+			expected: "public int Add(int a, int b)",
+		},
+		{
+			input:    "public int Double(int x) => x * 2;",
+			kind:     "method",
+			expected: "public int Double(int x)",
+		},
+		{
+			input:    "public Calculator() { _count = 0; }",
+			kind:     "constructor",
+			expected: "public Calculator()",
+		},
+		{
+			input:    "~Calculator() { }",
+			kind:     "destructor",
+			expected: "~Calculator()",
+		},
+		{
+			input:    "public class Foo<T> where T : class { public void Bar() { } }",
+			kind:     "class",
+			expected: "public class Foo<T> where T : class",
+		},
+		{
+			input:    "public struct Point { public int X; }",
+			kind:     "struct",
+			expected: "public struct Point",
+		},
+		{
+			input:    "public interface IFoo { void Bar(); }",
+			kind:     "interface",
+			expected: "public interface IFoo",
+		},
+		{
+			input:    "public enum Color { Red, Green }",
+			kind:     "enum",
+			expected: "public enum Color",
+		},
+		{
+			input:    "public record Person(string Name, int Age);",
+			kind:     "record",
+			expected: "public record Person(string Name, int Age);",
+		},
+		{
+			input:    "namespace MyApp { public class Foo { } }",
+			kind:     "namespace",
+			expected: "namespace MyApp",
+		},
+		{
+			input:    "public string Title { get; set; }",
+			kind:     "variable",
+			expected: "public string Title { get; set; }",
+		},
+		{
+			input:    "public int ReadOnly => 42;",
+			kind:     "variable",
+			expected: "public int ReadOnly",
+		},
+		{
+			input:    "public delegate void Action<T>(T item);",
+			kind:     "type",
+			expected: "public delegate void Action<T>(T item);",
+		},
+		{
+			input:    "void Execute();",
+			kind:     "method",
+			expected: "void Execute();",
+		},
+	}
+
+	for _, tt := range tests {
+		result := stripCSharpBody(tt.input, tt.kind)
+		if result != tt.expected {
+			t.Errorf("stripCSharpBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
+		}
+	}
+}
+
+func TestFindCSharpBodyStart(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected int
+	}{
+		{"public class Foo { }", 17},
+		{"class Foo<T> where T : class { }", 29},
+		{"List<Dictionary<int, string>> { }", 30},
+		{"no brace here", -1},
+	}
+
+	for _, tt := range tests {
+		result := findCSharpBodyStart(tt.input)
+		if result != tt.expected {
+			t.Errorf("findCSharpBodyStart(%q) = %d, want %d", tt.input, result, tt.expected)
+		}
+	}
+}
+
+func TestIsExpressionBodied(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"public int X => 42;", true},
+		{"public int Add(int a, int b) => a + b;", true},
+		{"public int Add(int a, int b) { return a + b; }", false},
+		{"public string Name { get; set; }", false},
+	}
+
+	for _, tt := range tests {
+		result := isExpressionBodied(tt.input)
+		if result != tt.expected {
+			t.Errorf("isExpressionBodied(%q) = %v, want %v", tt.input, result, tt.expected)
+		}
+	}
+}
+
+func TestExtractCSharpOperatorName(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"public static Vec operator +(Vec a, Vec b) => a;", "operator+"},
+		{"public static bool operator ==(Vec a, Vec b) => true;", "operator=="},
+		{"public static Vec operator -(Vec a) => a;", "operator-"},
+	}
+
+	for _, tt := range tests {
+		result := extractCSharpOperatorName(tt.input)
+		if result != tt.expected {
+			t.Errorf("extractCSharpOperatorName(%q) = %q, want %q", tt.input, result, tt.expected)
+		}
+	}
+}
+
+func TestExtractCSharpConversionOperatorName(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"public static implicit operator int(Vec v) => 0;", "implicit operator int"},
+		{"public static explicit operator string(Vec v) => \"\";", "explicit operator string"},
+	}
+
+	for _, tt := range tests {
+		result := extractCSharpConversionOperatorName(tt.input)
+		if result != tt.expected {
+			t.Errorf("extractCSharpConversionOperatorName(%q) = %q, want %q", tt.input, result, tt.expected)
+		}
 	}
 }
 
