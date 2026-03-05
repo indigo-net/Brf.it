@@ -406,26 +406,73 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	opts := DefaultScanOptions()
-	opts.RootPath = tmpDir
-	opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
+	t.Run("user-specified ignore file missing warns", func(t *testing.T) {
+		opts := DefaultScanOptions()
+		opts.RootPath = tmpDir
+		opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
 
-	sc, err := NewFileScanner(opts)
-	if err != nil {
-		t.Fatal(err)
-	}
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	var buf bytes.Buffer
-	sc.logger = log.New(&buf, "[brfit] ", 0)
+		var buf bytes.Buffer
+		sc.logger = log.New(&buf, "[brfit] ", 0)
 
-	_, err = sc.Scan()
-	if err != nil {
-		t.Fatal(err)
-	}
+		_, err = sc.Scan()
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if !strings.Contains(buf.String(), "WARN") || !strings.Contains(buf.String(), "ignore file") {
-		t.Errorf("expected warning about ignore file failure, got: %s", buf.String())
-	}
+		if !strings.Contains(buf.String(), "WARN") || !strings.Contains(buf.String(), "ignore file") {
+			t.Errorf("expected warning about ignore file failure, got: %q", buf.String())
+		}
+	})
+
+	t.Run("default gitignore missing does not warn", func(t *testing.T) {
+		opts := DefaultScanOptions()
+		opts.RootPath = tmpDir
+		// IgnoreFile defaults to ".gitignore" which doesn't exist in tmpDir
+
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var buf bytes.Buffer
+		sc.logger = log.New(&buf, "[brfit] ", 0)
+
+		_, err = sc.Scan()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if buf.Len() > 0 {
+			t.Errorf("expected no warning for default missing .gitignore, got: %q", buf.String())
+		}
+	})
+
+	t.Run("warning emitted only once on repeated Scan calls", func(t *testing.T) {
+		opts := DefaultScanOptions()
+		opts.RootPath = tmpDir
+		opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
+
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		var buf bytes.Buffer
+		sc.logger = log.New(&buf, "[brfit] ", 0)
+
+		_, _ = sc.Scan()
+		_, _ = sc.Scan()
+
+		warnCount := strings.Count(buf.String(), "WARN")
+		if warnCount != 1 {
+			t.Errorf("expected exactly 1 warning, got %d: %q", warnCount, buf.String())
+		}
+	})
 }
 
 func TestScanNestedDirectories(t *testing.T) {

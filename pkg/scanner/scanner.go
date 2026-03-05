@@ -2,6 +2,7 @@
 package scanner
 
 import (
+	"errors"
 	"io/fs"
 	"log"
 	"os"
@@ -99,10 +100,11 @@ type Scanner interface {
 
 // FileScanner implements Scanner for file system traversal.
 type FileScanner struct {
-	opts       *ScanOptions
-	ignorer    *ignore.GitIgnore
-	ignorerErr error
-	logger     *log.Logger
+	opts             *ScanOptions
+	ignorer          *ignore.GitIgnore
+	ignorerErr       error
+	ignorerErrWarned bool
+	logger           *log.Logger
 }
 
 // NewFileScanner creates a new FileScanner with the given options.
@@ -121,8 +123,11 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 	if opts.IgnoreFile != "" {
 		ignorer, err := ignore.CompileIgnoreFile(opts.IgnoreFile)
 		if err != nil {
-			// Store error but don't fail - gitignore is optional
-			scanner.ignorerErr = err
+			// Default .gitignore not found is normal; only store error for
+			// user-specified ignore files or non-file-not-found errors.
+			if !(errors.Is(err, os.ErrNotExist) && opts.IgnoreFile == ".gitignore") {
+				scanner.ignorerErr = err
+			}
 		} else {
 			scanner.ignorer = ignorer
 		}
@@ -136,9 +141,10 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 func (s *FileScanner) Scan() (*ScanResult, error) {
 	result := &ScanResult{}
 
-	// Warn if gitignore loading failed
-	if s.ignorerErr != nil {
-		s.logger.Printf("WARN: failed to load ignore file: %v\n", s.ignorerErr)
+	// Warn once if gitignore loading failed
+	if s.ignorerErr != nil && !s.ignorerErrWarned {
+		s.logger.Printf("WARN: failed to load ignore file: %v", s.ignorerErr)
+		s.ignorerErrWarned = true
 	}
 
 	// Check if root path is a file
