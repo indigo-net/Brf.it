@@ -686,6 +686,7 @@
 	&quot;.cs&quot;:    &quot;csharp&quot;,
 	&quot;.swift&quot;: &quot;swift&quot;,
 	&quot;.kt&quot;:    &quot;kotlin&quot;,
+	&quot;.kts&quot;:   &quot;kotlin&quot;,
 }</variable>
       <function>func DetectLanguage(path string) string</function>
     </file>
@@ -708,6 +709,332 @@
       <function>func TestRegistry(t *testing.T)</function>
       <function>func TestDefaultRegistry(t *testing.T)</function>
       <function>func TestDetectLanguage(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go" language="go">
+      <imports>
+        <import>import &quot;C&quot;</import>
+        <import>import &quot;unsafe&quot;</import>
+      </imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/scanner.c" language="c">
+      <imports>
+        <import>#include &quot;tree_sitter/array.h&quot;</import>
+        <import>#include &quot;tree_sitter/parser.h&quot;</import>
+        <import>#include &lt;string.h&gt;</import>
+        <import>#include &lt;wctype.h&gt;</import>
+      </imports>
+      <type>enum TokenType {
+  AUTOMATIC_SEMICOLON,
+  IMPORT_LIST_DELIMITER,
+  SAFE_NAV,
+  MULTILINE_COMMENT,
+  STRING_START,
+  STRING_END,
+  STRING_CONTENT,
+  PRIMARY_CONSTRUCTOR_KEYWORD,
+  IMPORT_DOT,
+}</type>
+      <variable>#define DELIMITER_LENGTH 3</variable>
+      <type>typedef char Delimiter;</type>
+      <type>typedef Array(Delimiter) Stack;</type>
+      <function>static inline void stack_push(Stack *stack, char chr, bool triple)</function>
+      <function>static inline Delimiter stack_pop(Stack *stack)</function>
+      <function>static inline void skip(TSLexer *lexer)</function>
+      <function>static inline void advance(TSLexer *lexer)</function>
+      <function>static bool scan_string_start(TSLexer *lexer, Stack *stack)</function>
+      <function>static bool scan_string_content(TSLexer *lexer, Stack *stack)</function>
+      <function>static bool scan_multiline_comment(TSLexer *lexer)</function>
+      <function>static bool scan_whitespace_and_comments(TSLexer *lexer)</function>
+      <function>static bool is_word_char(int32_t c)</function>
+      <function>static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len)</function>
+      <function>static bool check_word(TSLexer *lexer, const char *word, unsigned len)</function>
+      <function>static bool check_modifier_then_constructor(TSLexer *lexer)</function>
+      <function>static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>static bool scan_safe_nav(TSLexer *lexer)</function>
+      <function>static bool scan_line_sep(TSLexer *lexer)</function>
+      <function>static bool scan_import_list_delimiter(TSLexer *lexer)</function>
+      <function>static bool scan_import_dot(TSLexer *lexer)</function>
+      <function>bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>void *tree_sitter_kotlin_external_scanner_create()</function>
+      <function>void tree_sitter_kotlin_external_scanner_destroy(void *payload)</function>
+      <function>unsigned tree_sitter_kotlin_external_scanner_serialize(void *payload, char *buffer)</function>
+      <function>void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/alloc.h" language="cpp">
+      <imports>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdio.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/array.h" language="cpp">
+      <imports>
+        <import>#include &quot;./alloc.h&quot;</import>
+        <import>#include &lt;assert.h&gt;</import>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdint.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+        <import>#include &lt;string.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)</variable>
+      <variable>#define array_delete(self) _array__delete((Array *)(self))</variable>
+      <variable>#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)-&gt;contents[(self)-&gt;size++] = (element))</variable>
+      <variable>#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count); \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other)                                       \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)-&gt;size, \
+    0, count,  contents                                        \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )</variable>
+      <variable>#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &amp;(element))</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))</variable>
+      <variable>#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__delete(Array *self)</function>
+      <function>static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)</function>
+      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
+      <function>static inline void _array__swap(Array *self, Array *other)</function>
+      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
+      <function>static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/parser.h" language="cpp">
+      <imports>
+        <import>#include &lt;stdbool.h&gt;</import>
+        <import>#include &lt;stdint.h&gt;</import>
+        <import>#include &lt;stdlib.h&gt;</import>
+      </imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>
@@ -1232,6 +1559,95 @@
       <function>func TestJavaQueryExtractGenerics(t *testing.T)</function>
       <function>func TestJavaQueryExtractFieldDeclarations(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_kotlin &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin&quot;</import>
+      </imports>
+      <type>type KotlinQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewKotlinQuery() *KotlinQuery</function>
+      <function>func (q *KotlinQuery) Language() *sitter.Language</function>
+      <function>func (q *KotlinQuery) Query() []byte</function>
+      <function>func (q *KotlinQuery) Captures() []string</function>
+      <function>func (q *KotlinQuery) KindMapping() map[string]string</function>
+      <function>func (q *KotlinQuery) ImportQuery() []byte</function>
+      <variable>kotlinImportQueryPattern = `
+; Import statements
+(import_header) @import_path
+`</variable>
+      <variable>kotlinQueryPattern = `
+; Function declarations (regular, suspend, inline, extension, operator, infix, tailrec)
+(function_declaration
+  (simple_identifier) @name
+) @signature @kind
+
+; Class declarations (class, data class, sealed class, enum class, interface, annotation class, value class)
+(class_declaration
+  (type_identifier) @name
+) @signature @kind
+
+; Object declarations (singleton)
+(object_declaration
+  (type_identifier) @name
+) @signature @kind
+
+; Companion object with explicit name (e.g., companion object Factory)
+(companion_object
+  (type_identifier) @name
+) @signature @kind
+
+; Property declarations (val/var, const val, lateinit, delegated)
+(property_declaration
+  (variable_declaration
+    (simple_identifier) @name
+  )
+) @signature @kind
+
+; Type alias
+(type_alias
+  (type_identifier) @name
+) @signature @kind
+
+; Enum entries
+(enum_entry
+  (simple_identifier) @name
+) @signature @kind
+
+; Secondary constructors
+(secondary_constructor) @signature @kind
+
+; Line comments
+(line_comment) @doc
+
+; Block/multiline comments
+(multiline_comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_kotlin &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin&quot;</import>
+      </imports>
+      <function>func extractKotlinNames(t *testing.T, code []byte) map[string]bool</function>
+      <function>func TestKotlinQueryLanguage(t *testing.T)</function>
+      <function>func TestKotlinQueryPattern(t *testing.T)</function>
+      <function>func TestKotlinQueryImportPattern(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractFunction(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractTypes(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractInterface(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractObject(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractProperties(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractTypeAlias(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractEnumEntry(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractImport(t *testing.T)</function>
+      <function>func TestKotlinQueryExtractGenerics(t *testing.T)</function>
+      <function>func TestKotlinQueryKindMapping(t *testing.T)</function>
+      <function>func TestKotlinQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -1717,6 +2133,9 @@
       <function>func refineSwiftClassKind(text string) string</function>
       <function>func stripSwiftBody(text, kind string) string</function>
       <function>func findSwiftBodyStart(text string) int</function>
+      <function>func stripKotlinBody(text, kind string) string</function>
+      <function>func findKotlinBodyStart(text string) int</function>
+      <function>func refineKotlinClassKind(text string) string</function>
       <function>func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -1774,6 +2193,12 @@
       <function>func TestRustMacroExtraction(t *testing.T)</function>
       <function>func TestRustGenericsAndLifetimes(t *testing.T)</function>
       <function>func TestTreeSitterParserParseSwift(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseKotlin(t *testing.T)</function>
+      <function>func TestKotlinBodyStripping(t *testing.T)</function>
+      <function>func TestRefineKotlinClassKind(t *testing.T)</function>
+      <function>func TestKotlinAutoRegistration(t *testing.T)</function>
+      <function>func TestKotlinSignatureOnlyExtraction(t *testing.T)</function>
+      <function>func TestKotlinImportExtraction(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>

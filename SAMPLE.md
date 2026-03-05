@@ -752,6 +752,7 @@ LanguageMapping = map[string]string{
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
+	".kts":   "kotlin",
 } // variable
 func DetectLanguage(path string) string // function
 ```
@@ -779,6 +780,357 @@ func TestMockParser(t *testing.T) // function
 func TestRegistry(t *testing.T) // function
 func TestDefaultRegistry(t *testing.T) // function
 func TestDetectLanguage(t *testing.T) // function
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go
+
+**Imports:**
+- `import "C"`
+- `import "unsafe"`
+
+```go
+func Language() unsafe.Pointer // function
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/scanner.c
+
+**Imports:**
+- `#include "tree_sitter/array.h"`
+- `#include "tree_sitter/parser.h"`
+- `#include <string.h>`
+- `#include <wctype.h>`
+
+```c
+enum TokenType {
+  AUTOMATIC_SEMICOLON,
+  IMPORT_LIST_DELIMITER,
+  SAFE_NAV,
+  MULTILINE_COMMENT,
+  STRING_START,
+  STRING_END,
+  STRING_CONTENT,
+  PRIMARY_CONSTRUCTOR_KEYWORD,
+  IMPORT_DOT,
+} // enum
+#define DELIMITER_LENGTH 3 // macro
+typedef char Delimiter; // typedef
+typedef Array(Delimiter) Stack; // typedef
+static inline void stack_push(Stack *stack, char chr, bool triple) // function
+static inline Delimiter stack_pop(Stack *stack) // function
+static inline void skip(TSLexer *lexer) // function
+static inline void advance(TSLexer *lexer) // function
+static bool scan_string_start(TSLexer *lexer, Stack *stack) // function
+static bool scan_string_content(TSLexer *lexer, Stack *stack) // function
+static bool scan_multiline_comment(TSLexer *lexer) // function
+static bool scan_whitespace_and_comments(TSLexer *lexer) // function
+static bool is_word_char(int32_t c) // function
+static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len) // function
+static bool check_word(TSLexer *lexer, const char *word, unsigned len) // function
+static bool check_modifier_then_constructor(TSLexer *lexer) // function
+static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols) // function
+static bool scan_safe_nav(TSLexer *lexer) // function
+static bool scan_line_sep(TSLexer *lexer) // function
+static bool scan_import_list_delimiter(TSLexer *lexer) // function
+static bool scan_import_dot(TSLexer *lexer) // function
+bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) // function
+void *tree_sitter_kotlin_external_scanner_create() // function
+void tree_sitter_kotlin_external_scanner_destroy(void *payload) // function
+unsigned tree_sitter_kotlin_external_scanner_serialize(void *payload, char *buffer) // function
+void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) // function
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/alloc.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdio.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_ALLOC_H_ // macro
+#define ts_malloc  ts_current_malloc // macro
+#define ts_calloc  ts_current_calloc // macro
+#define ts_realloc ts_current_realloc // macro
+#define ts_free    ts_current_free // macro
+#define ts_malloc  malloc // macro
+#define ts_calloc  calloc // macro
+#define ts_realloc realloc // macro
+#define ts_free    free // macro
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/array.h
+
+**Imports:**
+- `#include "./alloc.h"`
+- `#include <assert.h>`
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+- `#include <string.h>`
+
+```cpp
+#define TREE_SITTER_ARRAY_H_ // macro
+#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  } // macro
+#define array_init(self) \
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL) // macro
+#define array_new() \
+  { NULL, 0, 0 } // macro
+#define array_get(self, _index) \
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index]) // macro
+#define array_front(self) array_get(self, 0) // macro
+#define array_back(self) array_get(self, (self)->size - 1) // macro
+#define array_clear(self) ((self)->size = 0) // macro
+#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity) // macro
+#define array_delete(self) _array__delete((Array *)(self)) // macro
+#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)->contents[(self)->size++] = (element)) // macro
+#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
+    (self)->size += (count); \
+  } while (0) // macro
+#define array_push_all(self, other)                                       \
+  array_extend((self), (other)->size, (other)->contents) // macro
+#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)->size, \
+    0, count,  contents                                        \
+  ) // macro
+#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  ) // macro
+#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element)) // macro
+#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index) // macro
+#define array_pop(self) ((self)->contents[--(self)->size]) // macro
+#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self)) // macro
+#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other)) // macro
+#define array_elem_size(self) (sizeof *(self)->contents) // macro
+#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists) // macro
+#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists) // macro
+#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0) // macro
+#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0) // macro
+static inline void _array__delete(Array *self) // function
+static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index) // function
+static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity) // function
+static inline void _array__assign(Array *self, const Array *other, size_t element_size) // function
+static inline void _array__swap(Array *self, Array *other) // function
+static inline void _array__grow(Array *self, uint32_t count, size_t element_size) // function
+static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements) // function
+#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)->size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size > 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&((self)->contents[mid_index] suffix), (needle)); \
+      if (comparison <= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison < 0) *(_index) += 1; \
+  } while (0) // macro
+#define _compare_int(a, b) ((int)*(a) - (int)(b)) // macro
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/parser.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_PARSER_H_ // macro
+#define ts_builtin_sym_error ((TSSymbol)-1) // macro
+#define ts_builtin_sym_end 0 // macro
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024 // macro
+typedef uint16_t TSStateId; // typedef
+typedef uint16_t TSSymbol; // typedef
+typedef uint16_t TSFieldId; // typedef
+struct TSLanguage // struct
+typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry; // typedef
+typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice; // typedef
+typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata; // typedef
+struct TSLexer // struct
+struct TSLexer // struct
+typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType; // typedef
+typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction; // typedef
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode; // typedef
+typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry; // typedef
+typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange; // typedef
+struct TSLanguage // struct
+static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead) // function
+#define UNUSED __pragma(warning(suppress : 4101)) // macro
+#define UNUSED __attribute__((unused)) // macro
+#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer->advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer->lookahead; // macro
+#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  } // macro
+#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i < sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  } // macro
+#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  } // macro
+#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer->result_symbol = symbol_value; \
+  lexer->mark_end(lexer); // macro
+#define END_STATE() return result; // macro
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT) // macro
+#define STATE(id) id // macro
+#define ACTIONS(id) id // macro
+#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }} // macro
+#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }} // macro
+#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }} // macro
+#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }} // macro
+#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }} // macro
+#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }} // macro
 ```
 
 ---
@@ -1346,6 +1698,105 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T) // function
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"`
+
+```go
+type KotlinQuery struct {
+	language *sitter.Language
+	query    []byte
+} // type
+func NewKotlinQuery() *KotlinQuery // function
+func (q *KotlinQuery) Language() *sitter.Language // method
+func (q *KotlinQuery) Query() []byte // method
+func (q *KotlinQuery) Captures() []string // method
+func (q *KotlinQuery) KindMapping() map[string]string // method
+func (q *KotlinQuery) ImportQuery() []byte // method
+kotlinImportQueryPattern = `
+; Import statements
+(import_header) @import_path
+` // variable
+kotlinQueryPattern = `
+; Function declarations (regular, suspend, inline, extension, operator, infix, tailrec)
+(function_declaration
+  (simple_identifier) @name
+) @signature @kind
+
+; Class declarations (class, data class, sealed class, enum class, interface, annotation class, value class)
+(class_declaration
+  (type_identifier) @name
+) @signature @kind
+
+; Object declarations (singleton)
+(object_declaration
+  (type_identifier) @name
+) @signature @kind
+
+; Companion object with explicit name (e.g., companion object Factory)
+(companion_object
+  (type_identifier) @name
+) @signature @kind
+
+; Property declarations (val/var, const val, lateinit, delegated)
+(property_declaration
+  (variable_declaration
+    (simple_identifier) @name
+  )
+) @signature @kind
+
+; Type alias
+(type_alias
+  (type_identifier) @name
+) @signature @kind
+
+; Enum entries
+(enum_entry
+  (simple_identifier) @name
+) @signature @kind
+
+; Secondary constructors
+(secondary_constructor) @signature @kind
+
+; Line comments
+(line_comment) @doc
+
+; Block/multiline comments
+(multiline_comment) @doc
+` // variable
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"`
+
+```go
+func extractKotlinNames(t *testing.T, code []byte) map[string]bool // function
+func TestKotlinQueryLanguage(t *testing.T) // function
+func TestKotlinQueryPattern(t *testing.T) // function
+func TestKotlinQueryImportPattern(t *testing.T) // function
+func TestKotlinQueryExtractFunction(t *testing.T) // function
+func TestKotlinQueryExtractTypes(t *testing.T) // function
+func TestKotlinQueryExtractInterface(t *testing.T) // function
+func TestKotlinQueryExtractObject(t *testing.T) // function
+func TestKotlinQueryExtractProperties(t *testing.T) // function
+func TestKotlinQueryExtractTypeAlias(t *testing.T) // function
+func TestKotlinQueryExtractEnumEntry(t *testing.T) // function
+func TestKotlinQueryExtractImport(t *testing.T) // function
+func TestKotlinQueryExtractGenerics(t *testing.T) // function
+func TestKotlinQueryKindMapping(t *testing.T) // function
+func TestKotlinQueryCaptures(t *testing.T) // function
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go
 
 **Imports:**
@@ -1873,6 +2324,9 @@ func findRustBodyStart(text string) int // function
 func refineSwiftClassKind(text string) string // function
 func stripSwiftBody(text, kind string) string // function
 func findSwiftBodyStart(text string) int // function
+func stripKotlinBody(text, kind string) string // function
+func findKotlinBodyStart(text string) int // function
+func refineKotlinClassKind(text string) string // function
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -1935,6 +2389,12 @@ func TestRustConstAndStaticExtraction(t *testing.T) // function
 func TestRustMacroExtraction(t *testing.T) // function
 func TestRustGenericsAndLifetimes(t *testing.T) // function
 func TestTreeSitterParserParseSwift(t *testing.T) // function
+func TestTreeSitterParserParseKotlin(t *testing.T) // function
+func TestKotlinBodyStripping(t *testing.T) // function
+func TestRefineKotlinClassKind(t *testing.T) // function
+func TestKotlinAutoRegistration(t *testing.T) // function
+func TestKotlinSignatureOnlyExtraction(t *testing.T) // function
+func TestKotlinImportExtraction(t *testing.T) // function
 ```
 
 ---
