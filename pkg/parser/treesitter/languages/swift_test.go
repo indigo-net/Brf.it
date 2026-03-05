@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
-	tree_sitter_swift "github.com/alex-pinkus/tree-sitter-swift/bindings/go"
+	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
 )
 
 func TestSwiftQueryLanguage(t *testing.T) {
