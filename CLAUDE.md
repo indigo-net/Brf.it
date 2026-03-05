@@ -289,7 +289,8 @@ if fileSize > maxFileSize {
 2. **브랜치 생성**: `git checkout -b feat/feature-name` (이슈 번호 제외, 기존 스타일 유지)
 3. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
 4. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
-5. **머지**: PR 머지 시 이슈 자동 닫힘
+5. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
+6. **머지**: PR 머지 시 이슈 자동 닫힘
 
 **브랜치명 형식**: `{type}/{feature-name}` (예: `feat/github-workflow-setup`)
 
