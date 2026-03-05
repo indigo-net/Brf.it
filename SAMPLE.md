@@ -813,6 +813,396 @@ func TestDetectLanguage(t *testing.T) // function
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/binding.go
+
+**Imports:**
+- `import "C"`
+- `import "unsafe"`
+
+```go
+func Language() unsafe.Pointer // function
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/scanner.c
+
+**Imports:**
+- `#include "tree_sitter/alloc.h"`
+- `#include "tree_sitter/array.h"`
+- `#include "tree_sitter/parser.h"`
+- `#include <wctype.h>`
+
+```c
+enum TokenType {
+    OPT_SEMI,
+    INTERPOLATION_REGULAR_START,
+    INTERPOLATION_VERBATIM_START,
+    INTERPOLATION_RAW_START,
+    INTERPOLATION_START_QUOTE,
+    INTERPOLATION_END_QUOTE,
+    INTERPOLATION_OPEN_BRACE,
+    INTERPOLATION_CLOSE_BRACE,
+    INTERPOLATION_STRING_CONTENT,
+    RAW_STRING_START,
+    RAW_STRING_END,
+    RAW_STRING_CONTENT,
+} // enum
+typedef enum {
+    REGULAR = 1 << 0,
+    VERBATIM = 1 << 1,
+    RAW = 1 << 2,
+} StringType; // typedef
+typedef struct {
+    uint8_t dollar_count;
+    uint8_t open_brace_count;
+    uint8_t quote_count;
+    StringType string_type;
+} Interpolation; // typedef
+static inline bool is_regular(Interpolation *interpolation) // function
+static inline bool is_verbatim(Interpolation *interpolation) // function
+static inline bool is_raw(Interpolation *interpolation) // function
+typedef struct {
+    uint8_t quote_count;
+    Array(Interpolation) interpolation_stack;
+} Scanner; // typedef
+static inline void advance(TSLexer *lexer) // function
+static inline void skip(TSLexer *lexer) // function
+void *tree_sitter_c_sharp_external_scanner_create() // function
+void tree_sitter_c_sharp_external_scanner_destroy(void *payload) // function
+unsigned tree_sitter_c_sharp_external_scanner_serialize(void *payload, char *buffer) // function
+void tree_sitter_c_sharp_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) // function
+bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) // function
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/alloc.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdio.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_ALLOC_H_ // macro
+#define ts_malloc  ts_current_malloc // macro
+#define ts_calloc  ts_current_calloc // macro
+#define ts_realloc ts_current_realloc // macro
+#define ts_free    ts_current_free // macro
+#define ts_malloc  malloc // macro
+#define ts_calloc  calloc // macro
+#define ts_realloc realloc // macro
+#define ts_free    free // macro
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/array.h
+
+**Imports:**
+- `#include "./alloc.h"`
+- `#include <assert.h>`
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+- `#include <string.h>`
+
+```cpp
+#define TREE_SITTER_ARRAY_H_ // macro
+#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  } // macro
+#define array_init(self) \
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL) // macro
+#define array_new() \
+  { NULL, 0, 0 } // macro
+#define array_get(self, _index) \
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index]) // macro
+#define array_front(self) array_get(self, 0) // macro
+#define array_back(self) array_get(self, (self)->size - 1) // macro
+#define array_clear(self) ((self)->size = 0) // macro
+#define array_reserve(self, new_capacity)        \
+  ((self)->contents = _array__reserve(           \
+    (void *)(self)->contents, &(self)->capacity, \
+    array_elem_size(self), new_capacity)         \
+  ) // macro
+#define array_delete(self) _array__delete((self), (void *)(self)->contents, sizeof(*self)) // macro
+#define array_push(self, element)                                 \
+  do {                                                            \
+    (self)->contents = _array__grow(                              \
+      (void *)(self)->contents, (self)->size, &(self)->capacity,  \
+      1, array_elem_size(self)                                    \
+    );                                                            \
+   (self)->contents[(self)->size++] = (element);                  \
+  } while(0) // macro
+#define array_grow_by(self, count)                                               \
+  do {                                                                           \
+    if ((count) == 0) break;                                                     \
+    (self)->contents = _array__grow(                                             \
+      (self)->contents, (self)->size, &(self)->capacity,                         \
+      count, array_elem_size(self)                                               \
+    );                                                                           \
+    memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
+    (self)->size += (count);                                                     \
+  } while (0) // macro
+#define array_push_all(self, other) \
+  array_extend((self), (other)->size, (other)->contents) // macro
+#define array_extend(self, count, other_contents)                 \
+  (self)->contents = _array__splice(                              \
+    (void*)(self)->contents, &(self)->size, &(self)->capacity,    \
+    array_elem_size(self), (self)->size, 0, count, other_contents \
+  ) // macro
+#define array_splice(self, _index, old_count, new_count, new_contents) \
+  (self)->contents = _array__splice(                                   \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity,        \
+    array_elem_size(self), _index, old_count, new_count, new_contents  \
+  ) // macro
+#define array_insert(self, _index, element)                     \
+  (self)->contents = _array__splice(                            \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity, \
+    array_elem_size(self), _index, 0, 1, &(element)             \
+  ) // macro
+#define array_erase(self, _index) \
+  _array__erase((void *)(self)->contents, &(self)->size, array_elem_size(self), _index) // macro
+#define array_pop(self) ((self)->contents[--(self)->size]) // macro
+#define array_assign(self, other)                                   \
+  (self)->contents = _array__assign(                                \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity,     \
+    (const void *)(other)->contents, (other)->size, array_elem_size(self) \
+  ) // macro
+#define array_swap(self, other)                                     \
+  do {                                                              \
+    struct Swap swapped_contents = _array__swap(                    \
+      (void *)(self)->contents, &(self)->size, &(self)->capacity,   \
+      (void *)(other)->contents, &(other)->size, &(other)->capacity \
+    );                                                              \
+    (self)->contents = swapped_contents.self_contents;              \
+    (other)->contents = swapped_contents.other_contents;            \
+  } while (0) // macro
+#define array_elem_size(self) (sizeof *(self)->contents) // macro
+#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists) // macro
+#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists) // macro
+#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0) // macro
+#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0) // macro
+static inline void _array__delete(void *self, void *contents, size_t self_size) // function
+static inline void _array__erase(void* self_contents, uint32_t *size,
+                                size_t element_size, uint32_t index) // function
+static inline void *_array__reserve(void *contents, uint32_t *capacity,
+                                  size_t element_size, uint32_t new_capacity) // function
+static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
+                                 const void *other_contents, uint32_t other_size, size_t element_size) // function
+struct Swap // struct
+struct Swap // struct
+struct Swap // struct
+static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
+                               uint32_t count, size_t element_size) // function
+static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
+                                 size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements) // function
+#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)->size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size > 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&((self)->contents[mid_index] suffix), (needle)); \
+      if (comparison <= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison < 0) *(_index) += 1; \
+  } while (0) // macro
+#define _compare_int(a, b) ((int)*(a) - (int)(b)) // macro
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/parser.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_PARSER_H_ // macro
+#define ts_builtin_sym_error ((TSSymbol)-1) // macro
+#define ts_builtin_sym_end 0 // macro
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024 // macro
+typedef uint16_t TSStateId; // typedef
+typedef uint16_t TSSymbol; // typedef
+typedef uint16_t TSFieldId; // typedef
+struct TSLanguage // struct
+struct TSLanguageMetadata // struct
+typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry; // typedef
+typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSMapSlice; // typedef
+typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata; // typedef
+struct TSLexer // struct
+struct TSLexer // struct
+typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType; // typedef
+typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction; // typedef
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode; // typedef
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+  uint16_t reserved_word_set_id;
+} TSLexerMode; // typedef
+typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry; // typedef
+typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange; // typedef
+struct TSLanguage // struct
+static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead) // function
+#define UNUSED __pragma(warning(suppress : 4101)) // macro
+#define UNUSED __attribute__((unused)) // macro
+#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer->advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer->lookahead; // macro
+#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  } // macro
+#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i < sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  } // macro
+#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  } // macro
+#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer->result_symbol = symbol_value; \
+  lexer->mark_end(lexer); // macro
+#define END_STATE() return result; // macro
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT) // macro
+#define STATE(id) id // macro
+#define ACTIONS(id) id // macro
+#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }} // macro
+#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }} // macro
+#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }} // macro
+#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }} // macro
+#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }} // macro
+#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }} // macro
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go
 
 **Imports:**
@@ -1977,6 +2367,162 @@ func TestCppQueryCaptures(t *testing.T) // function
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"`
+
+```go
+type CSharpQuery struct {
+	language *sitter.Language
+	query    []byte
+} // type
+func NewCSharpQuery() *CSharpQuery // function
+func (q *CSharpQuery) Language() *sitter.Language // method
+func (q *CSharpQuery) Query() []byte // method
+func (q *CSharpQuery) Captures() []string // method
+func (q *CSharpQuery) KindMapping() map[string]string // method
+func (q *CSharpQuery) ImportQuery() []byte // method
+csharpImportQueryPattern = `
+; using directives (capture full declaration)
+(using_directive) @import_path
+` // variable
+csharpQueryPattern = `
+; Class declarations
+(class_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Struct declarations
+(struct_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Interface declarations
+(interface_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Enum declarations
+(enum_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Record declarations (record, record class, record struct)
+(record_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Delegate declarations
+(delegate_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Method declarations
+(method_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Constructor declarations
+(constructor_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Destructor declarations
+(destructor_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Property declarations
+(property_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Field declarations (static/const filtered in parser.go)
+(field_declaration
+  (variable_declaration
+    (variable_declarator
+      name: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Event field declarations (e.g., public event EventHandler Changed;)
+(event_field_declaration
+  (variable_declaration
+    (variable_declarator
+      name: (identifier) @name
+    )
+  )
+) @signature @kind
+
+; Event declarations with accessor body
+(event_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Indexer declarations (no name capture — synthesized in parser.go)
+(indexer_declaration) @signature @kind
+
+; Operator declarations (no name capture — synthesized in parser.go)
+(operator_declaration) @signature @kind
+
+; Conversion operator declarations (no name capture — synthesized in parser.go)
+(conversion_operator_declaration) @signature @kind
+
+; Namespace declarations
+(namespace_declaration
+  name: (_) @name
+) @signature @kind
+
+; File-scoped namespace declarations (C# 10+)
+(file_scoped_namespace_declaration
+  name: (_) @name
+) @signature @kind
+
+; Enum member declarations
+(enum_member_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Comments (XML doc comments and regular)
+(comment) @doc
+` // variable
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"`
+
+```go
+func extractCSharpNames(t *testing.T, code []byte) map[string]bool // function
+func TestCSharpQueryLanguage(t *testing.T) // function
+func TestCSharpQueryPattern(t *testing.T) // function
+func TestCSharpQueryImportPattern(t *testing.T) // function
+func TestCSharpQueryExtractFunction(t *testing.T) // function
+func TestCSharpQueryExtractTypes(t *testing.T) // function
+func TestCSharpQueryExtractConstructorDestructor(t *testing.T) // function
+func TestCSharpQueryExtractProperties(t *testing.T) // function
+func TestCSharpQueryExtractFields(t *testing.T) // function
+func TestCSharpQueryExtractEvents(t *testing.T) // function
+func TestCSharpQueryExtractOperators(t *testing.T) // function
+foundOperator, foundConversion, foundIndexer bool // variable
+func TestCSharpQueryExtractImport(t *testing.T) // function
+func TestCSharpQueryExtractGenerics(t *testing.T) // function
+func TestCSharpQueryKindMapping(t *testing.T) // function
+func TestCSharpQueryCaptures(t *testing.T) // function
+func TestCSharpQueryExtractNamespace(t *testing.T) // function
+func TestCSharpQueryExtractRecords(t *testing.T) // function
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go.go
 
 **Imports:**
@@ -2791,6 +3337,12 @@ func findSwiftBodyStart(text string) int // function
 func stripKotlinBody(text, kind string) string // function
 func findKotlinBodyStart(text string) int // function
 func refineKotlinClassKind(text string) string // function
+func stripCSharpBody(text, kind string) string // function
+func findCSharpBodyStart(text string) int // function
+func isExpressionBodied(text string) bool // function
+func findCSharpArrowIndex(text string) int // function
+func extractCSharpOperatorName(text string) string // function
+func extractCSharpConversionOperatorName(text string) string // function
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
@@ -2860,6 +3412,17 @@ func TestKotlinAutoRegistration(t *testing.T) // function
 func TestKotlinSignatureOnlyExtraction(t *testing.T) // function
 func TestKotlinImportExtraction(t *testing.T) // function
 func TestParsePanicRecovery(t *testing.T) // function
+func TestTreeSitterParserParseCSharp(t *testing.T) // function
+func TestCSharpSignatureOnlyExtraction(t *testing.T) // function
+func TestCSharpOperatorNameSynthesis(t *testing.T) // function
+func TestCSharpStaticFieldExtraction(t *testing.T) // function
+func TestCSharpImportExtraction(t *testing.T) // function
+func TestCSharpAutoRegistration(t *testing.T) // function
+func TestCSharpBodyStripping(t *testing.T) // function
+func TestFindCSharpBodyStart(t *testing.T) // function
+func TestIsExpressionBodied(t *testing.T) // function
+func TestExtractCSharpOperatorName(t *testing.T) // function
+func TestExtractCSharpConversionOperatorName(t *testing.T) // function
 func TestParsePanicRecoveryMechanism(t *testing.T) // function
 ```
 
