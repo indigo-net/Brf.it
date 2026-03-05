@@ -2900,6 +2900,7 @@ func TestCaptureDefinitions(t *testing.T) // function
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go
 
 **Imports:**
+- `import "errors"`
 - `import "io/fs"`
 - `import "log"`
 - `import "os"`
@@ -2952,10 +2953,11 @@ type Scanner interface {
 	Scan() (*ScanResult, error)
 } // type
 type FileScanner struct {
-	opts       *ScanOptions
-	ignorer    *ignore.GitIgnore
-	ignorerErr error
-	logger     *log.Logger
+	opts             *ScanOptions
+	ignorer          *ignore.GitIgnore
+	ignorerErr       error
+	ignorerErrWarned bool
+	logger           *log.Logger
 } // type
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error) // function
 func (s *FileScanner) Scan() (*ScanResult, error) // method
@@ -2967,8 +2969,11 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go
 
 **Imports:**
+- `import "bytes"`
+- `import "log"`
 - `import "os"`
 - `import "path/filepath"`
+- `import "strings"`
 - `import "testing"`
 
 ```go
@@ -2987,6 +2992,10 @@ func TestScanExcludeHidden(t *testing.T) // function
 func TestScanIncludeHidden(t *testing.T) // function
 func TestScanMaxFileSize(t *testing.T) // function
 func TestScanGitignore(t *testing.T) // function
+func TestScanGitignoreLoadFailureWarning(t *testing.T) // function
+buf bytes.Buffer // variable
+buf bytes.Buffer // variable
+buf bytes.Buffer // variable
 func TestScanNestedDirectories(t *testing.T) // function
 ```
 

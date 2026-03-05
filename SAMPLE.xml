@@ -2665,6 +2665,7 @@
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go" language="go">
       <imports>
+        <import>import &quot;errors&quot;</import>
         <import>import &quot;io/fs&quot;</import>
         <import>import &quot;log&quot;</import>
         <import>import &quot;os&quot;</import>
@@ -2716,10 +2717,11 @@
 	Scan() (*ScanResult, error)
 }</type>
       <type>type FileScanner struct {
-	opts       *ScanOptions
-	ignorer    *ignore.GitIgnore
-	ignorerErr error
-	logger     *log.Logger
+	opts             *ScanOptions
+	ignorer          *ignore.GitIgnore
+	ignorerErr       error
+	ignorerErrWarned bool
+	logger           *log.Logger
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
       <function>func (s *FileScanner) Scan() (*ScanResult, error)</function>
@@ -2727,8 +2729,11 @@
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go" language="go">
       <imports>
+        <import>import &quot;bytes&quot;</import>
+        <import>import &quot;log&quot;</import>
         <import>import &quot;os&quot;</import>
         <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>
       </imports>
       <function>func TestNewFileScanner(t *testing.T)</function>
@@ -2746,6 +2751,10 @@
       <function>func TestScanIncludeHidden(t *testing.T)</function>
       <function>func TestScanMaxFileSize(t *testing.T)</function>
       <function>func TestScanGitignore(t *testing.T)</function>
+      <function>func TestScanGitignoreLoadFailureWarning(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <variable>buf bytes.Buffer</variable>
+      <variable>buf bytes.Buffer</variable>
       <function>func TestScanNestedDirectories(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tiktoken.go" language="go">
