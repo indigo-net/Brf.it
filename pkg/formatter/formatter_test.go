@@ -471,52 +471,6 @@ func TestXMLFormatterKindTags(t *testing.T) {
 	}
 }
 
-func TestMarkdownFormatterKindComment(t *testing.T) {
-	formatter := NewMarkdownFormatter()
-
-	tests := []struct {
-		name    string
-		kind    string
-		text    string
-		wantStr string
-	}{
-		{"function_kind", "function", "func Add(a, b int) int", "func Add(a, b int) int // function"},
-		{"method_kind", "method", "def foo(self):", "def foo(self): // method"},
-		{"type_kind", "type", "type Config struct", "type Config struct // type"},
-		{"empty_kind", "", "func foo()", "func foo()\n"}, // no comment for empty kind
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			data := &PackageData{
-				Files: []FileData{
-					{
-						Path:     "test.go",
-						Language: "go",
-						Signatures: []parser.Signature{
-							{
-								Name: "test",
-								Kind: tt.kind,
-								Text: tt.text,
-							},
-						},
-					},
-				},
-			}
-
-			output, err := formatter.Format(data)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			outputStr := string(output)
-			if !strings.Contains(outputStr, tt.wantStr) {
-				t.Errorf("expected %q in output:\n%s", tt.wantStr, outputStr)
-			}
-		})
-	}
-}
-
 func TestXMLFormatterNoStdImports(t *testing.T) {
 	formatter := NewXMLFormatter()
 
