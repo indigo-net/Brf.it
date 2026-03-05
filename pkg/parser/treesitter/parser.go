@@ -24,6 +24,7 @@ func init() {
 	parser.RegisterParser("cpp", NewTreeSitterParser())
 	parser.RegisterParser("rust", NewTreeSitterParser())
 	parser.RegisterParser("swift", NewTreeSitterParser())
+	parser.RegisterParser("kotlin", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -46,6 +47,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"cpp":        languages.NewCppQuery(),
 			"rust":       languages.NewRustQuery(),
 			"swift":      languages.NewSwiftQuery(),
+			"kotlin":     languages.NewKotlinQuery(),
 		},
 	}
 }
@@ -211,6 +213,22 @@ func (p *TreeSitterParser) extractSignatures(
 				}
 			}
 
+			// Kotlin: class_declaration is used for class, interface, enum class, etc.
+			// Refine kind based on the declaration keyword
+			if opts.Language == "kotlin" && kind == "class_declaration" {
+				sig.Kind = refineKotlinClassKind(sig.Text)
+			}
+
+			// Kotlin: companion_object may not have a name, synthesize "Companion"
+			if opts.Language == "kotlin" && sig.Name == "" {
+				switch kind {
+				case "companion_object":
+					sig.Name = "Companion"
+				case "secondary_constructor":
+					sig.Name = "constructor"
+				}
+			}
+
 			// C: distinguish between function prototypes and variable declarations
 			// Both are "declaration" node type, but function prototypes have ()
 			if opts.Language == "c" && kind == "declaration" {
@@ -301,6 +319,9 @@ func isExported(name, language string) bool {
 	case "swift":
 		// Swift: all elements are considered public (visibility modifiers preserved in signature text)
 		return true
+	case "kotlin":
+		// Kotlin: default visibility is public, all elements are considered exported
+		return true
 	default:
 		return false
 	}
@@ -326,6 +347,8 @@ func stripBody(text, kind, language string) string {
 		return stripRustBody(text, kind)
 	case "swift":
 		return stripSwiftBody(text, kind)
+	case "kotlin":
+		return stripKotlinBody(text, kind)
 	default:
 		return text
 	}
@@ -808,6 +831,105 @@ func findSwiftBodyStart(text string) int {
 		}
 	}
 	return -1
+}
+
+// stripKotlinBody removes the body from Kotlin declarations.
+func stripKotlinBody(text, kind string) string {
+	switch kind {
+	case "function":
+		// Single-expression functions (fun foo() = expr) have no braces
+		if !strings.Contains(text, "{") && strings.Contains(text, "=") {
+			return text
+		}
+		braceIdx := findKotlinBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "interface", "enum", "constructor":
+		braceIdx := findKotlinBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "variable", "type":
+		// Properties and type aliases: keep full text
+		return text
+	}
+	return text
+}
+
+// findKotlinBodyStart finds the index where the Kotlin body starts.
+// Handles nested angle brackets for generics and parentheses for parameters.
+func findKotlinBodyStart(text string) int {
+	parenDepth := 0
+	angleDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '<':
+			angleDepth++
+		case '>':
+			if angleDepth > 0 {
+				angleDepth--
+			}
+		case '{':
+			if angleDepth == 0 && parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// refineKotlinClassKind determines the specific kind of a Kotlin class_declaration
+// based on the declaration keyword (class, interface, enum class, etc.).
+// In tree-sitter-kotlin, interface and enum class share the class_declaration node type.
+func refineKotlinClassKind(text string) string {
+	trimmed := strings.TrimSpace(text)
+	// Strip leading modifiers
+	for _, prefix := range []string{
+		"public ", "private ", "internal ", "protected ",
+		"open ", "final ", "abstract ", "sealed ",
+		"data ", "inner ", "annotation ", "value ",
+		"external ", "actual ", "expect ", "override ",
+	} {
+		for strings.HasPrefix(trimmed, prefix) {
+			trimmed = strings.TrimPrefix(trimmed, prefix)
+			trimmed = strings.TrimSpace(trimmed)
+		}
+	}
+	// Strip annotations like @Serializable, @Retention(AnnotationRetention.RUNTIME)
+	for strings.HasPrefix(trimmed, "@") {
+		end := 1
+		depth := 0
+		for end < len(trimmed) {
+			c := trimmed[end]
+			if c == '(' {
+				depth++
+			} else if c == ')' {
+				depth--
+			} else if c == ' ' && depth == 0 {
+				break
+			}
+			end++
+		}
+		trimmed = strings.TrimSpace(trimmed[end:])
+	}
+	// Strip fun keyword for functional interfaces (fun interface)
+	trimmed = strings.TrimPrefix(trimmed, "fun ")
+	trimmed = strings.TrimSpace(trimmed)
+
+	switch {
+	case strings.HasPrefix(trimmed, "interface "):
+		return "interface"
+	case strings.HasPrefix(trimmed, "enum class "):
+		return "enum"
+	default:
+		return "class"
+	}
 }
 
 // extractImports extracts import/export statements from the AST.

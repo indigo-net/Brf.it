@@ -146,6 +146,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Java | `.java` | [Java Guide](docs/languages/java.md) |
 | Rust | `.rs` | [Rust Guide](docs/languages/rust.md) |
 | Swift | `.swift` | [Swift Guide](docs/languages/swift.md) |
+| Kotlin | `.kt`, `.kts` | [Kotlin Guide](docs/languages/kotlin.md) |
 
 ---
 

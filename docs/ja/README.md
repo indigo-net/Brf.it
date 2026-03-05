@@ -145,6 +145,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Java | `.java` | [Javaガイド](languages/java.md) |
 | Rust | `.rs` | [Rustガイド](languages/rust.md) |
 | Swift | `.swift` | [Swiftガイド](languages/swift.md) |
+| Kotlin | `.kt`, `.kts` | [Kotlinガイド](languages/kotlin.md) |
 
 ---
 

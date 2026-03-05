@@ -70,6 +70,8 @@ func DefaultScanOptions() *ScanOptions {
 			".java": "java",
 			".rs":    "rust",
 			".swift": "swift",
+			".kt":    "kotlin",
+			".kts":   "kotlin",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

@@ -145,6 +145,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Java | `.java` | [Java-Leitfaden](languages/java.md) |
 | Rust | `.rs` | [Rust-Leitfaden](languages/rust.md) |
 | Swift | `.swift` | [Swift-Leitfaden](languages/swift.md) |
+| Kotlin | `.kt`, `.kts` | [Kotlin-Leitfaden](languages/kotlin.md) |
 
 ---
 

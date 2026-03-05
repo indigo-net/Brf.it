@@ -199,6 +199,7 @@ var LanguageMapping = map[string]string{
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
+	".kts":   "kotlin",
 }
 
 // DetectLanguage returns the language for a given file path.
