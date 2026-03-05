@@ -279,6 +279,8 @@
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;os&quot;</import>
+        <import>import &quot;runtime&quot;</import>
+        <import>import &quot;sync&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;</import>
       </imports>
@@ -324,7 +326,8 @@
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
 
-	// Concurrency is the number of concurrent workers (0 = sequential).
+	// Concurrency is the number of concurrent workers.
+	// 0 = auto (runtime.NumCPU()), 1 = sequential.
 	Concurrency int
 
 	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
@@ -340,11 +343,15 @@
 }</type>
       <function>func NewFileExtractor(registry *parser.Registry) *FileExtractor</function>
       <function>func NewDefaultFileExtractor() *FileExtractor</function>
+      <function>func DefaultExtractOptions() *ExtractOptions</function>
       <function>func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</function>
+      <variable>wg sync.WaitGroup</variable>
+      <function>func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult</function>
       <function>func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go" language="go">
       <imports>
+        <import>import &quot;fmt&quot;</import>
         <import>import &quot;os&quot;</import>
         <import>import &quot;path/filepath&quot;</import>
         <import>import &quot;strings&quot;</import>
@@ -359,6 +366,14 @@
       <variable>foundAdd bool</variable>
       <function>func TestFileExtractorTOCTOUGuard(t *testing.T)</function>
       <function>func TestFileExtractorTOCTOUGuardDisabled(t *testing.T)</function>
+      <function>func TestExtractConcurrencySequential(t *testing.T)</function>
+      <function>func TestExtractConcurrencyDeterministicOrder(t *testing.T)</function>
+      <variable>entries []scanner.FileEntry</variable>
+      <function>func TestExtractConcurrencyEmptyFiles(t *testing.T)</function>
+      <function>func TestExtractNilScanResult(t *testing.T)</function>
+      <function>func TestExtractNegativeConcurrency(t *testing.T)</function>
+      <function>func TestDefaultExtractOptions(t *testing.T)</function>
+      <function>func TestExtractConcurrencyWithErrors(t *testing.T)</function>
       <function>func TestFileExtractorUnsupportedLanguage(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go" language="go">

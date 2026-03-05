@@ -304,6 +304,8 @@ newPrefix string // variable
 **Imports:**
 - `import "fmt"`
 - `import "os"`
+- `import "runtime"`
+- `import "sync"`
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 - `import "github.com/indigo-net/Brf.it/pkg/scanner"`
 
@@ -350,7 +352,8 @@ type ExtractOptions struct {
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
 
-	// Concurrency is the number of concurrent workers (0 = sequential).
+	// Concurrency is the number of concurrent workers.
+	// 0 = auto (runtime.NumCPU()), 1 = sequential.
 	Concurrency int
 
 	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
@@ -366,7 +369,10 @@ type FileExtractor struct {
 } // type
 func NewFileExtractor(registry *parser.Registry) *FileExtractor // function
 func NewDefaultFileExtractor() *FileExtractor // function
+func DefaultExtractOptions() *ExtractOptions // function
 func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) // method
+wg sync.WaitGroup // variable
+func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult // method
 func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile // method
 ```
 
@@ -375,6 +381,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go
 
 **Imports:**
+- `import "fmt"`
 - `import "os"`
 - `import "path/filepath"`
 - `import "strings"`
@@ -390,6 +397,14 @@ func TestFileExtractorExtract(t *testing.T) // function
 foundAdd bool // variable
 func TestFileExtractorTOCTOUGuard(t *testing.T) // function
 func TestFileExtractorTOCTOUGuardDisabled(t *testing.T) // function
+func TestExtractConcurrencySequential(t *testing.T) // function
+func TestExtractConcurrencyDeterministicOrder(t *testing.T) // function
+entries []scanner.FileEntry // variable
+func TestExtractConcurrencyEmptyFiles(t *testing.T) // function
+func TestExtractNilScanResult(t *testing.T) // function
+func TestExtractNegativeConcurrency(t *testing.T) // function
+func TestDefaultExtractOptions(t *testing.T) // function
+func TestExtractConcurrencyWithErrors(t *testing.T) // function
 func TestFileExtractorUnsupportedLanguage(t *testing.T) // function
 ```
 
