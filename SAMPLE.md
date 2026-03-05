@@ -82,9 +82,11 @@ func TestWriteToFile(t *testing.T) // function
 **Imports:**
 - `import "errors"`
 - `import "fmt"`
+- `import "os"`
 - `import pkgcontext "github.com/indigo-net/Brf.it/internal/context"`
 
 ```go
+MaxFileSizeUpperBound = 10 * 1024 * 1024 // variable
 type Config struct {
 	// Path is the root directory or file to process.
 	Path string
@@ -137,6 +139,9 @@ func (c *Config) ToOptions() *pkgcontext.Options // method
 ### /home/runner/work/Brf.it/Brf.it/internal/config/config_test.go
 
 **Imports:**
+- `import "bytes"`
+- `import "os"`
+- `import "strings"`
 - `import "testing"`
 
 ```go
@@ -145,6 +150,8 @@ expectedMaxSize = 512000 // variable
 func TestConfigValidate(t *testing.T) // function
 func TestConfigToOptionsNoStdImports(t *testing.T) // function
 func TestConfigSupportedLanguages(t *testing.T) // function
+func TestValidateMaxFileSizeUpperBound(t *testing.T) // function
+buf bytes.Buffer // variable
 func containsString(s, substr string) bool // function
 func containsSubstring(s, substr string) bool // function
 ```

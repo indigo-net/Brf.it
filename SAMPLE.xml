@@ -82,8 +82,10 @@
       <imports>
         <import>import &quot;errors&quot;</import>
         <import>import &quot;fmt&quot;</import>
+        <import>import &quot;os&quot;</import>
         <import>import pkgcontext &quot;github.com/indigo-net/Brf.it/internal/context&quot;</import>
       </imports>
+      <variable>MaxFileSizeUpperBound = 10 * 1024 * 1024</variable>
       <type>type Config struct {
 	// Path is the root directory or file to process.
 	Path string
@@ -132,6 +134,9 @@
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/config/config_test.go" language="go">
       <imports>
+        <import>import &quot;bytes&quot;</import>
+        <import>import &quot;os&quot;</import>
+        <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>
       </imports>
       <function>func TestDefaultConfig(t *testing.T)</function>
@@ -139,6 +144,8 @@
       <function>func TestConfigValidate(t *testing.T)</function>
       <function>func TestConfigToOptionsNoStdImports(t *testing.T)</function>
       <function>func TestConfigSupportedLanguages(t *testing.T)</function>
+      <function>func TestValidateMaxFileSizeUpperBound(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
       <function>func containsString(s, substr string) bool</function>
       <function>func containsSubstring(s, substr string) bool</function>
     </file>
