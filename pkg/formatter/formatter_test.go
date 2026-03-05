@@ -176,6 +176,10 @@ func TestMarkdownFormatterFormat(t *testing.T) {
 	if !strings.Contains(outputStr, "func Add(a, b int) int") {
 		t.Error("expected signature in code block")
 	}
+
+	if strings.Contains(outputStr, "// function") {
+		t.Error("kind comment should not appear in markdown output")
+	}
 }
 
 func TestFormatterNames(t *testing.T) {
