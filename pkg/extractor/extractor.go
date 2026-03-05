@@ -4,6 +4,8 @@ package extractor
 import (
 	"fmt"
 	"os"
+	"runtime"
+	"sync"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
@@ -56,7 +58,8 @@ type ExtractOptions struct {
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
 
-	// Concurrency is the number of concurrent workers (0 = sequential).
+	// Concurrency is the number of concurrent workers.
+	// 0 = auto (runtime.NumCPU()), 1 = sequential.
 	Concurrency int
 
 	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
@@ -87,16 +90,81 @@ func NewDefaultFileExtractor() *FileExtractor {
 	return NewFileExtractor(parser.DefaultRegistry())
 }
 
+// DefaultExtractOptions returns ExtractOptions with sensible defaults.
+// Concurrency defaults to 0 (auto = runtime.NumCPU()).
+func DefaultExtractOptions() *ExtractOptions {
+	return &ExtractOptions{
+		Concurrency: 0,
+	}
+}
+
 // Extract implements Extractor interface.
 func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) {
 	if opts == nil {
 		opts = &ExtractOptions{}
 	}
 
-	result := &ExtractResult{}
+	// Validate concurrency before accessing scanResult to catch invalid input early.
+	if opts.Concurrency < 0 {
+		return nil, fmt.Errorf("concurrency must be >= 0, got %d", opts.Concurrency)
+	}
 
-	// Sequential processing (concurrency can be added later)
-	for _, fileEntry := range scanResult.Files {
+	if scanResult == nil {
+		return &ExtractResult{}, nil
+	}
+
+	files := scanResult.Files
+	n := len(files)
+	if n == 0 {
+		return &ExtractResult{}, nil
+	}
+
+	// Resolve concurrency
+	concurrency := opts.Concurrency
+	if concurrency == 0 {
+		concurrency = runtime.NumCPU()
+	}
+	if concurrency > n {
+		concurrency = n
+	}
+
+	// Sequential fast path
+	if concurrency == 1 {
+		return e.extractSequential(files, opts), nil
+	}
+
+	// Concurrent path: semaphore + indexed goroutines
+	extracted := make([]ExtractedFile, n)
+	sem := make(chan struct{}, concurrency)
+	var wg sync.WaitGroup
+
+	for i, fileEntry := range files {
+		wg.Add(1)
+		sem <- struct{}{} // Acquire
+		go func(idx int, entry scanner.FileEntry) {
+			defer wg.Done()
+			defer func() { <-sem }() // Release
+			extracted[idx] = e.extractFile(entry, opts)
+		}(i, fileEntry)
+	}
+	wg.Wait()
+
+	// Aggregate (sequential)
+	result := &ExtractResult{Files: extracted}
+	for _, ef := range extracted {
+		result.TotalSignatures += len(ef.Signatures)
+		result.TotalSize += ef.Size
+		if ef.Error != nil {
+			result.ErrorCount++
+		}
+	}
+	return result, nil
+}
+
+// extractSequential processes files sequentially.
+func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult {
+	result := &ExtractResult{}
+	for _, fileEntry := range files {
 		extracted := e.extractFile(fileEntry, opts)
 		result.Files = append(result.Files, extracted)
 		result.TotalSignatures += len(extracted.Signatures)
@@ -105,8 +173,7 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 			result.ErrorCount++
 		}
 	}
-
-	return result, nil
+	return result
 }
 
 // extractFile extracts signatures from a single file.
