@@ -2523,7 +2523,7 @@
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.Signature</function>
+) ([]parser.Signature, error)</function>
       <variable>signatures []parser.Signature</variable>
       <variable>kindNode *sitter.Node</variable>
       <function>func cleanComment(text string) string</function>
@@ -2558,7 +2558,7 @@
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.ImportExport</function>
+) ([]parser.ImportExport, error)</function>
       <variable>imports []parser.ImportExport</variable>
       <variable>imp parser.ImportExport</variable>
       <variable>hasExportType bool</variable>

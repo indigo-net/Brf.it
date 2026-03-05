@@ -2739,7 +2739,7 @@ func (p *TreeSitterParser) extractSignatures(
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.Signature // method
+) ([]parser.Signature, error) // method
 signatures []parser.Signature // variable
 kindNode *sitter.Node // variable
 func cleanComment(text string) string // function
@@ -2774,7 +2774,7 @@ func (p *TreeSitterParser) extractImports(
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) []parser.ImportExport // method
+) ([]parser.ImportExport, error) // method
 imports []parser.ImportExport // variable
 imp parser.ImportExport // variable
 hasExportType bool // variable
