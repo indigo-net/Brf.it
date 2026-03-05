@@ -26,10 +26,11 @@ func TestRustQueryPattern(t *testing.T) {
 
 	// Compile query to verify syntax
 	lang := sitter.NewLanguage(tree_sitter_rust.Language())
-	_, err := sitter.NewQuery(lang, string(pattern))
+	q, err := sitter.NewQuery(lang, string(pattern))
 	if err != nil {
 		t.Fatalf("invalid query pattern: %v", err)
 	}
+	defer q.Close()
 }
 
 func TestRustQueryImportPattern(t *testing.T) {
@@ -42,10 +43,11 @@ func TestRustQueryImportPattern(t *testing.T) {
 
 	// Compile query to verify syntax
 	lang := sitter.NewLanguage(tree_sitter_rust.Language())
-	_, err := sitter.NewQuery(lang, string(pattern))
+	q, err := sitter.NewQuery(lang, string(pattern))
 	if err != nil {
 		t.Fatalf("invalid import query pattern: %v", err)
 	}
+	defer q.Close()
 }
 
 func TestRustQueryExtractFunction(t *testing.T) {
