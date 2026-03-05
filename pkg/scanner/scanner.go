@@ -136,6 +136,11 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 func (s *FileScanner) Scan() (*ScanResult, error) {
 	result := &ScanResult{}
 
+	// Warn if gitignore loading failed
+	if s.ignorerErr != nil {
+		s.logger.Printf("WARN: failed to load ignore file: %v\n", s.ignorerErr)
+	}
+
 	// Check if root path is a file
 	info, err := os.Stat(s.opts.RootPath)
 	if err != nil {

@@ -1,8 +1,11 @@
 package scanner
 
 import (
+	"bytes"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -388,6 +391,40 @@ func TestScanGitignore(t *testing.T) {
 		for _, e := range result.Files {
 			t.Logf("  - %s", e.Path)
 		}
+	}
+}
+
+func TestScanGitignoreLoadFailureWarning(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	testFile := filepath.Join(tmpDir, "main.go")
+	if err := os.WriteFile(testFile, []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	opts := DefaultScanOptions()
+	opts.RootPath = tmpDir
+	opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
+
+	sc, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var buf bytes.Buffer
+	sc.logger = log.New(&buf, "[brfit] ", 0)
+
+	_, err = sc.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !strings.Contains(buf.String(), "WARN") || !strings.Contains(buf.String(), "ignore file") {
+		t.Errorf("expected warning about ignore file failure, got: %s", buf.String())
 	}
 }
 
