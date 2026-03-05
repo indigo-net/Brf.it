@@ -326,6 +326,10 @@
 
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
+
+	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
+	// If positive, file content size is verified after reading.
+	MaxFileSize int64
 }</type>
       <type>type Extractor interface {
 	// Extract extracts signatures from the given scan result.
@@ -343,6 +347,7 @@
       <imports>
         <import>import &quot;os&quot;</import>
         <import>import &quot;path/filepath&quot;</import>
+        <import>import &quot;strings&quot;</import>
         <import>import &quot;testing&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
         <import>import _ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;</import>
@@ -352,6 +357,8 @@
       <variable>_ Extractor = (*FileExtractor)(nil)</variable>
       <function>func TestFileExtractorExtract(t *testing.T)</function>
       <variable>foundAdd bool</variable>
+      <function>func TestFileExtractorTOCTOUGuard(t *testing.T)</function>
+      <function>func TestFileExtractorTOCTOUGuardDisabled(t *testing.T)</function>
       <function>func TestFileExtractorUnsupportedLanguage(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go" language="go">

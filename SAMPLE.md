@@ -352,6 +352,10 @@ type ExtractOptions struct {
 
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
+
+	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
+	// If positive, file content size is verified after reading.
+	MaxFileSize int64
 } // type
 type Extractor interface {
 	// Extract extracts signatures from the given scan result.
@@ -373,6 +377,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 **Imports:**
 - `import "os"`
 - `import "path/filepath"`
+- `import "strings"`
 - `import "testing"`
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 - `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
@@ -383,6 +388,8 @@ func TestFileExtractorImplementsExtractor(t *testing.T) // function
 _ Extractor = (*FileExtractor)(nil) // variable
 func TestFileExtractorExtract(t *testing.T) // function
 foundAdd bool // variable
+func TestFileExtractorTOCTOUGuard(t *testing.T) // function
+func TestFileExtractorTOCTOUGuardDisabled(t *testing.T) // function
 func TestFileExtractorUnsupportedLanguage(t *testing.T) // function
 ```
 
