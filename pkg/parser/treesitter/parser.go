@@ -264,7 +264,7 @@ func (p *TreeSitterParser) extractSignatures(
 				}
 			}
 
-			// C#: record struct detection
+			// C#: record struct → "struct" kind; record/record class → "record" kind (의도적)
 			if opts.Language == "csharp" && kind == "record_declaration" {
 				if strings.Contains(sig.Text, "record struct") {
 					sig.Kind = "struct"

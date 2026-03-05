@@ -2,8 +2,6 @@
 package languages
 
 import (
-	"unsafe"
-
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
 )
@@ -17,7 +15,7 @@ type CSharpQuery struct {
 // NewCSharpQuery creates a new C# language query.
 func NewCSharpQuery() *CSharpQuery {
 	return &CSharpQuery{
-		language: sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language())),
+		language: sitter.NewLanguage(tree_sitter_c_sharp.Language()),
 		query:    []byte(csharpQueryPattern),
 	}
 }

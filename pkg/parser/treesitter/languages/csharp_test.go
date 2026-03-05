@@ -2,7 +2,6 @@ package languages
 
 import (
 	"testing"
-	"unsafe"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
@@ -14,7 +13,7 @@ func extractCSharpNames(t *testing.T, code []byte) map[string]bool {
 	t.Helper()
 	parser := sitter.NewParser()
 	defer parser.Close()
-	lang := sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language()))
+	lang := sitter.NewLanguage(tree_sitter_c_sharp.Language())
 	parser.SetLanguage(lang)
 	tree := parser.Parse(code, nil)
 	defer tree.Close()
@@ -61,7 +60,7 @@ func TestCSharpQueryPattern(t *testing.T) {
 	}
 
 	// Compile query to verify syntax
-	lang := sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language()))
+	lang := sitter.NewLanguage(tree_sitter_c_sharp.Language())
 	q, err := sitter.NewQuery(lang, string(pattern))
 	if err != nil {
 		t.Fatalf("invalid query pattern: %v", err)
@@ -78,7 +77,7 @@ func TestCSharpQueryImportPattern(t *testing.T) {
 	}
 
 	// Compile query to verify syntax
-	lang := sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language()))
+	lang := sitter.NewLanguage(tree_sitter_c_sharp.Language())
 	q, err := sitter.NewQuery(lang, string(pattern))
 	if err != nil {
 		t.Fatalf("invalid import query pattern: %v", err)
@@ -221,7 +220,7 @@ func TestCSharpQueryExtractOperators(t *testing.T) {
 	parser := sitter.NewParser()
 	defer parser.Close()
 
-	lang := sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language()))
+	lang := sitter.NewLanguage(tree_sitter_c_sharp.Language())
 	parser.SetLanguage(lang)
 
 	code := []byte(`
@@ -283,7 +282,7 @@ func TestCSharpQueryExtractImport(t *testing.T) {
 	parser := sitter.NewParser()
 	defer parser.Close()
 
-	lang := sitter.NewLanguage(unsafe.Pointer(tree_sitter_c_sharp.Language()))
+	lang := sitter.NewLanguage(tree_sitter_c_sharp.Language())
 	parser.SetLanguage(lang)
 
 	code := []byte(`
