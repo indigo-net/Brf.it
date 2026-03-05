@@ -1514,3 +1514,25 @@ func TestParsePanicRecovery(t *testing.T) {
 		})
 	}
 }
+
+func TestParsePanicRecoveryMechanism(t *testing.T) {
+	// Verify that if a panic occurs inside Parse, it returns an error
+	// rather than crashing. A nil LanguageQuery in the queries map causes
+	// a nil pointer dereference panic when query.Language() is called.
+	p := &TreeSitterParser{
+		queries: map[string]LanguageQuery{
+			"go": nil, // nil interface triggers panic on method call
+		},
+	}
+
+	result, err := p.Parse("package main", &parser.Options{Language: "go"})
+	if err == nil {
+		t.Fatal("expected error from recovered panic, got nil")
+	}
+	if result != nil {
+		t.Fatal("expected nil result from recovered panic")
+	}
+	if !strings.Contains(err.Error(), "panic recovered") {
+		t.Errorf("expected panic recovery error message, got: %v", err)
+	}
+}
