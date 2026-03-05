@@ -258,6 +258,39 @@ func TestExtractConcurrencyEmptyFiles(t *testing.T) {
 	}
 }
 
+func TestExtractNilScanResult(t *testing.T) {
+	extractor := NewDefaultFileExtractor()
+	result, err := extractor.Extract(nil, nil)
+	if err != nil {
+		t.Fatalf("expected no error for nil scanResult, got: %v", err)
+	}
+	if result == nil {
+		t.Fatal("expected non-nil result")
+	}
+	if len(result.Files) != 0 {
+		t.Errorf("expected 0 files, got %d", len(result.Files))
+	}
+}
+
+func TestExtractNegativeConcurrency(t *testing.T) {
+	scanResult := &scanner.ScanResult{Files: []scanner.FileEntry{}}
+	extractor := NewDefaultFileExtractor()
+	_, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: -1})
+	if err == nil {
+		t.Fatal("expected error for negative concurrency, got nil")
+	}
+}
+
+func TestDefaultExtractOptions(t *testing.T) {
+	opts := DefaultExtractOptions()
+	if opts == nil {
+		t.Fatal("expected non-nil options")
+	}
+	if opts.Concurrency != 0 {
+		t.Errorf("expected Concurrency=0 (auto), got %d", opts.Concurrency)
+	}
+}
+
 func TestExtractConcurrencyWithErrors(t *testing.T) {
 	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
 	if err != nil {

@@ -90,10 +90,27 @@ func NewDefaultFileExtractor() *FileExtractor {
 	return NewFileExtractor(parser.DefaultRegistry())
 }
 
+// DefaultExtractOptions returns ExtractOptions with sensible defaults.
+// Concurrency defaults to 0 (auto = runtime.NumCPU()).
+func DefaultExtractOptions() *ExtractOptions {
+	return &ExtractOptions{
+		Concurrency: 0,
+	}
+}
+
 // Extract implements Extractor interface.
 func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) {
 	if opts == nil {
 		opts = &ExtractOptions{}
+	}
+
+	// Validate concurrency before accessing scanResult to catch invalid input early.
+	if opts.Concurrency < 0 {
+		return nil, fmt.Errorf("concurrency must be >= 0, got %d", opts.Concurrency)
+	}
+
+	if scanResult == nil {
+		return &ExtractResult{}, nil
 	}
 
 	files := scanResult.Files
@@ -104,7 +121,7 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 
 	// Resolve concurrency
 	concurrency := opts.Concurrency
-	if concurrency <= 0 {
+	if concurrency == 0 {
 		concurrency = runtime.NumCPU()
 	}
 	if concurrency > n {
