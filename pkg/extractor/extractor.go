@@ -58,6 +58,10 @@ type ExtractOptions struct {
 
 	// Concurrency is the number of concurrent workers (0 = sequential).
 	Concurrency int
+
+	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
+	// If positive, file content size is verified after reading.
+	MaxFileSize int64
 }
 
 // Extractor defines the interface for signature extraction.
@@ -124,6 +128,13 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	content, err := os.ReadFile(entry.Path)
 	if err != nil {
 		extracted.Error = fmt.Errorf("failed to read file: %w", err)
+		return extracted
+	}
+
+	// TOCTOU guard: re-check file size after reading
+	if opts.MaxFileSize > 0 && int64(len(content)) > opts.MaxFileSize {
+		extracted.Error = fmt.Errorf("file size changed since scan: %s (%d > %d)",
+			entry.Path, len(content), opts.MaxFileSize)
 		return extracted
 	}
 
