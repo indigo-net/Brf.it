@@ -127,6 +127,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
 		IncludeImports: opts.IncludeImports,
+		MaxFileSize:    opts.MaxFileSize,
 	}
 	extractResult, err := p.extractor.Extract(scanResult, extractOpts)
 	if err != nil {
