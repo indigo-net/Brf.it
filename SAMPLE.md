@@ -3422,6 +3422,7 @@ func TestFindCSharpBodyStart(t *testing.T) // function
 func TestIsExpressionBodied(t *testing.T) // function
 func TestExtractCSharpOperatorName(t *testing.T) // function
 func TestExtractCSharpConversionOperatorName(t *testing.T) // function
+func TestFindFunctionBodyStart(t *testing.T) // function
 func TestParsePanicRecoveryMechanism(t *testing.T) // function
 ```
 
