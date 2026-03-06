@@ -1,6 +1,6 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.17.0*
+*brf.it 0.18.0*
 
 ---
 
@@ -9,10 +9,10 @@
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/main.go
 
 ```go
-version = "dev" // variable
-commit  = "none" // variable
-date    = "unknown" // variable
-func main() // function
+version = "dev"
+commit  = "none"
+date    = "unknown"
+func main()
 ```
 
 ---
@@ -30,20 +30,20 @@ func main() // function
 - `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
 
 ```go
-Version = "dev" // variable
-Commit  = "none" // variable
-Date    = "unknown" // variable
-func SetBuildInfo(v, c, d string) // function
-cfg *config.Config // variable
-rootCmd *cobra.Command // variable
-func init() // function
-func Execute() // function
-func NewRootCommand() *cobra.Command // function
-func newRootCommandWithConfig(c *config.Config) *cobra.Command // function
-func addFlags(cmd *cobra.Command, c *config.Config) // function
-func runRoot(cmd *cobra.Command, args []string, c *config.Config) error // function
-func writeOutput(result *context.Result, c *config.Config) error // function
-func writeToFile(path string, content []byte) error // function
+Version = "dev"
+Commit  = "none"
+Date    = "unknown"
+func SetBuildInfo(v, c, d string)
+cfg *config.Config
+rootCmd *cobra.Command
+func init()
+func Execute()
+func NewRootCommand() *cobra.Command
+func newRootCommandWithConfig(c *config.Config) *cobra.Command
+func addFlags(cmd *cobra.Command, c *config.Config)
+func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
+func writeOutput(result *context.Result, c *config.Config) error
+func writeToFile(path string, content []byte) error
 ```
 
 ---
@@ -61,18 +61,18 @@ func writeToFile(path string, content []byte) error // function
 - `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
 
 ```go
-func TestExecuteHelp(t *testing.T) // function
-func TestExecuteVersion(t *testing.T) // function
-buf bytes.Buffer // variable
-func TestNewRootCommand(t *testing.T) // function
-func TestParseFlags(t *testing.T) // function
-func TestParseFlagsNoStdImports(t *testing.T) // function
-func TestRootCommandIntegration(t *testing.T) // function
-buf bytes.Buffer // variable
-func TestRootCommandIntegrationMarkdown(t *testing.T) // function
-buf bytes.Buffer // variable
-func TestRootCommandPathNotFound(t *testing.T) // function
-func TestWriteToFile(t *testing.T) // function
+func TestExecuteHelp(t *testing.T)
+func TestExecuteVersion(t *testing.T)
+buf bytes.Buffer
+func TestNewRootCommand(t *testing.T)
+func TestParseFlags(t *testing.T)
+func TestParseFlagsNoStdImports(t *testing.T)
+func TestRootCommandIntegration(t *testing.T)
+buf bytes.Buffer
+func TestRootCommandIntegrationMarkdown(t *testing.T)
+buf bytes.Buffer
+func TestRootCommandPathNotFound(t *testing.T)
+func TestWriteToFile(t *testing.T)
 ```
 
 ---
@@ -86,7 +86,7 @@ func TestWriteToFile(t *testing.T) // function
 - `import pkgcontext "github.com/indigo-net/Brf.it/internal/context"`
 
 ```go
-MaxFileSizeUpperBound = 10 * 1024 * 1024 // variable
+MaxFileSizeUpperBound = 10 * 1024 * 1024
 type Config struct {
 	// Path is the root directory or file to process.
 	Path string
@@ -127,11 +127,11 @@ type Config struct {
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
-} // type
-func DefaultConfig() *Config // function
-func (c *Config) Validate() error // method
-func (c *Config) SupportedExtensions() map[string]string // method
-func (c *Config) ToOptions() *pkgcontext.Options // method
+}
+func DefaultConfig() *Config
+func (c *Config) Validate() error
+func (c *Config) SupportedExtensions() map[string]string
+func (c *Config) ToOptions() *pkgcontext.Options
 ```
 
 ---
@@ -145,15 +145,15 @@ func (c *Config) ToOptions() *pkgcontext.Options // method
 - `import "testing"`
 
 ```go
-func TestDefaultConfig(t *testing.T) // function
-expectedMaxSize = 512000 // variable
-func TestConfigValidate(t *testing.T) // function
-func TestConfigToOptionsNoStdImports(t *testing.T) // function
-func TestConfigSupportedLanguages(t *testing.T) // function
-func TestValidateMaxFileSizeUpperBound(t *testing.T) // function
-buf bytes.Buffer // variable
-func containsString(s, substr string) bool // function
-func containsSubstring(s, substr string) bool // function
+func TestDefaultConfig(t *testing.T)
+expectedMaxSize = 512000
+func TestConfigValidate(t *testing.T)
+func TestConfigToOptionsNoStdImports(t *testing.T)
+func TestConfigSupportedLanguages(t *testing.T)
+func TestValidateMaxFileSizeUpperBound(t *testing.T)
+buf bytes.Buffer
+func containsString(s, substr string) bool
+func containsSubstring(s, substr string) bool
 ```
 
 ---
@@ -203,8 +203,8 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
-} // type
-func DefaultOptions() *Options // function
+}
+func DefaultOptions() *Options
 type Result struct {
 	// Content is the formatted output bytes.
 	Content []byte
@@ -221,23 +221,23 @@ type Result struct {
 	// TokenCount is the number of tokens in the output.
 	// Returns 0 if token counting is disabled or tokenizer is not set.
 	TokenCount int
-} // type
+}
 type Packager struct {
 	scanner    scanner.Scanner
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
 	tokenizer  tokenizer.Tokenizer
-} // type
+}
 func NewPackager(
 	s scanner.Scanner,
 	e extractor.Extractor,
 	f map[string]formatter.Formatter,
-) *Packager // function
-func (p *Packager) SetTokenizer(t tokenizer.Tokenizer) // method
-func (p *Packager) Package(opts *Options) (*Result, error) // method
-treeStr string // variable
-func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error) // function
-func normalizeFormat(format string) string // function
+) *Packager
+func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
+func (p *Packager) Package(opts *Options) (*Result, error)
+treeStr string
+func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
+func normalizeFormat(format string) string
 ```
 
 ---
@@ -257,25 +257,25 @@ func normalizeFormat(format string) string // function
 type mockScanner struct {
 	result *scanner.ScanResult
 	err    error
-} // type
-func (m *mockScanner) Scan() (*scanner.ScanResult, error) // method
+}
+func (m *mockScanner) Scan() (*scanner.ScanResult, error)
 type mockExtractor struct {
 	result *extractor.ExtractResult
 	err    error
-} // type
-func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error) // method
-func TestPackagerPackage(t *testing.T) // function
-func TestPackagerPackageMarkdown(t *testing.T) // function
-func TestPackagerPackageMarkdownFull(t *testing.T) // function
-func TestPackagerUnknownFormat(t *testing.T) // function
-func TestPackagerSetTokenizer(t *testing.T) // function
-func TestPackagerWithTiktokenTokenizer(t *testing.T) // function
-func TestPackagerTokenizerConsistency(t *testing.T) // function
-func TestBuildTree(t *testing.T) // function
-func TestBuildTreeStructure(t *testing.T) // function
-func TestPackagerNoStdImportsPassthrough(t *testing.T) // function
-func TestDefaultOptions(t *testing.T) // function
-func TestNormalizeFormat(t *testing.T) // function
+}
+func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
+func TestPackagerPackage(t *testing.T)
+func TestPackagerPackageMarkdown(t *testing.T)
+func TestPackagerPackageMarkdownFull(t *testing.T)
+func TestPackagerUnknownFormat(t *testing.T)
+func TestPackagerSetTokenizer(t *testing.T)
+func TestPackagerWithTiktokenTokenizer(t *testing.T)
+func TestPackagerTokenizerConsistency(t *testing.T)
+func TestBuildTree(t *testing.T)
+func TestBuildTreeStructure(t *testing.T)
+func TestPackagerNoStdImportsPassthrough(t *testing.T)
+func TestDefaultOptions(t *testing.T)
+func TestNormalizeFormat(t *testing.T)
 ```
 
 ---
@@ -290,11 +290,11 @@ func TestNormalizeFormat(t *testing.T) // function
 ```go
 type treeNode struct {
 	children map[string]*treeNode
-} // type
-func BuildTree(root string, paths []string) string // function
-buf strings.Builder // variable
-func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) // function
-newPrefix string // variable
+}
+func BuildTree(root string, paths []string) string
+buf strings.Builder
+func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
+newPrefix string
 ```
 
 ---
@@ -328,7 +328,7 @@ type ExtractedFile struct {
 
 	// Error is any error that occurred during extraction.
 	Error error
-} // type
+}
 type ExtractResult struct {
 	// Files is the list of extracted files.
 	Files []ExtractedFile
@@ -341,7 +341,7 @@ type ExtractResult struct {
 
 	// ErrorCount is the number of files that had errors.
 	ErrorCount int
-} // type
+}
 type ExtractOptions struct {
 	// IncludePrivate whether to include non-exported/private signatures.
 	IncludePrivate bool
@@ -359,21 +359,21 @@ type ExtractOptions struct {
 	// MaxFileSize is the maximum file size in bytes for TOCTOU re-check.
 	// If positive, file content size is verified after reading.
 	MaxFileSize int64
-} // type
+}
 type Extractor interface {
 	// Extract extracts signatures from the given scan result.
 	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
-} // type
+}
 type FileExtractor struct {
 	registry *parser.Registry
-} // type
-func NewFileExtractor(registry *parser.Registry) *FileExtractor // function
-func NewDefaultFileExtractor() *FileExtractor // function
-func DefaultExtractOptions() *ExtractOptions // function
-func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) // method
-wg sync.WaitGroup // variable
-func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult // method
-func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile // method
+}
+func NewFileExtractor(registry *parser.Registry) *FileExtractor
+func NewDefaultFileExtractor() *FileExtractor
+func DefaultExtractOptions() *ExtractOptions
+func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+wg sync.WaitGroup
+func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult
+func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
 ```
 
 ---
@@ -391,21 +391,21 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 - `import "github.com/indigo-net/Brf.it/pkg/scanner"`
 
 ```go
-func TestFileExtractorImplementsExtractor(t *testing.T) // function
-_ Extractor = (*FileExtractor)(nil) // variable
-func TestFileExtractorExtract(t *testing.T) // function
-foundAdd bool // variable
-func TestFileExtractorTOCTOUGuard(t *testing.T) // function
-func TestFileExtractorTOCTOUGuardDisabled(t *testing.T) // function
-func TestExtractConcurrencySequential(t *testing.T) // function
-func TestExtractConcurrencyDeterministicOrder(t *testing.T) // function
-entries []scanner.FileEntry // variable
-func TestExtractConcurrencyEmptyFiles(t *testing.T) // function
-func TestExtractNilScanResult(t *testing.T) // function
-func TestExtractNegativeConcurrency(t *testing.T) // function
-func TestDefaultExtractOptions(t *testing.T) // function
-func TestExtractConcurrencyWithErrors(t *testing.T) // function
-func TestFileExtractorUnsupportedLanguage(t *testing.T) // function
+func TestFileExtractorImplementsExtractor(t *testing.T)
+_ Extractor = (*FileExtractor)(nil)
+func TestFileExtractorExtract(t *testing.T)
+foundAdd bool
+func TestFileExtractorTOCTOUGuard(t *testing.T)
+func TestFileExtractorTOCTOUGuardDisabled(t *testing.T)
+func TestExtractConcurrencySequential(t *testing.T)
+func TestExtractConcurrencyDeterministicOrder(t *testing.T)
+entries []scanner.FileEntry
+func TestExtractConcurrencyEmptyFiles(t *testing.T)
+func TestExtractNilScanResult(t *testing.T)
+func TestExtractNegativeConcurrency(t *testing.T)
+func TestDefaultExtractOptions(t *testing.T)
+func TestExtractConcurrencyWithErrors(t *testing.T)
+func TestFileExtractorUnsupportedLanguage(t *testing.T)
 ```
 
 ---
@@ -431,7 +431,7 @@ type FileData struct {
 
 	// Error is any error that occurred during extraction.
 	Error error
-} // type
+}
 type PackageData struct {
 	// RootPath is the root path being packaged.
 	RootPath string
@@ -456,14 +456,14 @@ type PackageData struct {
 
 	// NoStdImports excludes standard library imports from output.
 	NoStdImports bool
-} // type
+}
 type Formatter interface {
 	// Format formats the package data and returns the output bytes.
 	Format(data *PackageData) ([]byte, error)
 
 	// Name returns the formatter name (e.g., "xml", "markdown").
 	Name() string
-} // type
+}
 ```
 
 ---
@@ -477,29 +477,29 @@ type Formatter interface {
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 
 ```go
-func TestXMLFormatterImplementsFormatter(t *testing.T) // function
-_ Formatter = (*XMLFormatter)(nil) // variable
-func TestMarkdownFormatterImplementsFormatter(t *testing.T) // function
-_ Formatter = (*MarkdownFormatter)(nil) // variable
-func TestXMLFormatterFormat(t *testing.T) // function
-func TestXMLFormatterFormatWithError(t *testing.T) // function
-func TestMarkdownFormatterFormat(t *testing.T) // function
-func TestFormatterNames(t *testing.T) // function
-func TestXMLFormatterEscapeXML(t *testing.T) // function
-func TestMarkdownFormatterEscapeMarkdown(t *testing.T) // function
-func TestXMLFormatterEmptyData(t *testing.T) // function
-func TestMarkdownFormatterEmptyData(t *testing.T) // function
-func TestMarkdownFormatterEmptyFile(t *testing.T) // function
-func TestMarkdownFormatterEmptyFileWithImports(t *testing.T) // function
-func TestXMLFormatterEmptyFile(t *testing.T) // function
-func TestKindToTag(t *testing.T) // function
-func TestXMLFormatterKindTags(t *testing.T) // function
-func TestXMLFormatterNoStdImports(t *testing.T) // function
-func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T) // function
-func TestMarkdownFormatterNoStdImports(t *testing.T) // function
-func TestXMLFormatterNoStdImportsEmptyFile(t *testing.T) // function
-func TestMarkdownFormatterNoStdImportsEmptyFile(t *testing.T) // function
-func TestFormatterNoStdImportsDisabled(t *testing.T) // function
+func TestXMLFormatterImplementsFormatter(t *testing.T)
+_ Formatter = (*XMLFormatter)(nil)
+func TestMarkdownFormatterImplementsFormatter(t *testing.T)
+_ Formatter = (*MarkdownFormatter)(nil)
+func TestXMLFormatterFormat(t *testing.T)
+func TestXMLFormatterFormatWithError(t *testing.T)
+func TestMarkdownFormatterFormat(t *testing.T)
+func TestFormatterNames(t *testing.T)
+func TestXMLFormatterEscapeXML(t *testing.T)
+func TestMarkdownFormatterEscapeMarkdown(t *testing.T)
+func TestXMLFormatterEmptyData(t *testing.T)
+func TestMarkdownFormatterEmptyData(t *testing.T)
+func TestMarkdownFormatterEmptyFile(t *testing.T)
+func TestMarkdownFormatterEmptyFileWithImports(t *testing.T)
+func TestXMLFormatterEmptyFile(t *testing.T)
+func TestKindToTag(t *testing.T)
+func TestXMLFormatterKindTags(t *testing.T)
+func TestXMLFormatterNoStdImports(t *testing.T)
+func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T)
+func TestMarkdownFormatterNoStdImports(t *testing.T)
+func TestXMLFormatterNoStdImportsEmptyFile(t *testing.T)
+func TestMarkdownFormatterNoStdImportsEmptyFile(t *testing.T)
+func TestFormatterNoStdImportsDisabled(t *testing.T)
 ```
 
 ---
@@ -510,13 +510,13 @@ func TestFormatterNoStdImportsDisabled(t *testing.T) // function
 - `import "strings"`
 
 ```go
-func isStdLibImport(language, importPath string) bool // function
-func isGoStdLib(importPath string) bool // function
-func isPythonStdLib(importPath string) bool // function
-func isJSStdLib(importPath string) bool // function
-func isCStdLib(importPath string) bool // function
-func isJavaStdLib(importPath string) bool // function
-func isRustStdLib(importPath string) bool // function
+func isStdLibImport(language, importPath string) bool
+func isGoStdLib(importPath string) bool
+func isPythonStdLib(importPath string) bool
+func isJSStdLib(importPath string) bool
+func isCStdLib(importPath string) bool
+func isJavaStdLib(importPath string) bool
+func isRustStdLib(importPath string) bool
 pythonStdLibModules = map[string]struct{}{
 	"abc": {}, "aifc": {}, "argparse": {}, "array": {}, "ast": {},
 	"asynchat": {}, "asyncio": {}, "asyncore": {}, "atexit": {},
@@ -570,7 +570,7 @@ pythonStdLibModules = map[string]struct{}{
 	"zipapp": {}, "zipfile": {}, "zipimport": {}, "zlib": {},
 	"zoneinfo": {},
 	"_thread": {},
-} // variable
+}
 nodeBuiltinModules = map[string]struct{}{
 	"assert": {}, "buffer": {}, "child_process": {}, "cluster": {},
 	"console": {}, "constants": {}, "crypto": {}, "dgram": {},
@@ -581,8 +581,8 @@ nodeBuiltinModules = map[string]struct{}{
 	"repl": {}, "stream": {}, "string_decoder": {}, "timers": {},
 	"tls": {}, "trace_events": {}, "tty": {}, "url": {}, "util": {},
 	"v8": {}, "vm": {}, "wasi": {}, "worker_threads": {}, "zlib": {},
-} // variable
-func getEmptyComment(lang string) string // function
+}
+func getEmptyComment(lang string) string
 ```
 
 ---
@@ -594,8 +594,8 @@ func getEmptyComment(lang string) string // function
 - `import "testing"`
 
 ```go
-func TestIsStdLibImport(t *testing.T) // function
-func TestGetEmptyComment(t *testing.T) // function
+func TestIsStdLibImport(t *testing.T)
+func TestGetEmptyComment(t *testing.T)
 ```
 
 ---
@@ -608,13 +608,13 @@ func TestGetEmptyComment(t *testing.T) // function
 - `import "strings"`
 
 ```go
-type MarkdownFormatter struct{} // type
-func NewMarkdownFormatter() *MarkdownFormatter // function
-func (f *MarkdownFormatter) Name() string // method
-func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) // method
-buf bytes.Buffer // variable
-imports, exports []string // variable
-func escapeMarkdown(s string) string // function
+type MarkdownFormatter struct{}
+func NewMarkdownFormatter() *MarkdownFormatter
+func (f *MarkdownFormatter) Name() string
+func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)
+buf bytes.Buffer
+imports, exports []string
+func escapeMarkdown(s string) string
 ```
 
 ---
@@ -627,14 +627,14 @@ func escapeMarkdown(s string) string // function
 - `import "strings"`
 
 ```go
-type XMLFormatter struct{} // type
-func NewXMLFormatter() *XMLFormatter // function
-func (f *XMLFormatter) Name() string // method
-func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) // method
-buf bytes.Buffer // variable
-importLines []string // variable
-func escapeXML(s string) string // function
-func kindToTag(kind string) string // function
+type XMLFormatter struct{}
+func NewXMLFormatter() *XMLFormatter
+func (f *XMLFormatter) Name() string
+func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
+buf bytes.Buffer
+importLines []string
+func escapeXML(s string) string
+func kindToTag(kind string) string
 ```
 
 ---
@@ -658,7 +658,7 @@ type ImportExport struct {
 
 	// Line is the line number (1-indexed).
 	Line int
-} // type
+}
 type Signature struct {
 	// Name is the identifier name (e.g., "Scan", "FileScanner").
 	Name string
@@ -683,7 +683,7 @@ type Signature struct {
 
 	// Exported indicates whether the signature is exported/public.
 	Exported bool
-} // type
+}
 type Node struct {
 	// Type is the node type (e.g., "function_declaration", "class_definition").
 	Type string
@@ -705,7 +705,7 @@ type Node struct {
 
 	// Children are child nodes.
 	Children []Node
-} // type
+}
 type ParseResult struct {
 	// FilePath is the path to the parsed file.
 	FilePath string
@@ -724,7 +724,7 @@ type ParseResult struct {
 
 	// Error is any error that occurred during parsing.
 	Error error
-} // type
+}
 type Options struct {
 	// Language forces a specific language (auto-detected if empty).
 	Language string
@@ -742,26 +742,26 @@ type Options struct {
 
 	// IncludeImports whether to include import/export statements in the result.
 	IncludeImports bool
-} // type
+}
 type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
 	Parse(content string, opts *Options) (*ParseResult, error)
 
 	// Languages returns the list of supported languages.
 	Languages() []string
-} // type
+}
 type Registry struct {
 	mu      sync.RWMutex
 	parsers map[string]Parser
-} // type
-func NewRegistry() *Registry // function
-defaultRegistry = NewRegistry() // variable
-func DefaultRegistry() *Registry // function
-func (r *Registry) Register(lang string, parser Parser) // method
-func (r *Registry) Get(lang string) (Parser, bool) // method
-func (r *Registry) Languages() []string // method
-func RegisterParser(lang string, parser Parser) // function
-func GetParser(lang string) (Parser, bool) // function
+}
+func NewRegistry() *Registry
+defaultRegistry = NewRegistry()
+func DefaultRegistry() *Registry
+func (r *Registry) Register(lang string, parser Parser)
+func (r *Registry) Get(lang string) (Parser, bool)
+func (r *Registry) Languages() []string
+func RegisterParser(lang string, parser Parser)
+func GetParser(lang string) (Parser, bool)
 LanguageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
@@ -781,8 +781,8 @@ LanguageMapping = map[string]string{
 	".swift": "swift",
 	".kt":    "kotlin",
 	".kts":   "kotlin",
-} // variable
-func DetectLanguage(path string) string // function
+}
+func DetectLanguage(path string) string
 ```
 
 ---
@@ -793,21 +793,21 @@ func DetectLanguage(path string) string // function
 - `import "testing"`
 
 ```go
-func TestSignatureDefaults(t *testing.T) // function
-func TestParseResultDefaults(t *testing.T) // function
-func TestNodeKind(t *testing.T) // function
-func TestParserInterface(t *testing.T) // function
-_ Parser = (*MockParser)(nil) // variable
+func TestSignatureDefaults(t *testing.T)
+func TestParseResultDefaults(t *testing.T)
+func TestNodeKind(t *testing.T)
+func TestParserInterface(t *testing.T)
+_ Parser = (*MockParser)(nil)
 type MockParser struct {
 	signatures []Signature
 	err        error
-} // type
-func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error) // method
-func (m *MockParser) Languages() []string // method
-func TestMockParser(t *testing.T) // function
-func TestRegistry(t *testing.T) // function
-func TestDefaultRegistry(t *testing.T) // function
-func TestDetectLanguage(t *testing.T) // function
+}
+func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error)
+func (m *MockParser) Languages() []string
+func TestMockParser(t *testing.T)
+func TestRegistry(t *testing.T)
+func TestDefaultRegistry(t *testing.T)
+func TestDetectLanguage(t *testing.T)
 ```
 
 ---
@@ -819,7 +819,7 @@ func TestDetectLanguage(t *testing.T) // function
 - `import "unsafe"`
 
 ```go
-func Language() unsafe.Pointer // function
+func Language() unsafe.Pointer
 ```
 
 ---
@@ -846,32 +846,32 @@ enum TokenType {
     RAW_STRING_START,
     RAW_STRING_END,
     RAW_STRING_CONTENT,
-} // enum
+}
 typedef enum {
     REGULAR = 1 << 0,
     VERBATIM = 1 << 1,
     RAW = 1 << 2,
-} StringType; // typedef
+} StringType;
 typedef struct {
     uint8_t dollar_count;
     uint8_t open_brace_count;
     uint8_t quote_count;
     StringType string_type;
-} Interpolation; // typedef
-static inline bool is_regular(Interpolation *interpolation) // function
-static inline bool is_verbatim(Interpolation *interpolation) // function
-static inline bool is_raw(Interpolation *interpolation) // function
+} Interpolation;
+static inline bool is_regular(Interpolation *interpolation)
+static inline bool is_verbatim(Interpolation *interpolation)
+static inline bool is_raw(Interpolation *interpolation)
 typedef struct {
     uint8_t quote_count;
     Array(Interpolation) interpolation_stack;
-} Scanner; // typedef
-static inline void advance(TSLexer *lexer) // function
-static inline void skip(TSLexer *lexer) // function
-void *tree_sitter_c_sharp_external_scanner_create() // function
-void tree_sitter_c_sharp_external_scanner_destroy(void *payload) // function
-unsigned tree_sitter_c_sharp_external_scanner_serialize(void *payload, char *buffer) // function
-void tree_sitter_c_sharp_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) // function
-bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) // function
+} Scanner;
+static inline void advance(TSLexer *lexer)
+static inline void skip(TSLexer *lexer)
+void *tree_sitter_c_sharp_external_scanner_create()
+void tree_sitter_c_sharp_external_scanner_destroy(void *payload)
+unsigned tree_sitter_c_sharp_external_scanner_serialize(void *payload, char *buffer)
+void tree_sitter_c_sharp_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
+bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
 ---
@@ -884,15 +884,15 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_ALLOC_H_ // macro
-#define ts_malloc  ts_current_malloc // macro
-#define ts_calloc  ts_current_calloc // macro
-#define ts_realloc ts_current_realloc // macro
-#define ts_free    ts_current_free // macro
-#define ts_malloc  malloc // macro
-#define ts_calloc  calloc // macro
-#define ts_realloc realloc // macro
-#define ts_free    free // macro
+#define TREE_SITTER_ALLOC_H_
+#define ts_malloc  ts_current_malloc
+#define ts_calloc  ts_current_calloc
+#define ts_realloc ts_current_realloc
+#define ts_free    ts_current_free
+#define ts_malloc  malloc
+#define ts_calloc  calloc
+#define ts_realloc realloc
+#define ts_free    free
 ```
 
 ---
@@ -908,28 +908,28 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
 - `#include <string.h>`
 
 ```cpp
-#define TREE_SITTER_ARRAY_H_ // macro
+#define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
     T *contents;       \
     uint32_t size;     \
     uint32_t capacity; \
-  } // macro
+  }
 #define array_init(self) \
-  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL) // macro
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL)
 #define array_new() \
-  { NULL, 0, 0 } // macro
+  { NULL, 0, 0 }
 #define array_get(self, _index) \
-  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index]) // macro
-#define array_front(self) array_get(self, 0) // macro
-#define array_back(self) array_get(self, (self)->size - 1) // macro
-#define array_clear(self) ((self)->size = 0) // macro
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index])
+#define array_front(self) array_get(self, 0)
+#define array_back(self) array_get(self, (self)->size - 1)
+#define array_clear(self) ((self)->size = 0)
 #define array_reserve(self, new_capacity)        \
   ((self)->contents = _array__reserve(           \
     (void *)(self)->contents, &(self)->capacity, \
     array_elem_size(self), new_capacity)         \
-  ) // macro
-#define array_delete(self) _array__delete((self), (void *)(self)->contents, sizeof(*self)) // macro
+  )
+#define array_delete(self) _array__delete((self), (void *)(self)->contents, sizeof(*self))
 #define array_push(self, element)                                 \
   do {                                                            \
     (self)->contents = _array__grow(                              \
@@ -937,7 +937,7 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
       1, array_elem_size(self)                                    \
     );                                                            \
    (self)->contents[(self)->size++] = (element);                  \
-  } while(0) // macro
+  } while(0)
 #define array_grow_by(self, count)                                               \
   do {                                                                           \
     if ((count) == 0) break;                                                     \
@@ -947,32 +947,32 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
     );                                                                           \
     memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
     (self)->size += (count);                                                     \
-  } while (0) // macro
+  } while (0)
 #define array_push_all(self, other) \
-  array_extend((self), (other)->size, (other)->contents) // macro
+  array_extend((self), (other)->size, (other)->contents)
 #define array_extend(self, count, other_contents)                 \
   (self)->contents = _array__splice(                              \
     (void*)(self)->contents, &(self)->size, &(self)->capacity,    \
     array_elem_size(self), (self)->size, 0, count, other_contents \
-  ) // macro
+  )
 #define array_splice(self, _index, old_count, new_count, new_contents) \
   (self)->contents = _array__splice(                                   \
     (void *)(self)->contents, &(self)->size, &(self)->capacity,        \
     array_elem_size(self), _index, old_count, new_count, new_contents  \
-  ) // macro
+  )
 #define array_insert(self, _index, element)                     \
   (self)->contents = _array__splice(                            \
     (void *)(self)->contents, &(self)->size, &(self)->capacity, \
     array_elem_size(self), _index, 0, 1, &(element)             \
-  ) // macro
+  )
 #define array_erase(self, _index) \
-  _array__erase((void *)(self)->contents, &(self)->size, array_elem_size(self), _index) // macro
-#define array_pop(self) ((self)->contents[--(self)->size]) // macro
+  _array__erase((void *)(self)->contents, &(self)->size, array_elem_size(self), _index)
+#define array_pop(self) ((self)->contents[--(self)->size])
 #define array_assign(self, other)                                   \
   (self)->contents = _array__assign(                                \
     (void *)(self)->contents, &(self)->size, &(self)->capacity,     \
     (const void *)(other)->contents, (other)->size, array_elem_size(self) \
-  ) // macro
+  )
 #define array_swap(self, other)                                     \
   do {                                                              \
     struct Swap swapped_contents = _array__swap(                    \
@@ -981,40 +981,40 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
     );                                                              \
     (self)->contents = swapped_contents.self_contents;              \
     (other)->contents = swapped_contents.other_contents;            \
-  } while (0) // macro
-#define array_elem_size(self) (sizeof *(self)->contents) // macro
+  } while (0)
+#define array_elem_size(self) (sizeof *(self)->contents)
 #define array_search_sorted_with(self, compare, needle, _index, _exists) \
-  _array__search_sorted(self, 0, compare, , needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)
 #define array_search_sorted_by(self, field, needle, _index, _exists) \
-  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)
 #define array_insert_sorted_with(self, compare, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
+  } while (0)
 #define array_insert_sorted_by(self, field, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
-static inline void _array__delete(void *self, void *contents, size_t self_size) // function
+  } while (0)
+static inline void _array__delete(void *self, void *contents, size_t self_size)
 static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index) // function
+                                size_t element_size, uint32_t index)
 static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity) // function
+                                  size_t element_size, uint32_t new_capacity)
 static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size) // function
-struct Swap // struct
-struct Swap // struct
-struct Swap // struct
+                                 const void *other_contents, uint32_t other_size, size_t element_size)
+struct Swap
+struct Swap
+struct Swap
 static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size) // function
+                               uint32_t count, size_t element_size)
 static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
                                  size_t element_size,
                                  uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements) // function
+                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1032,8 +1032,8 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
     comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
     if (comparison == 0) *(_exists) = true; \
     else if (comparison < 0) *(_index) += 1; \
-  } while (0) // macro
-#define _compare_int(a, b) ((int)*(a) - (int)(b)) // macro
+  } while (0)
+#define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
 
 ---
@@ -1046,37 +1046,37 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_PARSER_H_ // macro
-#define ts_builtin_sym_error ((TSSymbol)-1) // macro
-#define ts_builtin_sym_end 0 // macro
-#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024 // macro
-typedef uint16_t TSStateId; // typedef
-typedef uint16_t TSSymbol; // typedef
-typedef uint16_t TSFieldId; // typedef
-struct TSLanguage // struct
-struct TSLanguageMetadata // struct
+#define TREE_SITTER_PARSER_H_
+#define ts_builtin_sym_error ((TSSymbol)-1)
+#define ts_builtin_sym_end 0
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024
+typedef uint16_t TSStateId;
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+struct TSLanguage
+struct TSLanguageMetadata
 typedef struct {
   TSFieldId field_id;
   uint8_t child_index;
   bool inherited;
-} TSFieldMapEntry; // typedef
+} TSFieldMapEntry;
 typedef struct {
   uint16_t index;
   uint16_t length;
-} TSMapSlice; // typedef
+} TSMapSlice;
 typedef struct {
   bool visible;
   bool named;
   bool supertype;
-} TSSymbolMetadata; // typedef
-struct TSLexer // struct
-struct TSLexer // struct
+} TSSymbolMetadata;
+struct TSLexer
+struct TSLexer
 typedef enum {
   TSParseActionTypeShift,
   TSParseActionTypeReduce,
   TSParseActionTypeAccept,
   TSParseActionTypeRecover,
-} TSParseActionType; // typedef
+} TSParseActionType;
 typedef union {
   struct {
     uint8_t type;
@@ -1092,31 +1092,31 @@ typedef union {
     uint16_t production_id;
   } reduce;
   uint8_t type;
-} TSParseAction; // typedef
+} TSParseAction;
 typedef struct {
   uint16_t lex_state;
   uint16_t external_lex_state;
-} TSLexMode; // typedef
+} TSLexMode;
 typedef struct {
   uint16_t lex_state;
   uint16_t external_lex_state;
   uint16_t reserved_word_set_id;
-} TSLexerMode; // typedef
+} TSLexerMode;
 typedef union {
   TSParseAction action;
   struct {
     uint8_t count;
     bool reusable;
   } entry;
-} TSParseActionEntry; // typedef
+} TSParseActionEntry;
 typedef struct {
   int32_t start;
   int32_t end;
-} TSCharacterRange; // typedef
-struct TSLanguage // struct
-static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead) // function
-#define UNUSED __pragma(warning(suppress : 4101)) // macro
-#define UNUSED __attribute__((unused)) // macro
+} TSCharacterRange;
+struct TSLanguage
+static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
+#define UNUSED __pragma(warning(suppress : 4101))
+#define UNUSED __attribute__((unused))
 #define START_LEXER()           \
   bool result = false;          \
   bool skip = false;            \
@@ -1128,12 +1128,12 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
   lexer->advance(lexer, skip);  \
   start:                        \
   skip = false;                 \
-  lookahead = lexer->lookahead; // macro
+  lookahead = lexer->lookahead;
 #define ADVANCE(state_value) \
   {                          \
     state = state_value;     \
     goto next_state;         \
-  } // macro
+  }
 #define ADVANCE_MAP(...)                                              \
   {                                                                   \
     static const uint16_t map[] = { __VA_ARGS__ };                    \
@@ -1143,28 +1143,28 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
         goto next_state;                                              \
       }                                                               \
     }                                                                 \
-  } // macro
+  }
 #define SKIP(state_value) \
   {                       \
     skip = true;          \
     state = state_value;  \
     goto next_state;      \
-  } // macro
+  }
 #define ACCEPT_TOKEN(symbol_value)     \
   result = true;                       \
   lexer->result_symbol = symbol_value; \
-  lexer->mark_end(lexer); // macro
-#define END_STATE() return result; // macro
-#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT) // macro
-#define STATE(id) id // macro
-#define ACTIONS(id) id // macro
+  lexer->mark_end(lexer);
+#define END_STATE() return result;
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)
+#define STATE(id) id
+#define ACTIONS(id) id
 #define SHIFT(state_value)            \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .state = (state_value)          \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_REPEAT(state_value)     \
   {{                                  \
     .shift = {                        \
@@ -1172,14 +1172,14 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
       .state = (state_value),         \
       .repetition = true              \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_EXTRA()                 \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .extra = true                   \
     }                                 \
-  }} // macro
+  }}
 #define REDUCE(symbol_name, children, precedence, prod_id) \
   {{                                                       \
     .reduce = {                                            \
@@ -1189,15 +1189,15 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
       .dynamic_precedence = precedence,                    \
       .production_id = prod_id                             \
     },                                                     \
-  }} // macro
+  }}
 #define RECOVER()                    \
   {{                                 \
     .type = TSParseActionTypeRecover \
-  }} // macro
+  }}
 #define ACCEPT_INPUT()              \
   {{                                \
     .type = TSParseActionTypeAccept \
-  }} // macro
+  }}
 ```
 
 ---
@@ -1209,7 +1209,7 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 - `import "unsafe"`
 
 ```go
-func Language() unsafe.Pointer // function
+func Language() unsafe.Pointer
 ```
 
 ---
@@ -1233,32 +1233,32 @@ enum TokenType {
   STRING_CONTENT,
   PRIMARY_CONSTRUCTOR_KEYWORD,
   IMPORT_DOT,
-} // enum
-#define DELIMITER_LENGTH 3 // macro
-typedef char Delimiter; // typedef
-typedef Array(Delimiter) Stack; // typedef
-static inline void stack_push(Stack *stack, char chr, bool triple) // function
-static inline Delimiter stack_pop(Stack *stack) // function
-static inline void skip(TSLexer *lexer) // function
-static inline void advance(TSLexer *lexer) // function
-static bool scan_string_start(TSLexer *lexer, Stack *stack) // function
-static bool scan_string_content(TSLexer *lexer, Stack *stack) // function
-static bool scan_multiline_comment(TSLexer *lexer) // function
-static bool scan_whitespace_and_comments(TSLexer *lexer) // function
-static bool is_word_char(int32_t c) // function
-static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len) // function
-static bool check_word(TSLexer *lexer, const char *word, unsigned len) // function
-static bool check_modifier_then_constructor(TSLexer *lexer) // function
-static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols) // function
-static bool scan_safe_nav(TSLexer *lexer) // function
-static bool scan_line_sep(TSLexer *lexer) // function
-static bool scan_import_list_delimiter(TSLexer *lexer) // function
-static bool scan_import_dot(TSLexer *lexer) // function
-bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) // function
-void *tree_sitter_kotlin_external_scanner_create() // function
-void tree_sitter_kotlin_external_scanner_destroy(void *payload) // function
-unsigned tree_sitter_kotlin_external_scanner_serialize(void *payload, char *buffer) // function
-void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) // function
+}
+#define DELIMITER_LENGTH 3
+typedef char Delimiter;
+typedef Array(Delimiter) Stack;
+static inline void stack_push(Stack *stack, char chr, bool triple)
+static inline Delimiter stack_pop(Stack *stack)
+static inline void skip(TSLexer *lexer)
+static inline void advance(TSLexer *lexer)
+static bool scan_string_start(TSLexer *lexer, Stack *stack)
+static bool scan_string_content(TSLexer *lexer, Stack *stack)
+static bool scan_multiline_comment(TSLexer *lexer)
+static bool scan_whitespace_and_comments(TSLexer *lexer)
+static bool is_word_char(int32_t c)
+static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len)
+static bool check_word(TSLexer *lexer, const char *word, unsigned len)
+static bool check_modifier_then_constructor(TSLexer *lexer)
+static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols)
+static bool scan_safe_nav(TSLexer *lexer)
+static bool scan_line_sep(TSLexer *lexer)
+static bool scan_import_list_delimiter(TSLexer *lexer)
+static bool scan_import_dot(TSLexer *lexer)
+bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
+void *tree_sitter_kotlin_external_scanner_create()
+void tree_sitter_kotlin_external_scanner_destroy(void *payload)
+unsigned tree_sitter_kotlin_external_scanner_serialize(void *payload, char *buffer)
+void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
 ```
 
 ---
@@ -1271,15 +1271,15 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_ALLOC_H_ // macro
-#define ts_malloc  ts_current_malloc // macro
-#define ts_calloc  ts_current_calloc // macro
-#define ts_realloc ts_current_realloc // macro
-#define ts_free    ts_current_free // macro
-#define ts_malloc  malloc // macro
-#define ts_calloc  calloc // macro
-#define ts_realloc realloc // macro
-#define ts_free    free // macro
+#define TREE_SITTER_ALLOC_H_
+#define ts_malloc  ts_current_malloc
+#define ts_calloc  ts_current_calloc
+#define ts_realloc ts_current_realloc
+#define ts_free    ts_current_free
+#define ts_malloc  malloc
+#define ts_calloc  calloc
+#define ts_realloc realloc
+#define ts_free    free
 ```
 
 ---
@@ -1295,83 +1295,83 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
 - `#include <string.h>`
 
 ```cpp
-#define TREE_SITTER_ARRAY_H_ // macro
+#define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
     T *contents;       \
     uint32_t size;     \
     uint32_t capacity; \
-  } // macro
+  }
 #define array_init(self) \
-  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL) // macro
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL)
 #define array_new() \
-  { NULL, 0, 0 } // macro
+  { NULL, 0, 0 }
 #define array_get(self, _index) \
-  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index]) // macro
-#define array_front(self) array_get(self, 0) // macro
-#define array_back(self) array_get(self, (self)->size - 1) // macro
-#define array_clear(self) ((self)->size = 0) // macro
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index])
+#define array_front(self) array_get(self, 0)
+#define array_back(self) array_get(self, (self)->size - 1)
+#define array_clear(self) ((self)->size = 0)
 #define array_reserve(self, new_capacity) \
-  _array__reserve((Array *)(self), array_elem_size(self), new_capacity) // macro
-#define array_delete(self) _array__delete((Array *)(self)) // macro
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)
+#define array_delete(self) _array__delete((Array *)(self))
 #define array_push(self, element)                            \
   (_array__grow((Array *)(self), 1, array_elem_size(self)), \
-   (self)->contents[(self)->size++] = (element)) // macro
+   (self)->contents[(self)->size++] = (element))
 #define array_grow_by(self, count) \
   do { \
     if ((count) == 0) break; \
     _array__grow((Array *)(self), count, array_elem_size(self)); \
     memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
     (self)->size += (count); \
-  } while (0) // macro
+  } while (0)
 #define array_push_all(self, other)                                       \
-  array_extend((self), (other)->size, (other)->contents) // macro
+  array_extend((self), (other)->size, (other)->contents)
 #define array_extend(self, count, contents)                    \
   _array__splice(                                               \
     (Array *)(self), array_elem_size(self), (self)->size, \
     0, count,  contents                                        \
-  ) // macro
+  )
 #define array_splice(self, _index, old_count, new_count, new_contents)  \
   _array__splice(                                                       \
     (Array *)(self), array_elem_size(self), _index,                \
     old_count, new_count, new_contents                                 \
-  ) // macro
+  )
 #define array_insert(self, _index, element) \
-  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element)) // macro
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element))
 #define array_erase(self, _index) \
-  _array__erase((Array *)(self), array_elem_size(self), _index) // macro
-#define array_pop(self) ((self)->contents[--(self)->size]) // macro
+  _array__erase((Array *)(self), array_elem_size(self), _index)
+#define array_pop(self) ((self)->contents[--(self)->size])
 #define array_assign(self, other) \
-  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self)) // macro
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))
 #define array_swap(self, other) \
-  _array__swap((Array *)(self), (Array *)(other)) // macro
-#define array_elem_size(self) (sizeof *(self)->contents) // macro
+  _array__swap((Array *)(self), (Array *)(other))
+#define array_elem_size(self) (sizeof *(self)->contents)
 #define array_search_sorted_with(self, compare, needle, _index, _exists) \
-  _array__search_sorted(self, 0, compare, , needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)
 #define array_search_sorted_by(self, field, needle, _index, _exists) \
-  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)
 #define array_insert_sorted_with(self, compare, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
+  } while (0)
 #define array_insert_sorted_by(self, field, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
-static inline void _array__delete(Array *self) // function
+  } while (0)
+static inline void _array__delete(Array *self)
 static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index) // function
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity) // function
-static inline void _array__assign(Array *self, const Array *other, size_t element_size) // function
-static inline void _array__swap(Array *self, Array *other) // function
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size) // function
+                                uint32_t index)
+static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
+static inline void _array__assign(Array *self, const Array *other, size_t element_size)
+static inline void _array__swap(Array *self, Array *other)
+static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
 static inline void _array__splice(Array *self, size_t element_size,
                                  uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements) // function
+                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1389,8 +1389,8 @@ static inline void _array__splice(Array *self, size_t element_size,
     comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
     if (comparison == 0) *(_exists) = true; \
     else if (comparison < 0) *(_index) += 1; \
-  } while (0) // macro
-#define _compare_int(a, b) ((int)*(a) - (int)(b)) // macro
+  } while (0)
+#define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
 
 ---
@@ -1403,36 +1403,36 @@ static inline void _array__splice(Array *self, size_t element_size,
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_PARSER_H_ // macro
-#define ts_builtin_sym_error ((TSSymbol)-1) // macro
-#define ts_builtin_sym_end 0 // macro
-#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024 // macro
-typedef uint16_t TSStateId; // typedef
-typedef uint16_t TSSymbol; // typedef
-typedef uint16_t TSFieldId; // typedef
-struct TSLanguage // struct
+#define TREE_SITTER_PARSER_H_
+#define ts_builtin_sym_error ((TSSymbol)-1)
+#define ts_builtin_sym_end 0
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024
+typedef uint16_t TSStateId;
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+struct TSLanguage
 typedef struct {
   TSFieldId field_id;
   uint8_t child_index;
   bool inherited;
-} TSFieldMapEntry; // typedef
+} TSFieldMapEntry;
 typedef struct {
   uint16_t index;
   uint16_t length;
-} TSFieldMapSlice; // typedef
+} TSFieldMapSlice;
 typedef struct {
   bool visible;
   bool named;
   bool supertype;
-} TSSymbolMetadata; // typedef
-struct TSLexer // struct
-struct TSLexer // struct
+} TSSymbolMetadata;
+struct TSLexer
+struct TSLexer
 typedef enum {
   TSParseActionTypeShift,
   TSParseActionTypeReduce,
   TSParseActionTypeAccept,
   TSParseActionTypeRecover,
-} TSParseActionType; // typedef
+} TSParseActionType;
 typedef union {
   struct {
     uint8_t type;
@@ -1448,26 +1448,26 @@ typedef union {
     uint16_t production_id;
   } reduce;
   uint8_t type;
-} TSParseAction; // typedef
+} TSParseAction;
 typedef struct {
   uint16_t lex_state;
   uint16_t external_lex_state;
-} TSLexMode; // typedef
+} TSLexMode;
 typedef union {
   TSParseAction action;
   struct {
     uint8_t count;
     bool reusable;
   } entry;
-} TSParseActionEntry; // typedef
+} TSParseActionEntry;
 typedef struct {
   int32_t start;
   int32_t end;
-} TSCharacterRange; // typedef
-struct TSLanguage // struct
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead) // function
-#define UNUSED __pragma(warning(suppress : 4101)) // macro
-#define UNUSED __attribute__((unused)) // macro
+} TSCharacterRange;
+struct TSLanguage
+static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
+#define UNUSED __pragma(warning(suppress : 4101))
+#define UNUSED __attribute__((unused))
 #define START_LEXER()           \
   bool result = false;          \
   bool skip = false;            \
@@ -1479,12 +1479,12 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   lexer->advance(lexer, skip);  \
   start:                        \
   skip = false;                 \
-  lookahead = lexer->lookahead; // macro
+  lookahead = lexer->lookahead;
 #define ADVANCE(state_value) \
   {                          \
     state = state_value;     \
     goto next_state;         \
-  } // macro
+  }
 #define ADVANCE_MAP(...)                                              \
   {                                                                   \
     static const uint16_t map[] = { __VA_ARGS__ };                    \
@@ -1494,28 +1494,28 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
         goto next_state;                                              \
       }                                                               \
     }                                                                 \
-  } // macro
+  }
 #define SKIP(state_value) \
   {                       \
     skip = true;          \
     state = state_value;  \
     goto next_state;      \
-  } // macro
+  }
 #define ACCEPT_TOKEN(symbol_value)     \
   result = true;                       \
   lexer->result_symbol = symbol_value; \
-  lexer->mark_end(lexer); // macro
-#define END_STATE() return result; // macro
-#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT) // macro
-#define STATE(id) id // macro
-#define ACTIONS(id) id // macro
+  lexer->mark_end(lexer);
+#define END_STATE() return result;
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)
+#define STATE(id) id
+#define ACTIONS(id) id
 #define SHIFT(state_value)            \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .state = (state_value)          \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_REPEAT(state_value)     \
   {{                                  \
     .shift = {                        \
@@ -1523,14 +1523,14 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
       .state = (state_value),         \
       .repetition = true              \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_EXTRA()                 \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .extra = true                   \
     }                                 \
-  }} // macro
+  }}
 #define REDUCE(symbol_name, children, precedence, prod_id) \
   {{                                                       \
     .reduce = {                                            \
@@ -1540,15 +1540,15 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
       .dynamic_precedence = precedence,                    \
       .production_id = prod_id                             \
     },                                                     \
-  }} // macro
+  }}
 #define RECOVER()                    \
   {{                                 \
     .type = TSParseActionTypeRecover \
-  }} // macro
+  }}
 #define ACCEPT_INPUT()              \
   {{                                \
     .type = TSParseActionTypeAccept \
-  }} // macro
+  }}
 ```
 
 ---
@@ -1560,7 +1560,7 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 - `import "unsafe"`
 
 ```go
-func Language() unsafe.Pointer // function
+func Language() unsafe.Pointer
 ```
 
 ---
@@ -1573,7 +1573,7 @@ func Language() unsafe.Pointer // function
 - `#include <wctype.h>`
 
 ```c
-#define TOKEN_COUNT 33 // macro
+#define TOKEN_COUNT 33
 enum TokenType {
     BLOCK_COMMENT,
     RAW_STR_PART,
@@ -1608,19 +1608,19 @@ enum TokenType {
     DIRECTIVE_ELSE,
     DIRECTIVE_ENDIF,
     FAKE_TRY_BANG
-} // enum
-#define OPERATOR_COUNT 20 // macro
+}
+#define OPERATOR_COUNT 20
 enum IllegalTerminatorGroup {
     ALPHANUMERIC,
     OPERATOR_SYMBOLS,
     OPERATOR_OR_DOT,
     NON_WHITESPACE
-} // enum
-enum IllegalTerminatorGroup // enum
-enum TokenType // enum
-#define RESERVED_OP_COUNT 31 // macro
-static bool is_cross_semi_token(enum TokenType op) // function
-#define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3 // macro
+}
+enum IllegalTerminatorGroup
+enum TokenType
+#define RESERVED_OP_COUNT 31
+static bool is_cross_semi_token(enum TokenType op)
+#define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3
 enum ParseDirective {
     CONTINUE_PARSING_NOTHING_FOUND,
     CONTINUE_PARSING_TOKEN_FOUND,
@@ -1628,72 +1628,72 @@ enum ParseDirective {
     STOP_PARSING_NOTHING_FOUND,
     STOP_PARSING_TOKEN_FOUND,
     STOP_PARSING_END_OF_FILE
-} // enum
+}
 struct ScannerState {
     uint32_t ongoing_raw_str_hash_count;
-} // struct
-void *tree_sitter_swift_external_scanner_create() // function
-struct ScannerState // struct
-void tree_sitter_swift_external_scanner_destroy(void *payload) // function
-void tree_sitter_swift_external_scanner_reset(void *payload) // function
-struct ScannerState // struct
-unsigned tree_sitter_swift_external_scanner_serialize(void *payload, char *buffer) // function
-struct ScannerState // struct
+}
+void *tree_sitter_swift_external_scanner_create()
+struct ScannerState
+void tree_sitter_swift_external_scanner_destroy(void *payload)
+void tree_sitter_swift_external_scanner_reset(void *payload)
+struct ScannerState
+unsigned tree_sitter_swift_external_scanner_serialize(void *payload, char *buffer)
+struct ScannerState
 void tree_sitter_swift_external_scanner_deserialize(
     void *payload,
     const char *buffer,
     unsigned length
-) // function
-struct ScannerState // struct
-static void advance(TSLexer *lexer) // function
-static bool should_treat_as_wspace(int32_t character) // function
-static int32_t encountered_op_count(bool *encountered_operator) // function
-static bool any_reserved_ops(uint8_t *encountered_reserved_ops) // function
+)
+struct ScannerState
+static void advance(TSLexer *lexer)
+static bool should_treat_as_wspace(int32_t character)
+static int32_t encountered_op_count(bool *encountered_operator)
+static bool any_reserved_ops(uint8_t *encountered_reserved_ops)
 static bool is_legal_custom_operator(
     int32_t char_idx,
     int32_t first_char,
     int32_t cur_char
-) // function
+)
 static bool eat_operators(
     TSLexer *lexer,
     const bool *valid_symbols,
     bool mark_end,
     const int32_t prior_char,
     enum TokenType *symbol_result
-) // function
-enum TokenType // enum
-enum IllegalTerminatorGroup // enum
-enum ParseDirective // enum
-enum TokenType // enum
-enum ParseDirective // enum
-enum TokenType // enum
-enum ParseDirective // enum
-enum ParseDirective // enum
-enum TokenType // enum
-enum TokenType // enum
-#define DIRECTIVE_COUNT 4 // macro
-enum TokenType // enum
-enum TokenType // enum
+)
+enum TokenType
+enum IllegalTerminatorGroup
+enum ParseDirective
+enum TokenType
+enum ParseDirective
+enum TokenType
+enum ParseDirective
+enum ParseDirective
+enum TokenType
+enum TokenType
+#define DIRECTIVE_COUNT 4
+enum TokenType
+enum TokenType
 static bool eat_raw_str_part(
     struct ScannerState *state,
     TSLexer *lexer,
     const bool *valid_symbols,
     enum TokenType *symbol_result
-) // function
-struct ScannerState // struct
-enum TokenType // enum
+)
+struct ScannerState
+enum TokenType
 bool tree_sitter_swift_external_scanner_scan(
     void *payload,
     TSLexer *lexer,
     const bool *valid_symbols
-) // function
-struct ScannerState // struct
-enum TokenType // enum
-enum ParseDirective // enum
-enum TokenType // enum
-enum ParseDirective // enum
-enum TokenType // enum
-enum TokenType // enum
+)
+struct ScannerState
+enum TokenType
+enum ParseDirective
+enum TokenType
+enum ParseDirective
+enum TokenType
+enum TokenType
 ```
 
 ---
@@ -1706,15 +1706,15 @@ enum TokenType // enum
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_ALLOC_H_ // macro
-#define ts_malloc  ts_current_malloc // macro
-#define ts_calloc  ts_current_calloc // macro
-#define ts_realloc ts_current_realloc // macro
-#define ts_free    ts_current_free // macro
-#define ts_malloc  malloc // macro
-#define ts_calloc  calloc // macro
-#define ts_realloc realloc // macro
-#define ts_free    free // macro
+#define TREE_SITTER_ALLOC_H_
+#define ts_malloc  ts_current_malloc
+#define ts_calloc  ts_current_calloc
+#define ts_realloc ts_current_realloc
+#define ts_free    ts_current_free
+#define ts_malloc  malloc
+#define ts_calloc  calloc
+#define ts_realloc realloc
+#define ts_free    free
 ```
 
 ---
@@ -1730,83 +1730,83 @@ enum TokenType // enum
 - `#include <string.h>`
 
 ```cpp
-#define TREE_SITTER_ARRAY_H_ // macro
+#define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
     T *contents;       \
     uint32_t size;     \
     uint32_t capacity; \
-  } // macro
+  }
 #define array_init(self) \
-  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL) // macro
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL)
 #define array_new() \
-  { NULL, 0, 0 } // macro
+  { NULL, 0, 0 }
 #define array_get(self, _index) \
-  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index]) // macro
-#define array_front(self) array_get(self, 0) // macro
-#define array_back(self) array_get(self, (self)->size - 1) // macro
-#define array_clear(self) ((self)->size = 0) // macro
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index])
+#define array_front(self) array_get(self, 0)
+#define array_back(self) array_get(self, (self)->size - 1)
+#define array_clear(self) ((self)->size = 0)
 #define array_reserve(self, new_capacity) \
-  _array__reserve((Array *)(self), array_elem_size(self), new_capacity) // macro
-#define array_delete(self) _array__delete((Array *)(self)) // macro
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)
+#define array_delete(self) _array__delete((Array *)(self))
 #define array_push(self, element)                            \
   (_array__grow((Array *)(self), 1, array_elem_size(self)), \
-   (self)->contents[(self)->size++] = (element)) // macro
+   (self)->contents[(self)->size++] = (element))
 #define array_grow_by(self, count) \
   do { \
     if ((count) == 0) break; \
     _array__grow((Array *)(self), count, array_elem_size(self)); \
     memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
     (self)->size += (count); \
-  } while (0) // macro
+  } while (0)
 #define array_push_all(self, other)                                       \
-  array_extend((self), (other)->size, (other)->contents) // macro
+  array_extend((self), (other)->size, (other)->contents)
 #define array_extend(self, count, contents)                    \
   _array__splice(                                               \
     (Array *)(self), array_elem_size(self), (self)->size, \
     0, count,  contents                                        \
-  ) // macro
+  )
 #define array_splice(self, _index, old_count, new_count, new_contents)  \
   _array__splice(                                                       \
     (Array *)(self), array_elem_size(self), _index,                \
     old_count, new_count, new_contents                                 \
-  ) // macro
+  )
 #define array_insert(self, _index, element) \
-  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element)) // macro
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element))
 #define array_erase(self, _index) \
-  _array__erase((Array *)(self), array_elem_size(self), _index) // macro
-#define array_pop(self) ((self)->contents[--(self)->size]) // macro
+  _array__erase((Array *)(self), array_elem_size(self), _index)
+#define array_pop(self) ((self)->contents[--(self)->size])
 #define array_assign(self, other) \
-  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self)) // macro
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))
 #define array_swap(self, other) \
-  _array__swap((Array *)(self), (Array *)(other)) // macro
-#define array_elem_size(self) (sizeof *(self)->contents) // macro
+  _array__swap((Array *)(self), (Array *)(other))
+#define array_elem_size(self) (sizeof *(self)->contents)
 #define array_search_sorted_with(self, compare, needle, _index, _exists) \
-  _array__search_sorted(self, 0, compare, , needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)
 #define array_search_sorted_by(self, field, needle, _index, _exists) \
-  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists) // macro
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)
 #define array_insert_sorted_with(self, compare, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
+  } while (0)
 #define array_insert_sorted_by(self, field, value) \
   do { \
     unsigned _index, _exists; \
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
-  } while (0) // macro
-static inline void _array__delete(Array *self) // function
+  } while (0)
+static inline void _array__delete(Array *self)
 static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index) // function
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity) // function
-static inline void _array__assign(Array *self, const Array *other, size_t element_size) // function
-static inline void _array__swap(Array *self, Array *other) // function
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size) // function
+                                uint32_t index)
+static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
+static inline void _array__assign(Array *self, const Array *other, size_t element_size)
+static inline void _array__swap(Array *self, Array *other)
+static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
 static inline void _array__splice(Array *self, size_t element_size,
                                  uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements) // function
+                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1824,8 +1824,8 @@ static inline void _array__splice(Array *self, size_t element_size,
     comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
     if (comparison == 0) *(_exists) = true; \
     else if (comparison < 0) *(_index) += 1; \
-  } while (0) // macro
-#define _compare_int(a, b) ((int)*(a) - (int)(b)) // macro
+  } while (0)
+#define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
 
 ---
@@ -1838,36 +1838,36 @@ static inline void _array__splice(Array *self, size_t element_size,
 - `#include <stdlib.h>`
 
 ```cpp
-#define TREE_SITTER_PARSER_H_ // macro
-#define ts_builtin_sym_error ((TSSymbol)-1) // macro
-#define ts_builtin_sym_end 0 // macro
-#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024 // macro
-typedef uint16_t TSStateId; // typedef
-typedef uint16_t TSSymbol; // typedef
-typedef uint16_t TSFieldId; // typedef
-struct TSLanguage // struct
+#define TREE_SITTER_PARSER_H_
+#define ts_builtin_sym_error ((TSSymbol)-1)
+#define ts_builtin_sym_end 0
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024
+typedef uint16_t TSStateId;
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+struct TSLanguage
 typedef struct {
   TSFieldId field_id;
   uint8_t child_index;
   bool inherited;
-} TSFieldMapEntry; // typedef
+} TSFieldMapEntry;
 typedef struct {
   uint16_t index;
   uint16_t length;
-} TSFieldMapSlice; // typedef
+} TSFieldMapSlice;
 typedef struct {
   bool visible;
   bool named;
   bool supertype;
-} TSSymbolMetadata; // typedef
-struct TSLexer // struct
-struct TSLexer // struct
+} TSSymbolMetadata;
+struct TSLexer
+struct TSLexer
 typedef enum {
   TSParseActionTypeShift,
   TSParseActionTypeReduce,
   TSParseActionTypeAccept,
   TSParseActionTypeRecover,
-} TSParseActionType; // typedef
+} TSParseActionType;
 typedef union {
   struct {
     uint8_t type;
@@ -1883,26 +1883,26 @@ typedef union {
     uint16_t production_id;
   } reduce;
   uint8_t type;
-} TSParseAction; // typedef
+} TSParseAction;
 typedef struct {
   uint16_t lex_state;
   uint16_t external_lex_state;
-} TSLexMode; // typedef
+} TSLexMode;
 typedef union {
   TSParseAction action;
   struct {
     uint8_t count;
     bool reusable;
   } entry;
-} TSParseActionEntry; // typedef
+} TSParseActionEntry;
 typedef struct {
   int32_t start;
   int32_t end;
-} TSCharacterRange; // typedef
-struct TSLanguage // struct
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead) // function
-#define UNUSED __pragma(warning(suppress : 4101)) // macro
-#define UNUSED __attribute__((unused)) // macro
+} TSCharacterRange;
+struct TSLanguage
+static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
+#define UNUSED __pragma(warning(suppress : 4101))
+#define UNUSED __attribute__((unused))
 #define START_LEXER()           \
   bool result = false;          \
   bool skip = false;            \
@@ -1914,12 +1914,12 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   lexer->advance(lexer, skip);  \
   start:                        \
   skip = false;                 \
-  lookahead = lexer->lookahead; // macro
+  lookahead = lexer->lookahead;
 #define ADVANCE(state_value) \
   {                          \
     state = state_value;     \
     goto next_state;         \
-  } // macro
+  }
 #define ADVANCE_MAP(...)                                              \
   {                                                                   \
     static const uint16_t map[] = { __VA_ARGS__ };                    \
@@ -1929,28 +1929,28 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
         goto next_state;                                              \
       }                                                               \
     }                                                                 \
-  } // macro
+  }
 #define SKIP(state_value) \
   {                       \
     skip = true;          \
     state = state_value;  \
     goto next_state;      \
-  } // macro
+  }
 #define ACCEPT_TOKEN(symbol_value)     \
   result = true;                       \
   lexer->result_symbol = symbol_value; \
-  lexer->mark_end(lexer); // macro
-#define END_STATE() return result; // macro
-#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT) // macro
-#define STATE(id) id // macro
-#define ACTIONS(id) id // macro
+  lexer->mark_end(lexer);
+#define END_STATE() return result;
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)
+#define STATE(id) id
+#define ACTIONS(id) id
 #define SHIFT(state_value)            \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .state = (state_value)          \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_REPEAT(state_value)     \
   {{                                  \
     .shift = {                        \
@@ -1958,14 +1958,14 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
       .state = (state_value),         \
       .repetition = true              \
     }                                 \
-  }} // macro
+  }}
 #define SHIFT_EXTRA()                 \
   {{                                  \
     .shift = {                        \
       .type = TSParseActionTypeShift, \
       .extra = true                   \
     }                                 \
-  }} // macro
+  }}
 #define REDUCE(symbol_name, children, precedence, prod_id) \
   {{                                                       \
     .reduce = {                                            \
@@ -1975,15 +1975,15 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
       .dynamic_precedence = precedence,                    \
       .production_id = prod_id                             \
     },                                                     \
-  }} // macro
+  }}
 #define RECOVER()                    \
   {{                                 \
     .type = TSParseActionTypeRecover \
-  }} // macro
+  }}
 #define ACCEPT_INPUT()              \
   {{                                \
     .type = TSParseActionTypeAccept \
-  }} // macro
+  }}
 ```
 
 ---
@@ -1998,17 +1998,17 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 type CQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewCQuery() *CQuery // function
-func (q *CQuery) Language() *sitter.Language // method
-func (q *CQuery) Query() []byte // method
-func (q *CQuery) Captures() []string // method
-func (q *CQuery) KindMapping() map[string]string // method
-func (q *CQuery) ImportQuery() []byte // method
+}
+func NewCQuery() *CQuery
+func (q *CQuery) Language() *sitter.Language
+func (q *CQuery) Query() []byte
+func (q *CQuery) Captures() []string
+func (q *CQuery) KindMapping() map[string]string
+func (q *CQuery) ImportQuery() []byte
 cImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
-` // variable
+`
 cQueryPattern = `
 ; Function definitions - direct declarator
 (function_definition
@@ -2105,7 +2105,7 @@ cQueryPattern = `
 
 ; Comments
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2118,15 +2118,15 @@ cQueryPattern = `
 - `import tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"`
 
 ```go
-func TestCQueryLanguage(t *testing.T) // function
-func TestCQueryPattern(t *testing.T) // function
-func TestCQueryExtractFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-func TestCQueryExtractStruct(t *testing.T) // function
-func TestCQueryExtractMacro(t *testing.T) // function
-func TestCQueryExtractEnum(t *testing.T) // function
-func TestCQueryExtractTypedef(t *testing.T) // function
-func TestCQueryExtractGlobalVariables(t *testing.T) // function
+func TestCQueryLanguage(t *testing.T)
+func TestCQueryPattern(t *testing.T)
+func TestCQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+func TestCQueryExtractStruct(t *testing.T)
+func TestCQueryExtractMacro(t *testing.T)
+func TestCQueryExtractEnum(t *testing.T)
+func TestCQueryExtractTypedef(t *testing.T)
+func TestCQueryExtractGlobalVariables(t *testing.T)
 ```
 
 ---
@@ -2141,17 +2141,17 @@ func TestCQueryExtractGlobalVariables(t *testing.T) // function
 type CppQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewCppQuery() *CppQuery // function
-func (q *CppQuery) Language() *sitter.Language // method
-func (q *CppQuery) Query() []byte // method
-func (q *CppQuery) Captures() []string // method
-func (q *CppQuery) KindMapping() map[string]string // method
-func (q *CppQuery) ImportQuery() []byte // method
+}
+func NewCppQuery() *CppQuery
+func (q *CppQuery) Language() *sitter.Language
+func (q *CppQuery) Query() []byte
+func (q *CppQuery) Captures() []string
+func (q *CppQuery) KindMapping() map[string]string
+func (q *CppQuery) ImportQuery() []byte
 cppImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
-` // variable
+`
 cppQueryPattern = `
 ; Function definitions - direct declarator
 (function_definition
@@ -2326,7 +2326,7 @@ cppQueryPattern = `
 
 ; Comments
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2339,29 +2339,29 @@ cppQueryPattern = `
 - `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
 
 ```go
-func TestCppQueryLanguage(t *testing.T) // function
-func TestCppQueryPattern(t *testing.T) // function
-func TestCppQueryExtractFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-func TestCppQueryExtractClass(t *testing.T) // function
-func TestCppQueryExtractMethod(t *testing.T) // function
-func TestCppQueryExtractConstructorDestructor(t *testing.T) // function
-func TestCppQueryExtractNamespace(t *testing.T) // function
-func TestCppQueryExtractTemplate(t *testing.T) // function
-func TestCppQueryExtractStruct(t *testing.T) // function
-func TestCppQueryExtractEnum(t *testing.T) // function
-func TestCppQueryExtractMacro(t *testing.T) // function
-func TestCppQueryExtractTypedef(t *testing.T) // function
-func TestCppQueryExtractIncludes(t *testing.T) // function
-imports []string // variable
-func TestCppQueryNestedNamespaces(t *testing.T) // function
-func TestCppQueryMultipleInheritance(t *testing.T) // function
-func TestCppQueryEmptyFile(t *testing.T) // function
-func TestCppQueryOnlyComments(t *testing.T) // function
-nameCount int // variable
-docCount int // variable
-func TestCppQueryKindMapping(t *testing.T) // function
-func TestCppQueryCaptures(t *testing.T) // function
+func TestCppQueryLanguage(t *testing.T)
+func TestCppQueryPattern(t *testing.T)
+func TestCppQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+func TestCppQueryExtractClass(t *testing.T)
+func TestCppQueryExtractMethod(t *testing.T)
+func TestCppQueryExtractConstructorDestructor(t *testing.T)
+func TestCppQueryExtractNamespace(t *testing.T)
+func TestCppQueryExtractTemplate(t *testing.T)
+func TestCppQueryExtractStruct(t *testing.T)
+func TestCppQueryExtractEnum(t *testing.T)
+func TestCppQueryExtractMacro(t *testing.T)
+func TestCppQueryExtractTypedef(t *testing.T)
+func TestCppQueryExtractIncludes(t *testing.T)
+imports []string
+func TestCppQueryNestedNamespaces(t *testing.T)
+func TestCppQueryMultipleInheritance(t *testing.T)
+func TestCppQueryEmptyFile(t *testing.T)
+func TestCppQueryOnlyComments(t *testing.T)
+nameCount int
+docCount int
+func TestCppQueryKindMapping(t *testing.T)
+func TestCppQueryCaptures(t *testing.T)
 ```
 
 ---
@@ -2376,17 +2376,17 @@ func TestCppQueryCaptures(t *testing.T) // function
 type CSharpQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewCSharpQuery() *CSharpQuery // function
-func (q *CSharpQuery) Language() *sitter.Language // method
-func (q *CSharpQuery) Query() []byte // method
-func (q *CSharpQuery) Captures() []string // method
-func (q *CSharpQuery) KindMapping() map[string]string // method
-func (q *CSharpQuery) ImportQuery() []byte // method
+}
+func NewCSharpQuery() *CSharpQuery
+func (q *CSharpQuery) Language() *sitter.Language
+func (q *CSharpQuery) Query() []byte
+func (q *CSharpQuery) Captures() []string
+func (q *CSharpQuery) KindMapping() map[string]string
+func (q *CSharpQuery) ImportQuery() []byte
 csharpImportQueryPattern = `
 ; using directives (capture full declaration)
 (using_directive) @import_path
-` // variable
+`
 csharpQueryPattern = `
 ; Class declarations
 (class_declaration
@@ -2487,7 +2487,7 @@ csharpQueryPattern = `
 
 ; Comments (XML doc comments and regular)
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2500,24 +2500,24 @@ csharpQueryPattern = `
 - `import tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"`
 
 ```go
-func extractCSharpNames(t *testing.T, code []byte) map[string]bool // function
-func TestCSharpQueryLanguage(t *testing.T) // function
-func TestCSharpQueryPattern(t *testing.T) // function
-func TestCSharpQueryImportPattern(t *testing.T) // function
-func TestCSharpQueryExtractFunction(t *testing.T) // function
-func TestCSharpQueryExtractTypes(t *testing.T) // function
-func TestCSharpQueryExtractConstructorDestructor(t *testing.T) // function
-func TestCSharpQueryExtractProperties(t *testing.T) // function
-func TestCSharpQueryExtractFields(t *testing.T) // function
-func TestCSharpQueryExtractEvents(t *testing.T) // function
-func TestCSharpQueryExtractOperators(t *testing.T) // function
-foundOperator, foundConversion, foundIndexer bool // variable
-func TestCSharpQueryExtractImport(t *testing.T) // function
-func TestCSharpQueryExtractGenerics(t *testing.T) // function
-func TestCSharpQueryKindMapping(t *testing.T) // function
-func TestCSharpQueryCaptures(t *testing.T) // function
-func TestCSharpQueryExtractNamespace(t *testing.T) // function
-func TestCSharpQueryExtractRecords(t *testing.T) // function
+func extractCSharpNames(t *testing.T, code []byte) map[string]bool
+func TestCSharpQueryLanguage(t *testing.T)
+func TestCSharpQueryPattern(t *testing.T)
+func TestCSharpQueryImportPattern(t *testing.T)
+func TestCSharpQueryExtractFunction(t *testing.T)
+func TestCSharpQueryExtractTypes(t *testing.T)
+func TestCSharpQueryExtractConstructorDestructor(t *testing.T)
+func TestCSharpQueryExtractProperties(t *testing.T)
+func TestCSharpQueryExtractFields(t *testing.T)
+func TestCSharpQueryExtractEvents(t *testing.T)
+func TestCSharpQueryExtractOperators(t *testing.T)
+foundOperator, foundConversion, foundIndexer bool
+func TestCSharpQueryExtractImport(t *testing.T)
+func TestCSharpQueryExtractGenerics(t *testing.T)
+func TestCSharpQueryKindMapping(t *testing.T)
+func TestCSharpQueryCaptures(t *testing.T)
+func TestCSharpQueryExtractNamespace(t *testing.T)
+func TestCSharpQueryExtractRecords(t *testing.T)
 ```
 
 ---
@@ -2529,20 +2529,20 @@ func TestCSharpQueryExtractRecords(t *testing.T) // function
 - `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
 
 ```go
-captureName      = "name" // variable
-captureSignature = "signature" // variable
-captureDoc       = "doc" // variable
-captureKind      = "kind" // variable
+captureName      = "name"
+captureSignature = "signature"
+captureDoc       = "doc"
+captureKind      = "kind"
 type GoQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewGoQuery() *GoQuery // function
-func (q *GoQuery) Language() *sitter.Language // method
-func (q *GoQuery) Query() []byte // method
-func (q *GoQuery) Captures() []string // method
-func (q *GoQuery) KindMapping() map[string]string // method
-func (q *GoQuery) ImportQuery() []byte // method
+}
+func NewGoQuery() *GoQuery
+func (q *GoQuery) Language() *sitter.Language
+func (q *GoQuery) Query() []byte
+func (q *GoQuery) Captures() []string
+func (q *GoQuery) KindMapping() map[string]string
+func (q *GoQuery) ImportQuery() []byte
 goImportQueryPattern = `
 ; Single import (capture full spec including alias)
 (import_declaration
@@ -2555,7 +2555,7 @@ goImportQueryPattern = `
     (import_spec) @import_path
   )
 )
-` // variable
+`
 goQueryPattern = `
 ; Function declarations
 (function_declaration
@@ -2586,7 +2586,7 @@ goQueryPattern = `
 
 ; Comments (documentation)
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2599,13 +2599,13 @@ goQueryPattern = `
 - `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
 
 ```go
-func TestGoQueryLanguage(t *testing.T) // function
-func TestGoQueryPattern(t *testing.T) // function
-func TestGoQueryExtractFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-funcKindNode *sitter.Node // variable
-kindNode *sitter.Node // variable
-func TestGoQueryExtractConstAndVar(t *testing.T) // function
+func TestGoQueryLanguage(t *testing.T)
+func TestGoQueryPattern(t *testing.T)
+func TestGoQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+funcKindNode *sitter.Node
+kindNode *sitter.Node
+func TestGoQueryExtractConstAndVar(t *testing.T)
 ```
 
 ---
@@ -2620,17 +2620,17 @@ func TestGoQueryExtractConstAndVar(t *testing.T) // function
 type JavaQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewJavaQuery() *JavaQuery // function
-func (q *JavaQuery) Language() *sitter.Language // method
-func (q *JavaQuery) Query() []byte // method
-func (q *JavaQuery) Captures() []string // method
-func (q *JavaQuery) KindMapping() map[string]string // method
-func (q *JavaQuery) ImportQuery() []byte // method
+}
+func NewJavaQuery() *JavaQuery
+func (q *JavaQuery) Language() *sitter.Language
+func (q *JavaQuery) Query() []byte
+func (q *JavaQuery) Captures() []string
+func (q *JavaQuery) KindMapping() map[string]string
+func (q *JavaQuery) ImportQuery() []byte
 javaImportQueryPattern = `
 ; import statements (capture full declaration)
 (import_declaration) @import_path
-` // variable
+`
 javaQueryPattern = `
 ; Class declarations (includes inner classes)
 (class_declaration
@@ -2677,7 +2677,7 @@ javaQueryPattern = `
 ; Comments (Javadoc and regular)
 (line_comment) @doc
 (block_comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2690,19 +2690,19 @@ javaQueryPattern = `
 - `import tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"`
 
 ```go
-func TestJavaQueryLanguage(t *testing.T) // function
-func TestJavaQueryPattern(t *testing.T) // function
-func TestJavaQueryKindMapping(t *testing.T) // function
-func TestJavaQueryExtractClass(t *testing.T) // function
-foundClass, foundMethod bool // variable
-func TestJavaQueryExtractInterface(t *testing.T) // function
-func TestJavaQueryExtractEnum(t *testing.T) // function
-foundEnum bool // variable
-func TestJavaQueryExtractAnnotationType(t *testing.T) // function
-foundAnnotation bool // variable
-func TestJavaQueryExtractRecord(t *testing.T) // function
-func TestJavaQueryExtractGenerics(t *testing.T) // function
-func TestJavaQueryExtractFieldDeclarations(t *testing.T) // function
+func TestJavaQueryLanguage(t *testing.T)
+func TestJavaQueryPattern(t *testing.T)
+func TestJavaQueryKindMapping(t *testing.T)
+func TestJavaQueryExtractClass(t *testing.T)
+foundClass, foundMethod bool
+func TestJavaQueryExtractInterface(t *testing.T)
+func TestJavaQueryExtractEnum(t *testing.T)
+foundEnum bool
+func TestJavaQueryExtractAnnotationType(t *testing.T)
+foundAnnotation bool
+func TestJavaQueryExtractRecord(t *testing.T)
+func TestJavaQueryExtractGenerics(t *testing.T)
+func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 ```
 
 ---
@@ -2717,17 +2717,17 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T) // function
 type KotlinQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewKotlinQuery() *KotlinQuery // function
-func (q *KotlinQuery) Language() *sitter.Language // method
-func (q *KotlinQuery) Query() []byte // method
-func (q *KotlinQuery) Captures() []string // method
-func (q *KotlinQuery) KindMapping() map[string]string // method
-func (q *KotlinQuery) ImportQuery() []byte // method
+}
+func NewKotlinQuery() *KotlinQuery
+func (q *KotlinQuery) Language() *sitter.Language
+func (q *KotlinQuery) Query() []byte
+func (q *KotlinQuery) Captures() []string
+func (q *KotlinQuery) KindMapping() map[string]string
+func (q *KotlinQuery) ImportQuery() []byte
 kotlinImportQueryPattern = `
 ; Import statements
 (import_header) @import_path
-` // variable
+`
 kotlinQueryPattern = `
 ; Function declarations (regular, suspend, inline, extension, operator, infix, tailrec)
 (function_declaration
@@ -2774,7 +2774,7 @@ kotlinQueryPattern = `
 
 ; Block/multiline comments
 (multiline_comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2787,21 +2787,21 @@ kotlinQueryPattern = `
 - `import tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"`
 
 ```go
-func extractKotlinNames(t *testing.T, code []byte) map[string]bool // function
-func TestKotlinQueryLanguage(t *testing.T) // function
-func TestKotlinQueryPattern(t *testing.T) // function
-func TestKotlinQueryImportPattern(t *testing.T) // function
-func TestKotlinQueryExtractFunction(t *testing.T) // function
-func TestKotlinQueryExtractTypes(t *testing.T) // function
-func TestKotlinQueryExtractInterface(t *testing.T) // function
-func TestKotlinQueryExtractObject(t *testing.T) // function
-func TestKotlinQueryExtractProperties(t *testing.T) // function
-func TestKotlinQueryExtractTypeAlias(t *testing.T) // function
-func TestKotlinQueryExtractEnumEntry(t *testing.T) // function
-func TestKotlinQueryExtractImport(t *testing.T) // function
-func TestKotlinQueryExtractGenerics(t *testing.T) // function
-func TestKotlinQueryKindMapping(t *testing.T) // function
-func TestKotlinQueryCaptures(t *testing.T) // function
+func extractKotlinNames(t *testing.T, code []byte) map[string]bool
+func TestKotlinQueryLanguage(t *testing.T)
+func TestKotlinQueryPattern(t *testing.T)
+func TestKotlinQueryImportPattern(t *testing.T)
+func TestKotlinQueryExtractFunction(t *testing.T)
+func TestKotlinQueryExtractTypes(t *testing.T)
+func TestKotlinQueryExtractInterface(t *testing.T)
+func TestKotlinQueryExtractObject(t *testing.T)
+func TestKotlinQueryExtractProperties(t *testing.T)
+func TestKotlinQueryExtractTypeAlias(t *testing.T)
+func TestKotlinQueryExtractEnumEntry(t *testing.T)
+func TestKotlinQueryExtractImport(t *testing.T)
+func TestKotlinQueryExtractGenerics(t *testing.T)
+func TestKotlinQueryKindMapping(t *testing.T)
+func TestKotlinQueryCaptures(t *testing.T)
 ```
 
 ---
@@ -2816,20 +2816,20 @@ func TestKotlinQueryCaptures(t *testing.T) // function
 type PythonQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewPythonQuery() *PythonQuery // function
-func (q *PythonQuery) Language() *sitter.Language // method
-func (q *PythonQuery) Query() []byte // method
-func (q *PythonQuery) Captures() []string // method
-func (q *PythonQuery) KindMapping() map[string]string // method
-func (q *PythonQuery) ImportQuery() []byte // method
+}
+func NewPythonQuery() *PythonQuery
+func (q *PythonQuery) Language() *sitter.Language
+func (q *PythonQuery) Query() []byte
+func (q *PythonQuery) Captures() []string
+func (q *PythonQuery) KindMapping() map[string]string
+func (q *PythonQuery) ImportQuery() []byte
 pythonImportQueryPattern = `
 ; import module (capture full statement)
 (import_statement) @import_path
 
 ; from module import ... (capture full statement)
 (import_from_statement) @import_path
-` // variable
+`
 pythonQueryPattern = `
 ; Function definitions (includes async def, methods)
 (function_definition
@@ -2852,7 +2852,7 @@ pythonQueryPattern = `
 
 ; Comments
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -2865,14 +2865,14 @@ pythonQueryPattern = `
 - `import tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"`
 
 ```go
-func TestPythonQueryLanguage(t *testing.T) // function
-func TestPythonQueryPattern(t *testing.T) // function
-func TestPythonQueryExtractFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-func TestPythonQueryExtractClass(t *testing.T) // function
-func TestPythonQueryExtractAsyncFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-func TestPythonQueryExtractModuleLevelVariables(t *testing.T) // function
+func TestPythonQueryLanguage(t *testing.T)
+func TestPythonQueryPattern(t *testing.T)
+func TestPythonQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+func TestPythonQueryExtractClass(t *testing.T)
+func TestPythonQueryExtractAsyncFunction(t *testing.T)
+funcCaptures map[string]string
+func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
 ---
@@ -2887,20 +2887,20 @@ func TestPythonQueryExtractModuleLevelVariables(t *testing.T) // function
 type RustQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewRustQuery() *RustQuery // function
-func (q *RustQuery) Language() *sitter.Language // method
-func (q *RustQuery) Query() []byte // method
-func (q *RustQuery) Captures() []string // method
-func (q *RustQuery) KindMapping() map[string]string // method
-func (q *RustQuery) ImportQuery() []byte // method
+}
+func NewRustQuery() *RustQuery
+func (q *RustQuery) Language() *sitter.Language
+func (q *RustQuery) Query() []byte
+func (q *RustQuery) Captures() []string
+func (q *RustQuery) KindMapping() map[string]string
+func (q *RustQuery) ImportQuery() []byte
 rustImportQueryPattern = `
 ; Use declarations (capture full statement)
 (use_declaration) @import_path
 
 ; Extern crate declarations
 (extern_crate_declaration) @import_path
-` // variable
+`
 rustQueryPattern = `
 ; Functions (including async, unsafe, const, extern)
 (function_item
@@ -2988,7 +2988,7 @@ rustQueryPattern = `
 
 ; Block doc comments (/** and /*!)
 (block_comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -3001,20 +3001,20 @@ rustQueryPattern = `
 - `import tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"`
 
 ```go
-func TestRustQueryLanguage(t *testing.T) // function
-func TestRustQueryPattern(t *testing.T) // function
-func TestRustQueryImportPattern(t *testing.T) // function
-func TestRustQueryExtractFunction(t *testing.T) // function
-func TestRustQueryExtractTypes(t *testing.T) // function
-func TestRustQueryExtractImplAndMethods(t *testing.T) // function
-func TestRustQueryExtractConstAndStatic(t *testing.T) // function
-func TestRustQueryExtractMacro(t *testing.T) // function
-func TestRustQueryExtractModule(t *testing.T) // function
-func TestRustQueryExtractUse(t *testing.T) // function
-func TestRustQueryExtractGenericsAndLifetimes(t *testing.T) // function
-func TestRustQueryEmptyFile(t *testing.T) // function
-func TestRustQueryKindMapping(t *testing.T) // function
-func TestRustQueryCaptures(t *testing.T) // function
+func TestRustQueryLanguage(t *testing.T)
+func TestRustQueryPattern(t *testing.T)
+func TestRustQueryImportPattern(t *testing.T)
+func TestRustQueryExtractFunction(t *testing.T)
+func TestRustQueryExtractTypes(t *testing.T)
+func TestRustQueryExtractImplAndMethods(t *testing.T)
+func TestRustQueryExtractConstAndStatic(t *testing.T)
+func TestRustQueryExtractMacro(t *testing.T)
+func TestRustQueryExtractModule(t *testing.T)
+func TestRustQueryExtractUse(t *testing.T)
+func TestRustQueryExtractGenericsAndLifetimes(t *testing.T)
+func TestRustQueryEmptyFile(t *testing.T)
+func TestRustQueryKindMapping(t *testing.T)
+func TestRustQueryCaptures(t *testing.T)
 ```
 
 ---
@@ -3029,17 +3029,17 @@ func TestRustQueryCaptures(t *testing.T) // function
 type SwiftQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewSwiftQuery() *SwiftQuery // function
-func (q *SwiftQuery) Language() *sitter.Language // method
-func (q *SwiftQuery) Query() []byte // method
-func (q *SwiftQuery) Captures() []string // method
-func (q *SwiftQuery) KindMapping() map[string]string // method
-func (q *SwiftQuery) ImportQuery() []byte // method
+}
+func NewSwiftQuery() *SwiftQuery
+func (q *SwiftQuery) Language() *sitter.Language
+func (q *SwiftQuery) Query() []byte
+func (q *SwiftQuery) Captures() []string
+func (q *SwiftQuery) KindMapping() map[string]string
+func (q *SwiftQuery) ImportQuery() []byte
 swiftImportQueryPattern = `
 ; Import declarations (capture full statement)
 (import_declaration) @import_path
-` // variable
+`
 swiftQueryPattern = `
 ; Functions
 (function_declaration
@@ -3099,7 +3099,7 @@ swiftQueryPattern = `
 
 ; Multiline comments (/** style)
 (multiline_comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -3112,20 +3112,20 @@ swiftQueryPattern = `
 - `import tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"`
 
 ```go
-func TestSwiftQueryLanguage(t *testing.T) // function
-func TestSwiftQueryPattern(t *testing.T) // function
-func TestSwiftQueryImportPattern(t *testing.T) // function
-func TestSwiftQueryExtractFunction(t *testing.T) // function
-func TestSwiftQueryExtractTypes(t *testing.T) // function
-func TestSwiftQueryExtractProtocol(t *testing.T) // function
-func TestSwiftQueryExtractExtension(t *testing.T) // function
-func TestSwiftQueryExtractProperties(t *testing.T) // function
-func TestSwiftQueryExtractInitDeinit(t *testing.T) // function
-func TestSwiftQueryExtractSubscript(t *testing.T) // function
-func TestSwiftQueryExtractImport(t *testing.T) // function
-func TestSwiftQueryExtractGenerics(t *testing.T) // function
-func TestSwiftQueryKindMapping(t *testing.T) // function
-func TestSwiftQueryCaptures(t *testing.T) // function
+func TestSwiftQueryLanguage(t *testing.T)
+func TestSwiftQueryPattern(t *testing.T)
+func TestSwiftQueryImportPattern(t *testing.T)
+func TestSwiftQueryExtractFunction(t *testing.T)
+func TestSwiftQueryExtractTypes(t *testing.T)
+func TestSwiftQueryExtractProtocol(t *testing.T)
+func TestSwiftQueryExtractExtension(t *testing.T)
+func TestSwiftQueryExtractProperties(t *testing.T)
+func TestSwiftQueryExtractInitDeinit(t *testing.T)
+func TestSwiftQueryExtractSubscript(t *testing.T)
+func TestSwiftQueryExtractImport(t *testing.T)
+func TestSwiftQueryExtractGenerics(t *testing.T)
+func TestSwiftQueryKindMapping(t *testing.T)
+func TestSwiftQueryCaptures(t *testing.T)
 ```
 
 ---
@@ -3140,13 +3140,13 @@ func TestSwiftQueryCaptures(t *testing.T) // function
 type TypeScriptQuery struct {
 	language *sitter.Language
 	query    []byte
-} // type
-func NewTypeScriptQuery() *TypeScriptQuery // function
-func (q *TypeScriptQuery) Language() *sitter.Language // method
-func (q *TypeScriptQuery) Query() []byte // method
-func (q *TypeScriptQuery) Captures() []string // method
-func (q *TypeScriptQuery) KindMapping() map[string]string // method
-func (q *TypeScriptQuery) ImportQuery() []byte // method
+}
+func NewTypeScriptQuery() *TypeScriptQuery
+func (q *TypeScriptQuery) Language() *sitter.Language
+func (q *TypeScriptQuery) Query() []byte
+func (q *TypeScriptQuery) Captures() []string
+func (q *TypeScriptQuery) KindMapping() map[string]string
+func (q *TypeScriptQuery) ImportQuery() []byte
 typeScriptImportQueryPattern = `
 ; Import statements (capture full statement)
 (import_statement) @import_path
@@ -3171,7 +3171,7 @@ typeScriptImportQueryPattern = `
     )
   )
 )
-` // variable
+`
 typeScriptQueryPattern = `
 ; Function declarations
 (function_declaration
@@ -3260,7 +3260,7 @@ typeScriptQueryPattern = `
 
 ; Comments (documentation)
 (comment) @doc
-` // variable
+`
 ```
 
 ---
@@ -3273,11 +3273,11 @@ typeScriptQueryPattern = `
 - `import tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"`
 
 ```go
-func TestTypeScriptQueryLanguage(t *testing.T) // function
-func TestTypeScriptQueryPattern(t *testing.T) // function
-func TestTypeScriptQueryExtractFunction(t *testing.T) // function
-funcCaptures map[string]string // variable
-func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T) // function
+func TestTypeScriptQueryLanguage(t *testing.T)
+func TestTypeScriptQueryPattern(t *testing.T)
+func TestTypeScriptQueryExtractFunction(t *testing.T)
+funcCaptures map[string]string
+func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
 ---
@@ -3293,65 +3293,65 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T) // function
 - `import "github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"`
 
 ```go
-func init() // function
+func init()
 type TreeSitterParser struct {
 	queries map[string]LanguageQuery
-} // type
-func NewTreeSitterParser() *TreeSitterParser // function
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error) // method
-imports []parser.ImportExport // variable
-func (p *TreeSitterParser) Languages() []string // method
+}
+func NewTreeSitterParser() *TreeSitterParser
+func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error)
+imports []parser.ImportExport
+func (p *TreeSitterParser) Languages() []string
 func (p *TreeSitterParser) extractSignatures(
 	root *sitter.Node,
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) ([]parser.Signature, error) // method
-signatures []parser.Signature // variable
-kindNode *sitter.Node // variable
-func cleanComment(text string) string // function
-func isExported(name, language string) bool // function
-func stripBody(text, kind, language string) string // function
-func stripGoBody(text, kind string) string // function
-tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`) // variable
-tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`) // variable
-tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`) // variable
-func stripTypeScriptBody(text, kind string) string // function
-func stripTSFunctionBody(text string) string // function
-func findFunctionBodyStart(text string) int // function
-func findTSClassBodyStart(text string) int // function
-func stripPythonBody(text, kind string) string // function
-func findPythonBodyStart(text string) int // function
-func stripCBody(text, kind string) string // function
-func stripCppBody(text, kind string) string // function
-func findCppBodyStart(text string) int // function
-func isPythonMethod(signature string) bool // function
-func stripJavaBody(text, kind string) string // function
-func findJavaBodyStart(text string) int // function
-func stripRustBody(text, kind string) string // function
-func findRustBodyStart(text string) int // function
-func refineSwiftClassKind(text string) string // function
-func stripSwiftBody(text, kind string) string // function
-func findSwiftBodyStart(text string) int // function
-func stripKotlinBody(text, kind string) string // function
-func findKotlinBodyStart(text string) int // function
-func refineKotlinClassKind(text string) string // function
-func stripCSharpBody(text, kind string) string // function
-func findCSharpBodyStart(text string) int // function
-func isExpressionBodied(text string) bool // function
-func findCSharpArrowIndex(text string) int // function
-func extractCSharpOperatorName(text string) string // function
-func extractCSharpConversionOperatorName(text string) string // function
+) ([]parser.Signature, error)
+signatures []parser.Signature
+kindNode *sitter.Node
+func cleanComment(text string) string
+func isExported(name, language string) bool
+func stripBody(text, kind, language string) string
+func stripGoBody(text, kind string) string
+tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
+tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
+func stripTypeScriptBody(text, kind string) string
+func stripTSFunctionBody(text string) string
+func findFunctionBodyStart(text string) int
+func findTSClassBodyStart(text string) int
+func stripPythonBody(text, kind string) string
+func findPythonBodyStart(text string) int
+func stripCBody(text, kind string) string
+func stripCppBody(text, kind string) string
+func findCppBodyStart(text string) int
+func isPythonMethod(signature string) bool
+func stripJavaBody(text, kind string) string
+func findJavaBodyStart(text string) int
+func stripRustBody(text, kind string) string
+func findRustBodyStart(text string) int
+func refineSwiftClassKind(text string) string
+func stripSwiftBody(text, kind string) string
+func findSwiftBodyStart(text string) int
+func stripKotlinBody(text, kind string) string
+func findKotlinBodyStart(text string) int
+func refineKotlinClassKind(text string) string
+func stripCSharpBody(text, kind string) string
+func findCSharpBodyStart(text string) int
+func isExpressionBodied(text string) bool
+func findCSharpArrowIndex(text string) int
+func extractCSharpOperatorName(text string) string
+func extractCSharpConversionOperatorName(text string) string
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) ([]parser.ImportExport, error) // method
-imports []parser.ImportExport // variable
-imp parser.ImportExport // variable
-hasExportType bool // variable
-func cleanImportPath(path string) string // function
+) ([]parser.ImportExport, error)
+imports []parser.ImportExport
+imp parser.ImportExport
+hasExportType bool
+func cleanImportPath(path string) string
 ```
 
 ---
@@ -3364,66 +3364,66 @@ func cleanImportPath(path string) string // function
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 
 ```go
-func TestTreeSitterParserImplementsParser(t *testing.T) // function
-_ parser.Parser = (*TreeSitterParser)(nil) // variable
-func TestTreeSitterParserLanguages(t *testing.T) // function
-func TestTreeSitterParserParseGo(t *testing.T) // function
-foundAdd bool // variable
-func TestTreeSitterParserParseTypeScript(t *testing.T) // function
-foundAdd bool // variable
-func TestTreeSitterParserUnsupportedLanguage(t *testing.T) // function
-func TestTreeSitterParserAutoRegistration(t *testing.T) // function
-func TestGoSignatureOnlyExtraction(t *testing.T) // function
-func TestGoIncludeBodyExtraction(t *testing.T) // function
-foundAdd bool // variable
-func TestTypeScriptSignatureOnlyExtraction(t *testing.T) // function
-func TestTypeScriptArrowFunctionSignature(t *testing.T) // function
-func contains(s, substr string) bool // function
-func TestTreeSitterParserParseJava(t *testing.T) // function
-foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool // variable
-func TestJavaSignatureOnlyExtraction(t *testing.T) // function
-func TestJavaGenericsExtraction(t *testing.T) // function
-foundClass, foundMethod bool // variable
-func TestJavaAutoRegistration(t *testing.T) // function
-func TestTreeSitterParserParseCpp(t *testing.T) // function
-func TestCppSignatureOnlyExtraction(t *testing.T) // function
-func TestCppTemplateExtraction(t *testing.T) // function
-func TestCppAutoRegistration(t *testing.T) // function
-func TestCppImportExtraction(t *testing.T) // function
-func TestGoVariableExtraction(t *testing.T) // function
-func TestTypeScriptVariableExtraction(t *testing.T) // function
-func TestPythonVariableExtraction(t *testing.T) // function
-func TestJavaStaticFieldExtraction(t *testing.T) // function
-func TestCGlobalVariableExtraction(t *testing.T) // function
-func TestVariableSignaturePreservesValue(t *testing.T) // function
-func TestTreeSitterParserParseRust(t *testing.T) // function
-func TestRustSignatureOnlyExtraction(t *testing.T) // function
-func TestRustImportExtraction(t *testing.T) // function
-func TestRustAutoRegistration(t *testing.T) // function
-func TestRustConstAndStaticExtraction(t *testing.T) // function
-func TestRustMacroExtraction(t *testing.T) // function
-func TestRustGenericsAndLifetimes(t *testing.T) // function
-func TestTreeSitterParserParseSwift(t *testing.T) // function
-func TestTreeSitterParserParseKotlin(t *testing.T) // function
-func TestKotlinBodyStripping(t *testing.T) // function
-func TestRefineKotlinClassKind(t *testing.T) // function
-func TestKotlinAutoRegistration(t *testing.T) // function
-func TestKotlinSignatureOnlyExtraction(t *testing.T) // function
-func TestKotlinImportExtraction(t *testing.T) // function
-func TestParsePanicRecovery(t *testing.T) // function
-func TestTreeSitterParserParseCSharp(t *testing.T) // function
-func TestCSharpSignatureOnlyExtraction(t *testing.T) // function
-func TestCSharpOperatorNameSynthesis(t *testing.T) // function
-func TestCSharpStaticFieldExtraction(t *testing.T) // function
-func TestCSharpImportExtraction(t *testing.T) // function
-func TestCSharpAutoRegistration(t *testing.T) // function
-func TestCSharpBodyStripping(t *testing.T) // function
-func TestFindCSharpBodyStart(t *testing.T) // function
-func TestIsExpressionBodied(t *testing.T) // function
-func TestExtractCSharpOperatorName(t *testing.T) // function
-func TestExtractCSharpConversionOperatorName(t *testing.T) // function
-func TestFindFunctionBodyStart(t *testing.T) // function
-func TestParsePanicRecoveryMechanism(t *testing.T) // function
+func TestTreeSitterParserImplementsParser(t *testing.T)
+_ parser.Parser = (*TreeSitterParser)(nil)
+func TestTreeSitterParserLanguages(t *testing.T)
+func TestTreeSitterParserParseGo(t *testing.T)
+foundAdd bool
+func TestTreeSitterParserParseTypeScript(t *testing.T)
+foundAdd bool
+func TestTreeSitterParserUnsupportedLanguage(t *testing.T)
+func TestTreeSitterParserAutoRegistration(t *testing.T)
+func TestGoSignatureOnlyExtraction(t *testing.T)
+func TestGoIncludeBodyExtraction(t *testing.T)
+foundAdd bool
+func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
+func TestTypeScriptArrowFunctionSignature(t *testing.T)
+func contains(s, substr string) bool
+func TestTreeSitterParserParseJava(t *testing.T)
+foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
+func TestJavaSignatureOnlyExtraction(t *testing.T)
+func TestJavaGenericsExtraction(t *testing.T)
+foundClass, foundMethod bool
+func TestJavaAutoRegistration(t *testing.T)
+func TestTreeSitterParserParseCpp(t *testing.T)
+func TestCppSignatureOnlyExtraction(t *testing.T)
+func TestCppTemplateExtraction(t *testing.T)
+func TestCppAutoRegistration(t *testing.T)
+func TestCppImportExtraction(t *testing.T)
+func TestGoVariableExtraction(t *testing.T)
+func TestTypeScriptVariableExtraction(t *testing.T)
+func TestPythonVariableExtraction(t *testing.T)
+func TestJavaStaticFieldExtraction(t *testing.T)
+func TestCGlobalVariableExtraction(t *testing.T)
+func TestVariableSignaturePreservesValue(t *testing.T)
+func TestTreeSitterParserParseRust(t *testing.T)
+func TestRustSignatureOnlyExtraction(t *testing.T)
+func TestRustImportExtraction(t *testing.T)
+func TestRustAutoRegistration(t *testing.T)
+func TestRustConstAndStaticExtraction(t *testing.T)
+func TestRustMacroExtraction(t *testing.T)
+func TestRustGenericsAndLifetimes(t *testing.T)
+func TestTreeSitterParserParseSwift(t *testing.T)
+func TestTreeSitterParserParseKotlin(t *testing.T)
+func TestKotlinBodyStripping(t *testing.T)
+func TestRefineKotlinClassKind(t *testing.T)
+func TestKotlinAutoRegistration(t *testing.T)
+func TestKotlinSignatureOnlyExtraction(t *testing.T)
+func TestKotlinImportExtraction(t *testing.T)
+func TestParsePanicRecovery(t *testing.T)
+func TestTreeSitterParserParseCSharp(t *testing.T)
+func TestCSharpSignatureOnlyExtraction(t *testing.T)
+func TestCSharpOperatorNameSynthesis(t *testing.T)
+func TestCSharpStaticFieldExtraction(t *testing.T)
+func TestCSharpImportExtraction(t *testing.T)
+func TestCSharpAutoRegistration(t *testing.T)
+func TestCSharpBodyStripping(t *testing.T)
+func TestFindCSharpBodyStart(t *testing.T)
+func TestIsExpressionBodied(t *testing.T)
+func TestExtractCSharpOperatorName(t *testing.T)
+func TestExtractCSharpConversionOperatorName(t *testing.T)
+func TestFindFunctionBodyStart(t *testing.T)
+func TestParsePanicRecoveryMechanism(t *testing.T)
 ```
 
 ---
@@ -3450,14 +3450,14 @@ type LanguageQuery interface {
 
 	// KindMapping maps Tree-sitter node types to Signature kinds.
 	KindMapping() map[string]string
-} // type
-CaptureName      = "name" // variable
-CaptureSignature = "signature" // variable
-CaptureDoc       = "doc" // variable
-CaptureKind      = "kind" // variable
-CaptureImportPath = "import_path" // variable
-CaptureExportName = "export_name" // variable
-CaptureImportType = "import_type" // variable
+}
+CaptureName      = "name"
+CaptureSignature = "signature"
+CaptureDoc       = "doc"
+CaptureKind      = "kind"
+CaptureImportPath = "import_path"
+CaptureExportName = "export_name"
+CaptureImportType = "import_type"
 DefaultKindMapping = map[string]string{
 	"function_declaration": "function",
 	"method_declaration":   "method",
@@ -3468,7 +3468,7 @@ DefaultKindMapping = map[string]string{
 	"arrow_function":       "function",
 	"function_expression":  "function",
 	"method_definition":    "method",
-} // variable
+}
 ```
 
 ---
@@ -3479,7 +3479,7 @@ DefaultKindMapping = map[string]string{
 - `import "testing"`
 
 ```go
-func TestCaptureDefinitions(t *testing.T) // function
+func TestCaptureDefinitions(t *testing.T)
 ```
 
 ---
@@ -3506,7 +3506,7 @@ type FileEntry struct {
 
 	// Size is the file size in bytes.
 	Size int64
-} // type
+}
 type ScanResult struct {
 	// Files is the list of matched files.
 	Files []FileEntry
@@ -3519,7 +3519,7 @@ type ScanResult struct {
 
 	// Warnings contains non-fatal issues encountered during scanning.
 	Warnings []string
-} // type
+}
 type ScanOptions struct {
 	// RootPath is the directory or file to scan.
 	RootPath string
@@ -3535,25 +3535,25 @@ type ScanOptions struct {
 
 	// MaxFileSize is the maximum file size in bytes to include.
 	MaxFileSize int64
-} // type
-func DefaultScanOptions() *ScanOptions // function
-func (o *ScanOptions) GetLanguage(path string) (string, bool) // method
-func IsHidden(name string) bool // function
+}
+func DefaultScanOptions() *ScanOptions
+func (o *ScanOptions) GetLanguage(path string) (string, bool)
+func IsHidden(name string) bool
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	Scan() (*ScanResult, error)
-} // type
+}
 type FileScanner struct {
 	opts             *ScanOptions
 	ignorer          *ignore.GitIgnore
 	ignorerErr       error
 	ignorerErrWarned bool
 	logger           *log.Logger
-} // type
-func NewFileScanner(opts *ScanOptions) (*FileScanner, error) // function
-func (s *FileScanner) Scan() (*ScanResult, error) // method
-warning string // variable
-func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) // method
+}
+func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
+func (s *FileScanner) Scan() (*ScanResult, error)
+warning string
+func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
 
 ---
@@ -3569,30 +3569,30 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 - `import "testing"`
 
 ```go
-func TestNewFileScanner(t *testing.T) // function
-func TestNewFileScannerNilOptions(t *testing.T) // function
-func TestFileEntryDefaults(t *testing.T) // function
-func TestScanOptionsDefaults(t *testing.T) // function
-expectedMaxSize = 512000 // variable
-func TestScanOptionsWithExtensions(t *testing.T) // function
-func TestScannerInterface(t *testing.T) // function
-_ Scanner = (*FileScanner)(nil) // variable
-func TestScanEmptyDirectory(t *testing.T) // function
-func TestScanSingleFile(t *testing.T) // function
-func TestScanFilterByExtension(t *testing.T) // function
-func TestScanExcludeHidden(t *testing.T) // function
-func TestScanIncludeHidden(t *testing.T) // function
-func TestScanMaxFileSize(t *testing.T) // function
-func TestScanGitignore(t *testing.T) // function
-func TestScanGitignoreLoadFailureWarning(t *testing.T) // function
-buf bytes.Buffer // variable
-buf bytes.Buffer // variable
-buf bytes.Buffer // variable
-func TestScanWalkDirPermissionDenied(t *testing.T) // function
-buf bytes.Buffer // variable
-func TestScanSymlinkSkip(t *testing.T) // function
-buf bytes.Buffer // variable
-func TestScanNestedDirectories(t *testing.T) // function
+func TestNewFileScanner(t *testing.T)
+func TestNewFileScannerNilOptions(t *testing.T)
+func TestFileEntryDefaults(t *testing.T)
+func TestScanOptionsDefaults(t *testing.T)
+expectedMaxSize = 512000
+func TestScanOptionsWithExtensions(t *testing.T)
+func TestScannerInterface(t *testing.T)
+_ Scanner = (*FileScanner)(nil)
+func TestScanEmptyDirectory(t *testing.T)
+func TestScanSingleFile(t *testing.T)
+func TestScanFilterByExtension(t *testing.T)
+func TestScanExcludeHidden(t *testing.T)
+func TestScanIncludeHidden(t *testing.T)
+func TestScanMaxFileSize(t *testing.T)
+func TestScanGitignore(t *testing.T)
+func TestScanGitignoreLoadFailureWarning(t *testing.T)
+buf bytes.Buffer
+buf bytes.Buffer
+buf bytes.Buffer
+func TestScanWalkDirPermissionDenied(t *testing.T)
+buf bytes.Buffer
+func TestScanSymlinkSkip(t *testing.T)
+buf bytes.Buffer
+func TestScanNestedDirectories(t *testing.T)
 ```
 
 ---
@@ -3606,11 +3606,11 @@ func TestScanNestedDirectories(t *testing.T) // function
 type TiktokenTokenizer struct {
 	encoding string
 	tke      *tiktoken.Tiktoken
-} // type
-_ Tokenizer = (*TiktokenTokenizer)(nil) // variable
-func NewTiktokenTokenizer() (*TiktokenTokenizer, error) // function
-func (t *TiktokenTokenizer) Count(text string) (int, error) // method
-func (t *TiktokenTokenizer) Name() string // method
+}
+_ Tokenizer = (*TiktokenTokenizer)(nil)
+func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
+func (t *TiktokenTokenizer) Count(text string) (int, error)
+func (t *TiktokenTokenizer) Name() string
 ```
 
 ---
@@ -3625,12 +3625,12 @@ type Tokenizer interface {
 
 	// Name returns the tokenizer name (e.g., "tiktoken-cl100k", "noop").
 	Name() string
-} // type
-type NoOpTokenizer struct{} // type
-_ Tokenizer = (*NoOpTokenizer)(nil) // variable
-func NewNoOpTokenizer() *NoOpTokenizer // function
-func (t *NoOpTokenizer) Count(_ string) (int, error) // method
-func (t *NoOpTokenizer) Name() string // method
+}
+type NoOpTokenizer struct{}
+_ Tokenizer = (*NoOpTokenizer)(nil)
+func NewNoOpTokenizer() *NoOpTokenizer
+func (t *NoOpTokenizer) Count(_ string) (int, error)
+func (t *NoOpTokenizer) Name() string
 ```
 
 ---
@@ -3642,16 +3642,16 @@ func (t *NoOpTokenizer) Name() string // method
 - `import "testing"`
 
 ```go
-func TestNoOpTokenizerImplementsTokenizer(t *testing.T) // function
-_ Tokenizer = (*NoOpTokenizer)(nil) // variable
-func TestTiktokenTokenizerImplementsTokenizer(t *testing.T) // function
-_ Tokenizer = (*TiktokenTokenizer)(nil) // variable
-func TestNoOpTokenizerCount(t *testing.T) // function
-func TestNoOpTokenizerName(t *testing.T) // function
-func TestTiktokenTokenizerCount(t *testing.T) // function
-func TestTiktokenTokenizerName(t *testing.T) // function
-func TestTiktokenTokenizerConsistency(t *testing.T) // function
-func TestTiktokenTokenizerSpecialCharacters(t *testing.T) // function
+func TestNoOpTokenizerImplementsTokenizer(t *testing.T)
+_ Tokenizer = (*NoOpTokenizer)(nil)
+func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)
+_ Tokenizer = (*TiktokenTokenizer)(nil)
+func TestNoOpTokenizerCount(t *testing.T)
+func TestNoOpTokenizerName(t *testing.T)
+func TestTiktokenTokenizerCount(t *testing.T)
+func TestTiktokenTokenizerName(t *testing.T)
+func TestTiktokenTokenizerConsistency(t *testing.T)
+func TestTiktokenTokenizerSpecialCharacters(t *testing.T)
 ```
 
 ---
