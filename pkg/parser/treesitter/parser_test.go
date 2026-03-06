@@ -1941,6 +1941,11 @@ func TestFindFunctionBodyStart(t *testing.T) {
 			expected: 5,
 		},
 		{
+			name:     "pure unbalanced close paren",
+			input:    ") {",
+			expected: -1,
+		},
+		{
 			name:     "no body",
 			input:    "func foo(a int)",
 			expected: -1,
