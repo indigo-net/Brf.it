@@ -190,6 +190,8 @@ EOF
 # 5. CHANGELOG.md 업데이트 후 커밋
 ```
 
+> 💡 `/release` 스킬이 위 절차를 자동화합니다. CI 실패 시 Issue 생성 후 즉시 중단, 인라인 수정 금지.
+
 ### 릴리즈 노트 양식
 
 모든 릴리즈 노트는 아래 양식을 따릅니다 (상세 템플릿: `.github/RELEASE_TEMPLATE.md`):
