@@ -1914,6 +1914,54 @@ func TestExtractCSharpConversionOperatorName(t *testing.T) {
 	}
 }
 
+func TestFindFunctionBodyStart(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected int
+	}{
+		{
+			name:     "normal function",
+			input:    "func foo(a int) {",
+			expected: 16,
+		},
+		{
+			name:     "generic function",
+			input:    "func foo<T>(a T) {",
+			expected: 17,
+		},
+		{
+			name:     "nested parentheses",
+			input:    "func foo(a func(b int)) {",
+			expected: 24,
+		},
+		{
+			name:     "unbalanced leading close paren",
+			input:    ")(x) {",
+			expected: 5,
+		},
+		{
+			name:     "no body",
+			input:    "func foo(a int)",
+			expected: -1,
+		},
+		{
+			name:     "empty string",
+			input:    "",
+			expected: -1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := findFunctionBodyStart(tt.input)
+			if result != tt.expected {
+				t.Errorf("findFunctionBodyStart(%q) = %d, want %d", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
 func TestParsePanicRecoveryMechanism(t *testing.T) {
 	// Verify that if a panic occurs inside Parse, it returns an error
 	// rather than crashing. A nil LanguageQuery in the queries map causes

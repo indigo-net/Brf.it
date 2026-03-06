@@ -512,7 +512,9 @@ func findFunctionBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 			if parenDepth == 0 {
 				lastParenClose = i
 			}
