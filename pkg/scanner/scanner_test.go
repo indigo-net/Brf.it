@@ -476,6 +476,10 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 }
 
 func TestScanWalkDirPermissionDenied(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("skipping permission test: running as root")
+	}
+
 	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
 	if err != nil {
 		t.Fatal(err)
