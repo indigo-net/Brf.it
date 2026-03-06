@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-03-06
+
+### Added
+- C# language support (#81)
+  - Classes, structs, interfaces, records, enums
+  - Methods, constructors, properties, fields, events
+  - Delegates, operators, indexers, finalizers
+  - Namespaces, using directives, generic type parameters
+- Parallel file extraction with worker pool (#60)
+  - Configurable concurrency via `DefaultExtractOptions()`
+  - scanResult nil guard and negative concurrency validation
+- `Warnings` field in scan results for non-fatal errors (#77)
+
+### Fixed
+- `findFunctionBodyStart` parenDepth negative depth guard (#97)
+- Markdown output: removed unnecessary kind comments (#84)
+- TOCTOU race condition defense in file scanner (#79)
+- Tree-sitter query error propagation (#78)
+- WalkDir error classification and warning separation (#77)
+- CGO panic recovery (#76)
+- `.gitignore` load failure warning output (#75)
+- `MaxFileSize` upper limit exceeded warning (#74)
+
 ## [0.17.0] - 2026-03-05
 
 ### Added
