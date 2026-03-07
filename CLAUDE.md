@@ -310,7 +310,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 1. **이슈 조회**: `gh issue list --state open`으로 기존 이슈 확인 → 중복 방지
 2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement"`
-3. **Worktree + 브랜치 생성**: `git worktree add .worktrees/<name> main -b feat/feature-name`으로 격리 환경과 브랜치를 동시에 생성
+3. **Worktree + 브랜치 생성**: `git worktree add -b feat/feature-name .worktrees/<name> main`으로 격리 환경과 브랜치를 동시에 생성
 4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
 5. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
 6. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
@@ -325,7 +325,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 모든 코드 변경 작업(feat, fix, refactor 등)은 **반드시 worktree에서 수행**합니다.
 
 **생성**:
-- `git worktree add .worktrees/<name> main -b {type}/{feature-name}`
+- `git worktree add -b {type}/{feature-name} .worktrees/<name> main`
 - Claude Code 환경에서는 `using-git-worktrees` superpowers 스킬 활용 가능 (환경 제공 스킬)
 - 위치: `.worktrees/` (`.gitignore`에 등록됨)
 - worktree 생성 후 테스트 통과 확인 (clean baseline)
