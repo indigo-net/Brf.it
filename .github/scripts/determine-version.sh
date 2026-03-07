@@ -141,8 +141,8 @@ main() {
             continue
         fi
 
-        # Check each linked issue
-        echo "$issues" | jq -c '.[]' 2>/dev/null | while read issue; do
+        # Check each linked issue (using process substitution to avoid subshell)
+        while read issue; do
             if [ -z "$issue" ] || [ "$issue" = "null" ]; then
                 continue
             fi
@@ -158,7 +158,7 @@ main() {
             if [ "$priority" -gt "$highest_priority" ]; then
                 highest_priority=$priority
             fi
-        done
+        done < <(echo "$issues" | jq -c '.[]' 2>/dev/null)
     done
 
     # Determine bump type

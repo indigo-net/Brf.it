@@ -95,8 +95,13 @@ jobs:
 
           # Prepend to CHANGELOG.md
           if [ -f CHANGELOG.md ]; then
-            # Insert after the header
-            sed -i "/## \[/r /tmp/changelog_entry.md" CHANGELOG.md
+            # Read existing content after the header, prepend new entry
+            {
+              head -n 2 CHANGELOG.md
+              cat /tmp/changelog_entry.md
+              tail -n +3 CHANGELOG.md
+            } > /tmp/new_changelog.md
+            mv /tmp/new_changelog.md CHANGELOG.md
           else
             echo "# Changelog" > CHANGELOG.md
             echo "" >> CHANGELOG.md
@@ -128,6 +133,8 @@ jobs:
     needs: check-and-release
     if: failure()
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: actions/checkout@v4
 
