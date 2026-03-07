@@ -1,0 +1,82 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "ページが見つかりません",
+    "description": "The title of the fallback page when the page didn't find any content"
+  },
+  "theme.NotFound.title": {
+    "message": "ページが見つかりません",
+    "description": "The title of the 404 page"
+  },
+  "theme.NotFound.p1": {
+    "message": "存在しないページです。",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "ホームページに戻ってください。",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "hero.title": {
+    "message": "Brf.it",
+    "description": "Hero title"
+  },
+  "hero.tagline": {
+    "message": "AIに要点だけを伝える。あらゆるコードベースから関数シグネチャを抽出。同じコンテキストで80%少ないトークン。",
+    "description": "Hero tagline"
+  },
+  "hero.getStarted": {
+    "message": "始める",
+    "description": "Get Started button"
+  },
+  "hero.github": {
+    "message": "GitHubで見る",
+    "description": "GitHub button"
+  },
+  "comparison.title": {
+    "message": "実際のトークン節約効果",
+    "description": "Token comparison title"
+  },
+  "comparison.subtitle": {
+    "message": "Brf.itが重要なコンテキストを維持しながらトークン使用量を減らす方法を確認",
+    "description": "Token comparison subtitle"
+  },
+  "features.title": {
+    "message": "主な機能",
+    "description": "Features title"
+  },
+  "features.subtitle": {
+    "message": "AIに適切なコンテキストを提供するために必要なすべて",
+    "description": "Features subtitle"
+  },
+  "languages.title": {
+    "message": "対応言語",
+    "description": "Languages title"
+  },
+  "languages.subtitle": {
+    "message": "正確なシグネチャ抽出のためのTree-sitterベースのパース",
+    "description": "Languages subtitle"
+  },
+  "install.title": {
+    "message": "クイックインストール",
+    "description": "Install title"
+  },
+  "install.subtitle": {
+    "message": "好みのパッケージマネージャーで数秒で始める",
+    "description": "Install subtitle"
+  },
+  "install.example": {
+    "message": "次に実行:",
+    "description": "Install example label"
+  },
+  "comparison.tokens": {
+    "message": "トークン削減",
+    "description": "Token reduction label"
+  },
+  "comparison.lines": {
+    "message": "行削減",
+    "description": "Lines reduction label"
+  },
+  "comparison.savings": {
+    "message": "リクエストごとの節約",
+    "description": "Cost savings label"
+  }
+}
