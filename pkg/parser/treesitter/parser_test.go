@@ -2170,3 +2170,30 @@ func TestRefineLuaFunctionKind(t *testing.T) {
 		}
 	}
 }
+
+func TestIsPythonMethod(t *testing.T) {
+	tests := []struct {
+		name      string
+		signature string
+		expected  bool
+	}{
+		{"simple method with self", "def greet(self) -> str:", true},
+		{"method with self and params", "def greet(self, name: str) -> str:", true},
+		{"classmethod with cls", "def create(cls, data: dict) -> 'MyClass':", true},
+		{"plain function", "def greet(name: str) -> str:", false},
+		{"no params", "def greet():", false},
+		{"no parens", "def greet:", false},
+		{"nested parens in type hint", "def process(self, data: Dict[str, Tuple[int, ...]]) -> None:", true},
+		{"default value with function call", "def setup(self, config: Config = Config()) -> None:", true},
+		{"nested parens not method", "def process(data: Dict[str, Tuple[int, ...]]) -> None:", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isPythonMethod(tt.signature)
+			if result != tt.expected {
+				t.Errorf("isPythonMethod(%q) = %v, want %v", tt.signature, result, tt.expected)
+			}
+		})
+	}
+}
