@@ -1,0 +1,312 @@
+/**
+ * Brf.it Custom CSS
+ * Primary Color: #1E3A8A (Deep Blue)
+ */
+
+:root {
+  --ifm-color-primary: #1E3A8A;
+  --ifm-color-primary-dark: #1a3279;
+  --ifm-color-primary-darker: #193073;
+  --ifm-color-primary-darkest: #14275f;
+  --ifm-color-primary-light: #22429b;
+  --ifm-color-primary-lighter: #2344a1;
+  --ifm-color-primary-lightest: #284db5;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(30, 58, 138, 0.1);
+
+  /* Custom properties */
+  --brfit-hero-gradient-start: #1E3A8A;
+  --brfit-hero-gradient-end: #3B82F6;
+  --brfit-accent: #10B981;
+  --brfit-warning: #F59E0B;
+  --brfit-error: #EF4444;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #60A5FA;
+  --ifm-color-primary-dark: #4d96f9;
+  --ifm-color-primary-darker: #4190f9;
+  --ifm-color-primary-darkest: #2a7cf7;
+  --ifm-color-primary-light: #73b4fb;
+  --ifm-color-primary-lighter: #7fbafb;
+  --ifm-color-primary-lightest: #a5cdff;
+  --docusaurus-highlighted-code-line-bg: rgba(96, 165, 250, 0.15);
+}
+
+/* Hero Section */
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+/* Token Comparison */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.code-panel {
+  background: var(--ifm-code-background);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.code-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--ifm-color-emphasis-200);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.code-panel-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.code-panel-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.code-panel-badge.before {
+  background: var(--brfit-error);
+  color: white;
+}
+
+.code-panel-badge.after {
+  background: var(--brfit-accent);
+  color: white;
+}
+
+.code-panel-content {
+  padding: 1rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85rem;
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Stats Card */
+.stats-card {
+  background: var(--ifm-card-background-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--ifm-global-shadow-lw);
+  margin: 2rem 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-item {
+  padding: 1rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--ifm-color-primary);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+}
+
+.stat-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.stat-change.positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--brfit-accent);
+}
+
+.stat-change.negative {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--brfit-error);
+}
+
+/* Language Grid */
+.language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.language-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  background: var(--ifm-card-background-color);
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  transition: all 0.2s ease;
+}
+
+.language-card:hover {
+  border-color: var(--ifm-color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--ifm-global-shadow-md);
+}
+
+.language-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.language-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Install Tabs */
+.install-tabs {
+  margin: 2rem 0;
+}
+
+.install-command {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--ifm-code-background);
+  border-radius: 8px;
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.copy-button {
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+/* Features Table */
+.features-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+}
+
+.features-table th,
+.features-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+
+.features-table th {
+  font-weight: 600;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.features-table tr:hover td {
+  background: var(--ifm-color-emphasis-50);
+}
+
+/* CTA Button */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 2rem 0;
+}
+
+.cta-button {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cta-button.primary {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+.cta-button.primary:hover {
+  background: var(--ifm-color-primary-dark);
+  color: white;
+}
+
+.cta-button.secondary {
+  background: transparent;
+  color: var(--ifm-color-primary);
+  border: 2px solid var(--ifm-color-primary);
+}
+
+.cta-button.secondary:hover {
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+/* Section styling */
+.section {
+  padding: 4rem 0;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1.125rem;
+  color: var(--ifm-color-emphasis-600);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}

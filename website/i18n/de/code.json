@@ -1,0 +1,82 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "Seite nicht gefunden",
+    "description": "The title of the fallback page when the page didn't find any content"
+  },
+  "theme.NotFound.title": {
+    "message": "Seite nicht gefunden",
+    "description": "The title of the 404 page"
+  },
+  "theme.NotFound.p1": {
+    "message": "Diese Seite existiert nicht.",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "Zurück zur Startseite.",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "hero.title": {
+    "message": "Brf.it",
+    "description": "Hero title"
+  },
+  "hero.tagline": {
+    "message": "Gib der AI das Wesentliche, nicht das Überflüssige. Extrahiere Funktionssignaturen aus jeder Codebasis. Gleicher Kontext. 80% weniger Tokens.",
+    "description": "Hero tagline"
+  },
+  "hero.getStarted": {
+    "message": "Loslegen",
+    "description": "Get Started button"
+  },
+  "hero.github": {
+    "message": "Auf GitHub ansehen",
+    "description": "GitHub button"
+  },
+  "comparison.title": {
+    "message": "Token-Einsparung in Aktion",
+    "description": "Token comparison title"
+  },
+  "comparison.subtitle": {
+    "message": "Sehen Sie, wie Brf.it die Token-Nutzung reduziert und dabei den wesentlichen Kontext bewahrt",
+    "description": "Token comparison subtitle"
+  },
+  "features.title": {
+    "message": "Funktionen",
+    "description": "Features title"
+  },
+  "features.subtitle": {
+    "message": "Alles, was Sie brauchen, um der AI den richtigen Kontext zu geben",
+    "description": "Features subtitle"
+  },
+  "languages.title": {
+    "message": "Unterstützte Sprachen",
+    "description": "Languages title"
+  },
+  "languages.subtitle": {
+    "message": "Tree-sitter-basiertes Parsing für präzise Signatur-Extraktion",
+    "description": "Languages subtitle"
+  },
+  "install.title": {
+    "message": "Schnellinstallation",
+    "description": "Install title"
+  },
+  "install.subtitle": {
+    "message": "Starten Sie in Sekunden mit Ihrem bevorzugten Paketmanager",
+    "description": "Install subtitle"
+  },
+  "install.example": {
+    "message": "Dann ausführen:",
+    "description": "Install example label"
+  },
+  "comparison.tokens": {
+    "message": "Token-Reduzierung",
+    "description": "Token reduction label"
+  },
+  "comparison.lines": {
+    "message": "Weniger Zeilen",
+    "description": "Lines reduction label"
+  },
+  "comparison.savings": {
+    "message": "Ersparnis pro Anfrage",
+    "description": "Cost savings label"
+  }
+}

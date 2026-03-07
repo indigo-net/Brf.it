@@ -1,0 +1,82 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "पेज नहीं मिला",
+    "description": "The title of the fallback page when the page didn't find any content"
+  },
+  "theme.NotFound.title": {
+    "message": "पेज नहीं मिला",
+    "description": "The title of the 404 page"
+  },
+  "theme.NotFound.p1": {
+    "message": "यह पेज मौजूद नहीं है।",
+    "description": "The first paragraph of the 404 page"
+  },
+  "theme.NotFound.p2": {
+    "message": "होमपेज पर वापस जाएं।",
+    "description": "The 2nd paragraph of the 404 page"
+  },
+  "hero.title": {
+    "message": "Brf.it",
+    "description": "Hero title"
+  },
+  "hero.tagline": {
+    "message": "AI को सार दें, बोझ नहीं। किसी भी कोडबेस से फंक्शन सिग्नेचर निकालें। वही कॉन्टेक्स्ट। 80% कम टोकन।",
+    "description": "Hero tagline"
+  },
+  "hero.getStarted": {
+    "message": "शुरू करें",
+    "description": "Get Started button"
+  },
+  "hero.github": {
+    "message": "GitHub पर देखें",
+    "description": "GitHub button"
+  },
+  "comparison.title": {
+    "message": "टोकन बचत कार्य में",
+    "description": "Token comparison title"
+  },
+  "comparison.subtitle": {
+    "message": "देखें कि Brf.it आवश्यक कॉन्टेक्स्ट बनाए रखते हुए टोकन उपयोग कैसे कम करता है",
+    "description": "Token comparison subtitle"
+  },
+  "features.title": {
+    "message": "विशेषताएं",
+    "description": "Features title"
+  },
+  "features.subtitle": {
+    "message": "AI को सही कॉन्टेक्स्ट देने के लिए आपको जो चाहिए",
+    "description": "Features subtitle"
+  },
+  "languages.title": {
+    "message": "समर्थित भाषाएं",
+    "description": "Languages title"
+  },
+  "languages.subtitle": {
+    "message": "सटीक सिग्नेचर निष्कर्षण के लिए Tree-sitter आधारित पार्सिंग",
+    "description": "Languages subtitle"
+  },
+  "install.title": {
+    "message": "त्वरित इंस्टॉल",
+    "description": "Install title"
+  },
+  "install.subtitle": {
+    "message": "अपने पसंदीदा पैकेज मैनेजर से सेकंड में शुरू करें",
+    "description": "Install subtitle"
+  },
+  "install.example": {
+    "message": "फिर चलाएं:",
+    "description": "Install example label"
+  },
+  "comparison.tokens": {
+    "message": "टोकन कमी",
+    "description": "Token reduction label"
+  },
+  "comparison.lines": {
+    "message": "कम लाइनें",
+    "description": "Lines reduction label"
+  },
+  "comparison.savings": {
+    "message": "प्रति अनुरोध बचत",
+    "description": "Cost savings label"
+  }
+}
