@@ -262,6 +262,8 @@ s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)\n", path, si
 
 ### 다중 브랜치 병렬 작업 시 주의사항
 
+**해결책**: worktree를 사용하면 각 작업이 독립 디렉토리에서 진행되므로 ref 오염 방지. 아래 "Worktree 작업 규칙" 참조.
+
 백그라운드 에이전트가 동일 워킹 디렉토리에서 브랜치를 전환하면 로컬 ref가 오염될 수 있음. rebase 전 항상 로컬/리모트 커밋 일치 확인:
 ```bash
 git log --oneline <branch> | head -3        # 로컬 확인
@@ -304,18 +306,48 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 **주의**: 외부 저장소 fork, 새 저장소 생성 등 사용자 계정에 영향을 주는 작업은 반드시 **사전 승인** 필요
 
-모든 작업은 이슈 기반으로 진행합니다:
+모든 코드 변경 작업은 **worktree 격리 환경**에서 이슈 기반으로 진행합니다:
 
-1. **이슈 생성**: `gh issue create --assignee indigo-net --label "enhancement"`
-2. **브랜치 생성**: `git checkout -b feat/feature-name` (이슈 번호 제외, 기존 스타일 유지)
-3. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
-4. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
-5. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
-6. **머지**: PR 머지 시 이슈 자동 닫힘
+1. **이슈 조회**: `gh issue list --state open`으로 기존 이슈 확인 → 중복 방지
+2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement"`
+3. **Worktree + 브랜치 생성**: `git worktree add -b feat/feature-name .worktrees/<name> main`으로 격리 환경과 브랜치를 동시에 생성
+4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
+5. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
+6. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
+7. **머지 & 정리**: PR merge 후 worktree 제거 + 로컬 브랜치 삭제
 
 **브랜치명 형식**: `{type}/{feature-name}` (예: `feat/github-workflow-setup`)
 
 **이슈/PR assignee**: 기본적으로 `indigo-net` 지정
+
+### Worktree 작업 규칙
+
+모든 코드 변경 작업(feat, fix, refactor 등)은 **반드시 worktree에서 수행**합니다.
+
+**생성**:
+- `git worktree add -b {type}/{feature-name} .worktrees/<name> main`
+- Claude Code 환경에서는 `using-git-worktrees` superpowers 스킬 활용 가능 (환경 제공 스킬)
+- 위치: `.worktrees/` (`.gitignore`에 등록됨)
+- worktree 생성 후 테스트 통과 확인 (clean baseline)
+
+**정리**:
+- PR merge 확인 후 정리 (Claude Code 환경에서는 `finishing-a-development-branch` superpowers 스킬 활용 가능)
+- worktree 디렉토리 제거 + 로컬 브랜치 삭제
+- `git worktree prune`으로 stale 참조 정리
+
+**예외**: 단순 조사, 파일 읽기, 문서 확인 등 읽기 전용 작업은 현재 디렉토리에서 수행
+
+**정리 명령어**:
+```bash
+# 현재 worktree 목록 확인
+git worktree list
+# worktree 제거
+git worktree remove .worktrees/<name>
+# 로컬 브랜치 삭제
+git branch -d <branch-name>
+# stale 참조 정리
+git worktree prune
+```
 
 ### SAMPLE 파일 생성
 
