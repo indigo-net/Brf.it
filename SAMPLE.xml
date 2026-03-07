@@ -70,7 +70,6 @@
       <variable>buf bytes.Buffer</variable>
       <function>func TestNewRootCommand(t *testing.T)</function>
       <function>func TestParseFlags(t *testing.T)</function>
-      <function>func TestParseFlagsNoStdImports(t *testing.T)</function>
       <function>func TestRootCommandIntegration(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
       <function>func TestRootCommandIntegrationMarkdown(t *testing.T)</function>
@@ -121,9 +120,6 @@
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
-
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 }</type>
@@ -142,7 +138,6 @@
       <function>func TestDefaultConfig(t *testing.T)</function>
       <variable>expectedMaxSize = 512000</variable>
       <function>func TestConfigValidate(t *testing.T)</function>
-      <function>func TestConfigToOptionsNoStdImports(t *testing.T)</function>
       <function>func TestConfigSupportedLanguages(t *testing.T)</function>
       <function>func TestValidateMaxFileSizeUpperBound(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
@@ -186,9 +181,6 @@
 
 	// IncludePrivate determines whether to include private symbols.
 	IncludePrivate bool
-
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
@@ -294,8 +286,8 @@
 	// Signatures is the list of extracted signatures.
 	Signatures []parser.Signature
 
-	// Imports is the list of extracted import/export statements.
-	Imports []parser.ImportExport
+	// RawImports is the list of raw import/export statement text.
+	RawImports []string
 
 	// Size is the file size in bytes.
 	Size int64
@@ -390,8 +382,8 @@
 	// Signatures is the list of extracted signatures.
 	Signatures []parser.Signature
 
-	// Imports is the list of extracted import/export statements.
-	Imports []parser.ImportExport
+	// RawImports is the list of raw import/export statement text.
+	RawImports []string
 
 	// Error is any error that occurred during extraction.
 	Error error
@@ -417,9 +409,6 @@
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
-
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
 }</type>
       <type>type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -453,97 +442,16 @@
       <function>func TestXMLFormatterEmptyFile(t *testing.T)</function>
       <function>func TestKindToTag(t *testing.T)</function>
       <function>func TestXMLFormatterKindTags(t *testing.T)</function>
-      <function>func TestXMLFormatterNoStdImports(t *testing.T)</function>
-      <function>func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T)</function>
-      <function>func TestMarkdownFormatterNoStdImports(t *testing.T)</function>
-      <function>func TestXMLFormatterNoStdImportsEmptyFile(t *testing.T)</function>
-      <function>func TestMarkdownFormatterNoStdImportsEmptyFile(t *testing.T)</function>
-      <function>func TestFormatterNoStdImportsDisabled(t *testing.T)</function>
+      <function>func TestXMLFormatterVerbatimImports(t *testing.T)</function>
+      <function>func TestMarkdownFormatterVerbatimImports(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
-      <imports>
-        <import>import &quot;strings&quot;</import>
-      </imports>
-      <function>func isStdLibImport(language, importPath string) bool</function>
-      <function>func isGoStdLib(importPath string) bool</function>
-      <function>func isPythonStdLib(importPath string) bool</function>
-      <function>func isJSStdLib(importPath string) bool</function>
-      <function>func isCStdLib(importPath string) bool</function>
-      <function>func isJavaStdLib(importPath string) bool</function>
-      <function>func isRustStdLib(importPath string) bool</function>
-      <variable>pythonStdLibModules = map[string]struct{}{
-	&quot;abc&quot;: {}, &quot;aifc&quot;: {}, &quot;argparse&quot;: {}, &quot;array&quot;: {}, &quot;ast&quot;: {},
-	&quot;asynchat&quot;: {}, &quot;asyncio&quot;: {}, &quot;asyncore&quot;: {}, &quot;atexit&quot;: {},
-	&quot;base64&quot;: {}, &quot;bdb&quot;: {}, &quot;binascii&quot;: {}, &quot;binhex&quot;: {}, &quot;bisect&quot;: {},
-	&quot;builtins&quot;: {}, &quot;bz2&quot;: {},
-	&quot;calendar&quot;: {}, &quot;cgi&quot;: {}, &quot;cgitb&quot;: {}, &quot;chunk&quot;: {}, &quot;cmath&quot;: {},
-	&quot;cmd&quot;: {}, &quot;code&quot;: {}, &quot;codecs&quot;: {}, &quot;codeop&quot;: {}, &quot;collections&quot;: {},
-	&quot;colorsys&quot;: {}, &quot;compileall&quot;: {}, &quot;concurrent&quot;: {}, &quot;configparser&quot;: {},
-	&quot;contextlib&quot;: {}, &quot;contextvars&quot;: {}, &quot;copy&quot;: {}, &quot;copyreg&quot;: {},
-	&quot;cProfile&quot;: {}, &quot;crypt&quot;: {}, &quot;csv&quot;: {}, &quot;ctypes&quot;: {}, &quot;curses&quot;: {},
-	&quot;dataclasses&quot;: {}, &quot;datetime&quot;: {}, &quot;dbm&quot;: {}, &quot;decimal&quot;: {}, &quot;difflib&quot;: {},
-	&quot;dis&quot;: {}, &quot;distutils&quot;: {},
-	&quot;email&quot;: {}, &quot;encodings&quot;: {}, &quot;enum&quot;: {}, &quot;errno&quot;: {},
-	&quot;faulthandler&quot;: {}, &quot;fcntl&quot;: {}, &quot;filecmp&quot;: {}, &quot;fileinput&quot;: {},
-	&quot;fnmatch&quot;: {}, &quot;fractions&quot;: {}, &quot;ftplib&quot;: {}, &quot;functools&quot;: {},
-	&quot;gc&quot;: {}, &quot;getopt&quot;: {}, &quot;getpass&quot;: {}, &quot;gettext&quot;: {}, &quot;glob&quot;: {},
-	&quot;graphlib&quot;: {}, &quot;grp&quot;: {}, &quot;gzip&quot;: {},
-	&quot;hashlib&quot;: {}, &quot;heapq&quot;: {}, &quot;hmac&quot;: {}, &quot;html&quot;: {}, &quot;http&quot;: {},
-	&quot;idlelib&quot;: {}, &quot;imaplib&quot;: {}, &quot;imghdr&quot;: {}, &quot;imp&quot;: {}, &quot;importlib&quot;: {},
-	&quot;inspect&quot;: {}, &quot;io&quot;: {}, &quot;ipaddress&quot;: {}, &quot;itertools&quot;: {},
-	&quot;json&quot;: {},
-	&quot;keyword&quot;: {},
-	&quot;lib2to3&quot;: {}, &quot;linecache&quot;: {}, &quot;locale&quot;: {}, &quot;logging&quot;: {}, &quot;lzma&quot;: {},
-	&quot;mailbox&quot;: {}, &quot;mailcap&quot;: {}, &quot;marshal&quot;: {}, &quot;math&quot;: {}, &quot;mimetypes&quot;: {},
-	&quot;mmap&quot;: {}, &quot;modulefinder&quot;: {}, &quot;multiprocessing&quot;: {},
-	&quot;netrc&quot;: {}, &quot;nis&quot;: {}, &quot;nntplib&quot;: {}, &quot;numbers&quot;: {},
-	&quot;operator&quot;: {}, &quot;optparse&quot;: {}, &quot;os&quot;: {}, &quot;ossaudiodev&quot;: {},
-	&quot;parser&quot;: {}, &quot;pathlib&quot;: {}, &quot;pdb&quot;: {}, &quot;pickle&quot;: {}, &quot;pickletools&quot;: {},
-	&quot;pipes&quot;: {}, &quot;pkgutil&quot;: {}, &quot;platform&quot;: {}, &quot;plistlib&quot;: {}, &quot;poplib&quot;: {},
-	&quot;posix&quot;: {}, &quot;posixpath&quot;: {}, &quot;pprint&quot;: {}, &quot;profile&quot;: {}, &quot;pstats&quot;: {},
-	&quot;pty&quot;: {}, &quot;pwd&quot;: {}, &quot;py_compile&quot;: {}, &quot;pyclbr&quot;: {}, &quot;pydoc&quot;: {},
-	&quot;queue&quot;: {}, &quot;quopri&quot;: {},
-	&quot;random&quot;: {}, &quot;re&quot;: {}, &quot;readline&quot;: {}, &quot;reprlib&quot;: {}, &quot;resource&quot;: {},
-	&quot;rlcompleter&quot;: {}, &quot;runpy&quot;: {},
-	&quot;sched&quot;: {}, &quot;secrets&quot;: {}, &quot;select&quot;: {}, &quot;selectors&quot;: {}, &quot;shelve&quot;: {},
-	&quot;shlex&quot;: {}, &quot;shutil&quot;: {}, &quot;signal&quot;: {}, &quot;site&quot;: {}, &quot;smtpd&quot;: {},
-	&quot;smtplib&quot;: {}, &quot;sndhdr&quot;: {}, &quot;socket&quot;: {}, &quot;socketserver&quot;: {},
-	&quot;sqlite3&quot;: {}, &quot;ssl&quot;: {}, &quot;stat&quot;: {}, &quot;statistics&quot;: {}, &quot;string&quot;: {},
-	&quot;stringprep&quot;: {}, &quot;struct&quot;: {}, &quot;subprocess&quot;: {}, &quot;sunau&quot;: {},
-	&quot;symtable&quot;: {}, &quot;sys&quot;: {}, &quot;sysconfig&quot;: {}, &quot;syslog&quot;: {},
-	&quot;tabnanny&quot;: {}, &quot;tarfile&quot;: {}, &quot;telnetlib&quot;: {}, &quot;tempfile&quot;: {},
-	&quot;termios&quot;: {}, &quot;test&quot;: {}, &quot;textwrap&quot;: {}, &quot;threading&quot;: {}, &quot;time&quot;: {},
-	&quot;timeit&quot;: {}, &quot;tkinter&quot;: {}, &quot;token&quot;: {}, &quot;tokenize&quot;: {}, &quot;tomllib&quot;: {},
-	&quot;trace&quot;: {}, &quot;traceback&quot;: {}, &quot;tracemalloc&quot;: {}, &quot;tty&quot;: {}, &quot;turtle&quot;: {},
-	&quot;turtledemo&quot;: {}, &quot;types&quot;: {}, &quot;typing&quot;: {},
-	&quot;unicodedata&quot;: {}, &quot;unittest&quot;: {}, &quot;urllib&quot;: {}, &quot;uu&quot;: {}, &quot;uuid&quot;: {},
-	&quot;venv&quot;: {},
-	&quot;warnings&quot;: {}, &quot;wave&quot;: {}, &quot;weakref&quot;: {}, &quot;webbrowser&quot;: {},
-	&quot;winreg&quot;: {}, &quot;winsound&quot;: {}, &quot;wsgiref&quot;: {},
-	&quot;xdrlib&quot;: {}, &quot;xml&quot;: {}, &quot;xmlrpc&quot;: {},
-	&quot;zipapp&quot;: {}, &quot;zipfile&quot;: {}, &quot;zipimport&quot;: {}, &quot;zlib&quot;: {},
-	&quot;zoneinfo&quot;: {},
-	&quot;_thread&quot;: {},
-}</variable>
-      <variable>nodeBuiltinModules = map[string]struct{}{
-	&quot;assert&quot;: {}, &quot;buffer&quot;: {}, &quot;child_process&quot;: {}, &quot;cluster&quot;: {},
-	&quot;console&quot;: {}, &quot;constants&quot;: {}, &quot;crypto&quot;: {}, &quot;dgram&quot;: {},
-	&quot;diagnostics_channel&quot;: {}, &quot;dns&quot;: {}, &quot;domain&quot;: {}, &quot;events&quot;: {},
-	&quot;fs&quot;: {}, &quot;http&quot;: {}, &quot;http2&quot;: {}, &quot;https&quot;: {}, &quot;inspector&quot;: {},
-	&quot;module&quot;: {}, &quot;net&quot;: {}, &quot;os&quot;: {}, &quot;path&quot;: {}, &quot;perf_hooks&quot;: {},
-	&quot;process&quot;: {}, &quot;punycode&quot;: {}, &quot;querystring&quot;: {}, &quot;readline&quot;: {},
-	&quot;repl&quot;: {}, &quot;stream&quot;: {}, &quot;string_decoder&quot;: {}, &quot;timers&quot;: {},
-	&quot;tls&quot;: {}, &quot;trace_events&quot;: {}, &quot;tty&quot;: {}, &quot;url&quot;: {}, &quot;util&quot;: {},
-	&quot;v8&quot;: {}, &quot;vm&quot;: {}, &quot;wasi&quot;: {}, &quot;worker_threads&quot;: {}, &quot;zlib&quot;: {},
-}</variable>
       <function>func getEmptyComment(lang string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go" language="go">
       <imports>
-        <import>import &quot;fmt&quot;</import>
         <import>import &quot;testing&quot;</import>
       </imports>
-      <function>func TestIsStdLibImport(t *testing.T)</function>
       <function>func TestGetEmptyComment(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go" language="go">
@@ -557,7 +465,6 @@
       <function>func (f *MarkdownFormatter) Name() string</function>
       <function>func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)</function>
       <variable>buf bytes.Buffer</variable>
-      <variable>imports, exports []string</variable>
       <function>func escapeMarkdown(s string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go" language="go">
@@ -571,7 +478,6 @@
       <function>func (f *XMLFormatter) Name() string</function>
       <function>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</function>
       <variable>buf bytes.Buffer</variable>
-      <variable>importLines []string</variable>
       <function>func escapeXML(s string) string</function>
       <function>func kindToTag(kind string) string</function>
     </file>
@@ -580,19 +486,6 @@
         <import>import &quot;path/filepath&quot;</import>
         <import>import &quot;sync&quot;</import>
       </imports>
-      <type>type ImportExport struct {
-	// Type is &quot;import&quot; or &quot;export&quot;.
-	Type string
-
-	// Path is the module path (e.g., &quot;fmt&quot;, &quot;react&quot;, &quot;./utils&quot;).
-	Path string
-
-	// Name is the export name (for named exports).
-	Name string
-
-	// Line is the line number (1-indexed).
-	Line int
-}</type>
       <type>type Signature struct {
 	// Name is the identifier name (e.g., &quot;Scan&quot;, &quot;FileScanner&quot;).
 	Name string
@@ -650,8 +543,8 @@
 	// Signatures is the list of extracted signatures.
 	Signatures []Signature
 
-	// Imports is the list of extracted import/export statements.
-	Imports []ImportExport
+	// RawImports is the list of raw import/export statement text.
+	RawImports []string
 
 	// AST is the root node of the parsed AST (optional).
 	AST *Node
@@ -2926,17 +2819,8 @@
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
       <variable>goImportQueryPattern = `
-; Single import (capture full spec including alias)
-(import_declaration
-  (import_spec) @import_path
-)
-
-; Multi-line imports (capture each spec)
-(import_declaration
-  (import_spec_list
-    (import_spec) @import_path
-  )
-)
+; Import declarations (capture entire declaration)
+(import_declaration) @import_path
 `</variable>
       <variable>goQueryPattern = `
 ; Function declarations
@@ -3563,22 +3447,11 @@
 ; Export statements with source (re-exports)
 (export_statement
   source: (string)
-) @import_path @export_type
+) @import_path
 
-; Named exports without source (local exports)
+; Export clause (barrel exports: export { foo, bar })
 (export_statement
-  declaration: (_
-    name: (identifier) @export_name
-  )
-)
-
-; Export clause (export { foo, bar })
-(export_statement
-  (export_clause
-    (export_specifier
-      name: (identifier) @export_name
-    )
-  )
+  (export_clause) @import_path
 )
 `</variable>
       <variable>typeScriptQueryPattern = `
@@ -3698,7 +3571,7 @@
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error)</function>
-      <variable>imports []parser.ImportExport</variable>
+      <variable>rawImports []string</variable>
       <function>func (p *TreeSitterParser) Languages() []string</function>
       <function>func (p *TreeSitterParser) extractSignatures(
 	root *sitter.Node,
@@ -3748,11 +3621,11 @@
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) ([]parser.ImportExport, error)</function>
-      <variable>imports []parser.ImportExport</variable>
-      <variable>imp parser.ImportExport</variable>
-      <variable>hasExportType bool</variable>
-      <function>func cleanImportPath(path string) string</function>
+) ([]string, error)</function>
+      <variable>imports []string</variable>
+      <variable>importNode *sitter.Node</variable>
+      <function>func removeBlankLines(text string) string</function>
+      <variable>result []string</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go" language="go">
       <imports>
@@ -3852,8 +3725,6 @@
       <variable>CaptureDoc       = &quot;doc&quot;</variable>
       <variable>CaptureKind      = &quot;kind&quot;</variable>
       <variable>CaptureImportPath = &quot;import_path&quot;</variable>
-      <variable>CaptureExportName = &quot;export_name&quot;</variable>
-      <variable>CaptureImportType = &quot;import_type&quot;</variable>
       <variable>CaptureImportFn = &quot;_fn&quot;</variable>
       <variable>DefaultKindMapping = map[string]string{
 	&quot;function_declaration&quot;: &quot;function&quot;,
