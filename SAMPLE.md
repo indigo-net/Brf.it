@@ -3593,6 +3593,8 @@ buf bytes.Buffer
 func TestScanSymlinkSkip(t *testing.T)
 buf bytes.Buffer
 func TestScanNestedDirectories(t *testing.T)
+func TestLogOutputNoDoubleNewline(t *testing.T)
+buf bytes.Buffer
 ```
 
 ---
