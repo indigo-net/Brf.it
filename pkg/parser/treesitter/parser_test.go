@@ -1396,6 +1396,11 @@ func TestRefineKotlinClassKind(t *testing.T) {
 		{"@Retention(AnnotationRetention.RUNTIME) interface Marker", "interface"},
 		{"@JvmField(name = \"x\") enum class Color", "enum"},
 		{"public sealed class State", "class"},
+		// Edge cases: malformed annotations (defensive)
+		{"@Foo(bar class X", "class"},     // unmatched parenthesis - stop stripping
+		{"@Foo) class Y", "class"},        // depth negative - stop stripping
+		{"@ class Z", "class"},            // empty annotation - class keyword recognized
+		{"@A(@B(val=1)) class T", "class"}, // nested annotation - normal processing
 	}
 
 	for _, tt := range tests {

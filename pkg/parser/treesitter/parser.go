@@ -1012,10 +1012,16 @@ func refineKotlinClassKind(text string) string {
 				depth++
 			} else if c == ')' {
 				depth--
+				if depth < 0 {
+					break // defensive: unmatched closing parenthesis
+				}
 			} else if c == ' ' && depth == 0 {
 				break
 			}
 			end++
+		}
+		if depth != 0 {
+			break // defensive: unmatched parentheses, stop stripping annotations
 		}
 		trimmed = strings.TrimSpace(trimmed[end:])
 	}
