@@ -151,6 +151,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Swift | `.swift` | [Swiftガイド](languages/swift.md) |
 | Kotlin | `.kt`, `.kts` | [Kotlinガイド](languages/kotlin.md) |
 | C# | `.cs` | [C#ガイド](languages/csharp.md) |
+| Lua | `.lua` | [Luaガイド](languages/lua.md) |
 
 ---
 

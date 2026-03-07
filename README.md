@@ -152,6 +152,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Swift | `.swift` | [Swift Guide](docs/languages/swift.md) |
 | Kotlin | `.kt`, `.kts` | [Kotlin Guide](docs/languages/kotlin.md) |
 | C# | `.cs` | [C# Guide](docs/languages/csharp.md) |
+| Lua | `.lua` | [Lua Guide](docs/languages/lua.md) |
 
 ---
 

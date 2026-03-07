@@ -78,6 +78,7 @@ func DefaultScanOptions() *ScanOptions {
 			".kt":    "kotlin",
 			".kts":   "kotlin",
 			".cs":    "csharp",
+			".lua":   "lua",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
