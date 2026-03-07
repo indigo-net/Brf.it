@@ -26,13 +26,6 @@ const installCommands = {
       { cmd: 'scoop install brfit', desc: 'Install' },
     ],
   },
-  npm: {
-    label: 'npm',
-    icon: '📦',
-    commands: [
-      { cmd: 'npm install -g @indigo-net/brfit', desc: 'Install globally' },
-    ],
-  },
 };
 
 type Platform = keyof typeof installCommands;
