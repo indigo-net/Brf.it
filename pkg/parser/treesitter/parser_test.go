@@ -660,8 +660,8 @@ int main() {
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	if len(result.Imports) != 3 {
-		t.Errorf("expected 3 imports, got %d", len(result.Imports))
+	if len(result.RawImports) != 3 {
+		t.Errorf("expected 3 imports, got %d", len(result.RawImports))
 	}
 }
 
@@ -1065,8 +1065,8 @@ pub fn main() {}
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	if len(result.Imports) < 3 {
-		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.RawImports))
 	}
 }
 
@@ -1477,8 +1477,8 @@ fun main() {}
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	if len(result.Imports) < 3 {
-		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.RawImports))
 	}
 }
 
@@ -1738,8 +1738,8 @@ public class Foo { }
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	if len(result.Imports) < 4 {
-		t.Errorf("expected at least 4 imports, got %d", len(result.Imports))
+	if len(result.RawImports) < 4 {
+		t.Errorf("expected at least 4 imports, got %d", len(result.RawImports))
 	}
 }
 
@@ -2099,14 +2099,14 @@ function M.run() end
 	if err != nil {
 		t.Fatalf("failed to parse Lua imports: %v", err)
 	}
-	if len(result.Imports) < 3 {
-		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.RawImports))
 	}
 
-	// Verify import paths contain require()
-	for _, imp := range result.Imports {
-		if !strings.Contains(imp.Path, "require(") {
-			t.Errorf("expected import path to contain 'require(', got: %q", imp.Path)
+	// Verify raw import text contains require()
+	for _, imp := range result.RawImports {
+		if !strings.Contains(imp, "require(") {
+			t.Errorf("expected raw import text to contain 'require(', got: %q", imp)
 		}
 	}
 }

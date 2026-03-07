@@ -40,9 +40,6 @@ type Options struct {
 	// IncludePrivate determines whether to include private symbols.
 	IncludePrivate bool
 
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
-
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
 }
@@ -151,7 +148,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 			Path:       ef.Path,
 			Language:   ef.Language,
 			Signatures: ef.Signatures,
-			Imports:    ef.Imports,
+			RawImports: ef.RawImports,
 			Error:      ef.Error,
 		}
 	}
@@ -165,7 +162,6 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalSize:       extractResult.TotalSize,
 		IncludeImports:  opts.IncludeImports,
-		NoStdImports:    opts.NoStdImports,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)

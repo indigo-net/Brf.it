@@ -171,7 +171,6 @@ brfit [경로] [옵션]
 | `--output` | `-o` | 출력 파일 경로 | stdout |
 | `--include-body` | | 함수 본문 포함 | `false` |
 | `--include-imports` | | import 문 포함 | `false` |
-| `--no-std-imports` | | 표준 라이브러리 import 제외 | `false` |
 | `--ignore` | `-i` | ignore 파일 경로 | `.gitignore` |
 | `--include-hidden` | | 숨김 파일 포함 | `false` |
 | `--no-tree` | | 디렉토리 트리 생략 | `false` |
@@ -196,8 +195,8 @@ brfit . --include-body
 # 디렉토리 트리 출력 생략
 brfit . --no-tree
 
-# import 포함 (표준 라이브러리 제외)
-brfit . --include-imports --no-std-imports
+# import 포함 (원본 그대로)
+brfit . --include-imports
 ```
 
 ---

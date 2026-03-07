@@ -110,9 +110,6 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.NoTokens, "no-tokens", c.NoTokens,
 		"disable token count calculation")
 
-	cmd.Flags().BoolVar(&c.NoStdImports, "no-std-imports", c.NoStdImports,
-		"exclude standard library imports from output")
-
 	// Max file size
 	cmd.Flags().Int64Var(&c.MaxFileSize, "max-size", c.MaxFileSize,
 		"maximum file size in bytes (default: 512000 = 500KB)")

@@ -287,7 +287,7 @@ func TestMarkdownFormatterEmptyFile(t *testing.T) {
 				Path:       "cmd/main.go",
 				Language:   "go",
 				Signatures: []parser.Signature{}, // 빈 시그니처
-				Imports:    []parser.ImportExport{},
+				RawImports: []string{},
 			},
 		},
 		IncludeImports: false,
@@ -312,9 +312,7 @@ func TestMarkdownFormatterEmptyFileWithImports(t *testing.T) {
 				Path:       "cmd/main.go",
 				Language:   "go",
 				Signatures: []parser.Signature{},
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: "fmt"},
-				},
+				RawImports: []string{`import "fmt"`},
 			},
 		},
 		IncludeImports: true,
@@ -340,7 +338,7 @@ func TestXMLFormatterEmptyFile(t *testing.T) {
 				Path:       "cmd/main.go",
 				Language:   "go",
 				Signatures: []parser.Signature{},
-				Imports:    []parser.ImportExport{},
+				RawImports: []string{},
 			},
 		},
 		IncludeImports: false,
@@ -477,7 +475,7 @@ func TestXMLFormatterKindTags(t *testing.T) {
 	}
 }
 
-func TestXMLFormatterNoStdImports(t *testing.T) {
+func TestXMLFormatterVerbatimImports(t *testing.T) {
 	formatter := NewXMLFormatter()
 
 	data := &PackageData{
@@ -488,15 +486,17 @@ func TestXMLFormatterNoStdImports(t *testing.T) {
 				Signatures: []parser.Signature{
 					{Name: "Main", Kind: "function", Text: "func Main()"},
 				},
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "os"`},
-					{Type: "import", Path: `import "github.com/spf13/cobra"`},
+				RawImports: []string{
+					`import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+)`,
 				},
 			},
 		},
 		IncludeImports: true,
-		NoStdImports:   true,
 	}
 
 	output, err := formatter.Format(data)
@@ -506,192 +506,56 @@ func TestXMLFormatterNoStdImports(t *testing.T) {
 
 	outputStr := string(output)
 
-	// stdlib should be excluded
-	if strings.Contains(outputStr, "fmt") {
-		t.Error("expected stdlib import 'fmt' to be excluded")
-	}
-	if strings.Contains(outputStr, `import &quot;os&quot;`) {
-		t.Error("expected stdlib import 'os' to be excluded")
-	}
-
-	// non-stdlib should be included
-	if !strings.Contains(outputStr, "cobra") {
-		t.Error("expected non-stdlib import 'cobra' to be included")
-	}
-
-	// imports section should still be present
+	// imports section should be present
 	if !strings.Contains(outputStr, "<imports>") {
-		t.Error("expected <imports> section for non-stdlib imports")
-	}
-}
-
-func TestXMLFormatterNoStdImportsAllFiltered(t *testing.T) {
-	formatter := NewXMLFormatter()
-
-	data := &PackageData{
-		Files: []FileData{
-			{
-				Path:     "main.go",
-				Language: "go",
-				Signatures: []parser.Signature{
-					{Name: "Main", Kind: "function", Text: "func Main()"},
-				},
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "os"`},
-				},
-			},
-		},
-		IncludeImports: true,
-		NoStdImports:   true,
+		t.Error("expected <imports> section")
 	}
 
-	output, err := formatter.Format(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	outputStr := string(output)
-
-	// When all imports are filtered out, <imports> section should not appear
-	if strings.Contains(outputStr, "<imports>") {
-		t.Error("expected no <imports> section when all imports are filtered")
-	}
-}
-
-func TestMarkdownFormatterNoStdImports(t *testing.T) {
-	formatter := NewMarkdownFormatter()
-
-	data := &PackageData{
-		Files: []FileData{
-			{
-				Path:     "main.go",
-				Language: "go",
-				Signatures: []parser.Signature{
-					{Name: "Main", Kind: "function", Text: "func Main()"},
-				},
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "github.com/spf13/cobra"`},
-				},
-			},
-		},
-		IncludeImports: true,
-		NoStdImports:   true,
-	}
-
-	output, err := formatter.Format(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	outputStr := string(output)
-
-	// stdlib should be excluded
-	if strings.Contains(outputStr, "fmt") {
-		t.Error("expected stdlib import 'fmt' to be excluded")
-	}
-
-	// non-stdlib should be included
-	if !strings.Contains(outputStr, "cobra") {
-		t.Error("expected non-stdlib import 'cobra' to be included")
-	}
-}
-
-func TestXMLFormatterNoStdImportsEmptyFile(t *testing.T) {
-	// Stdlib-only imports + no signatures → should render <!-- empty -->
-	formatter := NewXMLFormatter()
-
-	data := &PackageData{
-		Files: []FileData{
-			{
-				Path:     "main.go",
-				Language: "go",
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "os"`},
-				},
-			},
-		},
-		IncludeImports: true,
-		NoStdImports:   true,
-	}
-
-	output, err := formatter.Format(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	outputStr := string(output)
-	if !strings.Contains(outputStr, "<!-- empty -->") {
-		t.Errorf("expected <!-- empty --> when all imports are stdlib and no signatures, got:\n%s", outputStr)
-	}
-}
-
-func TestMarkdownFormatterNoStdImportsEmptyFile(t *testing.T) {
-	// Stdlib-only imports + no signatures → should render // (empty)
-	formatter := NewMarkdownFormatter()
-
-	data := &PackageData{
-		Files: []FileData{
-			{
-				Path:     "main.go",
-				Language: "go",
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "os"`},
-				},
-			},
-		},
-		IncludeImports: true,
-		NoStdImports:   true,
-	}
-
-	output, err := formatter.Format(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	outputStr := string(output)
-	if !strings.Contains(outputStr, "// (empty)") {
-		t.Errorf("expected // (empty) when all imports are stdlib and no signatures, got:\n%s", outputStr)
-	}
-}
-
-func TestFormatterNoStdImportsDisabled(t *testing.T) {
-	// When NoStdImports is false, all imports should appear
-	formatter := NewXMLFormatter()
-
-	data := &PackageData{
-		Files: []FileData{
-			{
-				Path:     "main.go",
-				Language: "go",
-				Signatures: []parser.Signature{
-					{Name: "Main", Kind: "function", Text: "func Main()"},
-				},
-				Imports: []parser.ImportExport{
-					{Type: "import", Path: `import "fmt"`},
-					{Type: "import", Path: `import "github.com/spf13/cobra"`},
-				},
-			},
-		},
-		IncludeImports: true,
-		NoStdImports:   false,
-	}
-
-	output, err := formatter.Format(data)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	outputStr := string(output)
-
-	// Both should be present
+	// raw import block should be included verbatim (including multi-line format)
 	if !strings.Contains(outputStr, "fmt") {
-		t.Error("expected stdlib import 'fmt' to be present when NoStdImports is false")
+		t.Error("expected import 'fmt' to be included")
 	}
 	if !strings.Contains(outputStr, "cobra") {
-		t.Error("expected non-stdlib import 'cobra' to be present")
+		t.Error("expected import 'cobra' to be included")
+	}
+}
+
+func TestMarkdownFormatterVerbatimImports(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "main.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "Main", Kind: "function", Text: "func Main()"},
+				},
+				RawImports: []string{
+					`import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+)`,
+				},
+			},
+		},
+		IncludeImports: true,
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	// imports should be included in the code block
+	if !strings.Contains(outputStr, "fmt") {
+		t.Error("expected import 'fmt' to be included")
+	}
+	if !strings.Contains(outputStr, "cobra") {
+		t.Error("expected import 'cobra' to be included")
 	}
 }

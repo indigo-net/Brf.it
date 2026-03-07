@@ -35,8 +35,6 @@ const (
 // Capture names for import queries.
 const (
 	CaptureImportPath = "import_path"
-	CaptureExportName = "export_name"
-	CaptureImportType = "import_type"
 	// CaptureImportFn captures the function name in a function-call import pattern
 	// (e.g., Lua's require()). Used for Go-side filtering when tree-sitter predicates
 	// (such as #eq?) are not evaluated by the binding at runtime.
