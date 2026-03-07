@@ -308,7 +308,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 모든 코드 변경 작업은 **worktree 격리 환경**에서 이슈 기반으로 진행합니다:
 
-1. **이슈 조회**: `gh issue list --state open`으로 기존 이슈 확인 → 중복 방지
+1. **이슈 조회** (필수): `gh issue list --state open --search "키워드"`로 기존 이슈 확인 → 중복 발견 시 기존 이슈에 코멘트 추가, 새 이슈 생성 금지
 2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement"`
 3. **Worktree + 브랜치 생성**: `git worktree add -b feat/feature-name .worktrees/<name> main`으로 격리 환경과 브랜치를 동시에 생성
 4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
