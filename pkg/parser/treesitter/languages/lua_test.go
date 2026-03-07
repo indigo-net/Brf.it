@@ -273,6 +273,66 @@ local lfs = require("lfs")
 	}
 }
 
+// TestLuaQueryNonRequireFalsePositive verifies that non-require() function calls
+// such as pcall("...") do not produce import false positives after Go-side filtering.
+func TestLuaQueryNonRequireFalsePositive(t *testing.T) {
+	parser := sitter.NewParser()
+	defer parser.Close()
+
+	lang := sitter.NewLanguage(tree_sitter_lua.Language())
+	parser.SetLanguage(lang)
+
+	// pcall and xpcall are valid function calls with string arguments but must NOT
+	// be treated as imports. Only require() should produce import matches.
+	code := []byte(`
+local json = require("json")
+local ok = pcall("not_a_module")
+local status = xpcall("handler", "msg")
+local lfs = require("lfs")
+`)
+
+	tree := parser.Parse(code, nil)
+	defer tree.Close()
+
+	query := NewLuaQuery()
+	q, err := sitter.NewQuery(lang, string(query.ImportQuery()))
+	if err != nil {
+		t.Fatalf("failed to create import query: %v", err)
+	}
+	defer q.Close()
+
+	captureNames := q.CaptureNames()
+
+	qc := sitter.NewQueryCursor()
+	defer qc.Close()
+
+	matches := qc.Matches(q, tree.RootNode(), code)
+
+	// Simulate the Go-side filtering that extractImports() performs:
+	// skip matches where @_fn != "require".
+	requireCount := 0
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+		fnName := ""
+		for _, c := range match.Captures {
+			if captureNames[c.Index] == "_fn" {
+				fnName = string(code[c.Node.StartByte():c.Node.EndByte()])
+			}
+		}
+		if fnName == "require" {
+			requireCount++
+		}
+	}
+
+	// Should match only the 2 require() calls, not pcall/xpcall.
+	if requireCount != 2 {
+		t.Errorf("expected exactly 2 require() matches after filtering, got %d", requireCount)
+	}
+}
+
 func TestLuaQueryExtractDoc(t *testing.T) {
 	parser := sitter.NewParser()
 	defer parser.Close()

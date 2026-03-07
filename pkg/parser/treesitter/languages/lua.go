@@ -56,7 +56,9 @@ func (q *LuaQuery) ImportQuery() []byte {
 
 // luaImportQueryPattern is the Tree-sitter query for extracting Lua require() calls.
 // Captures the full variable_declaration containing require() as @import_path.
-// Go-side filtering in cleanImportPath() handles the require() prefix recognition.
+// The (#eq? @_fn "require") predicate filters to only match require() calls.
+// Go-side filtering in extractImports() additionally checks @_fn == "require" as a fallback
+// in case the tree-sitter predicate is not evaluated by the Go binding.
 const luaImportQueryPattern = `
 ; local json = require("json")
 (variable_declaration
@@ -69,6 +71,7 @@ const luaImportQueryPattern = `
     )
   )
 ) @import_path
+(#eq? @_fn "require")
 `
 
 // luaQueryPattern is the Tree-sitter query for extracting Lua signatures.

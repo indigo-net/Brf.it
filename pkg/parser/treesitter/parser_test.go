@@ -2061,7 +2061,12 @@ end
 	}
 
 	for name, expected := range expectedKinds {
-		if actual, ok := kindMap[name]; ok && actual != expected {
+		actual, ok := kindMap[name]
+		if !ok {
+			t.Errorf("expected '%s' to be present in signatures", name)
+			continue
+		}
+		if actual != expected {
 			t.Errorf("expected '%s' kind = '%s', got '%s'", name, expected, actual)
 		}
 	}

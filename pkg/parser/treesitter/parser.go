@@ -1036,7 +1036,7 @@ func stripLuaBody(text, kind string) string {
 	switch kind {
 	case "function", "method", "module_function", "local_function":
 		parenIdx := strings.Index(text, ")")
-		if parenIdx > 0 {
+		if parenIdx >= 0 {
 			return strings.TrimSpace(text[:parenIdx+1])
 		}
 		// Fallback: take first line
@@ -1289,6 +1289,9 @@ func (p *TreeSitterParser) extractImports(
 
 		var imp parser.ImportExport
 		var hasExportType bool
+		// fnName holds the value of @_fn capture for function-call import patterns
+		// (e.g., Lua require()). Used for Go-side predicate filtering.
+		fnName := ""
 
 		for _, capture := range match.Captures {
 			name := captureNames[capture.Index]
@@ -1306,7 +1309,16 @@ func (p *TreeSitterParser) extractImports(
 				imp.Type = "export"
 			case "export_type":
 				hasExportType = true
+			case CaptureImportFn:
+				fnName = text
 			}
+		}
+
+		// Go-side filtering: if @_fn was captured, it must be "require".
+		// The tree-sitter (#eq? @_fn "require") predicate is not evaluated
+		// by the go-tree-sitter binding at runtime, so we enforce it here.
+		if fnName != "" && fnName != "require" {
+			continue
 		}
 
 		// Re-export (export with source) is marked as export
