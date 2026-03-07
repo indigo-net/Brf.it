@@ -1553,6 +1553,599 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/binding.go
+
+**Imports:**
+- `import "C"`
+- `import "unsafe"`
+
+```go
+func Language() unsafe.Pointer
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/parser.c
+
+**Imports:**
+- `#include "tree_sitter/parser.h"`
+
+```c
+#define LANGUAGE_VERSION 15
+#define STATE_COUNT 282
+#define LARGE_STATE_COUNT 2
+#define SYMBOL_COUNT 143
+#define ALIAS_COUNT 0
+#define TOKEN_COUNT 73
+#define EXTERNAL_TOKEN_COUNT 6
+#define FIELD_COUNT 23
+#define MAX_ALIAS_SEQUENCE_LENGTH 7
+#define MAX_RESERVED_WORD_SET_SIZE 0
+#define PRODUCTION_ID_COUNT 70
+#define SUPERTYPE_COUNT 4
+enum ts_symbol_identifiers {
+  sym_identifier = 1,
+  sym_hash_bang_line = 2,
+  anon_sym_return = 3,
+  anon_sym_SEMI = 4,
+  anon_sym_EQ = 5,
+  anon_sym_COMMA = 6,
+  anon_sym_COLON_COLON = 7,
+  sym_break_statement = 8,
+  anon_sym_goto = 9,
+  anon_sym_do = 10,
+  anon_sym_end = 11,
+  anon_sym_while = 12,
+  anon_sym_repeat = 13,
+  anon_sym_until = 14,
+  anon_sym_if = 15,
+  anon_sym_then = 16,
+  anon_sym_elseif = 17,
+  anon_sym_else = 18,
+  anon_sym_for = 19,
+  anon_sym_in = 20,
+  anon_sym_function = 21,
+  anon_sym_local = 22,
+  anon_sym_global = 23,
+  anon_sym_DOT = 24,
+  anon_sym_COLON = 25,
+  anon_sym_STAR = 26,
+  anon_sym_LT = 27,
+  anon_sym_GT = 28,
+  sym_nil = 29,
+  sym_false = 30,
+  sym_true = 31,
+  sym_number = 32,
+  anon_sym_DQUOTE = 33,
+  anon_sym_SQUOTE = 34,
+  aux_sym__doublequote_string_content_token1 = 35,
+  aux_sym__singlequote_string_content_token1 = 36,
+  sym_escape_sequence = 37,
+  sym_vararg_expression = 38,
+  anon_sym_LPAREN = 39,
+  anon_sym_RPAREN = 40,
+  anon_sym_LBRACK = 41,
+  anon_sym_RBRACK = 42,
+  anon_sym_LBRACE = 43,
+  anon_sym_RBRACE = 44,
+  anon_sym_or = 45,
+  anon_sym_and = 46,
+  anon_sym_LT_EQ = 47,
+  anon_sym_EQ_EQ = 48,
+  anon_sym_TILDE_EQ = 49,
+  anon_sym_GT_EQ = 50,
+  anon_sym_PIPE = 51,
+  anon_sym_TILDE = 52,
+  anon_sym_AMP = 53,
+  anon_sym_LT_LT = 54,
+  anon_sym_GT_GT = 55,
+  anon_sym_PLUS = 56,
+  anon_sym_DASH = 57,
+  anon_sym_SLASH = 58,
+  anon_sym_SLASH_SLASH = 59,
+  anon_sym_PERCENT = 60,
+  anon_sym_DOT_DOT = 61,
+  anon_sym_CARET = 62,
+  anon_sym_not = 63,
+  anon_sym_POUND = 64,
+  anon_sym_DASH_DASH = 65,
+  aux_sym_comment_token1 = 66,
+  sym__block_comment_start = 67,
+  sym__block_comment_content = 68,
+  sym__block_comment_end = 69,
+  sym__block_string_start = 70,
+  sym__block_string_content = 71,
+  sym__block_string_end = 72,
+  sym_chunk = 73,
+  sym__block = 74,
+  sym_statement = 75,
+  sym_return_statement = 76,
+  sym_empty_statement = 77,
+  sym_assignment_statement = 78,
+  sym__variable_assignment_varlist = 79,
+  sym__variable_assignment_explist = 80,
+  sym_label_statement = 81,
+  sym_goto_statement = 82,
+  sym_do_statement = 83,
+  sym_while_statement = 84,
+  sym_repeat_statement = 85,
+  sym_if_statement = 86,
+  sym_elseif_statement = 87,
+  sym_else_statement = 88,
+  sym_for_statement = 89,
+  sym_for_generic_clause = 90,
+  sym_for_numeric_clause = 91,
+  sym__name_list = 92,
+  sym_declaration = 93,
+  sym_function_declaration = 94,
+  sym__local_function_declaration = 95,
+  sym__global_function_declaration = 96,
+  sym__function_name = 97,
+  sym__function_name_prefix_expression = 98,
+  sym__function_name_dot_index_expression = 99,
+  sym__function_name_method_index_expression = 100,
+  sym_variable_declaration = 101,
+  sym__global_variable_declaration = 102,
+  sym__variable_assignment = 103,
+  sym__att_name_list = 104,
+  sym__global_implicit_variable_declaration = 105,
+  sym__attrib = 106,
+  sym__expression_list = 107,
+  sym_expression = 108,
+  sym_string = 109,
+  sym__quote_string = 110,
+  aux_sym__doublequote_string_content = 111,
+  aux_sym__singlequote_string_content = 112,
+  sym__block_string = 113,
+  sym_function_definition = 114,
+  sym__function_body = 115,
+  sym_parameters = 116,
+  sym__parameter_list = 117,
+  sym__vararg_parameter = 118,
+  sym__prefix_expression = 119,
+  sym_variable = 120,
+  sym_bracket_index_expression = 121,
+  sym_dot_index_expression = 122,
+  sym_function_call = 123,
+  sym_method_index_expression = 124,
+  sym_arguments = 125,
+  sym_parenthesized_expression = 126,
+  sym_table_constructor = 127,
+  sym__field_list = 128,
+  sym__field_sep = 129,
+  sym_field = 130,
+  sym_binary_expression = 131,
+  sym_unary_expression = 132,
+  sym_comment = 133,
+  sym__contextual_keyword = 134,
+  aux_sym_chunk_repeat1 = 135,
+  aux_sym__variable_assignment_varlist_repeat1 = 136,
+  aux_sym__variable_assignment_explist_repeat1 = 137,
+  aux_sym_if_statement_repeat1 = 138,
+  aux_sym__name_list_repeat1 = 139,
+  aux_sym__att_name_list_repeat1 = 140,
+  aux_sym__expression_list_repeat1 = 141,
+  aux_sym__field_list_repeat1 = 142,
+}
+enum ts_field_identifiers {
+  field_alternative = 1,
+  field_arguments = 2,
+  field_attribute = 3,
+  field_body = 4,
+  field_clause = 5,
+  field_condition = 6,
+  field_consequence = 7,
+  field_content = 8,
+  field_end = 9,
+  field_field = 10,
+  field_global_declaration = 11,
+  field_left = 12,
+  field_local_declaration = 13,
+  field_method = 14,
+  field_name = 15,
+  field_operand = 16,
+  field_operator = 17,
+  field_parameters = 18,
+  field_right = 19,
+  field_start = 20,
+  field_step = 21,
+  field_table = 22,
+  field_value = 23,
+}
+static bool ts_lex(TSLexer *lexer, TSStateId state)
+static bool ts_lex_keywords(TSLexer *lexer, TSStateId state)
+enum ts_external_scanner_symbol_identifiers {
+  ts_external_token__block_comment_start = 0,
+  ts_external_token__block_comment_content = 1,
+  ts_external_token__block_comment_end = 2,
+  ts_external_token__block_string_start = 3,
+  ts_external_token__block_string_content = 4,
+  ts_external_token__block_string_end = 5,
+}
+void *tree_sitter_lua_external_scanner_create(void);
+void tree_sitter_lua_external_scanner_destroy(void *);
+bool tree_sitter_lua_external_scanner_scan(void *, TSLexer *, const bool *);
+unsigned tree_sitter_lua_external_scanner_serialize(void *, char *);
+void tree_sitter_lua_external_scanner_deserialize(void *, const char *, unsigned);
+#define TS_PUBLIC
+#define TS_PUBLIC __declspec(dllexport)
+#define TS_PUBLIC __attribute__((visibility("default")))
+TS_PUBLIC const TSLanguage *tree_sitter_lua(void)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/scanner.c
+
+**Imports:**
+- `#include <stdio.h>`
+- `#include "tree_sitter/alloc.h"`
+- `#include "tree_sitter/parser.h"`
+- `#include <wctype.h>`
+
+```c
+enum TokenType {
+  BLOCK_COMMENT_START,
+  BLOCK_COMMENT_CONTENT,
+  BLOCK_COMMENT_END,
+
+  BLOCK_STRING_START,
+  BLOCK_STRING_CONTENT,
+  BLOCK_STRING_END,
+}
+static inline void consume(TSLexer *lexer)
+static inline void skip(TSLexer *lexer)
+static inline bool consume_char(char c, TSLexer *lexer)
+static inline uint8_t consume_and_count_char(char c, TSLexer *lexer)
+static inline void skip_whitespaces(TSLexer *lexer)
+typedef struct {
+  char ending_char;
+  uint8_t level_count;
+} Scanner;
+static inline void reset_state(Scanner *scanner)
+void *tree_sitter_lua_external_scanner_create()
+void tree_sitter_lua_external_scanner_destroy(void *payload)
+unsigned tree_sitter_lua_external_scanner_serialize(void *payload, char *buffer)
+void tree_sitter_lua_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
+static bool scan_block_start(Scanner *scanner, TSLexer *lexer)
+static bool scan_block_end(Scanner *scanner, TSLexer *lexer)
+static bool scan_block_content(Scanner *scanner, TSLexer *lexer)
+static bool scan_comment_start(Scanner *scanner, TSLexer *lexer)
+static bool scan_comment_content(Scanner *scanner, TSLexer *lexer)
+bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/alloc.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdio.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_ALLOC_H_
+#define ts_malloc  ts_current_malloc
+#define ts_calloc  ts_current_calloc
+#define ts_realloc ts_current_realloc
+#define ts_free    ts_current_free
+#define ts_malloc  malloc
+#define ts_calloc  calloc
+#define ts_realloc realloc
+#define ts_free    free
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/array.h
+
+**Imports:**
+- `#include "./alloc.h"`
+- `#include <assert.h>`
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+- `#include <string.h>`
+
+```cpp
+#define TREE_SITTER_ARRAY_H_
+#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }
+#define array_init(self) \
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL)
+#define array_new() \
+  { NULL, 0, 0 }
+#define array_get(self, _index) \
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index])
+#define array_front(self) array_get(self, 0)
+#define array_back(self) array_get(self, (self)->size - 1)
+#define array_clear(self) ((self)->size = 0)
+#define array_reserve(self, new_capacity)        \
+  ((self)->contents = _array__reserve(           \
+    (void *)(self)->contents, &(self)->capacity, \
+    array_elem_size(self), new_capacity)         \
+  )
+#define array_delete(self)                           \
+  do {                                               \
+    if ((self)->contents) ts_free((self)->contents); \
+    (self)->contents = NULL;                         \
+    (self)->size = 0;                                \
+    (self)->capacity = 0;                            \
+  } while (0)
+#define array_push(self, element)                                 \
+  do {                                                            \
+    (self)->contents = _array__grow(                              \
+      (void *)(self)->contents, (self)->size, &(self)->capacity,  \
+      1, array_elem_size(self)                                    \
+    );                                                            \
+   (self)->contents[(self)->size++] = (element);                  \
+  } while(0)
+#define array_grow_by(self, count)                                               \
+  do {                                                                           \
+    if ((count) == 0) break;                                                     \
+    (self)->contents = _array__grow(                                             \
+      (self)->contents, (self)->size, &(self)->capacity,                         \
+      count, array_elem_size(self)                                               \
+    );                                                                           \
+    memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
+    (self)->size += (count);                                                     \
+  } while (0)
+#define array_push_all(self, other) \
+  array_extend((self), (other)->size, (other)->contents)
+#define array_extend(self, count, other_contents)                 \
+  (self)->contents = _array__splice(                              \
+    (void*)(self)->contents, &(self)->size, &(self)->capacity,    \
+    array_elem_size(self), (self)->size, 0, count, other_contents \
+  )
+#define array_splice(self, _index, old_count, new_count, new_contents) \
+  (self)->contents = _array__splice(                                   \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity,        \
+    array_elem_size(self), _index, old_count, new_count, new_contents  \
+  )
+#define array_insert(self, _index, element)                     \
+  (self)->contents = _array__splice(                            \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity, \
+    array_elem_size(self), _index, 0, 1, &(element)             \
+  )
+#define array_erase(self, _index) \
+  _array__erase((void *)(self)->contents, &(self)->size, array_elem_size(self), _index)
+#define array_pop(self) ((self)->contents[--(self)->size])
+#define array_assign(self, other)                                   \
+  (self)->contents = _array__assign(                                \
+    (void *)(self)->contents, &(self)->size, &(self)->capacity,     \
+    (const void *)(other)->contents, (other)->size, array_elem_size(self) \
+  )
+#define array_swap(self, other)                                     \
+  do {                                                              \
+    void *_array_swap_tmp = (void *)(self)->contents;               \
+    (self)->contents = (other)->contents;                           \
+    (other)->contents = _array_swap_tmp;                            \
+    _array__swap(&(self)->size, &(self)->capacity,                  \
+                 &(other)->size, &(other)->capacity);               \
+  } while (0)
+#define array_elem_size(self) (sizeof *(self)->contents)
+#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)
+#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)
+#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)
+#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)
+static inline void _array__erase(void* self_contents, uint32_t *size,
+                                size_t element_size, uint32_t index)
+static inline void *_array__reserve(void *contents, uint32_t *capacity,
+                                  size_t element_size, uint32_t new_capacity)
+static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
+                                 const void *other_contents, uint32_t other_size, size_t element_size)
+static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
+                               uint32_t *other_size, uint32_t *other_capacity)
+static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
+                               uint32_t count, size_t element_size)
+static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
+                                 size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)
+#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)->size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size > 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&((self)->contents[mid_index] suffix), (needle)); \
+      if (comparison <= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison < 0) *(_index) += 1; \
+  } while (0)
+#define _compare_int(a, b) ((int)*(a) - (int)(b))
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/parser.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_PARSER_H_
+#define ts_builtin_sym_error ((TSSymbol)-1)
+#define ts_builtin_sym_end 0
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024
+typedef uint16_t TSStateId;
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+struct TSLanguage
+struct TSLanguageMetadata
+typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;
+typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSMapSlice;
+typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;
+struct TSLexer
+struct TSLexer
+typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;
+typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+  uint16_t reserved_word_set_id;
+} TSLexerMode;
+typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;
+typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;
+struct TSLanguage
+static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
+#define UNUSED __pragma(warning(suppress : 4101))
+#define UNUSED __attribute__((unused))
+#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer->advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer->lookahead;
+#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }
+#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i < sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }
+#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }
+#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer->result_symbol = symbol_value; \
+  lexer->mark_end(lexer);
+#define END_STATE() return result;
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)
+#define STATE(id) id
+#define ACTIONS(id) id
+#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}
+#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}
+#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}
+#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}
+#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}
+#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go
 
 **Imports:**
@@ -2806,6 +3399,103 @@ func TestKotlinQueryCaptures(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"`
+
+```go
+type LuaQuery struct {
+	language *sitter.Language
+	query    []byte
+}
+func NewLuaQuery() *LuaQuery
+func (q *LuaQuery) Language() *sitter.Language
+func (q *LuaQuery) Query() []byte
+func (q *LuaQuery) Captures() []string
+func (q *LuaQuery) KindMapping() map[string]string
+func (q *LuaQuery) ImportQuery() []byte
+luaImportQueryPattern = `
+; local json = require("json")
+(variable_declaration
+  (assignment_statement
+    (expression_list
+      value: (function_call
+        name: (identifier) @_fn
+        arguments: (arguments (string))
+      )
+    )
+  )
+) @import_path
+(#eq? @_fn "require")
+`
+luaQueryPattern = `
+; Function declarations (global, local, module, method)
+; Covers: function foo(), local function foo(), function M.foo(), function M:foo()
+(function_declaration
+  name: [
+    (identifier) @name
+    (dot_index_expression field: (identifier) @name)
+    (method_index_expression method: (identifier) @name)
+  ]
+) @signature @kind
+
+; Variable declarations with function assignment: local foo = function() end
+(variable_declaration
+  (assignment_statement
+    (variable_list
+      name: (identifier) @name)
+    (expression_list
+      value: (function_definition))
+  )
+) @signature @kind
+
+; Variable declarations with table constructor: local M = {}
+(variable_declaration
+  (assignment_statement
+    (variable_list
+      name: (identifier) @name)
+    (expression_list
+      value: (table_constructor))
+  )
+) @signature @kind
+
+; Comments (LuaDoc --- and regular --)
+(comment) @doc
+`
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"`
+
+```go
+func extractLuaNames(t *testing.T, code []byte) map[string]bool
+func TestLuaQueryLanguage(t *testing.T)
+func TestLuaQueryPattern(t *testing.T)
+func TestLuaQueryImportPattern(t *testing.T)
+func TestLuaQueryExtractFunction(t *testing.T)
+func TestLuaQueryExtractLocalFunction(t *testing.T)
+func TestLuaQueryExtractModuleFunction(t *testing.T)
+func TestLuaQueryExtractMethod(t *testing.T)
+func TestLuaQueryExtractTableAssignment(t *testing.T)
+func TestLuaQueryExtractFunctionAssignment(t *testing.T)
+func TestLuaQueryExtractImport(t *testing.T)
+func TestLuaQueryNonRequireFalsePositive(t *testing.T)
+func TestLuaQueryExtractDoc(t *testing.T)
+func TestLuaQueryKindMapping(t *testing.T)
+func TestLuaQueryCaptures(t *testing.T)
+func TestLuaQueryExtractMixed(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go
 
 **Imports:**
@@ -3336,6 +4026,8 @@ func findSwiftBodyStart(text string) int
 func stripKotlinBody(text, kind string) string
 func findKotlinBodyStart(text string) int
 func refineKotlinClassKind(text string) string
+func refineLuaFunctionKind(text string) string
+func stripLuaBody(text, kind string) string
 func stripCSharpBody(text, kind string) string
 func findCSharpBodyStart(text string) int
 func isExpressionBodied(text string) bool
@@ -3424,6 +4116,10 @@ func TestExtractCSharpOperatorName(t *testing.T)
 func TestExtractCSharpConversionOperatorName(t *testing.T)
 func TestFindFunctionBodyStart(t *testing.T)
 func TestParsePanicRecoveryMechanism(t *testing.T)
+func TestTreeSitterParserParseLua(t *testing.T)
+func TestTreeSitterParserParseLuaImports(t *testing.T)
+func TestLuaBodyStripping(t *testing.T)
+func TestRefineLuaFunctionKind(t *testing.T)
 ```
 
 ---
@@ -3458,6 +4154,7 @@ CaptureKind      = "kind"
 CaptureImportPath = "import_path"
 CaptureExportName = "export_name"
 CaptureImportType = "import_type"
+CaptureImportFn = "_fn"
 DefaultKindMapping = map[string]string{
 	"function_declaration": "function",
 	"method_declaration":   "method",
