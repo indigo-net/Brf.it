@@ -3893,5 +3893,272 @@
       <function>func TestTiktokenTokenizerConsistency(t *testing.T)</function>
       <function>func TestTiktokenTokenizerSpecialCharacters(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/docusaurus.config.ts" language="typescript">
+      <imports>
+        <import>import {themes as prismThemes} from &apos;prism-react-renderer&apos;;</import>
+        <import>import type {Config} from &apos;@docusaurus/types&apos;;</import>
+        <import>import type * as Preset from &apos;@docusaurus/preset-classic&apos;;</import>
+      </imports>
+      <function>const config: Config = {
+  title: &apos;Brf.it&apos;,
+  tagline: &apos;Give AI the gist, not the bloat&apos;,
+  favicon: &apos;img/favicon.ico&apos;,
+
+  future: {
+    v4: true,
+  },
+
+  url: &apos;https://indigo-net.github.io&apos;,
+  baseUrl: &apos;/Brf.it/&apos;,
+
+  organizationName: &apos;indigo-net&apos;,
+  projectName: &apos;Brf.it&apos;,
+  trailingSlash: false,
+
+  onBrokenLinks: &apos;throw&apos;,
+
+  i18n: {
+    defaultLocale: &apos;en&apos;,
+    locales: [&apos;en&apos;, &apos;ko&apos;, &apos;ja&apos;, &apos;de&apos;, &apos;hi&apos;],
+    localeConfigs: {
+      en: { label: &apos;English&apos;, direction: &apos;ltr&apos; },
+      ko: { label: &apos;한국어&apos;, direction: &apos;ltr&apos; },
+      ja: { label: &apos;日本語&apos;, direction: &apos;ltr&apos; },
+      de: { label: &apos;Deutsch&apos;, direction: &apos;ltr&apos; },
+      hi: { label: &apos;हिन्दी&apos;, direction: &apos;ltr&apos; },
+    },
+  },
+
+  presets: [
+    [
+      &apos;classic&apos;,
+      {
+        docs: {
+          sidebarPath: &apos;./sidebars.ts&apos;,
+          editUrl: &apos;https://github.com/indigo-net/Brf.it/tree/main/website/&apos;,
+        },
+        blog: false,
+        theme: {
+          customCss: &apos;./src/css/custom.css&apos;,
+        },
+      } satisfies Preset.Options,
+    ],
+  ],
+
+  themeConfig: {
+    image: &apos;img/docusaurus-social-card.jpg&apos;,
+    colorMode: {
+      respectPrefersColorScheme: true,
+    },
+    navbar: {
+      title: &apos;Brf.it&apos;,
+      logo: {
+        alt: &apos;Brf.it Logo&apos;,
+        src: &apos;img/logo.svg&apos;,
+      },
+      items: [
+        {
+          type: &apos;docSidebar&apos;,
+          sidebarId: &apos;docsSidebar&apos;,
+          position: &apos;left&apos;,
+          label: &apos;Docs&apos;,
+        },
+        {
+          type: &apos;localeDropdown&apos;,
+          position: &apos;right&apos;,
+          dropdownItemsBefore: [],
+          dropdownItemsAfter: [],
+        },
+        {
+          href: &apos;https://github.com/indigo-net/Brf.it&apos;,
+          label: &apos;GitHub&apos;,
+          position: &apos;right&apos;,
+        },
+      ],
+    },
+    footer: {
+      style: &apos;dark&apos;,
+      links: [
+        {
+          title: &apos;Docs&apos;,
+          items: [
+            {
+              label: &apos;Getting Started&apos;,
+              to: &apos;/docs/&apos;,
+            },
+            {
+              label: &apos;CLI Reference&apos;,
+              to: &apos;/docs/cli-reference&apos;,
+            },
+            {
+              label: &apos;Supported Languages&apos;,
+              to: &apos;/docs/languages/&apos;,
+            },
+          ],
+        },
+        {
+          title: &apos;Community&apos;,
+          items: [
+            {
+              label: &apos;GitHub Issues&apos;,
+              href: &apos;https://github.com/indigo-net/Brf.it/issues&apos;,
+            },
+          ],
+        },
+        {
+          title: &apos;More&apos;,
+          items: [
+            {
+              label: &apos;GitHub&apos;,
+              href: &apos;https://github.com/indigo-net/Brf.it&apos;,
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} indigo-net. Built with Docusaurus.`,
+    },
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+      additionalLanguages: [&apos;go&apos;, &apos;typescript&apos;, &apos;python&apos;, &apos;java&apos;, &apos;kotlin&apos;, &apos;rust&apos;, &apos;ruby&apos;, &apos;php&apos;, &apos;swift&apos;, &apos;scala&apos;],
+    },
+  } satisfies Preset.ThemeConfig,
+};</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/sidebars.ts" language="typescript">
+      <imports>
+        <import>import type {SidebarsConfig} from &apos;@docusaurus/plugin-content-docs&apos;;</import>
+      </imports>
+      <function>const sidebars: SidebarsConfig = {
+  docsSidebar: [
+    {
+      type: &apos;doc&apos;,
+      id: &apos;getting-started&apos;,
+      label: &apos;Getting Started&apos;,
+    },
+    {
+      type: &apos;doc&apos;,
+      id: &apos;cli-reference&apos;,
+      label: &apos;CLI Reference&apos;,
+    },
+    {
+      type: &apos;category&apos;,
+      label: &apos;Languages&apos;,
+      items: [
+        &apos;languages/index&apos;,
+        &apos;languages/go&apos;,
+        &apos;languages/typescript&apos;,
+        &apos;languages/python&apos;,
+        &apos;languages/java&apos;,
+        &apos;languages/kotlin&apos;,
+        &apos;languages/rust&apos;,
+        &apos;languages/ruby&apos;,
+        &apos;languages/php&apos;,
+        &apos;languages/swift&apos;,
+        &apos;languages/scala&apos;,
+        &apos;languages/c-cpp&apos;,
+      ],
+    },
+  ],
+};</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/components/FeaturesSection.tsx" language="typescript">
+      <imports>
+        <import>import React from &apos;react&apos;;</import>
+        <import>import Translate from &apos;@docusaurus/Translate&apos;;</import>
+      </imports>
+      <type>interface Feature {
+  title: string;
+  description: string;
+  icon: string;
+}</type>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/components/Hero.tsx" language="typescript">
+      <imports>
+        <import>import React from &apos;react&apos;;</import>
+        <import>import Link from &apos;@docusaurus/Link&apos;;</import>
+        <import>import Translate, {translate} from &apos;@docusaurus/Translate&apos;;</import>
+        <export>Hero</export>
+      </imports>
+      <variable>export default function Hero(): JSX.Element</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/components/InstallSection.tsx" language="typescript">
+      <imports>
+        <import>import React, {useState} from &apos;react&apos;;</import>
+        <import>import Translate from &apos;@docusaurus/Translate&apos;;</import>
+      </imports>
+      <type>type Platform = keyof typeof installCommands;</type>
+      <function>const copyToClipboard = (text: string)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/components/LanguageGrid.tsx" language="typescript">
+      <imports>
+        <import>import React from &apos;react&apos;;</import>
+        <import>import Translate from &apos;@docusaurus/Translate&apos;;</import>
+        <export>LanguageGrid</export>
+      </imports>
+      <type>interface Language {
+  name: string;
+  icon: string;
+}</type>
+      <function>const languages: Language[] = [
+  { name: &apos;Go&apos;, icon: &apos;🐹&apos; },
+  { name: &apos;TypeScript&apos;, icon: &apos;📘&apos; },
+  { name: &apos;JavaScript&apos;, icon: &apos;📒&apos; },
+  { name: &apos;Python&apos;, icon: &apos;🐍&apos; },
+  { name: &apos;Java&apos;, icon: &apos;☕&apos; },
+  { name: &apos;Kotlin&apos;, icon: &apos;🟣&apos; },
+  { name: &apos;Rust&apos;, icon: &apos;🦀&apos; },
+  { name: &apos;Ruby&apos;, icon: &apos;💎&apos; },
+  { name: &apos;PHP&apos;, icon: &apos;🐘&apos; },
+  { name: &apos;Swift&apos;, icon: &apos;🍎&apos; },
+  { name: &apos;Scala&apos;, icon: &apos;🔴&apos; },
+  { name: &apos;C/C++&apos;, icon: &apos;⚙️&apos; },
+];</function>
+      <variable>export default function LanguageGrid(): JSX.Element {
+  return (
+    &lt;section className=&quot;section&quot; style={{ background: &apos;var(--ifm-color-emphasis-100)&apos; }}&gt;
+      &lt;div className=&quot;container&quot;&gt;
+        &lt;h2 className=&quot;section-title&quot;&gt;
+          &lt;Translate id=&quot;languages.title&quot;&gt;Supported Languages&lt;/Translate&gt;
+        &lt;/h2&gt;
+        &lt;p className=&quot;section-subtitle&quot;&gt;
+          &lt;Translate id=&quot;languages.subtitle&quot;&gt;
+            Tree-sitter powered parsing for accurate signature extraction
+          &lt;/Translate&gt;
+        &lt;/p&gt;
+
+        &lt;div className=&quot;language-grid&quot;&gt;
+          {languages.map(lang</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/components/TokenComparison.tsx" language="typescript">
+      <imports>
+        <import>import React, {useState} from &apos;react&apos;;</import>
+        <import>import Translate, {translate} from &apos;@docusaurus/Translate&apos;;</import>
+      </imports>
+      <type>interface CodeExample {
+  language: string;
+  label: string;
+  before: string;
+  after: string;
+  beforeTokens: number;
+  afterTokens: number;
+  beforeLines: number;
+  afterLines: number;
+}</type>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/website/src/pages/index.tsx" language="typescript">
+      <imports>
+        <import>import type {ReactNode} from &apos;react&apos;;</import>
+        <import>import useDocusaurusContext from &apos;@docusaurus/useDocusaurusContext&apos;;</import>
+        <import>import Layout from &apos;@theme/Layout&apos;;</import>
+        <import>import Hero from &apos;@site/src/components/Hero&apos;;</import>
+        <import>import TokenComparison from &apos;@site/src/components/TokenComparison&apos;;</import>
+        <import>import FeaturesSection from &apos;@site/src/components/FeaturesSection&apos;;</import>
+        <import>import LanguageGrid from &apos;@site/src/components/LanguageGrid&apos;;</import>
+        <import>import InstallSection from &apos;@site/src/components/InstallSection&apos;;</import>
+        <export>Home</export>
+      </imports>
+      <variable>export default function Home(): ReactNode</variable>
+    </file>
   </files>
 </brfit>

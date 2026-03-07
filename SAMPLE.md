@@ -4227,3 +4227,316 @@ func TestTiktokenTokenizerSpecialCharacters(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/website/docusaurus.config.ts
+
+**Imports:**
+- `import {themes as prismThemes} from 'prism-react-renderer';`
+- `import type {Config} from '@docusaurus/types';`
+- `import type * as Preset from '@docusaurus/preset-classic';`
+
+```typescript
+const config: Config = {
+  title: 'Brf.it',
+  tagline: 'Give AI the gist, not the bloat',
+  favicon: 'img/favicon.ico',
+
+  future: {
+    v4: true,
+  },
+
+  url: 'https://indigo-net.github.io',
+  baseUrl: '/Brf.it/',
+
+  organizationName: 'indigo-net',
+  projectName: 'Brf.it',
+  trailingSlash: false,
+
+  onBrokenLinks: 'throw',
+
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ko', 'ja', 'de', 'hi'],
+    localeConfigs: {
+      en: { label: 'English', direction: 'ltr' },
+      ko: { label: '한국어', direction: 'ltr' },
+      ja: { label: '日本語', direction: 'ltr' },
+      de: { label: 'Deutsch', direction: 'ltr' },
+      hi: { label: 'हिन्दी', direction: 'ltr' },
+    },
+  },
+
+  presets: [
+    [
+      'classic',
+      {
+        docs: {
+          sidebarPath: './sidebars.ts',
+          editUrl: 'https://github.com/indigo-net/Brf.it/tree/main/website/',
+        },
+        blog: false,
+        theme: {
+          customCss: './src/css/custom.css',
+        },
+      } satisfies Preset.Options,
+    ],
+  ],
+
+  themeConfig: {
+    image: 'img/docusaurus-social-card.jpg',
+    colorMode: {
+      respectPrefersColorScheme: true,
+    },
+    navbar: {
+      title: 'Brf.it',
+      logo: {
+        alt: 'Brf.it Logo',
+        src: 'img/logo.svg',
+      },
+      items: [
+        {
+          type: 'docSidebar',
+          sidebarId: 'docsSidebar',
+          position: 'left',
+          label: 'Docs',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
+          dropdownItemsBefore: [],
+          dropdownItemsAfter: [],
+        },
+        {
+          href: 'https://github.com/indigo-net/Brf.it',
+          label: 'GitHub',
+          position: 'right',
+        },
+      ],
+    },
+    footer: {
+      style: 'dark',
+      links: [
+        {
+          title: 'Docs',
+          items: [
+            {
+              label: 'Getting Started',
+              to: '/docs/',
+            },
+            {
+              label: 'CLI Reference',
+              to: '/docs/cli-reference',
+            },
+            {
+              label: 'Supported Languages',
+              to: '/docs/languages/',
+            },
+          ],
+        },
+        {
+          title: 'Community',
+          items: [
+            {
+              label: 'GitHub Issues',
+              href: 'https://github.com/indigo-net/Brf.it/issues',
+            },
+          ],
+        },
+        {
+          title: 'More',
+          items: [
+            {
+              label: 'GitHub',
+              href: 'https://github.com/indigo-net/Brf.it',
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} indigo-net. Built with Docusaurus.`,
+    },
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+      additionalLanguages: ['go', 'typescript', 'python', 'java', 'kotlin', 'rust', 'ruby', 'php', 'swift', 'scala'],
+    },
+  } satisfies Preset.ThemeConfig,
+};
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/sidebars.ts
+
+**Imports:**
+- `import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';`
+
+```typescript
+const sidebars: SidebarsConfig = {
+  docsSidebar: [
+    {
+      type: 'doc',
+      id: 'getting-started',
+      label: 'Getting Started',
+    },
+    {
+      type: 'doc',
+      id: 'cli-reference',
+      label: 'CLI Reference',
+    },
+    {
+      type: 'category',
+      label: 'Languages',
+      items: [
+        'languages/index',
+        'languages/go',
+        'languages/typescript',
+        'languages/python',
+        'languages/java',
+        'languages/kotlin',
+        'languages/rust',
+        'languages/ruby',
+        'languages/php',
+        'languages/swift',
+        'languages/scala',
+        'languages/c-cpp',
+      ],
+    },
+  ],
+};
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/components/FeaturesSection.tsx
+
+**Imports:**
+- `import React from 'react';`
+- `import Translate from '@docusaurus/Translate';`
+
+```typescript
+interface Feature {
+  title: string;
+  description: string;
+  icon: string;
+}
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/components/Hero.tsx
+
+**Imports:**
+- `import React from 'react';`
+- `import Link from '@docusaurus/Link';`
+- `import Translate, {translate} from '@docusaurus/Translate';`
+
+**Exports:**
+- `Hero`
+
+```typescript
+export default function Hero(): JSX.Element
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/components/InstallSection.tsx
+
+**Imports:**
+- `import React, {useState} from 'react';`
+- `import Translate from '@docusaurus/Translate';`
+
+```typescript
+type Platform = keyof typeof installCommands;
+const copyToClipboard = (text: string)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/components/LanguageGrid.tsx
+
+**Imports:**
+- `import React from 'react';`
+- `import Translate from '@docusaurus/Translate';`
+
+**Exports:**
+- `LanguageGrid`
+
+```typescript
+interface Language {
+  name: string;
+  icon: string;
+}
+const languages: Language[] = [
+  { name: 'Go', icon: '🐹' },
+  { name: 'TypeScript', icon: '📘' },
+  { name: 'JavaScript', icon: '📒' },
+  { name: 'Python', icon: '🐍' },
+  { name: 'Java', icon: '☕' },
+  { name: 'Kotlin', icon: '🟣' },
+  { name: 'Rust', icon: '🦀' },
+  { name: 'Ruby', icon: '💎' },
+  { name: 'PHP', icon: '🐘' },
+  { name: 'Swift', icon: '🍎' },
+  { name: 'Scala', icon: '🔴' },
+  { name: 'C/C++', icon: '⚙️' },
+];
+export default function LanguageGrid(): JSX.Element {
+  return (
+    <section className="section" style={{ background: 'var(--ifm-color-emphasis-100)' }}>
+      <div className="container">
+        <h2 className="section-title">
+          <Translate id="languages.title">Supported Languages</Translate>
+        </h2>
+        <p className="section-subtitle">
+          <Translate id="languages.subtitle">
+            Tree-sitter powered parsing for accurate signature extraction
+          </Translate>
+        </p>
+
+        <div className="language-grid">
+          {languages.map(lang
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/components/TokenComparison.tsx
+
+**Imports:**
+- `import React, {useState} from 'react';`
+- `import Translate, {translate} from '@docusaurus/Translate';`
+
+```typescript
+interface CodeExample {
+  language: string;
+  label: string;
+  before: string;
+  after: string;
+  beforeTokens: number;
+  afterTokens: number;
+  beforeLines: number;
+  afterLines: number;
+}
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/website/src/pages/index.tsx
+
+**Imports:**
+- `import type {ReactNode} from 'react';`
+- `import useDocusaurusContext from '@docusaurus/useDocusaurusContext';`
+- `import Layout from '@theme/Layout';`
+- `import Hero from '@site/src/components/Hero';`
+- `import TokenComparison from '@site/src/components/TokenComparison';`
+- `import FeaturesSection from '@site/src/components/FeaturesSection';`
+- `import LanguageGrid from '@site/src/components/LanguageGrid';`
+- `import InstallSection from '@site/src/components/InstallSection';`
+
+**Exports:**
+- `Home`
+
+```typescript
+export default function Home(): ReactNode
+```
+
+---
+
