@@ -181,7 +181,7 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 			default:
 				warning = fmt.Sprintf("skipping: %s: %v", path, err)
 			}
-			s.logger.Printf("WARN: %s\n", warning)
+			s.logger.Printf("WARN: %s", warning)
 			result.Warnings = append(result.Warnings, warning)
 			return nil
 		}
@@ -189,7 +189,7 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 		// Skip symlinks
 		if d.Type()&os.ModeSymlink != 0 {
 			warning := fmt.Sprintf("skipping symlink: %s", path)
-			s.logger.Printf("WARN: %s\n", warning)
+			s.logger.Printf("WARN: %s", warning)
 			result.Warnings = append(result.Warnings, warning)
 			if d.IsDir() {
 				return filepath.SkipDir
@@ -217,7 +217,7 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 		info, err := d.Info()
 		if err != nil {
 			warning := fmt.Sprintf("skipping: %s: %v", path, err)
-			s.logger.Printf("WARN: %s\n", warning)
+			s.logger.Printf("WARN: %s", warning)
 			result.Warnings = append(result.Warnings, warning)
 			return nil
 		}
@@ -257,7 +257,7 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 
 	// Check file size - log warning for large files
 	if info.Size() > s.opts.MaxFileSize {
-		s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)\n",
+		s.logger.Printf("WARN: skipping large file %s (%d bytes > %d limit)",
 			path, info.Size(), s.opts.MaxFileSize)
 		return FileEntry{}, false
 	}

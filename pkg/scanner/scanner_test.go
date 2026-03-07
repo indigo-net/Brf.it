@@ -650,3 +650,41 @@ func TestScanNestedDirectories(t *testing.T) {
 		t.Error("expected TotalSize to be non-zero")
 	}
 }
+
+func TestLogOutputNoDoubleNewline(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a file that exceeds MaxFileSize to trigger "skipping large file" warning.
+	// Use valid Go source content repeated to reach 1KB+ size.
+	largeFile := filepath.Join(tmpDir, "large.go")
+	data := bytes.Repeat([]byte("package main\n"), 100)
+	if err := os.WriteFile(largeFile, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	opts := DefaultScanOptions()
+	opts.RootPath = tmpDir
+	opts.MaxFileSize = 512 // Set low limit so 1KB file triggers warning
+
+	sc, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var buf bytes.Buffer
+	sc.logger = log.New(&buf, "", 0)
+
+	_, err = sc.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	output := buf.String()
+	if !strings.Contains(output, "skipping large file") {
+		t.Fatalf("expected 'skipping large file' warning, got: %q", output)
+	}
+
+	if strings.Contains(output, "\n\n") {
+		t.Errorf("log output contains double newline (Printf format string should not end with \\n): %q", output)
+	}
+}
