@@ -712,8 +712,32 @@ func findCppBodyStart(text string) int {
 // by looking for self or cls as the first parameter.
 func isPythonMethod(signature string) bool {
 	parenStart := strings.Index(signature, "(")
-	parenEnd := strings.Index(signature, ")")
-	if parenStart < 0 || parenEnd < 0 || parenEnd <= parenStart+1 {
+	if parenStart < 0 {
+		return false
+	}
+
+	// Find matching closing parenthesis (handles nested parens/brackets)
+	parenDepth := 0
+	bracketDepth := 0
+	parenEnd := -1
+	for i := parenStart; i < len(signature); i++ {
+		switch signature[i] {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+			if parenDepth == 0 {
+				parenEnd = i
+				goto found
+			}
+		case '[':
+			bracketDepth++
+		case ']':
+			bracketDepth--
+		}
+	}
+found:
+	if parenEnd < 0 || parenEnd <= parenStart+1 {
 		return false
 	}
 

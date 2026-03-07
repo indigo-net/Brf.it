@@ -57,12 +57,19 @@ HEAD와 origin/main이 다르면 중단: "로컬과 리모트가 동기화되지
 go test ./...
 ```
 
-실패 시 → **GitHub Issue 생성 후 중단**:
+실패 시 → **중복 확인 후 GitHub Issue 생성, 즉시 중단**:
 
 ```bash
-gh issue create \
-  --title "fix: 릴리즈 전 테스트 실패" \
-  --body "## 개요
+# 중복 이슈 확인
+existing=$(gh issue list --state open --search "릴리즈 전 테스트 실패" --json number,title --jq '.[0].number // empty')
+if [ -n "$existing" ]; then
+    # 기존 이슈에 코멘트 추가
+    gh issue comment "$existing" --body "동일 문제 재발생 (vX.X.X 릴리즈 시도)"
+else
+    # 새 이슈 생성
+    gh issue create \
+      --title "fix: 릴리즈 전 테스트 실패" \
+      --body "## 개요
 릴리즈 프리플라이트에서 \`go test ./...\` 실패.
 
 ## 테스트 출력
@@ -72,8 +79,9 @@ gh issue create \
 
 ## 다음 단계
 테스트 수정 후 릴리즈 재시도" \
-  --assignee indigo-net \
-  --label bug
+      --assignee indigo-net \
+      --label bug
+fi
 ```
 
 사용자에게 이슈 번호를 알리고 즉시 중단.
@@ -84,7 +92,7 @@ gh issue create \
 go build ./cmd/brfit
 ```
 
-실패 시 → 0-4와 같은 방식으로 GitHub Issue 생성 후 중단.
+실패 시 → 0-4와 같은 방식으로 중복 확인 후 GitHub Issue 생성 (또는 기존 이슈에 코멘트), 즉시 중단.
 
 ### GATE 0
 
@@ -236,11 +244,18 @@ Stage 5로 진행.
 gh run view <run-id> --log-failed
 ```
 
-2. GitHub Issue 생성:
+2. 중복 확인 후 GitHub Issue 생성:
 ```bash
-gh issue create \
-  --title "fix: vX.X.X 릴리즈 CI 실패" \
-  --body "## 개요
+# 중복 이슈 확인
+existing=$(gh issue list --state open --search "릴리즈 CI 실패" --json number,title --jq '.[0].number // empty')
+if [ -n "$existing" ]; then
+    # 기존 이슈에 코멘트 추가
+    gh issue comment "$existing" --body "동일 문제 재발생 (vX.X.X 릴리즈 CI 실패)"
+else
+    # 새 이슈 생성
+    gh issue create \
+      --title "fix: vX.X.X 릴리즈 CI 실패" \
+      --body "## 개요
 vX.X.X 릴리즈 CI가 실패했습니다.
 
 ## CI 로그
@@ -256,8 +271,9 @@ vX.X.X 릴리즈 CI가 실패했습니다.
 ## 다음 단계
 1. 이슈 원인 분석 및 수정
 2. 수정 커밋 후 새 태그로 릴리즈 재시도" \
-  --assignee indigo-net \
-  --label bug
+      --assignee indigo-net \
+      --label bug
+fi
 ```
 
 3. 사용자에게 알림:
@@ -391,6 +407,7 @@ gh workflow run "Update SAMPLE"
 | 에셋 수 확인 안 함 | Stage 5-1에서 6개 에셋 검증 |
 | 릴리즈 노트 템플릿 미준수 | `.github/RELEASE_TEMPLATE.md` 참조 필수 |
 | 버전을 사용자 확인 없이 결정 | Stage 1 GATE에서 AskUserQuestion 필수 |
+| 중복 이슈 생성 | Issue 생성 전 `gh issue list --search` 필수 |
 
 ## Red Flags — 멈추고 재확인
 
