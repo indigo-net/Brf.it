@@ -9,6 +9,7 @@
 [![Release](https://img.shields.io/github/v/release/indigo-net/Brf.it)](https://github.com/indigo-net/Brf.it/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Coverage](https://codecov.io/gh/indigo-net/Brf.it/branch/main/graph/badge.svg)](https://codecov.io/gh/indigo-net/Brf.it)
 
 > **코드베이스를 AI가 이해하기 쉬운 형태로 패키징**
 >
