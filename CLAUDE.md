@@ -301,6 +301,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 - **Vendor 참조 구현**: `pkg/parser/treesitter/grammars/kotlin/` (binding.go + C sources)
 - **LanguageQuery 참조**: `pkg/parser/treesitter/languages/kotlin.go` (refineKind 패턴 포함)
+- **Import 추출**: `RawImports []string` 사용. Tree-sitter 쿼리는 전체 import 선언문 캡처 (예: Go의 `import (...)` 블록)
 
 ### GitHub Issue 기반 워크플로우
 
@@ -309,6 +310,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 모든 코드 변경 작업은 **worktree 격리 환경**에서 이슈 기반으로 진행합니다:
 
 1. **이슈 조회** (필수): `gh issue list --state open --search "키워드"`로 기존 이슈 확인 → 중복 발견 시 기존 이슈에 코멘트 추가, 새 이슈 생성 금지
+2. **약속 이행**: "별도 이슈로 후속 작업" 등 말할 때는 즉시 `gh issue create`로 이슈 생성하고 번호 공유
 2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement,version:minor"`
 3. **Worktree + 브랜치 생성**: `git worktree add -b feat/feature-name .worktrees/<name> main`으로 격리 환경과 브랜치를 동시에 생성
 4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
