@@ -59,9 +59,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
 	buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
 	buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
-	buf.WriteString(`      <tag name="imports" description="Import statements container" />` + "\n")
-	buf.WriteString(`      <tag name="import" description="Single import statement" />` + "\n")
-	buf.WriteString(`      <tag name="export" description="Single export statement" />` + "\n")
+	buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
 	buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
 	buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
 	buf.WriteString("    </schema>\n")
@@ -75,30 +73,11 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 
 		// Imports section (within file block)
 		hasRenderedImports := false
-		if file.Error == nil && data.IncludeImports && len(file.Imports) > 0 {
-			var importLines []string
-			for _, imp := range file.Imports {
-				if imp.Type == "import" {
-					if data.NoStdImports && isStdLibImport(file.Language, imp.Path) {
-						continue
-					}
-					importLines = append(importLines, "        <import>"+escapeXML(imp.Path)+"</import>\n")
-				} else if imp.Type == "export" {
-					if imp.Name != "" {
-						importLines = append(importLines, "        <export>"+escapeXML(imp.Name)+"</export>\n")
-					} else if imp.Path != "" {
-						importLines = append(importLines, "        <export>"+escapeXML(imp.Path)+"</export>\n")
-					}
-				}
-			}
-			if len(importLines) > 0 {
-				hasRenderedImports = true
-				buf.WriteString("      <imports>\n")
-				for _, line := range importLines {
-					buf.WriteString(line)
-				}
-				buf.WriteString("      </imports>\n")
-			}
+		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
+			hasRenderedImports = true
+			buf.WriteString("      <imports>")
+			buf.WriteString(escapeXML(strings.Join(file.RawImports, "\n")))
+			buf.WriteString("</imports>\n")
 		}
 
 		if file.Error != nil {

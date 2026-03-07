@@ -171,7 +171,6 @@ brfit [Pfad] [Optionen]
 | `--output` | `-o` | Ausgabedateipfad | stdout |
 | `--include-body` | | Funktionskörper einschließen | `false` |
 | `--include-imports` | | Import-Anweisungen einschließen | `false` |
-| `--no-std-imports` | | Stdlib-Imports ausschließen | `false` |
 | `--ignore` | `-i` | Ignore-Dateipfad | `.gitignore` |
 | `--include-hidden` | | Versteckte Dateien einschließen | `false` |
 | `--no-tree` | | Verzeichnisbaum überspringen | `false` |
@@ -196,8 +195,8 @@ brfit . --include-body
 # Verzeichnisbaum-Ausgabe überspringen
 brfit . --no-tree
 
-# Imports einschließen (Stdlib ausschließen)
-brfit . --include-imports --no-std-imports
+# Imports einschließen (wörtlich)
+brfit . --include-imports
 ```
 
 ---

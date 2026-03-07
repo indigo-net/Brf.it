@@ -49,9 +49,6 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
-
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 }
@@ -68,7 +65,6 @@ func DefaultConfig() *Config {
 		IncludeImports: false,
 		NoTree:         false,
 		NoTokens:       false,
-		NoStdImports:   false,
 		MaxFileSize:    512000, // 500KB
 	}
 }
@@ -136,7 +132,6 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludeImports: c.IncludeImports,
 		IncludeTree:    !c.NoTree,
 		IncludePrivate: false, // Future: add --include-private flag
-		NoStdImports:   c.NoStdImports,
 		MaxFileSize:    c.MaxFileSize,
 	}
 }

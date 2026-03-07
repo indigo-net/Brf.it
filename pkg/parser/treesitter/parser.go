@@ -106,9 +106,9 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 	}
 
 	// Extract imports if requested
-	var imports []parser.ImportExport
+	var rawImports []string
 	if opts.IncludeImports {
-		imports, err = p.extractImports(tree.RootNode(), []byte(content), query, opts)
+		rawImports, err = p.extractImports(tree.RootNode(), []byte(content), query, opts)
 		if err != nil {
 			return nil, fmt.Errorf("import extraction failed: %w", err)
 		}
@@ -117,7 +117,7 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 	return &parser.ParseResult{
 		Language:   lang,
 		Signatures: signatures,
-		Imports:    imports,
+		RawImports: rawImports,
 	}, nil
 }
 
@@ -1274,14 +1274,14 @@ func extractCSharpConversionOperatorName(text string) string {
 	return keyword + " operator"
 }
 
-// extractImports extracts import/export statements from the AST.
+// extractImports extracts import/export statements from the AST as raw text.
 func (p *TreeSitterParser) extractImports(
 	root *sitter.Node,
 	content []byte,
 	langQuery LanguageQuery,
 	opts *parser.Options,
-) ([]parser.ImportExport, error) {
-	var imports []parser.ImportExport
+) ([]string, error) {
+	var imports []string
 
 	importQueryBytes := langQuery.ImportQuery()
 	if importQueryBytes == nil || len(importQueryBytes) == 0 {
@@ -1302,8 +1302,8 @@ func (p *TreeSitterParser) extractImports(
 	matches := qc.Matches(query, root, content)
 	captureNames := query.CaptureNames()
 
-	// Track seen imports to avoid duplicates
-	seenPaths := make(map[string]bool)
+	// Track seen imports by start position to avoid duplicates
+	seenPositions := make(map[uint]bool)
 
 	for {
 		match := matches.Next()
@@ -1311,11 +1311,10 @@ func (p *TreeSitterParser) extractImports(
 			break
 		}
 
-		var imp parser.ImportExport
-		var hasExportType bool
 		// fnName holds the value of @_fn capture for function-call import patterns
 		// (e.g., Lua require()). Used for Go-side predicate filtering.
 		fnName := ""
+		var importNode *sitter.Node
 
 		for _, capture := range match.Captures {
 			name := captureNames[capture.Index]
@@ -1324,15 +1323,7 @@ func (p *TreeSitterParser) extractImports(
 
 			switch name {
 			case CaptureImportPath:
-				imp.Path = cleanImportPath(text)
-				imp.Line = int(node.StartPosition().Row) + 1
-				imp.Type = "import"
-			case CaptureExportName:
-				imp.Name = text
-				imp.Line = int(node.StartPosition().Row) + 1
-				imp.Type = "export"
-			case "export_type":
-				hasExportType = true
+				importNode = &node
 			case CaptureImportFn:
 				fnName = text
 			}
@@ -1345,18 +1336,20 @@ func (p *TreeSitterParser) extractImports(
 			continue
 		}
 
-		// Re-export (export with source) is marked as export
-		if hasExportType && imp.Path != "" {
-			imp.Type = "export"
-		}
+		// Extract raw text from the import node
+		if importNode != nil {
+			startByte := (*importNode).StartByte()
+			// Deduplicate by start position
+			if seenPositions[startByte] {
+				continue
+			}
+			seenPositions[startByte] = true
 
-		// Only add if we have a path or name
-		if imp.Path != "" || imp.Name != "" {
-			// Deduplicate by path+name
-			key := imp.Type + ":" + imp.Path + ":" + imp.Name
-			if !seenPaths[key] {
-				seenPaths[key] = true
-				imports = append(imports, imp)
+			rawText := string(content[startByte:(*importNode).EndByte()])
+			// Remove blank lines (Go module group separators, etc.)
+			rawText = removeBlankLines(rawText)
+			if rawText != "" {
+				imports = append(imports, rawText)
 			}
 		}
 	}
@@ -1364,27 +1357,17 @@ func (p *TreeSitterParser) extractImports(
 	return imports, nil
 }
 
-// cleanImportPath removes quotes and normalizes import paths.
-// If the input is a full import statement, it returns as-is.
-func cleanImportPath(path string) string {
-	// If it's a full import statement, return as-is
-	trimmed := strings.TrimSpace(path)
-	if strings.HasPrefix(trimmed, "import ") ||
-		strings.HasPrefix(trimmed, "from ") ||
-		strings.HasPrefix(trimmed, "#include") ||
-		strings.HasPrefix(trimmed, "use ") ||
-		strings.HasPrefix(trimmed, "using ") ||
-		strings.HasPrefix(trimmed, "extern crate") ||
-		strings.Contains(trimmed, "require(") {
-		return trimmed
+// removeBlankLines removes empty lines from the import text.
+// This is used to clean up Go import blocks that may have blank lines
+// between import groups.
+func removeBlankLines(text string) string {
+	lines := strings.Split(text, "\n")
+	var result []string
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed != "" {
+			result = append(result, line)
+		}
 	}
-	// Go import_spec: "path" or alias "path" - prefix with "import "
-	if strings.HasPrefix(trimmed, "\"") || strings.Contains(trimmed, " \"") {
-		return "import " + trimmed
-	}
-	// Remove surrounding quotes (", ', `)
-	path = strings.Trim(path, "\"'`")
-	// Remove angle brackets for C system includes
-	path = strings.Trim(path, "<>")
-	return path
+	return strings.Join(result, "\n")
 }

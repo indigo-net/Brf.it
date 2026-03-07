@@ -172,7 +172,6 @@ brfit [path] [options]
 | `--output` | `-o` | Output file path | stdout |
 | `--include-body` | | Include function bodies | `false` |
 | `--include-imports` | | Include import statements | `false` |
-| `--no-std-imports` | | Exclude stdlib imports | `false` |
 | `--ignore` | `-i` | Ignore file path | `.gitignore` |
 | `--include-hidden` | | Include hidden files | `false` |
 | `--no-tree` | | Skip directory tree | `false` |
@@ -197,8 +196,8 @@ brfit . --include-body
 # Skip directory tree output
 brfit . --no-tree
 
-# Include imports (exclude stdlib)
-brfit . --include-imports --no-std-imports
+# Include imports (verbatim)
+brfit . --include-imports
 ```
 
 ---

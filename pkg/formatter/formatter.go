@@ -16,8 +16,8 @@ type FileData struct {
 	// Signatures is the list of extracted signatures.
 	Signatures []parser.Signature
 
-	// Imports is the list of extracted import/export statements.
-	Imports []parser.ImportExport
+	// RawImports is the list of raw import/export statement text.
+	RawImports []string
 
 	// Error is any error that occurred during extraction.
 	Error error
@@ -45,9 +45,6 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
-
-	// NoStdImports excludes standard library imports from output.
-	NoStdImports bool
 }
 
 // Formatter defines the interface for output formatting.

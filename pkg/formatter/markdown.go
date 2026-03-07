@@ -49,42 +49,10 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 	for _, file := range data.Files {
 		buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
 
-		// Imports & Exports (within file block)
+		// Imports (within file block)
 		hasRenderedImports := false
-		if file.Error == nil && data.IncludeImports && len(file.Imports) > 0 {
-			var imports, exports []string
-			for _, imp := range file.Imports {
-				if imp.Type == "import" {
-					if data.NoStdImports && isStdLibImport(file.Language, imp.Path) {
-						continue
-					}
-					imports = append(imports, imp.Path)
-				} else if imp.Type == "export" {
-					if imp.Name != "" {
-						exports = append(exports, imp.Name)
-					} else if imp.Path != "" {
-						exports = append(exports, imp.Path)
-					}
-				}
-			}
-
-			if len(imports) > 0 {
-				hasRenderedImports = true
-				buf.WriteString("**Imports:**\n")
-				for _, imp := range imports {
-					buf.WriteString(fmt.Sprintf("- `%s`\n", escapeMarkdown(imp)))
-				}
-				buf.WriteString("\n")
-			}
-
-			if len(exports) > 0 {
-				hasRenderedImports = true
-				buf.WriteString("**Exports:**\n")
-				for _, exp := range exports {
-					buf.WriteString(fmt.Sprintf("- `%s`\n", escapeMarkdown(exp)))
-				}
-				buf.WriteString("\n")
-			}
+		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
+			hasRenderedImports = true
 		}
 
 		if file.Error != nil {
@@ -100,6 +68,14 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 				buf.WriteString(getEmptyComment(file.Language))
 				buf.WriteString("\n")
 			} else {
+				// Include imports at the top of the code block
+				if hasRenderedImports {
+					for _, imp := range file.RawImports {
+						buf.WriteString(imp)
+						buf.WriteString("\n")
+					}
+				}
+				// Then include signatures
 				for _, sig := range file.Signatures {
 					buf.WriteString(sig.Text)
 					buf.WriteString("\n")

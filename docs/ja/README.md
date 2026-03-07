@@ -171,7 +171,6 @@ brfit [パス] [オプション]
 | `--output` | `-o` | 出力ファイルパス | stdout |
 | `--include-body` | | 関数本体を含める | `false` |
 | `--include-imports` | | import文を含める | `false` |
-| `--no-std-imports` | | 標準ライブラリimportを除外 | `false` |
 | `--ignore` | `-i` | ignoreファイルパス | `.gitignore` |
 | `--include-hidden` | | 隠しファイルを含める | `false` |
 | `--no-tree` | | ディレクトリツリーをスキップ | `false` |
@@ -196,8 +195,8 @@ brfit . --include-body
 # ディレクトリツリー出力をスキップ
 brfit . --no-tree
 
-# importを含める（標準ライブラリを除外）
-brfit . --include-imports --no-std-imports
+# importを含める（そのまま）
+brfit . --include-imports
 ```
 
 ---

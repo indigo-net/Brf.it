@@ -171,7 +171,6 @@ brfit [पथ] [विकल्प]
 | `--output` | `-o` | आउटपुट फाइल पथ | stdout |
 | `--include-body` | | फंक्शन बॉडी शामिल करें | `false` |
 | `--include-imports` | | import स्टेटमेंट शामिल करें | `false` |
-| `--no-std-imports` | | स्टैंडर्ड लाइब्रेरी import हटाएं | `false` |
 | `--ignore` | `-i` | ignore फाइल पथ | `.gitignore` |
 | `--include-hidden` | | हिडन फाइल्स शामिल करें | `false` |
 | `--no-tree` | | डायरेक्टरी ट्री स्किप करें | `false` |
@@ -196,8 +195,8 @@ brfit . --include-body
 # डायरेक्टरी ट्री आउटपुट स्किप करें
 brfit . --no-tree
 
-# import शामिल करें (स्टैंडर्ड लाइब्रेरी हटाएं)
-brfit . --include-imports --no-std-imports
+# import शामिल करें (जस-का-तस)
+brfit . --include-imports
 ```
 
 ---

@@ -309,7 +309,7 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 모든 코드 변경 작업은 **worktree 격리 환경**에서 이슈 기반으로 진행합니다:
 
 1. **이슈 조회** (필수): `gh issue list --state open --search "키워드"`로 기존 이슈 확인 → 중복 발견 시 기존 이슈에 코멘트 추가, 새 이슈 생성 금지
-2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement"`
+2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement,version:minor"`
 3. **Worktree + 브랜치 생성**: `git worktree add -b feat/feature-name .worktrees/<name> main`으로 격리 환경과 브랜치를 동시에 생성
 4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
 5. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
@@ -319,6 +319,20 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 **브랜치명 형식**: `{type}/{feature-name}` (예: `feat/github-workflow-setup`)
 
 **이슈/PR assignee**: 기본적으로 `indigo-net` 지정
+
+**version_tag 라벨 (필수)**: 모든 이슈는 다음 중 하나의 라벨이 필요합니다:
+- `version:major` - Breaking change (API 변경, 호환성 깨짐)
+- `version:minor` - 새 기능, 기능 개선
+- `version:patch` - 버그 수정, 문서 수정, 리팩토링
+
+이슈 생성 예시:
+```bash
+# 새 기능 (minor)
+gh issue create --assignee indigo-net --label "enhancement,version:minor"
+
+# 버그 수정 (patch)
+gh issue create --assignee indigo-net --label "bug,version:patch"
+```
 
 ### Worktree 작업 규칙
 

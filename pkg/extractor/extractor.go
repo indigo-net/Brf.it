@@ -22,8 +22,8 @@ type ExtractedFile struct {
 	// Signatures is the list of extracted signatures.
 	Signatures []parser.Signature
 
-	// Imports is the list of extracted import/export statements.
-	Imports []parser.ImportExport
+	// RawImports is the list of raw import/export statement text.
+	RawImports []string
 
 	// Size is the file size in bytes.
 	Size int64
@@ -218,6 +218,6 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	}
 
 	extracted.Signatures = parseResult.Signatures
-	extracted.Imports = parseResult.Imports
+	extracted.RawImports = parseResult.RawImports
 	return extracted
 }

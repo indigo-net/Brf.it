@@ -445,9 +445,11 @@ func TestPackagerNoStdImportsPassthrough(t *testing.T) {
 					Signatures: []parser.Signature{
 						{Name: "Main", Kind: "function", Text: "func Main()"},
 					},
-					Imports: []parser.ImportExport{
-						{Type: "import", Path: `import "fmt"`},
-						{Type: "import", Path: `import "github.com/spf13/cobra"`},
+					RawImports: []string{
+						`import (
+	"fmt"
+	"github.com/spf13/cobra"
+)`,
 					},
 					Size: 100,
 				},
@@ -464,24 +466,23 @@ func TestPackagerNoStdImportsPassthrough(t *testing.T) {
 
 	p := NewPackager(mockScan, mockExt, formatters)
 
-	// With NoStdImports=true, stdlib imports should be filtered
+	// With IncludeImports=true, imports should be included verbatim
 	result, err := p.Package(&Options{
 		Path:           ".",
 		Format:         "xml",
 		IncludeTree:    false,
 		IncludeImports: true,
-		NoStdImports:   true,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	output := string(result.Content)
-	if strings.Contains(output, "fmt") {
-		t.Error("expected stdlib import 'fmt' to be filtered out with NoStdImports=true")
+	if !strings.Contains(output, "fmt") {
+		t.Error("expected import 'fmt' to be present")
 	}
 	if !strings.Contains(output, "cobra") {
-		t.Error("expected non-stdlib import 'cobra' to be present")
+		t.Error("expected import 'cobra' to be present")
 	}
 }
 
