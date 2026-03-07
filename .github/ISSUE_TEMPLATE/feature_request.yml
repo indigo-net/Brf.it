@@ -53,6 +53,18 @@ body:
     validations:
       required: true
 
+  - type: dropdown
+    id: version_impact
+    attributes:
+      label: 🏷️ 버전 영향도 (Version Impact)
+      description: 이 기능 추가 시 예상되는 버전 변경
+      options:
+        - minor (새 기능)
+        - major (Breaking change)
+        - patch (작은 개선)
+    validations:
+      required: true
+
   - type: textarea
     id: alternatives
     attributes:

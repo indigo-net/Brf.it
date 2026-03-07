@@ -58,6 +58,18 @@ body:
         Stack trace: ...
       render: shell
 
+  - type: dropdown
+    id: version_impact
+    attributes:
+      label: 🏷️ 버전 영향도 (Version Impact)
+      description: 이 버그 수정 시 예상되는 버전 변경
+      options:
+        - patch (버그 수정)
+        - minor (기능 개선 포함)
+        - major (Breaking change)
+    validations:
+      required: true
+
   - type: textarea
     id: additional
     attributes:
