@@ -4120,6 +4120,7 @@ func TestTreeSitterParserParseLua(t *testing.T)
 func TestTreeSitterParserParseLuaImports(t *testing.T)
 func TestLuaBodyStripping(t *testing.T)
 func TestRefineLuaFunctionKind(t *testing.T)
+func TestIsPythonMethod(t *testing.T)
 ```
 
 ---

@@ -3824,6 +3824,7 @@
       <function>func TestTreeSitterParserParseLuaImports(t *testing.T)</function>
       <function>func TestLuaBodyStripping(t *testing.T)</function>
       <function>func TestRefineLuaFunctionKind(t *testing.T)</function>
+      <function>func TestIsPythonMethod(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>
