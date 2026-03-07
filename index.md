@@ -5,7 +5,7 @@ nav_exclude: true
 ---
 
 <p align="center">
-  <img src="assets/logo.png" alt="Brf.it logo" width="128">
+  <img src="{{ '/assets/logo.png' | relative_url }}" alt="Brf.it logo" width="128">
 </p>
 
 # Brf.it
