@@ -26,6 +26,7 @@ func init() {
 	parser.RegisterParser("swift", NewTreeSitterParser())
 	parser.RegisterParser("kotlin", NewTreeSitterParser())
 	parser.RegisterParser("csharp", NewTreeSitterParser())
+	parser.RegisterParser("lua", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -50,6 +51,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"swift":      languages.NewSwiftQuery(),
 			"kotlin":     languages.NewKotlinQuery(),
 			"csharp":     languages.NewCSharpQuery(),
+			"lua":        languages.NewLuaQuery(),
 		},
 	}
 }
@@ -282,6 +284,12 @@ func (p *TreeSitterParser) extractSignatures(
 					sig.Kind = "variable"
 				}
 			}
+
+			// Lua: refine function_declaration kind based on text pattern
+			// (global function, local function, module function M.foo, method M:foo)
+			if opts.Language == "lua" && kind == "function_declaration" {
+				sig.Kind = refineLuaFunctionKind(sig.Text)
+			}
 		}
 
 		// Only add if we have a name and signature
@@ -313,6 +321,21 @@ func (p *TreeSitterParser) extractSignatures(
 
 // cleanComment removes comment markers from the text.
 func cleanComment(text string) string {
+	// LuaDoc (--- prefix) — check before -- to avoid partial match
+	if strings.HasPrefix(text, "---") {
+		return strings.TrimSpace(strings.TrimPrefix(text, "---"))
+	}
+	// Lua block comment --[[ ... ]]
+	if strings.HasPrefix(text, "--[[") {
+		inner := strings.TrimPrefix(text, "--[[")
+		inner = strings.TrimSuffix(inner, "]]")
+		return strings.TrimSpace(inner)
+	}
+	// Lua single-line (-- prefix)
+	if strings.HasPrefix(text, "--") {
+		return strings.TrimSpace(strings.TrimPrefix(text, "--"))
+	}
+
 	// Remove // prefix for single-line comments
 	if strings.HasPrefix(text, "//") {
 		return strings.TrimSpace(strings.TrimPrefix(text, "//"))
@@ -367,6 +390,9 @@ func isExported(name, language string) bool {
 	case "csharp":
 		// C#: all elements are considered exported (visibility modifiers preserved in signature text)
 		return true
+	case "lua":
+		// Lua: all elements are considered public (no access modifiers)
+		return true
 	default:
 		return false
 	}
@@ -396,6 +422,8 @@ func stripBody(text, kind, language string) string {
 		return stripKotlinBody(text, kind)
 	case "csharp":
 		return stripCSharpBody(text, kind)
+	case "lua":
+		return stripLuaBody(text, kind)
 	default:
 		return text
 	}
@@ -981,6 +1009,44 @@ func refineKotlinClassKind(text string) string {
 	}
 }
 
+// refineLuaFunctionKind determines the specific kind of a Lua function_declaration
+// based on the declaration text (method M:foo, module function M.foo, local function, global function).
+func refineLuaFunctionKind(text string) string {
+	trimmed := strings.TrimSpace(text)
+	funcIdx := strings.Index(trimmed, "function")
+	parenIdx := strings.Index(trimmed, "(")
+	if funcIdx >= 0 && parenIdx > funcIdx {
+		between := trimmed[funcIdx:parenIdx]
+		if strings.Contains(between, ":") {
+			return "method"
+		}
+		if strings.Contains(between, ".") {
+			return "module_function"
+		}
+	}
+	if strings.HasPrefix(trimmed, "local ") {
+		return "local_function"
+	}
+	return "function"
+}
+
+// stripLuaBody removes the body from Lua declarations.
+// Lua functions use function...end blocks; the body starts after the parameter list ")".
+func stripLuaBody(text, kind string) string {
+	switch kind {
+	case "function", "method", "module_function", "local_function":
+		parenIdx := strings.Index(text, ")")
+		if parenIdx > 0 {
+			return strings.TrimSpace(text[:parenIdx+1])
+		}
+		// Fallback: take first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	}
+	return text
+}
+
 // stripCSharpBody removes the body from C# declarations.
 func stripCSharpBody(text, kind string) string {
 	switch kind {
@@ -1272,7 +1338,8 @@ func cleanImportPath(path string) string {
 		strings.HasPrefix(trimmed, "#include") ||
 		strings.HasPrefix(trimmed, "use ") ||
 		strings.HasPrefix(trimmed, "using ") ||
-		strings.HasPrefix(trimmed, "extern crate") {
+		strings.HasPrefix(trimmed, "extern crate") ||
+		strings.Contains(trimmed, "require(") {
 		return trimmed
 	}
 	// Go import_spec: "path" or alias "path" - prefix with "import "

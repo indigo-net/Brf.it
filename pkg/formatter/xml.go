@@ -149,7 +149,7 @@ func escapeXML(s string) string {
 // kindToTag maps a signature Kind to the appropriate XML tag name.
 func kindToTag(kind string) string {
 	switch kind {
-	case "function", "method", "constructor", "destructor", "arrow":
+	case "function", "method", "constructor", "destructor", "arrow", "local_function", "module_function":
 		return "function"
 	case "class", "interface", "type", "struct", "enum", "record", "annotation", "typedef", "namespace", "template":
 		return "type"

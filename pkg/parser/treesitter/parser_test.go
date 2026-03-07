@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -1986,5 +1986,182 @@ func TestParsePanicRecoveryMechanism(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "panic recovered") {
 		t.Errorf("expected panic recovery error message, got: %v", err)
+	}
+}
+
+func TestTreeSitterParserParseLua(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `local M = {}
+
+--- Greets a person by name.
+-- @param name string The person's name
+function M.greet(name)
+    print("Hello, " .. name)
+end
+
+function M:init(config)
+    self.config = config
+end
+
+local function helper()
+    return 42
+end
+
+function globalFunc(a, b)
+    return a + b
+end
+
+local callback = function(err, result)
+    if err then return nil end
+    return result
+end
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "lua"})
+	if err != nil {
+		t.Fatalf("failed to parse Lua: %v", err)
+	}
+	if len(result.Signatures) == 0 {
+		t.Fatal("expected signatures but got none")
+	}
+
+	expectedNames := map[string]bool{
+		"M":          true,
+		"greet":      true,
+		"init":       true,
+		"helper":     true,
+		"globalFunc": true,
+		"callback":   true,
+	}
+
+	foundNames := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		foundNames[sig.Name] = true
+	}
+
+	for name := range expectedNames {
+		if !foundNames[name] {
+			t.Errorf("expected to find '%s' in signatures", name)
+		}
+	}
+
+	// Verify kind refinement
+	kindMap := make(map[string]string)
+	for _, sig := range result.Signatures {
+		kindMap[sig.Name] = sig.Kind
+	}
+
+	expectedKinds := map[string]string{
+		"greet":      "module_function",
+		"init":       "method",
+		"helper":     "local_function",
+		"globalFunc": "function",
+		"M":          "variable",
+	}
+
+	for name, expected := range expectedKinds {
+		if actual, ok := kindMap[name]; ok && actual != expected {
+			t.Errorf("expected '%s' kind = '%s', got '%s'", name, expected, actual)
+		}
+	}
+
+	// Verify body stripping
+	for _, sig := range result.Signatures {
+		if sig.Kind == "module_function" || sig.Kind == "method" || sig.Kind == "function" || sig.Kind == "local_function" {
+			if strings.Contains(sig.Text, "\n") {
+				t.Errorf("expected body stripped for '%s', got multiline: %q", sig.Name, sig.Text)
+			}
+		}
+	}
+
+	// Note: doc comments are captured separately in Tree-sitter and may not
+	// be associated with the following declaration (same as other languages)
+}
+
+func TestTreeSitterParserParseLuaImports(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `local json = require("json")
+local utils = require("app.utils")
+local lfs = require("lfs")
+
+local M = {}
+function M.run() end
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "lua", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("failed to parse Lua imports: %v", err)
+	}
+	if len(result.Imports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.Imports))
+	}
+
+	// Verify import paths contain require()
+	for _, imp := range result.Imports {
+		if !strings.Contains(imp.Path, "require(") {
+			t.Errorf("expected import path to contain 'require(', got: %q", imp.Path)
+		}
+	}
+}
+
+func TestLuaBodyStripping(t *testing.T) {
+	tests := []struct {
+		input    string
+		kind     string
+		expected string
+	}{
+		{
+			input:    "function greet(name)\n    print(name)\nend",
+			kind:     "function",
+			expected: "function greet(name)",
+		},
+		{
+			input:    "function M.create(name)\n    return {}\nend",
+			kind:     "module_function",
+			expected: "function M.create(name)",
+		},
+		{
+			input:    "function M:init(config)\n    self.config = config\nend",
+			kind:     "method",
+			expected: "function M:init(config)",
+		},
+		{
+			input:    "local function helper()\n    return 42\nend",
+			kind:     "local_function",
+			expected: "local function helper()",
+		},
+		{
+			input:    "local M = {}",
+			kind:     "variable",
+			expected: "local M = {}",
+		},
+	}
+
+	for _, tt := range tests {
+		result := stripLuaBody(tt.input, tt.kind)
+		if result != tt.expected {
+			t.Errorf("stripLuaBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
+		}
+	}
+}
+
+func TestRefineLuaFunctionKind(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"function globalFunc(a, b)\n  return a + b\nend", "function"},
+		{"local function helper()\n  return 42\nend", "local_function"},
+		{"function M.create(name)\n  return {}\nend", "module_function"},
+		{"function M:init(config)\n  self.config = config\nend", "method"},
+	}
+
+	for _, tt := range tests {
+		result := refineLuaFunctionKind(tt.input)
+		if result != tt.expected {
+			t.Errorf("refineLuaFunctionKind(%q) = %q, want %q", tt.input, result, tt.expected)
+		}
 	}
 }

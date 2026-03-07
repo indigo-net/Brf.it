@@ -151,6 +151,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Swift | `.swift` | [Swift-Leitfaden](languages/swift.md) |
 | Kotlin | `.kt`, `.kts` | [Kotlin-Leitfaden](languages/kotlin.md) |
 | C# | `.cs` | [C#-Leitfaden](languages/csharp.md) |
+| Lua | `.lua` | [Lua-Leitfaden](languages/lua.md) |
 
 ---
 

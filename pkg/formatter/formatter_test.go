@@ -368,6 +368,8 @@ func TestKindToTag(t *testing.T) {
 		{"constructor", "function"},
 		{"destructor", "function"},
 		{"arrow", "function"},
+		{"local_function", "function"},
+		{"module_function", "function"},
 
 		// type 그룹
 		{"class", "type"},
