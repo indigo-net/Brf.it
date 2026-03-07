@@ -654,9 +654,10 @@ func TestScanNestedDirectories(t *testing.T) {
 func TestLogOutputNoDoubleNewline(t *testing.T) {
 	tmpDir := t.TempDir()
 
-	// Create a file that exceeds MaxFileSize to trigger "skipping large file" warning
+	// Create a file that exceeds MaxFileSize to trigger "skipping large file" warning.
+	// Use valid Go source content repeated to reach 1KB+ size.
 	largeFile := filepath.Join(tmpDir, "large.go")
-	data := make([]byte, 1024) // 1KB
+	data := bytes.Repeat([]byte("package main\n"), 100)
 	if err := os.WriteFile(largeFile, data, 0644); err != nil {
 		t.Fatal(err)
 	}
