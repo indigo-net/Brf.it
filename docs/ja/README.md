@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../assets/logo.png" alt="Brf.it logo" width="128">
+</p>
+
 # Brf.it
 
 🌐 [English](../../README.md) | [한국어](../ko/README.md) | [日本語](README.md) | [हिन्दी](../hi/README.md) | [Deutsch](../de/README.md)
