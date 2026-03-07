@@ -310,12 +310,11 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 1. **이슈 조회**: `gh issue list --state open`으로 기존 이슈 확인 → 중복 방지
 2. **이슈 생성**: 중복이 없을 때만 `gh issue create --assignee indigo-net --label "enhancement"`
-3. **Worktree 생성**: `using-git-worktrees` 스킬로 `.worktrees/`에 격리 환경 생성
-4. **브랜치 생성**: worktree 내에서 `git checkout -b feat/feature-name`
-5. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
-6. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
-7. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
-8. **머지 & 정리**: PR merge 후 worktree 제거 + 로컬 브랜치 삭제
+3. **Worktree + 브랜치 생성**: `git worktree add .worktrees/<name> main -b feat/feature-name`으로 격리 환경과 브랜치를 동시에 생성
+4. **커밋**: `git commit -m "feat: 구현 내용 (#123)"` (이슈 번호 괄호로 참조)
+5. **PR 생성**: `gh pr create --assignee indigo-net` + `Closes #XXX` in body
+6. **PR 리뷰**: PR 생성 후 `/review-pr` 스킬을 실행하여 자동 리뷰 수행
+7. **머지 & 정리**: PR merge 후 worktree 제거 + 로컬 브랜치 삭제
 
 **브랜치명 형식**: `{type}/{feature-name}` (예: `feat/github-workflow-setup`)
 
@@ -326,12 +325,13 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 모든 코드 변경 작업(feat, fix, refactor 등)은 **반드시 worktree에서 수행**합니다.
 
 **생성**:
-- `using-git-worktrees` superpowers 스킬 활용
+- `git worktree add .worktrees/<name> main -b {type}/{feature-name}`
+- Claude Code 환경에서는 `using-git-worktrees` superpowers 스킬 활용 가능 (환경 제공 스킬)
 - 위치: `.worktrees/` (`.gitignore`에 등록됨)
 - worktree 생성 후 테스트 통과 확인 (clean baseline)
 
 **정리**:
-- PR merge 확인 후 `finishing-a-development-branch` 스킬로 정리
+- PR merge 확인 후 정리 (Claude Code 환경에서는 `finishing-a-development-branch` superpowers 스킬 활용 가능)
 - worktree 디렉토리 제거 + 로컬 브랜치 삭제
 - `git worktree prune`으로 stale 참조 정리
 
@@ -339,6 +339,8 @@ git log --oneline origin/<branch> | head -3  # 리모트 확인
 
 **정리 명령어**:
 ```bash
+# 현재 worktree 목록 확인
+git worktree list
 # worktree 제거
 git worktree remove .worktrees/<name>
 # 로컬 브랜치 삭제
