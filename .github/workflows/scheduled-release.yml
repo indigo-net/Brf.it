@@ -1,0 +1,151 @@
+name: Scheduled Release
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # UTC 01:00 = KST 10:00
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.changes.outputs.has_changes }}
+      new_version: ${{ steps.version.outputs.new_version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for changes
+        id: changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No previous tags found, checking for any merged PRs"
+            # Check if there are any commits on main
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+            if [ "$COMMIT_COUNT" -gt 0 ]; then
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+              echo "Found $COMMIT_COUNT commits"
+            else
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Latest tag: $LATEST_TAG"
+
+            # Get merged PRs since last tag
+            MERGED_PRS=$(gh pr list --state merged --base main \
+              --search "merged:>${LATEST_TAG#v}" \
+              --json number,title,labels \
+              --jq 'length')
+
+            if [ "$MERGED_PRS" -gt 0 ]; then
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+              echo "Found $MERGED_PRS merged PRs since $LATEST_TAG"
+            else
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+              echo "No merged PRs since $LATEST_TAG"
+            fi
+          fi
+
+      - name: Determine version
+        id: version
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x .github/scripts/determine-version.sh
+          .github/scripts/determine-version.sh
+
+      - name: Update CHANGELOG
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+          BUMP_TYPE: ${{ steps.version.outputs.bump_type }}
+        run: |
+          # Generate changelog entry
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          echo "## [$NEW_VERSION] - $(date +%Y-%m-%d)" > /tmp/changelog_entry.md
+          echo "" >> /tmp/changelog_entry.md
+
+          if [ -n "$LATEST_TAG" ]; then
+            # Get PRs since last tag
+            gh pr list --state merged --base main \
+              --search "merged:>${LATEST_TAG#v}" \
+              --json number,title,labels \
+              --jq '.[] | "- \(.title) (#\(.number))"' >> /tmp/changelog_entry.md
+          else
+            echo "- Initial release" >> /tmp/changelog_entry.md
+          fi
+
+          echo "" >> /tmp/changelog_entry.md
+
+          # Prepend to CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            # Insert after the header
+            sed -i "/## \[/r /tmp/changelog_entry.md" CHANGELOG.md
+          else
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            cat /tmp/changelog_entry.md >> CHANGELOG.md
+          fi
+
+          # Commit CHANGELOG update
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG for v${NEW_VERSION}" || echo "No CHANGELOG changes to commit"
+          git push
+
+      - name: Create tag
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag "v${NEW_VERSION}"
+          git push origin "v${NEW_VERSION}"
+
+          echo "Created tag v${NEW_VERSION}"
+          echo "Release workflow will be triggered automatically"
+
+  handle-failure:
+    needs: check-and-release
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue create \
+            --title "[Auto] Scheduled Release Failed - $(date +%Y-%m-%d)" \
+            --body "## Scheduled Release Failure
+
+The scheduled release workflow failed on $(date +%Y-%m-%d).
+
+**Workflow Run:** ${RUN_URL}
+
+Please investigate and fix the issue before the next scheduled release.
+
+---
+*This issue was automatically created by the scheduled-release workflow.*" \
+            --label "bug,release"
