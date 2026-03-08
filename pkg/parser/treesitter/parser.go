@@ -186,7 +186,9 @@ func (p *TreeSitterParser) extractSignatures(
 				sig.Line = int(node.StartPosition().Row) + 1
 				sig.EndLine = int(node.EndPosition().Row) + 1
 			case CaptureDoc:
-				sig.Doc = cleanComment(text)
+				if text != "" {
+					sig.Doc = cleanComment(text)
+				}
 			case CaptureKind:
 				kindNode = &node
 			}
