@@ -4108,6 +4108,7 @@ type ScanOptions struct {
 func DefaultScanOptions() *ScanOptions
 func (o *ScanOptions) GetLanguage(path string) (string, bool)
 func IsHidden(name string) bool
+func getBaseName(path string) string
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	Scan() (*ScanResult, error)
@@ -4138,6 +4139,7 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 - `import "testing"`
 
 ```go
+func TestGetBaseName(t *testing.T)
 func TestNewFileScanner(t *testing.T)
 func TestNewFileScannerNilOptions(t *testing.T)
 func TestFileEntryDefaults(t *testing.T)
@@ -4164,6 +4166,7 @@ buf bytes.Buffer
 func TestScanNestedDirectories(t *testing.T)
 func TestLogOutputNoDoubleNewline(t *testing.T)
 buf bytes.Buffer
+func TestFilepathBaseEdgeCases(t *testing.T)
 ```
 
 ---
