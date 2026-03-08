@@ -16,6 +16,10 @@ func TestMarkdownFormatterImplementsFormatter(t *testing.T) {
 	var _ Formatter = (*MarkdownFormatter)(nil)
 }
 
+func TestJSONFormatterImplementsFormatter(t *testing.T) {
+	var _ Formatter = (*JSONFormatter)(nil)
+}
+
 func TestXMLFormatterFormat(t *testing.T) {
 	formatter := NewXMLFormatter()
 
@@ -557,5 +561,195 @@ func TestMarkdownFormatterVerbatimImports(t *testing.T) {
 	}
 	if !strings.Contains(outputStr, "cobra") {
 		t.Error("expected import 'cobra' to be included")
+	}
+}
+
+func TestJSONFormatterFormat(t *testing.T) {
+	formatter := NewJSONFormatter()
+
+	data := &PackageData{
+		Version:  "v0.17.0",
+		RootPath: "/path/to/project",
+		Tree:     "pkg/\n└── test.go",
+		Files: []FileData{
+			{
+				Path:     "pkg/test.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{
+						Name:     "Add",
+						Kind:     "function",
+						Text:     "func Add(a, b int) int",
+						Doc:      "Add returns the sum of two integers.",
+						Line:     5,
+						Language: "go",
+						Exported: true,
+					},
+				},
+			},
+		},
+		TotalSignatures: 1,
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	// Verify JSON structure
+	if !strings.Contains(outputStr, `"version":"v0.17.0"`) {
+		t.Error("expected version in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"path":"/path/to/project"`) {
+		t.Error("expected path in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"tree":"`) {
+		t.Error("expected tree in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"files":[`) {
+		t.Error("expected files array in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"path":"pkg/test.go"`) {
+		t.Error("expected file path in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"language":"go"`) {
+		t.Error("expected language in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"kind":"function"`) {
+		t.Error("expected kind in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"text":"func Add(a, b int) int"`) {
+		t.Error("expected signature text in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `"doc":"Add returns the sum of two integers."`) {
+		t.Error("expected doc in JSON output")
+	}
+}
+
+func TestJSONFormatterKindNormalization(t *testing.T) {
+	formatter := NewJSONFormatter()
+
+	tests := []struct {
+		name         string
+		kind         string
+		expectedKind string
+	}{
+		{"method", "method", "function"},
+		{"constructor", "constructor", "function"},
+		{"class", "class", "type"},
+		{"interface", "interface", "type"},
+		{"struct", "struct", "type"},
+		{"variable", "variable", "variable"},
+		{"field", "field", "variable"},
+		{"unknown", "unknown_kind", "unknown_kind"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			data := &PackageData{
+				Files: []FileData{
+					{
+						Path:     "test.go",
+						Language: "go",
+						Signatures: []parser.Signature{
+							{Kind: tt.kind, Text: "test"},
+						},
+					},
+				},
+			}
+
+			output, err := formatter.Format(data)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			outputStr := string(output)
+			expected := fmt.Sprintf(`"kind":"%s"`, tt.expectedKind)
+			if !strings.Contains(outputStr, expected) {
+				t.Errorf("expected kind %s, got: %s", tt.expectedKind, outputStr)
+			}
+		})
+	}
+}
+
+func TestJSONFormatterWithImports(t *testing.T) {
+	formatter := NewJSONFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "main.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "Main", Kind: "function", Text: "func Main()"},
+				},
+				RawImports: []string{
+					`import "fmt"`,
+					`import "os"`,
+				},
+			},
+		},
+		IncludeImports: true,
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	if !strings.Contains(outputStr, `"imports":[`) {
+		t.Error("expected imports array in JSON output")
+	}
+
+	// JSON escapes quotes, so we check for the escaped version
+	if !strings.Contains(outputStr, `import \"fmt\"`) {
+		t.Error("expected 'fmt' import in JSON output")
+	}
+
+	if !strings.Contains(outputStr, `import \"os\"`) {
+		t.Error("expected 'os' import in JSON output")
+	}
+}
+
+func TestJSONFormatterWithError(t *testing.T) {
+	formatter := NewJSONFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "test.py",
+				Language: "python",
+				Error:    fmt.Errorf("no parser for language: python"),
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if !strings.Contains(outputStr, `"error":"no parser for language: python"`) {
+		t.Error("expected error field in JSON output")
+	}
+}
+
+func TestJSONFormatterName(t *testing.T) {
+	formatter := NewJSONFormatter()
+	if formatter.Name() != "json" {
+		t.Errorf("expected name 'json', got '%s'", formatter.Name())
 	}
 }

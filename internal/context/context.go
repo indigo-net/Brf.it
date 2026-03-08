@@ -202,6 +202,7 @@ func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error) {
 	formatters := map[string]formatter.Formatter{
 		"xml":      formatter.NewXMLFormatter(),
 		"markdown": formatter.NewMarkdownFormatter(),
+		"json":     formatter.NewJSONFormatter(),
 	}
 
 	p := NewPackager(s, e, formatters)

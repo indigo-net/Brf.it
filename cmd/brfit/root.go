@@ -84,7 +84,7 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 
 	// Format flag
 	cmd.Flags().StringVarP(&c.Format, "format", "f", c.Format,
-		"output format: \"xml\" | \"md\"")
+		"output format: \"xml\" | \"md\" | \"json\"")
 
 	// Output flag
 	cmd.Flags().StringVarP(&c.Output, "output", "o", c.Output,
