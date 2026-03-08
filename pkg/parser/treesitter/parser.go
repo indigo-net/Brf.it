@@ -28,6 +28,7 @@ func init() {
 	parser.RegisterParser("csharp", NewTreeSitterParser())
 	parser.RegisterParser("lua", NewTreeSitterParser())
 	parser.RegisterParser("shell", NewTreeSitterParser())
+	parser.RegisterParser("php", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -54,6 +55,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"csharp":     languages.NewCSharpQuery(),
 			"lua":        languages.NewLuaQuery(),
 			"shell":      languages.NewShellQuery(),
+			"php":        languages.NewPHPQuery(),
 		},
 	}
 }
@@ -398,6 +400,9 @@ func isExported(name, language string) bool {
 	case "shell":
 		// Shell/Bash: all functions and variables are public
 		return true
+	case "php":
+		// PHP: all elements are considered exported (visibility modifiers preserved in signature text)
+		return true
 	default:
 		return false
 	}
@@ -431,6 +436,8 @@ func stripBody(text, kind, language string) string {
 		return stripLuaBody(text, kind)
 	case "shell":
 		return stripShellBody(text, kind)
+	case "php":
+		return stripPHPBody(text, kind)
 	default:
 		return text
 	}
@@ -1084,6 +1091,29 @@ func stripLuaBody(text, kind string) string {
 	return text
 }
 
+// stripPHPBody removes the body from PHP declarations.
+// PHP uses { } blocks; the body starts after the opening brace.
+func stripPHPBody(text, kind string) string {
+	switch kind {
+	case "function", "method":
+		// Find the opening brace and remove everything after
+		braceIdx := findPHPBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "class", "interface", "trait", "enum", "type":
+		// For classes/interfaces/traits, remove the body
+		braceIdx := findPHPBodyStart(text)
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+	case "variable":
+		// Properties/Constants: keep full text with value
+		return text
+	}
+	return text
+}
+
 // stripShellBody removes the body from Shell/Bash declarations.
 // Shell functions use { } blocks; the body starts after the opening brace.
 func stripShellBody(text, kind string) string {
@@ -1103,6 +1133,26 @@ func stripShellBody(text, kind string) string {
 		return text
 	}
 	return text
+}
+
+// findPHPBodyStart finds the index where the PHP body starts.
+// It handles nested parentheses and brackets.
+func findPHPBodyStart(text string) int {
+	parenDepth := 0
+
+	for i, ch := range text {
+		switch ch {
+		case '(':
+			parenDepth++
+		case ')':
+			parenDepth--
+		case '{':
+			if parenDepth == 0 {
+				return i
+			}
+		}
+	}
+	return -1
 }
 
 // stripCSharpBody removes the body from C# declarations.

@@ -119,6 +119,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".sh":    "shell",
 		".bash":  "shell",
 		".zsh":   "shell",
+		".php":   "php",
 	}
 }
 

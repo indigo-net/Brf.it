@@ -26,6 +26,7 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | C# | `.cs` | [C# Guide](csharp) |
 | Lua | `.lua` | [Lua Guide](lua) |
 | Shell | `.sh`, `.bash`, `.zsh` | [Shell Guide](shell) |
+| PHP | `.php` | [PHP Guide](php) |
 
 ## Extraction Capabilities
 
@@ -34,29 +35,22 @@ Each language extracts:
 - **Functions/Methods** — Signatures with parameters and return types
 - **Types** — Classes, structs, interfaces, enums
 - **Variables** — Constants and variable declarations
-- **Documentation** — Comments (JSDoc, GoDoc, docstrings, etc.)
+- **Imports** — Module dependencies (with `--include-imports`)
+- **Documentation** — Doc comments and annotations
 
-## Output Examples
+## Language-Specific Features
 
-### XML Format
+Each language may have unique features:
 
-```xml
-<file path="example.go" language="go">
-  <signature kind="function" line="5">
-    <name>DoSomething</name>
-    <text>func DoSomething(input string) error</text>
-    <doc>DoSomething performs an action.</doc>
-  </signature>
-</file>
-```
-
-### Markdown Format
-
-````markdown
-### example.go
-
-```go
-func DoSomething(input string) error
-```
-DoSomething performs an action.
-````
+- **Go** — Structs, interfaces, type aliases
+- **TypeScript/JavaScript** — Classes, interfaces, type aliases, arrow functions
+- **Python** — Classes, decorators, type hints
+- **C/C++** — Structs, unions, typedefs, preprocessor directives
+- **Java** — Classes, interfaces, annotations, enums
+- **Rust** — Structs, enums, traits, impls, macros
+- **Swift** — Structs, classes, protocols, extensions
+- **Kotlin** — Classes, interfaces, objects, companion objects
+- **C#** — Classes, interfaces, structs, delegates, events
+- **Lua** — Functions, local functions, module functions, methods
+- **Shell** — Functions, variables
+- **PHP** — Classes, interfaces, traits, enums, constants

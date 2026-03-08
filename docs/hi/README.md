@@ -152,6 +152,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Kotlin | `.kt`, `.kts` | [Kotlin गाइड](languages/kotlin.md) |
 | C# | `.cs` | [C# गाइड](languages/csharp.md) |
 | Lua | `.lua` | [Lua गाइड](languages/lua.md) |
+| PHP | `.php` | [PHP गाइड](languages/php.md) |
 
 ---
 
