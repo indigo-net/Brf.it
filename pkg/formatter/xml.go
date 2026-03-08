@@ -119,13 +119,43 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 }
 
 // escapeXML escapes special characters for XML content.
+// Optimized to scan the string only once instead of 5 sequential ReplaceAll calls.
 func escapeXML(s string) string {
-	s = strings.ReplaceAll(s, "&", "&amp;")
-	s = strings.ReplaceAll(s, "<", "&lt;")
-	s = strings.ReplaceAll(s, ">", "&gt;")
-	s = strings.ReplaceAll(s, "\"", "&quot;")
-	s = strings.ReplaceAll(s, "'", "&apos;")
-	return s
+	// Fast path: check if escaping is needed
+	var needsEscape bool
+	for i := 0; i < len(s); i++ {
+		c := s[i]
+		if c == '&' || c == '<' || c == '>' || c == '"' || c == '\'' {
+			needsEscape = true
+			break
+		}
+	}
+	if !needsEscape {
+		return s
+	}
+
+	// Escape needed: single-pass replacement
+	var buf strings.Builder
+	buf.Grow(len(s) + len(s)/10) // ~10% extra capacity for escaped chars
+
+	for i := 0; i < len(s); i++ {
+		switch c := s[i]; c {
+		case '&':
+			buf.WriteString("&amp;")
+		case '<':
+			buf.WriteString("&lt;")
+		case '>':
+			buf.WriteString("&gt;")
+		case '"':
+			buf.WriteString("&quot;")
+		case '\'':
+			buf.WriteString("&apos;")
+		default:
+			buf.WriteByte(c)
+		}
+	}
+
+	return buf.String()
 }
 
 // kindToTag maps a signature Kind to the appropriate XML tag name.
