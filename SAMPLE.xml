@@ -429,6 +429,8 @@
       <variable>_ Formatter = (*XMLFormatter)(nil)</variable>
       <function>func TestMarkdownFormatterImplementsFormatter(t *testing.T)</function>
       <variable>_ Formatter = (*MarkdownFormatter)(nil)</variable>
+      <function>func TestJSONFormatterImplementsFormatter(t *testing.T)</function>
+      <variable>_ Formatter = (*JSONFormatter)(nil)</variable>
       <function>func TestXMLFormatterFormat(t *testing.T)</function>
       <function>func TestXMLFormatterFormatWithError(t *testing.T)</function>
       <function>func TestMarkdownFormatterFormat(t *testing.T)</function>
@@ -444,6 +446,11 @@
       <function>func TestXMLFormatterKindTags(t *testing.T)</function>
       <function>func TestXMLFormatterVerbatimImports(t *testing.T)</function>
       <function>func TestMarkdownFormatterVerbatimImports(t *testing.T)</function>
+      <function>func TestJSONFormatterFormat(t *testing.T)</function>
+      <function>func TestJSONFormatterKindNormalization(t *testing.T)</function>
+      <function>func TestJSONFormatterWithImports(t *testing.T)</function>
+      <function>func TestJSONFormatterWithError(t *testing.T)</function>
+      <function>func TestJSONFormatterName(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
       <function>func getEmptyComment(lang string) string</function>
@@ -453,6 +460,34 @@
         <import>import &quot;testing&quot;</import>
       </imports>
       <function>func TestGetEmptyComment(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/json.go" language="go">
+      <imports>
+        <import>import &quot;encoding/json&quot;</import>
+      </imports>
+      <type>type JSONFormatter struct{}</type>
+      <function>func NewJSONFormatter() *JSONFormatter</function>
+      <function>func (f *JSONFormatter) Name() string</function>
+      <type>type jsonOutput struct {
+	Version string     `json:&quot;version,omitempty&quot;`
+	Path    string     `json:&quot;path,omitempty&quot;`
+	Tree    string     `json:&quot;tree,omitempty&quot;`
+	Files   []jsonFile `json:&quot;files&quot;`
+}</type>
+      <type>type jsonFile struct {
+	Path       string        `json:&quot;path&quot;`
+	Language   string        `json:&quot;language&quot;`
+	Signatures []jsonSig     `json:&quot;signatures,omitempty&quot;`
+	Imports    []string      `json:&quot;imports,omitempty&quot;`
+	Error      string        `json:&quot;error,omitempty&quot;`
+}</type>
+      <type>type jsonSig struct {
+	Kind string `json:&quot;kind&quot;`
+	Text string `json:&quot;text&quot;`
+	Doc  string `json:&quot;doc,omitempty&quot;`
+}</type>
+      <function>func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)</function>
+      <function>func normalizeKind(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go" language="go">
       <imports>

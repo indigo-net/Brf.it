@@ -470,6 +470,8 @@ func TestXMLFormatterImplementsFormatter(t *testing.T)
 _ Formatter = (*XMLFormatter)(nil)
 func TestMarkdownFormatterImplementsFormatter(t *testing.T)
 _ Formatter = (*MarkdownFormatter)(nil)
+func TestJSONFormatterImplementsFormatter(t *testing.T)
+_ Formatter = (*JSONFormatter)(nil)
 func TestXMLFormatterFormat(t *testing.T)
 func TestXMLFormatterFormatWithError(t *testing.T)
 func TestMarkdownFormatterFormat(t *testing.T)
@@ -485,6 +487,11 @@ func TestKindToTag(t *testing.T)
 func TestXMLFormatterKindTags(t *testing.T)
 func TestXMLFormatterVerbatimImports(t *testing.T)
 func TestMarkdownFormatterVerbatimImports(t *testing.T)
+func TestJSONFormatterFormat(t *testing.T)
+func TestJSONFormatterKindNormalization(t *testing.T)
+func TestJSONFormatterWithImports(t *testing.T)
+func TestJSONFormatterWithError(t *testing.T)
+func TestJSONFormatterName(t *testing.T)
 ```
 
 ---
@@ -504,6 +511,39 @@ func getEmptyComment(lang string) string
 
 ```go
 func TestGetEmptyComment(t *testing.T)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/formatter/json.go
+
+**Imports:**
+- `import "encoding/json"`
+
+```go
+type JSONFormatter struct{}
+func NewJSONFormatter() *JSONFormatter
+func (f *JSONFormatter) Name() string
+type jsonOutput struct {
+	Version string     `json:"version,omitempty"`
+	Path    string     `json:"path,omitempty"`
+	Tree    string     `json:"tree,omitempty"`
+	Files   []jsonFile `json:"files"`
+}
+type jsonFile struct {
+	Path       string        `json:"path"`
+	Language   string        `json:"language"`
+	Signatures []jsonSig     `json:"signatures,omitempty"`
+	Imports    []string      `json:"imports,omitempty"`
+	Error      string        `json:"error,omitempty"`
+}
+type jsonSig struct {
+	Kind string `json:"kind"`
+	Text string `json:"text"`
+	Doc  string `json:"doc,omitempty"`
+}
+func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
+func normalizeKind(kind string) string
 ```
 
 ---
