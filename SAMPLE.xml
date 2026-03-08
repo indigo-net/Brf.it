@@ -479,6 +479,8 @@
       <function>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</function>
       <variable>buf bytes.Buffer</variable>
       <function>func escapeXML(s string) string</function>
+      <variable>needsEscape bool</variable>
+      <variable>buf strings.Builder</variable>
       <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">

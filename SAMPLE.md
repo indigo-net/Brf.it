@@ -540,6 +540,8 @@ func (f *XMLFormatter) Name() string
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
 buf bytes.Buffer
 func escapeXML(s string) string
+needsEscape bool
+buf strings.Builder
 func kindToTag(kind string) string
 ```
 
