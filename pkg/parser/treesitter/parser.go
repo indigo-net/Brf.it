@@ -27,6 +27,7 @@ func init() {
 	parser.RegisterParser("kotlin", NewTreeSitterParser())
 	parser.RegisterParser("csharp", NewTreeSitterParser())
 	parser.RegisterParser("lua", NewTreeSitterParser())
+	parser.RegisterParser("shell", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -52,6 +53,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"kotlin":     languages.NewKotlinQuery(),
 			"csharp":     languages.NewCSharpQuery(),
 			"lua":        languages.NewLuaQuery(),
+			"shell":      languages.NewShellQuery(),
 		},
 	}
 }
@@ -393,6 +395,9 @@ func isExported(name, language string) bool {
 	case "lua":
 		// Lua: all elements are considered public (no access modifiers)
 		return true
+	case "shell":
+		// Shell/Bash: all functions and variables are public
+		return true
 	default:
 		return false
 	}
@@ -424,6 +429,8 @@ func stripBody(text, kind, language string) string {
 		return stripCSharpBody(text, kind)
 	case "lua":
 		return stripLuaBody(text, kind)
+	case "shell":
+		return stripShellBody(text, kind)
 	default:
 		return text
 	}
@@ -1073,6 +1080,27 @@ func stripLuaBody(text, kind string) string {
 		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
 			return strings.TrimSpace(text[:nlIdx])
 		}
+	}
+	return text
+}
+
+// stripShellBody removes the body from Shell/Bash declarations.
+// Shell functions use { } blocks; the body starts after the opening brace.
+func stripShellBody(text, kind string) string {
+	switch kind {
+	case "function":
+		// Find the opening brace and remove everything after
+		braceIdx := strings.Index(text, "{")
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+		// Function without braces (rare): take first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "variable":
+		// Variables: keep full text with value
+		return text
 	}
 	return text
 }

@@ -116,6 +116,9 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".kts":   "kotlin",
 		".cs":    "csharp",
 		".lua":   "lua",
+		".sh":    "shell",
+		".bash":  "shell",
+		".zsh":   "shell",
 	}
 }
 
