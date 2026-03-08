@@ -25,6 +25,7 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | Kotlin | `.kt`, `.kts` | [Kotlin Guide](kotlin) |
 | C# | `.cs` | [C# Guide](csharp) |
 | Lua | `.lua` | [Lua Guide](lua) |
+| Bash/Shell | `.sh`, `.bash` | [Bash Guide](bash) |
 
 ## Extraction Capabilities
 
