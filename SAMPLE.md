@@ -640,7 +640,9 @@ type Options struct {
 }
 type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
-	Parse(content string, opts *Options) (*ParseResult, error)
+	// Content is passed as []byte to avoid unnecessary string conversion
+	// from os.ReadFile output.
+	Parse(content []byte, opts *Options) (*ParseResult, error)
 
 	// Languages returns the list of supported languages.
 	Languages() []string
@@ -697,7 +699,7 @@ type MockParser struct {
 	signatures []Signature
 	err        error
 }
-func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error)
+func (m *MockParser) Parse(content []byte, opts *Options) (*ParseResult, error)
 func (m *MockParser) Languages() []string
 func TestMockParser(t *testing.T)
 func TestRegistry(t *testing.T)
@@ -4026,7 +4028,7 @@ type TreeSitterParser struct {
 	queries map[string]LanguageQuery
 }
 func NewTreeSitterParser() *TreeSitterParser
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error)
+func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)
 rawImports []string
 func (p *TreeSitterParser) Languages() []string
 func (p *TreeSitterParser) extractSignatures(
