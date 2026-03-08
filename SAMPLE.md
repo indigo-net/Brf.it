@@ -4013,7 +4013,6 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 
 **Imports:**
 - `import "fmt"`
-- `import "regexp"`
 - `import "strings"`
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
@@ -4040,9 +4039,6 @@ func cleanComment(text string) string
 func isExported(name, language string) bool
 func stripBody(text, kind, language string) string
 func stripGoBody(text, kind string) string
-tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
-tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
-tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
 func stripTypeScriptBody(text, kind string) string
 func stripTSFunctionBody(text string) string
 func findFunctionBodyStart(text string) int

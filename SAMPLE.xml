@@ -3703,7 +3703,6 @@
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser.go" language="go">
       <imports>
         <import>import &quot;fmt&quot;</import>
-        <import>import &quot;regexp&quot;</import>
         <import>import &quot;strings&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
@@ -3729,9 +3728,6 @@
       <function>func isExported(name, language string) bool</function>
       <function>func stripBody(text, kind, language string) string</function>
       <function>func stripGoBody(text, kind string) string</function>
-      <variable>tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)</variable>
-      <variable>tsArrowBodyRe = regexp.MustCompile(`\s*=&gt;\s*[\s\S]+$`)</variable>
-      <variable>tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)</variable>
       <function>func stripTypeScriptBody(text, kind string) string</function>
       <function>func stripTSFunctionBody(text string) string</function>
       <function>func findFunctionBodyStart(text string) int</function>
