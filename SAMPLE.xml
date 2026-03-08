@@ -3131,6 +3131,94 @@
       <function>func TestLuaQueryCaptures(t *testing.T)</function>
       <function>func TestLuaQueryExtractMixed(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_php &quot;github.com/tree-sitter/tree-sitter-php/bindings/go&quot;</import>
+      </imports>
+      <type>type PHPQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewPHPQuery() *PHPQuery</function>
+      <function>func (q *PHPQuery) Language() *sitter.Language</function>
+      <function>func (q *PHPQuery) Query() []byte</function>
+      <function>func (q *PHPQuery) Captures() []string</function>
+      <function>func (q *PHPQuery) KindMapping() map[string]string</function>
+      <function>func (q *PHPQuery) ImportQuery() []byte</function>
+      <variable>phpImportQueryPattern = `
+; use Namespace\\Class;
+(namespace_use_declaration) @import_path
+
+; include &apos;file.php&apos;;
+(include_expression) @import_path
+
+; require &apos;vendor/autoload.php&apos;;
+(require_expression) @import_path
+
+; include_once &apos;config.php&apos;;
+(include_once_expression) @import_path
+
+; require_once &apos;config.php&apos;;
+(require_once_expression) @import_path
+`</variable>
+      <variable>phpQueryPattern = `
+; Function definitions: function name() {}
+(function_definition name: (name) @name) @signature @kind
+
+; Method declarations in classes
+(method_declaration name: (name) @name) @signature @kind
+
+; Class declarations
+(class_declaration name: (name) @name) @signature @kind
+
+; Interface declarations
+(interface_declaration name: (name) @name) @signature @kind
+
+; Trait declarations
+(trait_declaration name: (name) @name) @signature @kind
+
+; Enum declarations
+(enum_declaration name: (name) @name) @signature @kind
+
+; Const declarations: const NAME = value;
+(const_declaration
+  (const_element
+    (name) @name
+  )
+) @signature @kind
+
+; Property declarations: public $name;
+(property_declaration
+  (property_element
+    (variable_name (name) @name)
+  )
+) @signature @kind
+
+; Comments (PHPDoc and regular)
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_php &quot;github.com/tree-sitter/tree-sitter-php/bindings/go&quot;</import>
+      </imports>
+      <function>func extractPHPNames(t *testing.T, code []byte) map[string]bool</function>
+      <function>func TestPHPQueryLanguage(t *testing.T)</function>
+      <function>func TestPHPQueryPattern(t *testing.T)</function>
+      <function>func TestPHPQueryImportPattern(t *testing.T)</function>
+      <function>func TestPHPQueryExtractFunction(t *testing.T)</function>
+      <function>func TestPHPQueryExtractClass(t *testing.T)</function>
+      <function>func TestPHPQueryExtractInterface(t *testing.T)</function>
+      <function>func TestPHPQueryExtractTrait(t *testing.T)</function>
+      <function>func TestPHPQueryExtractEnum(t *testing.T)</function>
+      <function>func TestPHPQueryExtractVariable(t *testing.T)</function>
+      <function>func TestPHPQueryExtractImport(t *testing.T)</function>
+      <function>func TestPHPQueryKindMapping(t *testing.T)</function>
+      <function>func TestPHPQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -3666,7 +3754,9 @@
       <function>func refineKotlinClassKind(text string) string</function>
       <function>func refineLuaFunctionKind(text string) string</function>
       <function>func stripLuaBody(text, kind string) string</function>
+      <function>func stripPHPBody(text, kind string) string</function>
       <function>func stripShellBody(text, kind string) string</function>
+      <function>func findPHPBodyStart(text string) int</function>
       <function>func stripCSharpBody(text, kind string) string</function>
       <function>func findCSharpBodyStart(text string) int</function>
       <function>func isExpressionBodied(text string) bool</function>
@@ -3755,6 +3845,10 @@
       <function>func TestLuaBodyStripping(t *testing.T)</function>
       <function>func TestRefineLuaFunctionKind(t *testing.T)</function>
       <function>func TestIsPythonMethod(t *testing.T)</function>
+      <function>func TestTreeSitterParserParsePHP(t *testing.T)</function>
+      <variable>foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool</variable>
+      <function>func TestTreeSitterParserParsePHPImports(t *testing.T)</function>
+      <function>func TestPHPBodyStripping(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>
