@@ -203,6 +203,11 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 			// Skip hidden directories (e.g., .git, .idea), but not the root directory
 			if path != s.opts.RootPath {
 				name := filepath.Base(path)
+				// Handle Windows UNC path edge cases (e.g., \\server\share)
+				// filepath.Base returns "." or separator for UNC root paths
+				if name == "." || name == string(filepath.Separator) {
+					return nil
+				}
 				if !s.opts.IncludeHidden && IsHidden(name) {
 					return filepath.SkipDir
 				}
