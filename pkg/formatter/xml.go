@@ -27,44 +27,47 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	buf.WriteByte('\n')
 	buf.WriteString("<brfit>\n")
 
-	// Metadata section
-	buf.WriteString("  <metadata>\n")
+	// Metadata section (only output if any metadata exists)
+	hasMetadata := data.Version != "" || data.RootPath != "" || data.Tree != ""
+	if hasMetadata {
+		buf.WriteString("  <metadata>\n")
 
-	// Version
-	if data.Version != "" {
-		buf.WriteString(fmt.Sprintf("    <version>%s</version>\n", escapeXML(data.Version)))
+		// Version
+		if data.Version != "" {
+			buf.WriteString(fmt.Sprintf("    <version>%s</version>\n", escapeXML(data.Version)))
+		}
+
+		// Path
+		if data.RootPath != "" {
+			buf.WriteString(fmt.Sprintf("    <path>%s</path>\n", escapeXML(data.RootPath)))
+		}
+
+		// Tree
+		if data.Tree != "" {
+			buf.WriteString("    <tree>")
+			buf.WriteString(escapeXML(data.Tree))
+			buf.WriteString("</tree>\n")
+		}
+
+		// Schema
+		buf.WriteString("    <schema>\n")
+		buf.WriteString(`      <tag name="metadata" description="Project metadata container" />` + "\n")
+		buf.WriteString(`      <tag name="version" description="brf.it version" />` + "\n")
+		buf.WriteString(`      <tag name="path" description="Root path of the scanned project" />` + "\n")
+		buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
+		buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
+		buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
+		buf.WriteString(`      <tag name="function" description="Function, method, or constructor declaration" />` + "\n")
+		buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
+		buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
+		buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
+		buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
+		buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
+		buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
+		buf.WriteString("    </schema>\n")
+
+		buf.WriteString("  </metadata>\n")
 	}
-
-	// Path
-	if data.RootPath != "" {
-		buf.WriteString(fmt.Sprintf("    <path>%s</path>\n", escapeXML(data.RootPath)))
-	}
-
-	// Tree
-	if data.Tree != "" {
-		buf.WriteString("    <tree>")
-		buf.WriteString(escapeXML(data.Tree))
-		buf.WriteString("</tree>\n")
-	}
-
-	// Schema
-	buf.WriteString("    <schema>\n")
-	buf.WriteString(`      <tag name="metadata" description="Project metadata container" />` + "\n")
-	buf.WriteString(`      <tag name="version" description="brf.it version" />` + "\n")
-	buf.WriteString(`      <tag name="path" description="Root path of the scanned project" />` + "\n")
-	buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
-	buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
-	buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
-	buf.WriteString(`      <tag name="function" description="Function, method, or constructor declaration" />` + "\n")
-	buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
-	buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
-	buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
-	buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
-	buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
-	buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
-	buf.WriteString("    </schema>\n")
-
-	buf.WriteString("  </metadata>\n")
 
 	// Files section
 	buf.WriteString("  <files>\n")
