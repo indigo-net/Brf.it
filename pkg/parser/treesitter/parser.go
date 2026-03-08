@@ -27,6 +27,7 @@ func init() {
 	parser.RegisterParser("kotlin", NewTreeSitterParser())
 	parser.RegisterParser("csharp", NewTreeSitterParser())
 	parser.RegisterParser("lua", NewTreeSitterParser())
+	parser.RegisterParser("bash", NewTreeSitterParser())
 }
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
@@ -52,6 +53,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"kotlin":     languages.NewKotlinQuery(),
 			"csharp":     languages.NewCSharpQuery(),
 			"lua":        languages.NewLuaQuery(),
+			"bash":       languages.NewBashQuery(),
 		},
 	}
 }
@@ -348,6 +350,11 @@ func cleanComment(text string) string {
 		return strings.TrimSpace(inner)
 	}
 
+	// Remove # prefix for Bash/Shell comments
+	if strings.HasPrefix(text, "#") {
+		return strings.TrimSpace(strings.TrimPrefix(text, "#"))
+	}
+
 	return strings.TrimSpace(text)
 }
 
@@ -393,6 +400,9 @@ func isExported(name, language string) bool {
 	case "lua":
 		// Lua: all elements are considered public (no access modifiers)
 		return true
+	case "bash":
+		// Bash: all functions and variables are public (no access modifiers)
+		return true
 	default:
 		return false
 	}
@@ -424,6 +434,8 @@ func stripBody(text, kind, language string) string {
 		return stripCSharpBody(text, kind)
 	case "lua":
 		return stripLuaBody(text, kind)
+	case "bash":
+		return stripBashBody(text, kind)
 	default:
 		return text
 	}
@@ -1070,6 +1082,30 @@ func stripLuaBody(text, kind string) string {
 			return strings.TrimSpace(text[:parenIdx+1])
 		}
 		// Fallback: take first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	}
+	return text
+}
+
+// stripBashBody removes the body from Bash declarations.
+func stripBashBody(text, kind string) string {
+	switch kind {
+	case "function":
+		// Bash function: foo() { ... } or function foo { ... }
+		// Find opening brace or the end of function signature
+		braceIdx := strings.Index(text, "{")
+		if braceIdx > 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+		// Fallback: take first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "variable":
+		// Variables: keep full assignment (e.g., VAR=value)
+		// Take first line only
 		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
 			return strings.TrimSpace(text[:nlIdx])
 		}

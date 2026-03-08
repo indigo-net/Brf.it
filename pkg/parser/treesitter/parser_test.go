@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "bash"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -2201,5 +2201,90 @@ func TestIsPythonMethod(t *testing.T) {
 				t.Errorf("isPythonMethod(%q) = %v, want %v", tt.signature, result, tt.expected)
 			}
 		})
+	}
+}
+
+func TestTreeSitterParserParseBash(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `#!/bin/bash
+
+# Deploy application to server
+function deploy {
+    local app_name="$1"
+    echo "Deploying $app_name"
+}
+
+# Build the project
+build() {
+    echo "Building..."
+}
+
+VERSION="1.0.0"
+declare VERBOSE
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "bash"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if result.Language != "bash" {
+		t.Errorf("expected language 'bash', got '%s'", result.Language)
+	}
+
+	// Check for expected signatures
+	expectedNames := []string{"deploy", "build", "VERSION", "VERBOSE"}
+	for _, exp := range expectedNames {
+		found := false
+		for _, sig := range result.Signatures {
+			if sig.Name == exp {
+				found = true
+				break
+			}
+		}
+		if !found {
+			t.Errorf("expected to find signature '%s'", exp)
+		}
+	}
+
+	// Check function kinds
+	for _, sig := range result.Signatures {
+		if sig.Name == "deploy" || sig.Name == "build" {
+			if sig.Kind != "function" {
+				t.Errorf("expected '%s' to be kind 'function', got '%s'", sig.Name, sig.Kind)
+			}
+		}
+	}
+}
+
+func TestStripBashBody(t *testing.T) {
+	tests := []struct {
+		input    string
+		kind     string
+		expected string
+	}{
+		{
+			input:    "function greet {\n    echo 'hi'\n}",
+			kind:     "function",
+			expected: "function greet",
+		},
+		{
+			input:    "foo() {\n    echo 'bar'\n}",
+			kind:     "function",
+			expected: "foo()",
+		},
+		{
+			input:    "NAME=\"value\"\necho $NAME",
+			kind:     "variable",
+			expected: "NAME=\"value\"",
+		},
+	}
+
+	for _, tt := range tests {
+		result := stripBashBody(tt.input, tt.kind)
+		if result != tt.expected {
+			t.Errorf("stripBashBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
+		}
 	}
 }
