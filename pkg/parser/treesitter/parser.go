@@ -522,12 +522,9 @@ func stripTypeScriptBody(text, kind string) string {
 // It handles regular functions, methods, and arrow functions.
 func stripTSFunctionBody(text string) string {
 	// Handle arrow functions: const foo = (args): type => { body } or const foo = (args): type => expr
-	if strings.Contains(text, "=>") {
-		arrowIdx := strings.Index(text, "=>")
-		if arrowIdx > 0 {
-			// Remove everything from => onwards, keep only the signature
-			return strings.TrimSpace(text[:arrowIdx])
-		}
+	if arrowIdx := strings.Index(text, "=>"); arrowIdx > 0 {
+		// Remove everything from => onwards, keep only the signature
+		return strings.TrimSpace(text[:arrowIdx])
 	}
 
 	// Handle regular functions: function foo(args): type { body }
