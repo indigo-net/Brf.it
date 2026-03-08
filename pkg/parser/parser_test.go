@@ -58,7 +58,7 @@ type MockParser struct {
 	err        error
 }
 
-func (m *MockParser) Parse(content string, opts *Options) (*ParseResult, error) {
+func (m *MockParser) Parse(content []byte, opts *Options) (*ParseResult, error) {
 	if m.err != nil {
 		return &ParseResult{Error: m.err}, m.err
 	}
@@ -78,7 +78,7 @@ func TestMockParser(t *testing.T) {
 		},
 	}
 
-	result, err := mock.Parse("package main", nil)
+	result, err := mock.Parse([]byte("package main"), nil)
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}

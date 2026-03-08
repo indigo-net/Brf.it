@@ -205,8 +205,8 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 		return extracted
 	}
 
-	// Parse content
-	parseResult, err := p.Parse(string(content), &parser.Options{
+	// Parse content (no string conversion needed)
+	parseResult, err := p.Parse(content, &parser.Options{
 		Language:       entry.Language,
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
