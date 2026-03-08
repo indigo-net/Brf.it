@@ -35,10 +35,10 @@ const (
 // Capture names for import queries.
 const (
 	CaptureImportPath = "import_path"
-	// CaptureImportFn captures the function name in a function-call import pattern
+	// CaptureLuaRequireFn captures the function name in a Lua function-call import pattern
 	// (e.g., Lua's require()). Used for Go-side filtering when tree-sitter predicates
 	// (such as #eq?) are not evaluated by the binding at runtime.
-	CaptureImportFn = "_fn"
+	CaptureLuaRequireFn = "_fn"
 )
 
 // DefaultKindMapping provides default kind mappings (can be overridden per language).

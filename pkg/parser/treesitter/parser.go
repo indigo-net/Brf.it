@@ -1395,9 +1395,9 @@ func (p *TreeSitterParser) extractImports(
 			break
 		}
 
-		// fnName holds the value of @_fn capture for function-call import patterns
+		// luaRequireFn holds the value of @_fn capture for Lua function-call import patterns
 		// (e.g., Lua require()). Used for Go-side predicate filtering.
-		fnName := ""
+		luaRequireFn := ""
 		var importNode *sitter.Node
 
 		for _, capture := range match.Captures {
@@ -1408,15 +1408,15 @@ func (p *TreeSitterParser) extractImports(
 			switch name {
 			case CaptureImportPath:
 				importNode = &node
-			case CaptureImportFn:
-				fnName = text
+			case CaptureLuaRequireFn:
+				luaRequireFn = text
 			}
 		}
 
 		// Go-side filtering: if @_fn was captured, it must be "require".
 		// The tree-sitter (#eq? @_fn "require") predicate is not evaluated
 		// by the go-tree-sitter binding at runtime, so we enforce it here.
-		if fnName != "" && fnName != "require" {
+		if luaRequireFn != "" && luaRequireFn != "require" {
 			continue
 		}
 
