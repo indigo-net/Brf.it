@@ -101,7 +101,9 @@ type Options struct {
 // Parser defines the interface for code parsers.
 type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
-	Parse(content string, opts *Options) (*ParseResult, error)
+	// Content is passed as []byte to avoid unnecessary string conversion
+	// from os.ReadFile output.
+	Parse(content []byte, opts *Options) (*ParseResult, error)
 
 	// Languages returns the list of supported languages.
 	Languages() []string

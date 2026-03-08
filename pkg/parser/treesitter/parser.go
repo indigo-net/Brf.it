@@ -60,7 +60,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 }
 
 // Parse parses the given content and returns extracted signatures.
-func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *parser.ParseResult, err error) {
+func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("tree-sitter panic recovered: %v", r)
@@ -94,8 +94,8 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 		return nil, fmt.Errorf("failed to set language: %w", err)
 	}
 
-	// Parse content
-	tree := sitterParser.Parse([]byte(content), nil)
+	// Parse content (no conversion needed - already []byte)
+	tree := sitterParser.Parse(content, nil)
 	defer tree.Close()
 
 	if tree == nil {
@@ -103,7 +103,7 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 	}
 
 	// Extract signatures
-	signatures, err := p.extractSignatures(tree.RootNode(), []byte(content), query, opts)
+	signatures, err := p.extractSignatures(tree.RootNode(), content, query, opts)
 	if err != nil {
 		return nil, fmt.Errorf("signature extraction failed: %w", err)
 	}
@@ -111,7 +111,7 @@ func (p *TreeSitterParser) Parse(content string, opts *parser.Options) (result *
 	// Extract imports if requested
 	var rawImports []string
 	if opts.IncludeImports {
-		rawImports, err = p.extractImports(tree.RootNode(), []byte(content), query, opts)
+		rawImports, err = p.extractImports(tree.RootNode(), content, query, opts)
 		if err != nil {
 			return nil, fmt.Errorf("import extraction failed: %w", err)
 		}

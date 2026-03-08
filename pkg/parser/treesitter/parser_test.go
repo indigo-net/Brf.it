@@ -47,7 +47,7 @@ type Point struct {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "go"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "go"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -93,7 +93,7 @@ export interface Point {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "typescript"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "typescript"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -124,7 +124,7 @@ func TestTreeSitterParserUnsupportedLanguage(t *testing.T) {
 
 	code := `puts "hello"`
 
-	result, err := p.Parse(code, &parser.Options{Language: "ruby"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "ruby"})
 	if err == nil {
 		t.Error("expected error for unsupported language")
 	}
@@ -168,7 +168,7 @@ type Point struct {
 `
 
 	// Test with IncludeBody = false (default)
-	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "go", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -202,7 +202,7 @@ func Add(a, b int) int {
 `
 
 	// Test with IncludeBody = true
-	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "go", IncludeBody: true})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -246,7 +246,7 @@ export interface Config {
 `
 
 	// Test with IncludeBody = false (default)
-	result, err := p.Parse(code, &parser.Options{Language: "typescript", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "typescript", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -284,7 +284,7 @@ const double = (n: number): number => n * 2;
 `
 
 	// Test with IncludeBody = false (default)
-	result, err := p.Parse(code, &parser.Options{Language: "typescript", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "typescript", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -335,7 +335,7 @@ public class User {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "java"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "java"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -409,7 +409,7 @@ public record Point(int x, int y) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "java", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "java", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -465,7 +465,7 @@ public class Box<T extends Comparable<T>> {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "java", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "java", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -529,7 +529,7 @@ T getMax(T a, T b) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "cpp"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "cpp"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -573,7 +573,7 @@ int multiply(int a, int b) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "cpp", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -610,7 +610,7 @@ T convert(U input) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "cpp", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -655,7 +655,7 @@ int main() {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "cpp", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "cpp", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -686,7 +686,7 @@ func Add(a, b int) int {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "go"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "go"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -728,7 +728,7 @@ export function add(a: number, b: number): number {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "typescript"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "typescript"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -776,7 +776,7 @@ class Config:
     CLASS_VAR = "value"
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "python"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "python"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -829,7 +829,7 @@ public class Config {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "java"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "java"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -878,7 +878,7 @@ void test() {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "c"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "c"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -926,7 +926,7 @@ const MaxSize = 100
 var DefaultTimeout = 30 * time.Second
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "go", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "go", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -969,7 +969,7 @@ impl Point {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1024,7 +1024,7 @@ impl Rectangle {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1060,7 +1060,7 @@ use crate::utils::*;
 pub fn main() {}
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1093,7 +1093,7 @@ static mut MUTABLE_STATIC: i32 = 0;
 pub fn main() {}
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1126,7 +1126,7 @@ func TestRustMacroExtraction(t *testing.T) {
 pub fn main() {}
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1160,7 +1160,7 @@ pub fn generic_fn<T: Clone>(item: T) -> T {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "rust", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "rust", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1217,7 +1217,7 @@ public func greet(name: String) -> String {
 public let PI = 3.14159
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "swift"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "swift"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1308,7 +1308,7 @@ enum class Role {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "kotlin"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "kotlin"})
 	if err != nil {
 		t.Fatalf("failed to parse Kotlin: %v", err)
 	}
@@ -1445,7 +1445,7 @@ enum class Status {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "kotlin", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "kotlin", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1478,7 +1478,7 @@ import kotlinx.coroutines.launch
 fun main() {}
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "kotlin", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "kotlin", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1516,7 +1516,7 @@ func TestParsePanicRecovery(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Should not panic regardless of input
-			_, _ = p.Parse(tt.content, &parser.Options{Language: tt.language})
+			_, _ = p.Parse([]byte(tt.content), &parser.Options{Language: tt.language})
 		})
 	}
 }
@@ -1556,7 +1556,7 @@ namespace MyApp {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "csharp"})
 	if err != nil {
 		t.Fatalf("failed to parse C#: %v", err)
 	}
@@ -1614,7 +1614,7 @@ public record Person(string Name, int Age);
 public record struct Measurement(double Value);
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "csharp", IncludeBody: false})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "csharp", IncludeBody: false})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1664,7 +1664,7 @@ func TestCSharpOperatorNameSynthesis(t *testing.T) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "csharp"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1700,7 +1700,7 @@ func TestCSharpStaticFieldExtraction(t *testing.T) {
 }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "csharp"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "csharp"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1739,7 +1739,7 @@ global using System.Linq;
 public class Foo { }
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "csharp", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "csharp", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -1983,7 +1983,7 @@ func TestParsePanicRecoveryMechanism(t *testing.T) {
 		},
 	}
 
-	result, err := p.Parse("package main", &parser.Options{Language: "go"})
+	result, err := p.Parse([]byte("package main"), &parser.Options{Language: "go"})
 	if err == nil {
 		t.Fatal("expected error from recovered panic, got nil")
 	}
@@ -2024,7 +2024,7 @@ local callback = function(err, result)
 end
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "lua"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "lua"})
 	if err != nil {
 		t.Fatalf("failed to parse Lua: %v", err)
 	}
@@ -2101,7 +2101,7 @@ local M = {}
 function M.run() end
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "lua", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "lua", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("failed to parse Lua imports: %v", err)
 	}
