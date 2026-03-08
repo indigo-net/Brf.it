@@ -3324,6 +3324,62 @@
       <function>func TestRustQueryKindMapping(t *testing.T)</function>
       <function>func TestRustQueryCaptures(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_bash &quot;github.com/tree-sitter/tree-sitter-bash/bindings/go&quot;</import>
+      </imports>
+      <type>type ShellQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewShellQuery() *ShellQuery</function>
+      <function>func (q *ShellQuery) Language() *sitter.Language</function>
+      <function>func (q *ShellQuery) Query() []byte</function>
+      <function>func (q *ShellQuery) Captures() []string</function>
+      <function>func (q *ShellQuery) KindMapping() map[string]string</function>
+      <function>func (q *ShellQuery) ImportQuery() []byte</function>
+      <variable>shellImportQueryPattern = `
+; source /path/to/file and . /path/to/file
+; Capture command nodes. Go-side filtering will check if command name is &quot;source&quot; or &quot;.&quot;
+(command
+  name: (command_name) @name
+) @import_path
+`</variable>
+      <variable>shellQueryPattern = `
+; Function definitions: function foo { } or function foo() { } or foo() { }
+(function_definition
+  name: (word) @name
+) @signature @kind
+
+; Variable assignments: FOO=bar, FOO=&quot;bar&quot;, FOO=$(cmd)
+(variable_assignment
+  name: (variable_name) @name
+) @signature @kind
+
+; Comments (# ...)
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_bash &quot;github.com/tree-sitter/tree-sitter-bash/bindings/go&quot;</import>
+      </imports>
+      <function>func extractShellNames(t *testing.T, code []byte) map[string]bool</function>
+      <function>func TestShellQueryLanguage(t *testing.T)</function>
+      <function>func TestShellQueryPattern(t *testing.T)</function>
+      <function>func TestShellQueryImportPattern(t *testing.T)</function>
+      <function>func TestShellQueryExtractFunction(t *testing.T)</function>
+      <function>func TestShellQueryExtractFunctionWithoutKeyword(t *testing.T)</function>
+      <function>func TestShellQueryExtractVariable(t *testing.T)</function>
+      <function>func TestShellQueryExtractImport(t *testing.T)</function>
+      <function>func TestShellQueryExtractDoc(t *testing.T)</function>
+      <function>func TestShellQueryKindMapping(t *testing.T)</function>
+      <function>func TestShellQueryCaptures(t *testing.T)</function>
+      <function>func TestShellQueryExtractMixed(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -3610,6 +3666,7 @@
       <function>func refineKotlinClassKind(text string) string</function>
       <function>func refineLuaFunctionKind(text string) string</function>
       <function>func stripLuaBody(text, kind string) string</function>
+      <function>func stripShellBody(text, kind string) string</function>
       <function>func stripCSharpBody(text, kind string) string</function>
       <function>func findCSharpBodyStart(text string) int</function>
       <function>func isExpressionBodied(text string) bool</function>
