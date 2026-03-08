@@ -77,9 +77,10 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("invalid mode '%s': only 'sig' mode is supported", c.Mode)
 	}
 
-	// Validate format (accept "xml", "md", "markdown")
-	if c.Format != "xml" && c.Format != "md" && c.Format != "markdown" {
-		return fmt.Errorf("invalid format '%s': must be 'xml', 'md', or 'markdown'", c.Format)
+	// Validate format (accept "xml", "md", "markdown", "json")
+	validFormats := map[string]bool{"xml": true, "md": true, "markdown": true, "json": true}
+	if !validFormats[c.Format] {
+		return fmt.Errorf("invalid format '%s': must be 'xml', 'md', 'markdown', or 'json'", c.Format)
 	}
 
 	// Validate max file size
