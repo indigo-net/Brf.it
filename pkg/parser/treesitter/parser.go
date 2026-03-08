@@ -2,7 +2,6 @@ package treesitter
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
@@ -467,16 +466,6 @@ func stripGoBody(text, kind string) string {
 	}
 	return text
 }
-
-// Regex patterns for TypeScript body stripping
-var (
-	// Matches function body: starts with { and ends with matching }
-	tsFunctionBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
-	// Matches arrow function body: => { ... } or => expression
-	tsArrowBodyRe = regexp.MustCompile(`\s*=>\s*[\s\S]+$`)
-	// Matches class body
-	tsClassBodyRe = regexp.MustCompile(`\s*\{[\s\S]*\}\s*$`)
-)
 
 // stripTypeScriptBody removes the body from TypeScript/JavaScript declarations.
 func stripTypeScriptBody(text, kind string) string {
