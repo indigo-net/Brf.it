@@ -98,6 +98,17 @@ func IsHidden(name string) bool {
 	return strings.HasPrefix(name, ".")
 }
 
+// getBaseName extracts the base name from path, handling UNC edge cases.
+// Returns empty string for paths where filepath.Base returns "." (empty path),
+// which can occur with certain special paths like Windows UNC roots.
+func getBaseName(path string) string {
+	name := filepath.Base(path)
+	if name == "." {
+		return ""
+	}
+	return name
+}
+
 // Scanner defines the interface for file system scanning.
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
@@ -202,10 +213,10 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 		if d.IsDir() {
 			// Skip hidden directories (e.g., .git, .idea), but not the root directory
 			if path != s.opts.RootPath {
-				name := filepath.Base(path)
-				// Handle Windows UNC path edge cases (e.g., \\server\share)
-				// filepath.Base returns "." or separator for UNC root paths
-				if name == "." || name == string(filepath.Separator) {
+				name := getBaseName(path)
+				// Edge case: empty name means filepath.Base returned "." (empty/special path)
+				// Continue traversal without applying hidden check
+				if name == "" {
 					return nil
 				}
 				if !s.opts.IncludeHidden && IsHidden(name) {
@@ -245,8 +256,11 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 // checkFile checks if a file should be included in the scan results.
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) {
 	// Check hidden
-	name := filepath.Base(path)
-	if !s.opts.IncludeHidden && IsHidden(name) {
+	name := getBaseName(path)
+	// UNC root paths return empty - skip hidden check and include the file
+	if name == "" {
+		// Fall through to other checks
+	} else if !s.opts.IncludeHidden && IsHidden(name) {
 		return FileEntry{}, false
 	}
 
