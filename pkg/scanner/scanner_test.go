@@ -9,6 +9,30 @@ import (
 	"testing"
 )
 
+func TestGetBaseName(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		expected string
+	}{
+		{"normal file", "path/to/file.go", "file.go"},
+		{"hidden file", "path/to/.hidden", ".hidden"},
+		{"root path", ".", ""},
+		{"empty path", "", ""},
+		{"normal directory", "src/pkg", "pkg"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := getBaseName(tt.path)
+			// Note: filepath.Base(".") returns "." which getBaseName converts to ""
+			if result != tt.expected {
+				t.Errorf("getBaseName(%q) = %q, want %q", tt.path, result, tt.expected)
+			}
+		})
+	}
+}
+
 func TestNewFileScanner(t *testing.T) {
 	opts := DefaultScanOptions()
 	opts.RootPath = "."
@@ -686,5 +710,27 @@ func TestLogOutputNoDoubleNewline(t *testing.T) {
 
 	if strings.Contains(output, "\n\n") {
 		t.Errorf("log output contains double newline (Printf format string should not end with \\n): %q", output)
+	}
+}
+
+func TestFilepathBaseEdgeCases(t *testing.T) {
+	// Document expected behavior of filepath.Base for edge cases
+	tests := []struct {
+		path     string
+		expected string
+	}{
+		{".", "."},
+		{"", "."},
+		{"dir", "dir"},
+		{"dir/subdir", "subdir"},
+		{"/path/to/file", "file"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			if got := filepath.Base(tt.path); got != tt.expected {
+				t.Errorf("filepath.Base(%q) = %q, want %q", tt.path, got, tt.expected)
+			}
+		})
 	}
 }

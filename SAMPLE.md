@@ -3593,6 +3593,72 @@ func TestRustQueryCaptures(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"`
+
+```go
+type ShellQuery struct {
+	language *sitter.Language
+	query    []byte
+}
+func NewShellQuery() *ShellQuery
+func (q *ShellQuery) Language() *sitter.Language
+func (q *ShellQuery) Query() []byte
+func (q *ShellQuery) Captures() []string
+func (q *ShellQuery) KindMapping() map[string]string
+func (q *ShellQuery) ImportQuery() []byte
+shellImportQueryPattern = `
+; source /path/to/file and . /path/to/file
+; Capture command nodes. Go-side filtering will check if command name is "source" or "."
+(command
+  name: (command_name) @name
+) @import_path
+`
+shellQueryPattern = `
+; Function definitions: function foo { } or function foo() { } or foo() { }
+(function_definition
+  name: (word) @name
+) @signature @kind
+
+; Variable assignments: FOO=bar, FOO="bar", FOO=$(cmd)
+(variable_assignment
+  name: (variable_name) @name
+) @signature @kind
+
+; Comments (# ...)
+(comment) @doc
+`
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"`
+
+```go
+func extractShellNames(t *testing.T, code []byte) map[string]bool
+func TestShellQueryLanguage(t *testing.T)
+func TestShellQueryPattern(t *testing.T)
+func TestShellQueryImportPattern(t *testing.T)
+func TestShellQueryExtractFunction(t *testing.T)
+func TestShellQueryExtractFunctionWithoutKeyword(t *testing.T)
+func TestShellQueryExtractVariable(t *testing.T)
+func TestShellQueryExtractImport(t *testing.T)
+func TestShellQueryExtractDoc(t *testing.T)
+func TestShellQueryKindMapping(t *testing.T)
+func TestShellQueryCaptures(t *testing.T)
+func TestShellQueryExtractMixed(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go
 
 **Imports:**
@@ -3901,6 +3967,7 @@ func findKotlinBodyStart(text string) int
 func refineKotlinClassKind(text string) string
 func refineLuaFunctionKind(text string) string
 func stripLuaBody(text, kind string) string
+func stripShellBody(text, kind string) string
 func stripCSharpBody(text, kind string) string
 func findCSharpBodyStart(text string) int
 func isExpressionBodied(text string) bool
@@ -4108,6 +4175,7 @@ type ScanOptions struct {
 func DefaultScanOptions() *ScanOptions
 func (o *ScanOptions) GetLanguage(path string) (string, bool)
 func IsHidden(name string) bool
+func getBaseName(path string) string
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	Scan() (*ScanResult, error)
@@ -4138,6 +4206,7 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 - `import "testing"`
 
 ```go
+func TestGetBaseName(t *testing.T)
 func TestNewFileScanner(t *testing.T)
 func TestNewFileScannerNilOptions(t *testing.T)
 func TestFileEntryDefaults(t *testing.T)
@@ -4164,6 +4233,7 @@ buf bytes.Buffer
 func TestScanNestedDirectories(t *testing.T)
 func TestLogOutputNoDoubleNewline(t *testing.T)
 buf bytes.Buffer
+func TestFilepathBaseEdgeCases(t *testing.T)
 ```
 
 ---
