@@ -4197,7 +4197,7 @@ CaptureSignature = "signature"
 CaptureDoc       = "doc"
 CaptureKind      = "kind"
 CaptureImportPath = "import_path"
-CaptureImportFn = "_fn"
+CaptureLuaRequireFn = "_fn"
 DefaultKindMapping = map[string]string{
 	"function_declaration": "function",
 	"method_declaration":   "method",

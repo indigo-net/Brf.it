@@ -3876,7 +3876,7 @@
       <variable>CaptureDoc       = &quot;doc&quot;</variable>
       <variable>CaptureKind      = &quot;kind&quot;</variable>
       <variable>CaptureImportPath = &quot;import_path&quot;</variable>
-      <variable>CaptureImportFn = &quot;_fn&quot;</variable>
+      <variable>CaptureLuaRequireFn = &quot;_fn&quot;</variable>
       <variable>DefaultKindMapping = map[string]string{
 	&quot;function_declaration&quot;: &quot;function&quot;,
 	&quot;method_declaration&quot;:   &quot;method&quot;,
