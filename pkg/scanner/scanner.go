@@ -79,6 +79,7 @@ func DefaultScanOptions() *ScanOptions {
 			".kts":   "kotlin",
 			".cs":    "csharp",
 			".lua":   "lua",
+			".php":   "php",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

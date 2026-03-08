@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -2201,5 +2201,193 @@ func TestIsPythonMethod(t *testing.T) {
 				t.Errorf("isPythonMethod(%q) = %v, want %v", tt.signature, result, tt.expected)
 			}
 		})
+	}
+}
+
+func TestTreeSitterParserParsePHP(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `<?php
+
+namespace App\Services;
+
+use App\Models\User;
+
+/**
+ * UserService handles user-related operations.
+ */
+class UserService {
+    private $repository;
+
+    public function __construct($repo) {
+        $this->repository = $repo;
+    }
+
+    public function findUser($id) {
+        return $this->repository->find($id);
+    }
+}
+
+interface RepositoryInterface {
+    public function find($id);
+    public function save($entity);
+}
+
+trait Loggable {
+    public function log($message) {
+        echo $message;
+    }
+}
+
+function helper($data) {
+    return $data;
+}
+
+const MAX_ITEMS = 100;
+const APP_NAME = "Brf.it";
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "php"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	// Expected signatures: UserService class, __construct, findUser, RepositoryInterface,
+	// find, save, Loggable trait, log, helper function, MAX_ITEMS, APP_NAME
+	if len(result.Signatures) < 8 {
+		t.Errorf("expected at least 8 signatures, got %d", len(result.Signatures))
+	}
+
+	// Find UserService class
+	var foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool
+	for _, sig := range result.Signatures {
+		switch sig.Name {
+		case "UserService":
+			foundClass = true
+			if sig.Kind != "class" {
+				t.Errorf("expected UserService kind 'class', got '%s'", sig.Kind)
+			}
+		case "findUser":
+			foundMethod = true
+			if sig.Kind != "method" {
+				t.Errorf("expected findUser kind 'method', got '%s'", sig.Kind)
+			}
+		case "RepositoryInterface":
+			foundInterface = true
+			if sig.Kind != "interface" {
+				t.Errorf("expected RepositoryInterface kind 'interface', got '%s'", sig.Kind)
+			}
+		case "Loggable":
+			foundTrait = true
+			if sig.Kind != "type" {
+				t.Errorf("expected Loggable kind 'type', got '%s'", sig.Kind)
+			}
+		case "helper":
+			foundFunction = true
+			if sig.Kind != "function" {
+				t.Errorf("expected helper kind 'function', got '%s'", sig.Kind)
+			}
+		case "MAX_ITEMS":
+			foundConst = true
+			if sig.Kind != "variable" {
+				t.Errorf("expected MAX_ITEMS kind 'variable', got '%s'", sig.Kind)
+			}
+		}
+	}
+
+	if !foundClass {
+		t.Error("expected to find 'UserService' class")
+	}
+	if !foundMethod {
+		t.Error("expected to find 'findUser' method")
+	}
+	if !foundInterface {
+		t.Error("expected to find 'RepositoryInterface' interface")
+	}
+	if !foundTrait {
+		t.Error("expected to find 'Loggable' trait")
+	}
+	if !foundFunction {
+		t.Error("expected to find 'helper' function")
+	}
+	if !foundConst {
+		t.Error("expected to find 'MAX_ITEMS' const")
+	}
+}
+
+func TestTreeSitterParserParsePHPImports(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `<?php
+use App\Services\UserService;
+use App\Models\Product;
+require 'vendor/autoload.php';
+include 'config.php';
+`
+
+	result, err := p.Parse(code, &parser.Options{Language: "php", IncludeImports: true})
+	if err != nil {
+		t.Fatalf("failed to parse PHP imports: %v", err)
+	}
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d", len(result.RawImports))
+	}
+
+	// Verify raw import text contains use/require/include
+	for _, imp := range result.RawImports {
+		if !strings.Contains(imp, "use ") && !strings.Contains(imp, "require") && !strings.Contains(imp, "include") {
+			t.Errorf("expected raw import text to contain use/require/include, got: %q", imp)
+		}
+	}
+}
+
+func TestPHPBodyStripping(t *testing.T) {
+	tests := []struct {
+		input    string
+		kind     string
+		expected string
+	}{
+		{
+			input:    "function greet($name) {\n    return 'Hello, ' . $name;\n}",
+			kind:     "function",
+			expected: "function greet($name)",
+		},
+		{
+			input:    "public function findUser($id) {\n    return $this->repo->find($id);\n}",
+			kind:     "method",
+			expected: "public function findUser($id)",
+		},
+		{
+			input:    "class UserService {\n    private $repo;\n}",
+			kind:     "class",
+			expected: "class UserService",
+		},
+		{
+			input:    "interface Repository {\n    public function find($id);\n}",
+			kind:     "interface",
+			expected: "interface Repository",
+		},
+		{
+			input:    "enum Status {\n    case Active;\n    case Inactive;\n}",
+			kind:     "enum",
+			expected: "enum Status",
+		},
+		{
+			input:    "trait Loggable {\n    public function log($msg) {}\n}",
+			kind:     "type",
+			expected: "trait Loggable",
+		},
+		{
+			input:    "const MAX_SIZE = 100;",
+			kind:     "variable",
+			expected: "const MAX_SIZE = 100;",
+		},
+	}
+
+	for _, tt := range tests {
+		result := stripPHPBody(tt.input, tt.kind)
+		if result != tt.expected {
+			t.Errorf("stripPHPBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
+		}
 	}
 }

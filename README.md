@@ -153,6 +153,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Kotlin | `.kt`, `.kts` | [Kotlin Guide](docs/languages/kotlin.md) |
 | C# | `.cs` | [C# Guide](docs/languages/csharp.md) |
 | Lua | `.lua` | [Lua Guide](docs/languages/lua.md) |
+| PHP | `.php` | [PHP Guide](docs/languages/php.md) |
 
 ---
 

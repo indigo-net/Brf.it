@@ -152,6 +152,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Kotlin | `.kt`, `.kts` | [Kotlin-Leitfaden](languages/kotlin.md) |
 | C# | `.cs` | [C#-Leitfaden](languages/csharp.md) |
 | Lua | `.lua` | [Lua-Leitfaden](languages/lua.md) |
+| PHP | `.php` | [PHP-Leitfaden](languages/php.md) |
 
 ---
 

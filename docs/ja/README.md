@@ -152,6 +152,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Kotlin | `.kt`, `.kts` | [Kotlinガイド](languages/kotlin.md) |
 | C# | `.cs` | [C#ガイド](languages/csharp.md) |
 | Lua | `.lua` | [Luaガイド](languages/lua.md) |
+| PHP | `.php` | [PHPガイド](languages/php.md) |
 
 ---
 
