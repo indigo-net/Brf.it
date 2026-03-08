@@ -3,6 +3,7 @@ package treesitter
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
 
@@ -30,9 +31,25 @@ func init() {
 	parser.RegisterParser("php", NewTreeSitterParser())
 }
 
+// queryType distinguishes between signature and import queries for caching.
+type queryType int
+
+const (
+	queryTypeSignature queryType = iota
+	queryTypeImport
+)
+
+// queryCacheKey combines language and query type for cache lookup.
+type queryCacheKey struct {
+	lang string
+	typ  queryType
+}
+
 // TreeSitterParser implements parser.Parser using Tree-sitter.
 type TreeSitterParser struct {
-	queries map[string]LanguageQuery
+	queries          map[string]LanguageQuery
+	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex  sync.RWMutex
 }
 
 // NewTreeSitterParser creates a new Tree-sitter based parser.
@@ -57,6 +74,45 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"php":        languages.NewPHPQuery(),
 		},
 	}
+}
+
+// getOrCreateQuery returns a cached query or creates and caches a new one.
+// The returned query should NOT be closed by the caller - it's managed by the cache.
+func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error) {
+	key := queryCacheKey{lang: lang, typ: typ}
+
+	// Fast path: check cache with read lock
+	p.queryCacheMutex.RLock()
+	if cached, ok := p.compiledQueries.Load(key); ok {
+		p.queryCacheMutex.RUnlock()
+		return cached.(*sitter.Query), nil
+	}
+	p.queryCacheMutex.RUnlock()
+
+	// Slow path: create query with write lock
+	p.queryCacheMutex.Lock()
+	defer p.queryCacheMutex.Unlock()
+
+	// Double-check after acquiring write lock
+	if cached, ok := p.compiledQueries.Load(key); ok {
+		return cached.(*sitter.Query), nil
+	}
+
+	// Create new query
+	var queryStr string
+	if typ == queryTypeSignature {
+		queryStr = string(langQuery.Query())
+	} else {
+		queryStr = string(langQuery.ImportQuery())
+	}
+
+	query, err := sitter.NewQuery(langQuery.Language(), queryStr)
+	if err != nil {
+		return nil, err
+	}
+
+	p.compiledQueries.Store(key, query)
+	return query, nil
 }
 
 // Parse parses the given content and returns extracted signatures.
@@ -142,12 +198,12 @@ func (p *TreeSitterParser) extractSignatures(
 ) ([]parser.Signature, error) {
 	var signatures []parser.Signature
 
-	// Create query
-	query, err := sitter.NewQuery(langQuery.Language(), string(langQuery.Query()))
+	// Get cached query (or create if first time)
+	query, err := p.getOrCreateQuery(opts.Language, langQuery, queryTypeSignature)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create signature query for %s: %w", opts.Language, err)
 	}
-	defer query.Close()
+	// Note: query.Close() is NOT called here because the query is cached for reuse
 
 	// Execute query
 	qc := sitter.NewQueryCursor()
@@ -1360,12 +1416,12 @@ func (p *TreeSitterParser) extractImports(
 		return imports, nil
 	}
 
-	// Create query
-	query, err := sitter.NewQuery(langQuery.Language(), string(importQueryBytes))
+	// Get cached query (or create if first time)
+	query, err := p.getOrCreateQuery(opts.Language, langQuery, queryTypeImport)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create import query for %s: %w", opts.Language, err)
 	}
-	defer query.Close()
+	// Note: query.Close() is NOT called here because the query is cached for reuse
 
 	// Execute query
 	qc := sitter.NewQueryCursor()
