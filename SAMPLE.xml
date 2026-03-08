@@ -3708,15 +3708,27 @@
       <imports>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;strings&quot;</import>
+        <import>import &quot;sync&quot;</import>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser&quot;</import>
         <import>import &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages&quot;</import>
       </imports>
       <function>func init()</function>
+      <type>type queryType int</type>
+      <variable>queryTypeSignature queryType = iota</variable>
+      <variable>queryTypeImport</variable>
+      <type>type queryCacheKey struct {
+	lang string
+	typ  queryType
+}</type>
       <type>type TreeSitterParser struct {
-	queries map[string]LanguageQuery
+	queries          map[string]LanguageQuery
+	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex  sync.RWMutex
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
+      <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
+      <variable>queryStr string</variable>
       <function>func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)</function>
       <variable>rawImports []string</variable>
       <function>func (p *TreeSitterParser) Languages() []string</function>

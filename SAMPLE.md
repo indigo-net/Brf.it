@@ -4018,16 +4018,28 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 **Imports:**
 - `import "fmt"`
 - `import "strings"`
+- `import "sync"`
 - `import sitter "github.com/tree-sitter/go-tree-sitter"`
 - `import "github.com/indigo-net/Brf.it/pkg/parser"`
 - `import "github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"`
 
 ```go
 func init()
+type queryType int
+queryTypeSignature queryType = iota
+queryTypeImport
+type queryCacheKey struct {
+	lang string
+	typ  queryType
+}
 type TreeSitterParser struct {
-	queries map[string]LanguageQuery
+	queries          map[string]LanguageQuery
+	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex  sync.RWMutex
 }
 func NewTreeSitterParser() *TreeSitterParser
+func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
+queryStr string
 func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)
 rawImports []string
 func (p *TreeSitterParser) Languages() []string
