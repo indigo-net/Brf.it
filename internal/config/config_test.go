@@ -75,6 +75,15 @@ func TestConfigValidate(t *testing.T) {
 			wantError: false,
 		},
 		{
+			name: "valid sig mode with json format",
+			config: Config{
+				Mode:        "sig",
+				Format:      "json",
+				MaxFileSize: 512000,
+			},
+			wantError: false,
+		},
+		{
 			name: "invalid mode",
 			config: Config{
 				Mode:   "invalid",
@@ -87,7 +96,7 @@ func TestConfigValidate(t *testing.T) {
 			name: "invalid format",
 			config: Config{
 				Mode:   "sig",
-				Format: "json",
+				Format: "invalid",
 			},
 			wantError: true,
 			errorMsg:  "invalid format",
