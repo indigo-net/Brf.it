@@ -27,6 +27,7 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | Lua | `.lua` | [Lua Guide](lua) |
 | Shell | `.sh`, `.bash`, `.zsh` | [Shell Guide](shell) |
 | PHP | `.php` | [PHP Guide](php) |
+| Ruby | `.rb` | [Ruby Guide](ruby) |
 
 ## Extraction Capabilities
 
@@ -54,3 +55,4 @@ Each language may have unique features:
 - **Lua** — Functions, local functions, module functions, methods
 - **Shell** — Functions, variables
 - **PHP** — Classes, interfaces, traits, enums, constants
+- **Ruby** — Classes, modules, methods, class methods, constants

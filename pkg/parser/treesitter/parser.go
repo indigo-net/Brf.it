@@ -29,6 +29,7 @@ func init() {
 	parser.RegisterParser("lua", NewTreeSitterParser())
 	parser.RegisterParser("shell", NewTreeSitterParser())
 	parser.RegisterParser("php", NewTreeSitterParser())
+	parser.RegisterParser("ruby", NewTreeSitterParser())
 }
 
 // queryType distinguishes between signature and import queries for caching.
@@ -74,6 +75,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"lua":        languages.NewLuaQuery(),
 			"shell":      languages.NewShellQuery(),
 			"php":        languages.NewPHPQuery(),
+			"ruby":       languages.NewRubyQuery(),
 		},
 	}
 	p.parserPool = sync.Pool{
@@ -480,6 +482,9 @@ func isExported(name, language string) bool {
 	case "php":
 		// PHP: all elements are considered exported (visibility modifiers preserved in signature text)
 		return true
+	case "ruby":
+		// Ruby: all elements are considered public (visibility modifiers not filtered)
+		return true
 	default:
 		return false
 	}
@@ -515,6 +520,8 @@ func stripBody(text, kind, language string) string {
 		return stripShellBody(text, kind)
 	case "php":
 		return stripPHPBody(text, kind)
+	case "ruby":
+		return stripRubyBody(text, kind)
 	default:
 		return text
 	}
@@ -1196,6 +1203,33 @@ func stripPHPBody(text, kind string) string {
 	return text
 }
 
+// stripRubyBody removes the body from Ruby declarations.
+// Ruby methods use def...end blocks; we keep only the first line (signature).
+func stripRubyBody(text, kind string) string {
+	switch kind {
+	case "method":
+		// For methods: keep from "def" up to and including the closing ")"
+		// or end of first line if no params
+		parenIdx := strings.Index(text, ")")
+		if parenIdx >= 0 {
+			return strings.TrimSpace(text[:parenIdx+1])
+		}
+		// No params - take first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "class", "namespace":
+		// For class/module: keep first line (class Foo < Bar / module Foo)
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "variable":
+		// Constants: keep full text with value
+		return text
+	}
+	return text
+}
+
 // stripShellBody removes the body from Shell/Bash declarations.
 // Shell functions use { } blocks; the body starts after the opening brace.
 func stripShellBody(text, kind string) string {
@@ -1507,10 +1541,10 @@ func (p *TreeSitterParser) extractImports(
 			}
 		}
 
-		// Go-side filtering: if @_fn was captured, it must be "require".
-		// The tree-sitter (#eq? @_fn "require") predicate is not evaluated
-		// by the go-tree-sitter binding at runtime, so we enforce it here.
-		if luaRequireFn != "" && luaRequireFn != "require" {
+		// Go-side filtering: if @_fn was captured, it must start with "require".
+		// This covers Lua's require() and Ruby's require/require_relative.
+		// The tree-sitter predicate is not evaluated by the go-tree-sitter binding.
+		if luaRequireFn != "" && !strings.HasPrefix(luaRequireFn, "require") {
 			continue
 		}
 

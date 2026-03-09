@@ -153,6 +153,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | C# | `.cs` | [C#-Leitfaden](languages/csharp.md) |
 | Lua | `.lua` | [Lua-Leitfaden](languages/lua.md) |
 | PHP | `.php` | [PHP-Leitfaden](languages/php.md) |
+| Ruby | `.rb` | [Ruby-Leitfaden](languages/ruby.md) |
 
 ---
 

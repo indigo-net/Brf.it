@@ -153,6 +153,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | C# | `.cs` | [C# गाइड](languages/csharp.md) |
 | Lua | `.lua` | [Lua गाइड](languages/lua.md) |
 | PHP | `.php` | [PHP गाइड](languages/php.md) |
+| Ruby | `.rb` | [Ruby गाइड](languages/ruby.md) |
 
 ---
 

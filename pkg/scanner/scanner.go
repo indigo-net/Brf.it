@@ -83,6 +83,7 @@ func DefaultScanOptions() *ScanOptions {
 			".bash":  "shell",
 			".zsh":   "shell",
 			".php":   "php",
+			".rb":    "ruby",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

@@ -154,6 +154,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | C# | `.cs` | [C# Guide](docs/languages/csharp.md) |
 | Lua | `.lua` | [Lua Guide](docs/languages/lua.md) |
 | PHP | `.php` | [PHP Guide](docs/languages/php.md) |
+| Ruby | `.rb` | [Ruby Guide](docs/languages/ruby.md) |
 
 ---
 
