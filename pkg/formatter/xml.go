@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 // XMLFormatter implements Formatter for XML output.
@@ -158,14 +159,15 @@ func escapeXML(s string) string {
 	return buf.String()
 }
 
-// truncateDoc truncates a documentation string to maxLen characters.
-// If maxLen is 0, the original string is returned unchanged.
+// truncateDoc truncates a documentation string to maxLen characters (Unicode code points).
+// If maxLen is 0 or negative, the original string is returned unchanged.
 // Truncated strings end with "..." to indicate truncation.
 func truncateDoc(doc string, maxLen int) string {
-	if maxLen <= 0 || len(doc) <= maxLen {
+	if maxLen <= 0 || utf8.RuneCountInString(doc) <= maxLen {
 		return doc
 	}
-	return doc[:maxLen] + "..."
+	runes := []rune(doc)
+	return string(runes[:maxLen]) + "..."
 }
 
 // kindToTag maps a signature Kind to the appropriate XML tag name.

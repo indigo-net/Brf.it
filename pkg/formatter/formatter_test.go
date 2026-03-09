@@ -797,6 +797,24 @@ func TestTruncateDoc(t *testing.T) {
 			maxLen:   2,
 			expected: "He...",
 		},
+		{
+			name:     "multibyte_korean",
+			doc:      "한글 테스트 문장입니다",
+			maxLen:   5,
+			expected: "한글 테스...",
+		},
+		{
+			name:     "multibyte_emoji",
+			doc:      "Hello 😀🎉 World",
+			maxLen:   8,
+			expected: "Hello 😀🎉...",
+		},
+		{
+			name:     "negative_limit",
+			doc:      "Some text",
+			maxLen:   -1,
+			expected: "Some text",
+		},
 	}
 
 	for _, tt := range tests {
