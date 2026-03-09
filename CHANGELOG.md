@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.19.0] - 2026-03-09
+
+### Added
+- Scala language support (#25)
+  - Classes, traits, objects, methods, val/var, type aliases
+  - Enum, given definitions (Scala 3)
+  - Extension methods extracted individually
+  - Import statement extraction
+- Ruby language support (#21)
+  - Classes, modules, methods, singleton methods, constants
+  - attr_accessor/reader/writer
+  - require/require_relative import extraction
+- PHP language support (#22)
+  - Classes, interfaces, traits, enums, functions, methods
+  - Properties, constants, namespaces
+  - use/require/include import extraction
+- Shell/Bash language support (#118)
+  - Functions, variables, aliases
+- Lua language support (#26)
+  - Functions, local functions, module functions
+  - require import extraction
+- JSON output format (`--format json`) (#73)
+- Docusaurus documentation website (#112)
+- Automated release GitHub Workflow (#114)
+- verbatim import/export output and `--no-std-imports` flag removal (#109)
+
+### Changed
+- `normalizeKind()`: added `trait` and `impl` Kind mappings
+- XML/JSON formatter Kind mapping logic unified (#138)
+- Lua import filtering variable name improved (#120)
+- Unused TypeScript regex variable removed (#123)
+
+### Fixed
+- Binary file detection and parse skip logic (#134)
+- Tree-sitter node byte range explicit bound check (#137)
+- Negative depth guard unified across all body-start functions (#133)
+- PHP parser test type mismatch and config validation test (#129)
+- Windows UNC path `filepath.Base` handling (#116)
+- refineKotlinClassKind annotation parsing defense (#113)
+- isPythonMethod nested parenthesis handling (#106)
+- scanner.go `log.Printf` unnecessary `\n` removal (#101)
+
+### Performance
+- sync.Pool for Tree-sitter Parser pooling (#131)
+- sync.Pool for QueryCursor pooling (#135)
+- Tree-sitter Query compile caching (#61)
+- `removeBlankLines` single-pass strings.Builder (#136)
+- `Parser.Parse` interface changed to accept `[]byte` (#126)
+- `escapeXML()` single-pass optimization (#125)
+- Empty metadata field output optimization (#124)
+- `stripTSFunctionBody` duplicate string scan removal (#122)
+- Empty string `cleanComment` call prevention (#121)
+- Capture loop unnecessary string conversion removal (#132)
+
 ## [0.18.0] - 2026-03-06
 
 ### Added
@@ -248,6 +302,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.19.0]: https://github.com/indigo-net/Brf.it/compare/v0.18.0...v0.19.0
 [0.9.0]: https://github.com/indigo-net/Brf.it/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/indigo-net/Brf.it/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/indigo-net/Brf.it/compare/v0.6.0...v0.7.0
