@@ -122,6 +122,8 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".zsh":   "shell",
 		".php":   "php",
 		".rb":    "ruby",
+		".scala": "scala",
+		".sc":    "scala",
 	}
 }
 

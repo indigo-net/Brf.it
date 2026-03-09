@@ -154,6 +154,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Lua | `.lua` | [Lua-Leitfaden](languages/lua.md) |
 | PHP | `.php` | [PHP-Leitfaden](languages/php.md) |
 | Ruby | `.rb` | [Ruby-Leitfaden](languages/ruby.md) |
+| Scala | `.scala`, `.sc` | [Scala-Leitfaden](languages/scala.md) |
 
 ---
 

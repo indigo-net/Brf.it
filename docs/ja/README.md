@@ -154,6 +154,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Lua | `.lua` | [Luaガイド](languages/lua.md) |
 | PHP | `.php` | [PHPガイド](languages/php.md) |
 | Ruby | `.rb` | [Rubyガイド](languages/ruby.md) |
+| Scala | `.scala`, `.sc` | [Scalaガイド](languages/scala.md) |
 
 ---
 

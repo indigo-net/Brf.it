@@ -84,6 +84,8 @@ func DefaultScanOptions() *ScanOptions {
 			".zsh":   "shell",
 			".php":   "php",
 			".rb":    "ruby",
+			".scala": "scala",
+			".sc":    "scala",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
