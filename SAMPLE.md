@@ -256,6 +256,10 @@ type Config struct {
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments in characters.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 func DefaultConfig() *Config
 func (c *Config) Validate() error
@@ -328,6 +332,10 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -581,6 +589,10 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -628,6 +640,10 @@ func TestJSONFormatterKindNormalization(t *testing.T)
 func TestJSONFormatterWithImports(t *testing.T)
 func TestJSONFormatterWithError(t *testing.T)
 func TestJSONFormatterName(t *testing.T)
+func TestTruncateDoc(t *testing.T)
+func TestXMLFormatterWithMaxDocLength(t *testing.T)
+func TestMarkdownFormatterWithMaxDocLength(t *testing.T)
+func TestJSONFormatterWithMaxDocLength(t *testing.T)
 ```
 
 ---
@@ -709,6 +725,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
@@ -718,6 +735,7 @@ buf bytes.Buffer
 func escapeXML(s string) string
 needsEscape bool
 buf strings.Builder
+func truncateDoc(doc string, maxLen int) string
 func kindToTag(kind string) string
 ```
 

@@ -86,7 +86,7 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 						Text: sig.Text,
 					}
 					if sig.Doc != "" {
-						js.Doc = sig.Doc
+						js.Doc = truncateDoc(sig.Doc, data.MaxDocLength)
 					}
 					jf.Signatures = append(jf.Signatures, js)
 				}

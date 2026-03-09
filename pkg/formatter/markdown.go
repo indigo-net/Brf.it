@@ -99,7 +99,7 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 				for _, sig := range file.Signatures {
 					if sig.Doc != "" {
 						buf.WriteString("> ")
-						buf.WriteString(escapeMarkdown(sig.Doc))
+						buf.WriteString(escapeMarkdown(truncateDoc(sig.Doc, data.MaxDocLength)))
 						buf.WriteString("\n\n")
 					}
 				}

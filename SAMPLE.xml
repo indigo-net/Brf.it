@@ -248,6 +248,10 @@ main &quot;$@&quot;</imports>
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments in characters.
+	// 0 means no limit (default).
+	MaxDocLength int
 }</type>
       <function>func DefaultConfig() *Config</function>
       <function>func (c *Config) Validate() error</function>
@@ -310,6 +314,10 @@ main &quot;$@&quot;</imports>
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -538,6 +546,10 @@ main &quot;$@&quot;</imports>
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }</type>
       <type>type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -580,6 +592,10 @@ main &quot;$@&quot;</imports>
       <function>func TestJSONFormatterWithImports(t *testing.T)</function>
       <function>func TestJSONFormatterWithError(t *testing.T)</function>
       <function>func TestJSONFormatterName(t *testing.T)</function>
+      <function>func TestTruncateDoc(t *testing.T)</function>
+      <function>func TestXMLFormatterWithMaxDocLength(t *testing.T)</function>
+      <function>func TestMarkdownFormatterWithMaxDocLength(t *testing.T)</function>
+      <function>func TestJSONFormatterWithMaxDocLength(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
       <function>func normalizeKind(kind string) string</function>
@@ -636,6 +652,7 @@ main &quot;$@&quot;</imports>
 	&quot;bytes&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
+	&quot;unicode/utf8&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
       <function>func NewXMLFormatter() *XMLFormatter</function>
@@ -645,6 +662,7 @@ main &quot;$@&quot;</imports>
       <function>func escapeXML(s string) string</function>
       <variable>needsEscape bool</variable>
       <variable>buf strings.Builder</variable>
+      <function>func truncateDoc(doc string, maxLen int) string</function>
       <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
