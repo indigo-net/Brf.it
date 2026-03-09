@@ -15,16 +15,16 @@ nav_order: 15
 
 ## Extraction Targets
 
-| Element | Kind | Example |
-|---------|------|---------|
-| Method | `method` | `def greet(name)` |
-| Class Method | `class_method` | `def self.create(attrs)` |
-| Class | `class` | `class User < ActiveRecord::Base` |
-| Module | `module` | `module Authentication` |
-| Constant | `variable` | `MAX_RETRIES = 3` |
-| YARD Comment | `doc` | `# Description` |
-| require | `import` | `require "json"` |
-| require_relative | `import` | `require_relative "helpers"` |
+| Element | Kind | XML Tag | Example |
+|---------|------|---------|---------|
+| Method | `method` | `<function>` | `def greet(name)` |
+| Class Method | `method` | `<function>` | `def self.create(attrs)` |
+| Class | `class` | `<type>` | `class User < ActiveRecord::Base` |
+| Module | `namespace` | `<type>` | `module Authentication` |
+| Constant (top-level) | `variable` | `<variable>` | `MAX_RETRIES = 3` |
+| Comment | `doc` | | `# Description` |
+| require | | `<imports>` | `require "json"` |
+| require_relative | | `<imports>` | `require_relative "helpers"` |
 
 ## Example
 
@@ -34,25 +34,21 @@ nav_order: 15
 require "json"
 require_relative "helpers"
 
+MAX_RETRIES = 3
+
 # Represents a user in the system.
 class User
-  MAX_RETRIES = 3
-
   # Creates a new user from attributes.
-  # @param attrs [Hash] user attributes
   def self.create(attrs)
     new(attrs).save
   end
 
   # Initializes the user.
-  # @param name [String] the user's name
   def initialize(name)
     @name = name
   end
 
   # Greets another person.
-  # @param other [String] the other person's name
-  # @return [String] a greeting message
   def greet(other)
     "Hello, #{other}! I'm #{@name}."
   end
@@ -69,34 +65,13 @@ end
 
 ```xml
 <file path="example.rb" language="ruby">
-  <class kind="class" line="5">
-    <name>User</name>
-    <text>class User</text>
-  </class>
-  <variable kind="variable" line="6">
-    <name>MAX_RETRIES</name>
-    <text>MAX_RETRIES = 3</text>
-  </variable>
-  <function kind="class_method" line="10">
-    <name>create</name>
-    <text>def self.create(attrs)</text>
-  </function>
-  <function kind="method" line="15">
-    <name>initialize</name>
-    <text>def initialize(name)</text>
-  </function>
-  <function kind="method" line="21">
-    <name>greet</name>
-    <text>def greet(other)</text>
-  </function>
-  <module kind="module" line="27">
-    <name>Authentication</name>
-    <text>module Authentication</text>
-  </module>
-  <function kind="method" line="28">
-    <name>authenticate</name>
-    <text>def authenticate(password)</text>
-  </function>
+  <type>class User</type>
+  <function>def self.create(attrs)</function>
+  <function>def initialize(name)</function>
+  <function>def greet(other)</function>
+  <variable>MAX_RETRIES = 3</variable>
+  <type>module Authentication</type>
+  <function>def authenticate(password)</function>
 </file>
 ```
 
@@ -109,8 +84,7 @@ end
 
 ### Method Kinds
 
-- `method`: Instance method declarations (`def foo`)
-- `class_method`: Class-level method declarations (`def self.foo`)
+- Both instance methods (`def foo`) and class methods (`def self.foo`) use kind `method`
 
 ### Body Removal
 

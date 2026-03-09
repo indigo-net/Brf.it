@@ -8,16 +8,16 @@
 
 ## Extraktionsziele
 
-| Element | Kind | Beispiel |
-|---------|------|----------|
-| Methode | `method` | `def greet(name)` |
-| Klassenmethode | `class_method` | `def self.create(attrs)` |
-| Klasse | `class` | `class User < ActiveRecord::Base` |
-| Modul | `module` | `module Authentication` |
-| Konstante | `variable` | `MAX_RETRIES = 3` |
-| YARD-Kommentar | `doc` | `# Beschreibung` |
-| require | `import` | `require "json"` |
-| require_relative | `import` | `require_relative "helpers"` |
+| Element | Kind | XML Tag | Beispiel |
+|---------|------|---------|----------|
+| Methode | `method` | `<function>` | `def greet(name)` |
+| Klassenmethode | `method` | `<function>` | `def self.create(attrs)` |
+| Klasse | `class` | `<type>` | `class User < ActiveRecord::Base` |
+| Modul | `namespace` | `<type>` | `module Authentication` |
+| Konstante (top-level) | `variable` | `<variable>` | `MAX_RETRIES = 3` |
+| YARD-Kommentar | `doc` | | `# Beschreibung` |
+| require | | `<imports>` | `require "json"` |
+| require_relative | | `<imports>` | `require_relative "helpers"` |
 
 ## Beispiel
 
@@ -27,25 +27,21 @@
 require "json"
 require_relative "helpers"
 
+MAX_RETRIES = 3
+
 # Repräsentiert einen Benutzer im System.
 class User
-  MAX_RETRIES = 3
-
   # Erstellt einen neuen Benutzer aus Attributen.
-  # @param attrs [Hash] Benutzerattribute
   def self.create(attrs)
     new(attrs).save
   end
 
   # Initialisiert den Benutzer.
-  # @param name [String] der Name des Benutzers
   def initialize(name)
     @name = name
   end
 
   # Begrüßt eine andere Person.
-  # @param other [String] der Name der anderen Person
-  # @return [String] eine Grußnachricht
   def greet(other)
     "Hello, #{other}! I'm #{@name}."
   end
@@ -62,34 +58,13 @@ end
 
 ```xml
 <file path="example.rb" language="ruby">
-  <class kind="class" line="5">
-    <name>User</name>
-    <text>class User</text>
-  </class>
-  <variable kind="variable" line="6">
-    <name>MAX_RETRIES</name>
-    <text>MAX_RETRIES = 3</text>
-  </variable>
-  <function kind="class_method" line="10">
-    <name>create</name>
-    <text>def self.create(attrs)</text>
-  </function>
-  <function kind="method" line="15">
-    <name>initialize</name>
-    <text>def initialize(name)</text>
-  </function>
-  <function kind="method" line="21">
-    <name>greet</name>
-    <text>def greet(other)</text>
-  </function>
-  <module kind="module" line="27">
-    <name>Authentication</name>
-    <text>module Authentication</text>
-  </module>
-  <function kind="method" line="28">
-    <name>authenticate</name>
-    <text>def authenticate(password)</text>
-  </function>
+  <type>class User</type>
+  <function>def self.create(attrs)</function>
+  <function>def initialize(name)</function>
+  <function>def greet(other)</function>
+  <variable>MAX_RETRIES = 3</variable>
+  <type>module Authentication</type>
+  <function>def authenticate(password)</function>
 </file>
 ```
 
@@ -102,8 +77,7 @@ end
 
 ### Methodenarten
 
-- `method`: Instanzmethoden-Deklarationen (`def foo`)
-- `class_method`: Klassenmethoden-Deklarationen (`def self.foo`)
+- Sowohl Instanzmethoden (`def foo`) als auch Klassenmethoden (`def self.foo`) verwenden Kind `method`
 
 ### Körperentfernung
 

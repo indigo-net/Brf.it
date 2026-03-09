@@ -8,16 +8,16 @@
 
 ## एक्सट्रैक्शन लक्ष्य
 
-| तत्व | Kind | उदाहरण |
-|------|------|--------|
-| मेथड | `method` | `def greet(name)` |
-| क्लास मेथड | `class_method` | `def self.create(attrs)` |
-| क्लास | `class` | `class User < ActiveRecord::Base` |
-| मॉड्यूल | `module` | `module Authentication` |
-| कॉन्स्टेंट | `variable` | `MAX_RETRIES = 3` |
-| YARD कमेंट | `doc` | `# विवरण` |
-| require | `import` | `require "json"` |
-| require_relative | `import` | `require_relative "helpers"` |
+| तत्व | Kind | XML Tag | उदाहरण |
+|------|------|---------|--------|
+| मेथड | `method` | `<function>` | `def greet(name)` |
+| क्लास मेथड | `method` | `<function>` | `def self.create(attrs)` |
+| क्लास | `class` | `<type>` | `class User < ActiveRecord::Base` |
+| मॉड्यूल | `namespace` | `<type>` | `module Authentication` |
+| कॉन्स्टेंट (top-level) | `variable` | `<variable>` | `MAX_RETRIES = 3` |
+| YARD कमेंट | `doc` | | `# विवरण` |
+| require | | `<imports>` | `require "json"` |
+| require_relative | | `<imports>` | `require_relative "helpers"` |
 
 ## उदाहरण
 
@@ -27,25 +27,21 @@
 require "json"
 require_relative "helpers"
 
+MAX_RETRIES = 3
+
 # सिस्टम में एक उपयोगकर्ता को दर्शाता है।
 class User
-  MAX_RETRIES = 3
-
   # एट्रिब्यूट्स से एक नया उपयोगकर्ता बनाता है।
-  # @param attrs [Hash] उपयोगकर्ता एट्रिब्यूट्स
   def self.create(attrs)
     new(attrs).save
   end
 
   # उपयोगकर्ता को इनिशियलाइज़ करता है।
-  # @param name [String] उपयोगकर्ता का नाम
   def initialize(name)
     @name = name
   end
 
   # किसी अन्य व्यक्ति का अभिवादन करता है।
-  # @param other [String] दूसरे व्यक्ति का नाम
-  # @return [String] अभिवादन संदेश
   def greet(other)
     "Hello, #{other}! I'm #{@name}."
   end
@@ -62,34 +58,13 @@ end
 
 ```xml
 <file path="example.rb" language="ruby">
-  <class kind="class" line="5">
-    <name>User</name>
-    <text>class User</text>
-  </class>
-  <variable kind="variable" line="6">
-    <name>MAX_RETRIES</name>
-    <text>MAX_RETRIES = 3</text>
-  </variable>
-  <function kind="class_method" line="10">
-    <name>create</name>
-    <text>def self.create(attrs)</text>
-  </function>
-  <function kind="method" line="15">
-    <name>initialize</name>
-    <text>def initialize(name)</text>
-  </function>
-  <function kind="method" line="21">
-    <name>greet</name>
-    <text>def greet(other)</text>
-  </function>
-  <module kind="module" line="27">
-    <name>Authentication</name>
-    <text>module Authentication</text>
-  </module>
-  <function kind="method" line="28">
-    <name>authenticate</name>
-    <text>def authenticate(password)</text>
-  </function>
+  <type>class User</type>
+  <function>def self.create(attrs)</function>
+  <function>def initialize(name)</function>
+  <function>def greet(other)</function>
+  <variable>MAX_RETRIES = 3</variable>
+  <type>module Authentication</type>
+  <function>def authenticate(password)</function>
 </file>
 ```
 
@@ -102,8 +77,7 @@ end
 
 ### मेथड प्रकार
 
-- `method`: इंस्टेंस मेथड डिक्लेरेशन (`def foo`)
-- `class_method`: क्लास-लेवल मेथड डिक्लेरेशन (`def self.foo`)
+- इंस्टेंस मेथड (`def foo`) और क्लास मेथड (`def self.foo`) दोनों kind `method` का उपयोग करते हैं
 
 ### बॉडी रिमूवल
 
