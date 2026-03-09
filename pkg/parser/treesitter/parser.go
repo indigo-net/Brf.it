@@ -159,11 +159,10 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 
 	// Parse content (no conversion needed - already []byte)
 	tree := sitterParser.Parse(content, nil)
-	defer tree.Close()
-
 	if tree == nil {
 		return nil, fmt.Errorf("failed to parse content")
 	}
+	defer tree.Close()
 
 	// Extract signatures
 	signatures, err := p.extractSignatures(tree.RootNode(), content, query, opts)
