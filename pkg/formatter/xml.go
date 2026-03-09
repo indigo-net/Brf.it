@@ -159,14 +159,13 @@ func escapeXML(s string) string {
 }
 
 // kindToTag maps a signature Kind to the appropriate XML tag name.
+// It uses normalizeKind for the common mapping and falls back to "signature"
+// for unknown or empty kinds.
 func kindToTag(kind string) string {
-	switch kind {
-	case "function", "method", "constructor", "destructor", "arrow", "local_function", "module_function":
-		return "function"
-	case "class", "interface", "type", "struct", "enum", "record", "annotation", "typedef", "namespace", "template":
-		return "type"
-	case "variable", "field", "macro", "export":
-		return "variable"
+	result := normalizeKind(kind)
+	switch result {
+	case "function", "type", "variable":
+		return result
 	default:
 		return "signature" // fallback for empty or unknown kinds
 	}
