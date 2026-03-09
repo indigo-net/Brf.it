@@ -53,6 +53,10 @@ type PackageData struct {
 	// GlobalImports holds deduplicated imports with their usage counts.
 	// Only populated when DedupeImports is true.
 	GlobalImports []ImportCount
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 
 // ImportCount represents an import with its usage count across files.
