@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -122,9 +122,9 @@ export interface Point {
 func TestTreeSitterParserUnsupportedLanguage(t *testing.T) {
 	p := NewTreeSitterParser()
 
-	code := `puts "hello"`
+	code := `print("hello")`
 
-	result, err := p.Parse([]byte(code), &parser.Options{Language: "ruby"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "haskell"})
 	if err == nil {
 		t.Error("expected error for unsupported language")
 	}
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -2389,5 +2389,100 @@ func TestPHPBodyStripping(t *testing.T) {
 		if result != tt.expected {
 			t.Errorf("stripPHPBody(%q, %q) = %q, want %q", tt.input, tt.kind, result, tt.expected)
 		}
+	}
+}
+
+func TestTreeSitterParserParseRuby(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`# User class for managing accounts
+class User
+  attr_reader :name, :email
+
+  def initialize(name, email)
+    @name = name
+    @email = email
+  end
+
+  def self.create(attrs)
+    new(attrs[:name], attrs[:email])
+  end
+
+  def display
+    "#{name} <#{email}>"
+  end
+end
+
+module Helpers
+  def self.format(str)
+    str.strip
+  end
+end
+
+MAX_RETRIES = 3
+
+def greet(name)
+  puts "Hello, #{name}!"
+end
+`)
+
+	opts := &parser.Options{
+		Language: "ruby",
+	}
+
+	result, err := p.Parse(code, opts)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if result.Language != "ruby" {
+		t.Errorf("expected language 'ruby', got '%s'", result.Language)
+	}
+
+	expectedNames := map[string]bool{
+		"User": false, "initialize": false, "create": false,
+		"display": false, "Helpers": false, "format": false,
+		"MAX_RETRIES": false, "greet": false,
+	}
+
+	for _, sig := range result.Signatures {
+		if _, ok := expectedNames[sig.Name]; ok {
+			expectedNames[sig.Name] = true
+		}
+	}
+
+	for name, found := range expectedNames {
+		if !found {
+			t.Errorf("expected to find signature '%s'", name)
+		}
+	}
+}
+
+func TestTreeSitterParserParseRubyImports(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`require "json"
+require "net/http"
+require_relative "helper"
+
+class App
+  def run
+    data = JSON.parse("{}")
+  end
+end
+`)
+
+	opts := &parser.Options{
+		Language:       "ruby",
+		IncludeImports: true,
+	}
+
+	result, err := p.Parse(code, opts)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d: %v", len(result.RawImports), result.RawImports)
 	}
 }

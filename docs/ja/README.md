@@ -153,6 +153,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | C# | `.cs` | [C#ガイド](languages/csharp.md) |
 | Lua | `.lua` | [Luaガイド](languages/lua.md) |
 | PHP | `.php` | [PHPガイド](languages/php.md) |
+| Ruby | `.rb` | [Rubyガイド](languages/ruby.md) |
 
 ---
 
