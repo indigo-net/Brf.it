@@ -789,15 +789,19 @@ func isPythonMethod(signature string) bool {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
-			if parenDepth == 0 {
-				parenEnd = i
-				goto found
+			if parenDepth > 0 {
+				parenDepth--
+				if parenDepth == 0 {
+					parenEnd = i
+					goto found
+				}
 			}
 		case '[':
 			bracketDepth++
 		case ']':
-			bracketDepth--
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
 		}
 	}
 found:
@@ -1310,7 +1314,9 @@ func isExpressionBodied(text string) bool {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -1349,7 +1355,9 @@ func findCSharpArrowIndex(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
