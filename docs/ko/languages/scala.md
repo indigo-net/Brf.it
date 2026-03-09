@@ -21,7 +21,6 @@
 | 타입 별칭 | `type` | `<type>` | `type StringList = List[String]` |
 | Enum (Scala 3) | `enum` | `<type>` | `enum Color` |
 | Given (Scala 3) | `variable` | `<variable>` | `given ordering: Ordering[Int]` |
-| Extension (Scala 3) | `method` | `<function>` | `extension (s: String)` |
 
 ## 예시
 
@@ -91,4 +90,4 @@ type StringList = List[String]
 
 - `enum` 정의는 kind `enum`으로 분류됩니다
 - 이름이 있는 `given` 인스턴스는 kind `variable`로 분류됩니다
-- `extension` 메서드 그룹은 kind `method`로 분류됩니다
+- `extension` 메서드는 개별적으로 `method`로 추출됩니다 (extension 선언 자체는 캡처되지 않음)

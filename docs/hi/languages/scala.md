@@ -21,7 +21,6 @@
 | टाइप एलियास | `type` | `<type>` | `type StringList = List[String]` |
 | Enum (Scala 3) | `enum` | `<type>` | `enum Color` |
 | Given (Scala 3) | `variable` | `<variable>` | `given ordering: Ordering[Int]` |
-| Extension (Scala 3) | `method` | `<function>` | `extension (s: String)` |
 
 ## उदाहरण
 
@@ -91,4 +90,4 @@ type StringList = List[String]
 
 - `enum` डेफिनिशन kind `enum` के रूप में वर्गीकृत हैं
 - नामित `given` इंस्टेंस kind `variable` के रूप में वर्गीकृत हैं
-- `extension` मेथड ग्रुप kind `method` के रूप में वर्गीकृत हैं
+- `extension` मेथड व्यक्तिगत रूप से `method` के रूप में निकाले जाते हैं (extension घोषणा स्वयं कैप्चर नहीं होती)

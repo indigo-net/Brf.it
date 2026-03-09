@@ -21,7 +21,6 @@
 | Typ-Alias | `type` | `<type>` | `type StringList = List[String]` |
 | Enum (Scala 3) | `enum` | `<type>` | `enum Color` |
 | Given (Scala 3) | `variable` | `<variable>` | `given ordering: Ordering[Int]` |
-| Extension (Scala 3) | `method` | `<function>` | `extension (s: String)` |
 
 ## Beispiel
 
@@ -91,4 +90,4 @@ Wenn das `--include-body` Flag nicht verwendet wird:
 
 - `enum`-Definitionen werden als Kind `enum` klassifiziert
 - Benannte `given`-Instanzen werden als Kind `variable` klassifiziert
-- `extension`-Methodengruppen werden als Kind `method` klassifiziert
+- `extension`-Methoden werden einzeln als `method` extrahiert (die extension-Deklaration selbst wird nicht erfasst)

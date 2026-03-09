@@ -379,7 +379,6 @@ func TestScalaQueryKindMapping(t *testing.T) {
 		"type_definition":      "type",
 		"enum_definition":      "enum",
 		"given_definition":     "variable",
-		"extension_definition": "method",
 	}
 
 	for key, expectedValue := range expectedMappings {

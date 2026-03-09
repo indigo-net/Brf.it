@@ -55,7 +55,6 @@ func (q *ScalaQuery) KindMapping() map[string]string {
 		"type_definition":      "type",
 		"enum_definition":      "enum",
 		"given_definition":     "variable",
-		"extension_definition": "method",
 	}
 }
 
@@ -148,9 +147,6 @@ const scalaQueryPattern = `
 (given_definition
   name: (identifier) @name
 ) @signature @kind
-
-; Extension definitions (Scala 3)
-(extension_definition) @signature @kind
 
 ; Line comments
 (comment) @doc

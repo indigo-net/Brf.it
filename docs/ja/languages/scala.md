@@ -21,7 +21,6 @@
 | 型エイリアス | `type` | `<type>` | `type StringList = List[String]` |
 | Enum（Scala 3） | `enum` | `<type>` | `enum Color` |
 | Given（Scala 3） | `variable` | `<variable>` | `given ordering: Ordering[Int]` |
-| Extension（Scala 3） | `method` | `<function>` | `extension (s: String)` |
 
 ## 例
 
@@ -91,4 +90,4 @@ type StringList = List[String]
 
 - `enum`定義はkind `enum`に分類されます
 - 名前付き`given`インスタンスはkind `variable`に分類されます
-- `extension`メソッドグループはkind `method`に分類されます
+- `extension`メソッドは個別に`method`として抽出されます（extension宣言自体はキャプチャされません）

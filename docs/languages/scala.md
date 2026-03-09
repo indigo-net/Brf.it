@@ -28,7 +28,6 @@ nav_order: 16
 | Type Alias | `type` | `<type>` | `type StringList = List[String]` |
 | Enum (Scala 3) | `enum` | `<type>` | `enum Color` |
 | Given (Scala 3) | `variable` | `<variable>` | `given ordering: Ordering[Int]` |
-| Extension (Scala 3) | `method` | `<function>` | `extension (s: String)` |
 
 ## Example
 
@@ -98,4 +97,4 @@ When `--include-body` flag is not used:
 
 - `enum` definitions are classified as kind `enum`
 - Named `given` instances are classified as kind `variable`
-- `extension` method groups are classified as kind `method`
+- `extension` methods are extracted individually as `method` (the extension declaration itself is not captured)
