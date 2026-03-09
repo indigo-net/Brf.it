@@ -51,6 +51,7 @@ type TreeSitterParser struct {
 	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
 	queryCacheMutex  sync.RWMutex
 	parserPool       sync.Pool
+	cursorPool       sync.Pool
 }
 
 // NewTreeSitterParser creates a new Tree-sitter based parser.
@@ -78,6 +79,11 @@ func NewTreeSitterParser() *TreeSitterParser {
 	p.parserPool = sync.Pool{
 		New: func() any {
 			return sitter.NewParser()
+		},
+	}
+	p.cursorPool = sync.Pool{
+		New: func() any {
+			return sitter.NewQueryCursor()
 		},
 	}
 	return p
@@ -212,8 +218,8 @@ func (p *TreeSitterParser) extractSignatures(
 	// Note: query.Close() is NOT called here because the query is cached for reuse
 
 	// Execute query
-	qc := sitter.NewQueryCursor()
-	defer qc.Close()
+	qc := p.cursorPool.Get().(*sitter.QueryCursor)
+	defer p.cursorPool.Put(qc)
 
 	matches := qc.Matches(query, root, content)
 
@@ -1464,8 +1470,8 @@ func (p *TreeSitterParser) extractImports(
 	// Note: query.Close() is NOT called here because the query is cached for reuse
 
 	// Execute query
-	qc := sitter.NewQueryCursor()
-	defer qc.Close()
+	qc := p.cursorPool.Get().(*sitter.QueryCursor)
+	defer p.cursorPool.Put(qc)
 
 	matches := qc.Matches(query, root, content)
 	captureNames := query.CaptureNames()
