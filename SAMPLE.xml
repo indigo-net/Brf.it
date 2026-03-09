@@ -3822,7 +3822,7 @@
       <variable>imports []string</variable>
       <variable>importNode *sitter.Node</variable>
       <function>func removeBlankLines(text string) string</function>
-      <variable>result []string</variable>
+      <variable>buf strings.Builder</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go" language="go">
       <imports>

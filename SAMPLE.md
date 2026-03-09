@@ -4138,7 +4138,7 @@ func (p *TreeSitterParser) extractImports(
 imports []string
 importNode *sitter.Node
 func removeBlankLines(text string) string
-result []string
+buf strings.Builder
 ```
 
 ---
