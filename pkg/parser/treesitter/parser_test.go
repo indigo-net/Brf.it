@@ -2247,7 +2247,7 @@ const MAX_ITEMS = 100;
 const APP_NAME = "Brf.it";
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "php"})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "php"})
 	if err != nil {
 		t.Fatalf("Parse returned error: %v", err)
 	}
@@ -2325,7 +2325,7 @@ require 'vendor/autoload.php';
 include 'config.php';
 `
 
-	result, err := p.Parse(code, &parser.Options{Language: "php", IncludeImports: true})
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "php", IncludeImports: true})
 	if err != nil {
 		t.Fatalf("failed to parse PHP imports: %v", err)
 	}

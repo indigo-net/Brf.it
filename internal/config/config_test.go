@@ -87,7 +87,7 @@ func TestConfigValidate(t *testing.T) {
 			name: "invalid format",
 			config: Config{
 				Mode:   "sig",
-				Format: "json",
+				Format: "invalid",
 			},
 			wantError: true,
 			errorMsg:  "invalid format",
