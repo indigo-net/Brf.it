@@ -641,6 +641,22 @@ type Formatter interface {
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_fuzz_test.go
+
+```go
+import (
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func FuzzXMLFormatter(f *testing.F)
+func FuzzMarkdownFormatter(f *testing.F)
+func FuzzJSONFormatter(f *testing.F)
+func FuzzFormatterWithLargeData(f *testing.F)
+func FuzzFormatterWithImports(f *testing.F)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_test.go
 
 ```go
@@ -767,7 +783,6 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-	"unicode/utf8"
 )
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
@@ -777,7 +792,6 @@ buf bytes.Buffer
 func escapeXML(s string) string
 needsEscape bool
 buf strings.Builder
-func truncateDoc(doc string, maxLen int) string
 func kindToTag(kind string) string
 ```
 
@@ -4860,6 +4874,24 @@ imports []string
 importNode *sitter.Node
 func removeBlankLines(text string) string
 buf strings.Builder
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go
+
+```go
+import (
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func FuzzParseGo(f *testing.F)
+func FuzzParseTypeScript(f *testing.F)
+func FuzzParsePython(f *testing.F)
+func FuzzParseJava(f *testing.F)
+func FuzzParseRust(f *testing.F)
+func FuzzParseC(f *testing.F)
+func FuzzParseJSON(f *testing.F)
 ```
 
 ---

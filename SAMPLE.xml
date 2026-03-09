@@ -595,6 +595,17 @@ main &quot;$@&quot;</imports>
 	Name() string
 }</type>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_fuzz_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func FuzzXMLFormatter(f *testing.F)</function>
+      <function>func FuzzMarkdownFormatter(f *testing.F)</function>
+      <function>func FuzzJSONFormatter(f *testing.F)</function>
+      <function>func FuzzFormatterWithLargeData(f *testing.F)</function>
+      <function>func FuzzFormatterWithImports(f *testing.F)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_test.go" language="go">
       <imports>import (
 	&quot;fmt&quot;
@@ -694,7 +705,6 @@ main &quot;$@&quot;</imports>
 	&quot;bytes&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
-	&quot;unicode/utf8&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
       <function>func NewXMLFormatter() *XMLFormatter</function>
@@ -704,7 +714,6 @@ main &quot;$@&quot;</imports>
       <function>func escapeXML(s string) string</function>
       <variable>needsEscape bool</variable>
       <variable>buf strings.Builder</variable>
-      <function>func truncateDoc(doc string, maxLen int) string</function>
       <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
@@ -4492,6 +4501,19 @@ import &quot;unsafe&quot;</imports>
       <variable>importNode *sitter.Node</variable>
       <function>func removeBlankLines(text string) string</function>
       <variable>buf strings.Builder</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func FuzzParseGo(f *testing.F)</function>
+      <function>func FuzzParseTypeScript(f *testing.F)</function>
+      <function>func FuzzParsePython(f *testing.F)</function>
+      <function>func FuzzParseJava(f *testing.F)</function>
+      <function>func FuzzParseRust(f *testing.F)</function>
+      <function>func FuzzParseC(f *testing.F)</function>
+      <function>func FuzzParseJSON(f *testing.F)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go" language="go">
       <imports>import (
