@@ -45,6 +45,22 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// DedupeImports indicates whether imports should be deduplicated across files.
+	// When true, imports are collected globally and shown in a separate section.
+	DedupeImports bool
+
+	// GlobalImports holds deduplicated imports with their usage counts.
+	// Only populated when DedupeImports is true.
+	GlobalImports []ImportCount
+}
+
+// ImportCount represents an import with its usage count across files.
+type ImportCount struct {
+	// Import is the raw import statement text.
+	Import string
+	// Count is the number of files that use this import.
+	Count int
 }
 
 // Formatter defines the interface for output formatting.

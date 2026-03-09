@@ -104,6 +104,9 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.IncludeImports, "include-imports", c.IncludeImports,
 		"include import/export statements in output")
 
+	cmd.Flags().BoolVar(&c.DedupeImports, "dedupe-imports", c.DedupeImports,
+		"deduplicate imports across files (requires --include-imports)")
+
 	cmd.Flags().BoolVar(&c.NoTree, "no-tree", c.NoTree,
 		"skip directory tree in output")
 

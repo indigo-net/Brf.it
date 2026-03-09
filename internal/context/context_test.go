@@ -1,6 +1,7 @@
 package context
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -520,5 +521,139 @@ func TestNormalizeFormat(t *testing.T) {
 				t.Errorf("normalizeFormat(%q) = %q, want %q", tt.input, result, tt.expected)
 			}
 		})
+	}
+}
+
+func TestBuildGlobalImports(t *testing.T) {
+	tests := []struct {
+		name           string
+		files          []formatter.FileData
+		expectedCount  int
+		expectedImport string
+		expectedFiles  int
+	}{
+		{
+			name: "single file with imports",
+			files: []formatter.FileData{
+				{
+					Path:       "a.go",
+					RawImports: []string{`import "fmt"`, `import "os"`},
+				},
+			},
+			expectedCount:  2,
+			expectedImport: `import "fmt"`,
+			expectedFiles:  1,
+		},
+		{
+			name: "multiple files with overlapping imports",
+			files: []formatter.FileData{
+				{
+					Path:       "a.go",
+					RawImports: []string{`import "fmt"`, `import "os"`},
+				},
+				{
+					Path:       "b.go",
+					RawImports: []string{`import "fmt"`, `import "strings"`},
+				},
+			},
+			expectedCount:  3,
+			expectedImport: `import "fmt"`,
+			expectedFiles:  2, // fmt appears in 2 files
+		},
+		{
+			name: "file with error should be skipped",
+			files: []formatter.FileData{
+				{
+					Path:       "a.go",
+					RawImports: []string{`import "fmt"`},
+				},
+				{
+					Path:       "b.go",
+					Error:      fmt.Errorf("parse error"),
+					RawImports: []string{`import "os"`},
+				},
+			},
+			expectedCount:  1,
+			expectedImport: `import "fmt"`,
+			expectedFiles:  1,
+		},
+		{
+			name:           "empty files",
+			files:          []formatter.FileData{},
+			expectedCount:  0,
+			expectedImport: "",
+			expectedFiles:  0,
+		},
+		{
+			name: "duplicate imports in same file counted once",
+			files: []formatter.FileData{
+				{
+					Path:       "a.go",
+					RawImports: []string{`import "fmt"`, `import "fmt"`},
+				},
+			},
+			expectedCount:  1,
+			expectedImport: `import "fmt"`,
+			expectedFiles:  1, // counted once per file
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := buildGlobalImports(tt.files)
+
+			if len(result) != tt.expectedCount {
+				t.Errorf("expected %d imports, got %d", tt.expectedCount, len(result))
+			}
+
+			if tt.expectedImport != "" {
+				found := false
+				for _, ic := range result {
+					if ic.Import == tt.expectedImport {
+						found = true
+						if ic.Count != tt.expectedFiles {
+							t.Errorf("expected import %q count %d, got %d", tt.expectedImport, tt.expectedFiles, ic.Count)
+						}
+						break
+					}
+				}
+				if !found {
+					t.Errorf("expected import %q not found", tt.expectedImport)
+				}
+			}
+		})
+	}
+}
+
+func TestBuildGlobalImportsSorting(t *testing.T) {
+	files := []formatter.FileData{
+		{
+			Path:       "a.go",
+			RawImports: []string{`import "fmt"`},
+		},
+		{
+			Path:       "b.go",
+			RawImports: []string{`import "fmt"`},
+		},
+		{
+			Path:       "c.go",
+			RawImports: []string{`import "fmt"`, `import "os"`},
+		},
+	}
+
+	result := buildGlobalImports(files)
+
+	// Should be sorted by count descending
+	if len(result) != 2 {
+		t.Fatalf("expected 2 imports, got %d", len(result))
+	}
+
+	// fmt appears in 3 files, os in 1
+	if result[0].Import != `import "fmt"` || result[0].Count != 3 {
+		t.Errorf("expected fmt with count 3 first, got %s with count %d", result[0].Import, result[0].Count)
+	}
+
+	if result[1].Import != `import "os"` || result[1].Count != 1 {
+		t.Errorf("expected os with count 1 second, got %s with count %d", result[1].Import, result[1].Count)
 	}
 }

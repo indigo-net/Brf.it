@@ -43,6 +43,10 @@ type Config struct {
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// NoTree skips directory tree generation in output.
 	NoTree bool
 
@@ -138,6 +142,7 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludeHidden:  c.IncludeHidden,
 		IncludeBody:    c.IncludeBody,
 		IncludeImports: c.IncludeImports,
+		DedupeImports:  c.DedupeImports,
 		IncludeTree:    !c.NoTree,
 		IncludePrivate: false, // Future: add --include-private flag
 		MaxFileSize:    c.MaxFileSize,

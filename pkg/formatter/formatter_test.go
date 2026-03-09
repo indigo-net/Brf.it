@@ -753,3 +753,153 @@ func TestJSONFormatterName(t *testing.T) {
 		t.Errorf("expected name 'json', got '%s'", formatter.Name())
 	}
 }
+
+func TestXMLFormatterDedupeImports(t *testing.T) {
+	formatter := NewXMLFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "a.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
+				},
+				RawImports: []string{`import "fmt"`, `import "os"`},
+			},
+			{
+				Path:     "b.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncB", Kind: "function", Text: "func FuncB()"},
+				},
+				RawImports: []string{`import "fmt"`, `import "strings"`},
+			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 2},
+			{Import: `import "os"`, Count: 1},
+			{Import: `import "strings"`, Count: 1},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	// Should have global imports section
+	if !strings.Contains(outputStr, "<imports-global>") {
+		t.Error("expected <imports-global> section")
+	}
+
+	// Should have count attribute
+	if !strings.Contains(outputStr, `count="2"`) {
+		t.Error("expected count=\"2\" for fmt import")
+	}
+
+	// Should NOT have imports in individual files
+	if strings.Contains(outputStr, "<imports>") {
+		t.Error("should not have <imports> in individual files when deduping")
+	}
+}
+
+func TestMarkdownFormatterDedupeImports(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "a.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
+				},
+				RawImports: []string{`import "fmt"`},
+			},
+			{
+				Path:     "b.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncB", Kind: "function", Text: "func FuncB()"},
+				},
+				RawImports: []string{`import "fmt"`},
+			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 2},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	// Should have Global Imports section
+	if !strings.Contains(outputStr, "## Global Imports") {
+		t.Error("expected '## Global Imports' section")
+	}
+
+	// Should have table format
+	if !strings.Contains(outputStr, "| Import | Files |") {
+		t.Error("expected import table header")
+	}
+
+	// Should show count
+	if !strings.Contains(outputStr, "| 2 |") {
+		t.Error("expected count of 2 in table")
+	}
+}
+
+func TestJSONFormatterDedupeImports(t *testing.T) {
+	formatter := NewJSONFormatter()
+
+	data := &PackageData{
+		Files: []FileData{
+			{
+				Path:     "a.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
+				},
+				RawImports: []string{`import "fmt"`},
+			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 1},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+
+	// Should have globalImports field
+	if !strings.Contains(outputStr, `"globalImports":[`) {
+		t.Error("expected globalImports array in JSON output")
+	}
+
+	// Should have count field
+	if !strings.Contains(outputStr, `"count":1`) {
+		t.Error("expected count field in globalImports")
+	}
+
+	// Should NOT have imports in individual files when deduping
+	if strings.Contains(outputStr, `"imports":[`) {
+		t.Error("should not have imports array in files when deduping")
+	}
+}

@@ -43,15 +43,26 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString("\n```\n\n")
 	}
 
+	// Global imports (when dedupe mode is enabled)
+	if data.DedupeImports && len(data.GlobalImports) > 0 {
+		buf.WriteString("## Global Imports\n\n")
+		buf.WriteString("| Import | Files |\n")
+		buf.WriteString("|--------|-------|\n")
+		for _, ic := range data.GlobalImports {
+			buf.WriteString(fmt.Sprintf("| `%s` | %d |\n", escapeMarkdown(ic.Import), ic.Count))
+		}
+		buf.WriteString("\n")
+	}
+
 	// Files
 	buf.WriteString("---\n\n")
 	buf.WriteString("## Files\n\n")
 	for _, file := range data.Files {
 		buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
 
-		// Imports (within file block)
+		// Imports (within file block) - only if not deduping
 		hasRenderedImports := false
-		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
+		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports {
 			hasRenderedImports = true
 		}
 
