@@ -456,6 +456,7 @@
       <function>func TestJSONFormatterName(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
+      <function>func normalizeKind(kind string) string</function>
       <function>func getEmptyComment(lang string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go" language="go">
@@ -490,7 +491,6 @@
 	Doc  string `json:&quot;doc,omitempty&quot;`
 }</type>
       <function>func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)</function>
-      <function>func normalizeKind(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go" language="go">
       <imports>

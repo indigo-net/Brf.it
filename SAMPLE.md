@@ -502,6 +502,7 @@ func TestJSONFormatterName(t *testing.T)
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
 ```go
+func normalizeKind(kind string) string
 func getEmptyComment(lang string) string
 ```
 
@@ -546,7 +547,6 @@ type jsonSig struct {
 	Doc  string `json:"doc,omitempty"`
 }
 func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
-func normalizeKind(kind string) string
 ```
 
 ---
