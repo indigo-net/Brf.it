@@ -1322,7 +1322,7 @@ enum class Role {
 		"AppConfig": true, "VERSION": true,
 		"requireNotNull": true,
 		"UserCallback":   true,
-		"Role": true, "ADMIN": true, "USER": true, "GUEST": true,
+		"Role":           true, "ADMIN": true, "USER": true, "GUEST": true,
 	}
 
 	foundNames := make(map[string]bool)

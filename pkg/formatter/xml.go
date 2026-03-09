@@ -66,7 +66,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
 			buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
 			buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
-            buf.WriteString("    </schema>\n")
+			buf.WriteString("    </schema>\n")
 		}
 
 		buf.WriteString("  </metadata>\n")

@@ -264,14 +264,14 @@ func TestPHPQueryKindMapping(t *testing.T) {
 	mapping := query.KindMapping()
 
 	expectedMappings := map[string]string{
-		"function_definition":  "function",
-		"method_declaration":   "method",
-		"class_declaration":    "class",
-		"interface_declaration": "interface",
-		"trait_declaration":    "type",
-		"enum_declaration":     "enum",
-		"const_declaration":    "variable",
-		"property_declaration": "variable",
+		"function_definition":       "function",
+		"method_declaration":        "method",
+		"class_declaration":         "class",
+		"interface_declaration":     "interface",
+		"trait_declaration":         "type",
+		"enum_declaration":          "enum",
+		"const_declaration":         "variable",
+		"property_declaration":      "variable",
 		"namespace_use_declaration": "import",
 	}
 

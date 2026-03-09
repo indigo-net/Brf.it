@@ -121,6 +121,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().IntVar(&c.MaxDocLength, "max-doc-length", c.MaxDocLength,
 		"maximum documentation comment length in characters (0 = no limit)")
 
+	// No schema flag
+	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
+		"skip XML schema section in output")
+
 	// Version flag
 	cmd.Flags().BoolP("version", "v", false, "print version information")
 }

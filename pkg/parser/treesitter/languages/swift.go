@@ -2,8 +2,8 @@
 package languages
 
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // SwiftQuery implements LanguageQuery for Swift language.

@@ -2,8 +2,8 @@
 package languages
 
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // LuaQuery implements LanguageQuery for Lua language.

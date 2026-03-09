@@ -153,7 +153,7 @@ FILES=$(ls -la)
 		if !foundNames[expected] {
 			t.Errorf("expected to find variable '%s'", expected)
 		}
-	 }
+	}
 }
 
 func TestShellQueryExtractImport(t *testing.T) {

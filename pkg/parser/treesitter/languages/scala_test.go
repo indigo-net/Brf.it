@@ -4,8 +4,8 @@ import (
 	"testing"
 	"unsafe"
 
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // extractScalaNames is a test helper that parses Scala code and returns

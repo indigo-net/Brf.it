@@ -2,8 +2,8 @@
 package languages
 
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // CSharpQuery implements LanguageQuery for C# language.
@@ -43,25 +43,25 @@ func (q *CSharpQuery) Captures() []string {
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *CSharpQuery) KindMapping() map[string]string {
 	return map[string]string{
-		"class_declaration":               "class",
-		"struct_declaration":              "struct",
-		"interface_declaration":           "interface",
-		"enum_declaration":                "enum",
-		"record_declaration":              "record",
-		"delegate_declaration":            "type",
-		"method_declaration":              "method",
-		"constructor_declaration":         "constructor",
-		"destructor_declaration":          "destructor",
-		"property_declaration":            "variable",
-		"field_declaration":               "field",
-		"event_declaration":               "variable",
-		"event_field_declaration":         "variable",
-		"indexer_declaration":             "method",
-		"operator_declaration":            "function",
-		"conversion_operator_declaration": "function",
-		"namespace_declaration":           "namespace",
+		"class_declaration":                 "class",
+		"struct_declaration":                "struct",
+		"interface_declaration":             "interface",
+		"enum_declaration":                  "enum",
+		"record_declaration":                "record",
+		"delegate_declaration":              "type",
+		"method_declaration":                "method",
+		"constructor_declaration":           "constructor",
+		"destructor_declaration":            "destructor",
+		"property_declaration":              "variable",
+		"field_declaration":                 "field",
+		"event_declaration":                 "variable",
+		"event_field_declaration":           "variable",
+		"indexer_declaration":               "method",
+		"operator_declaration":              "function",
+		"conversion_operator_declaration":   "function",
+		"namespace_declaration":             "namespace",
 		"file_scoped_namespace_declaration": "namespace",
-		"enum_member_declaration":         "variable",
+		"enum_member_declaration":           "variable",
 	}
 }
 
