@@ -231,7 +231,11 @@ func (p *TreeSitterParser) extractSignatures(
 		for _, capture := range match.Captures {
 			name := captureNames[capture.Index]
 			node := capture.Node
-			text := string(content[node.StartByte():node.EndByte()])
+			start, end := node.StartByte(), node.EndByte()
+			if end > uint(len(content)) || start > end {
+				continue
+			}
+			text := string(content[start:end])
 
 			switch name {
 			case CaptureName:
@@ -1473,7 +1477,11 @@ func (p *TreeSitterParser) extractImports(
 		for _, capture := range match.Captures {
 			name := captureNames[capture.Index]
 			node := capture.Node
-			text := string(content[node.StartByte():node.EndByte()])
+			start, end := node.StartByte(), node.EndByte()
+			if end > uint(len(content)) || start > end {
+				continue
+			}
+			text := string(content[start:end])
 
 			switch name {
 			case CaptureImportPath:
