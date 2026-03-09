@@ -50,11 +50,12 @@ type TreeSitterParser struct {
 	queries          map[string]LanguageQuery
 	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
 	queryCacheMutex  sync.RWMutex
+	parserPool       sync.Pool
 }
 
 // NewTreeSitterParser creates a new Tree-sitter based parser.
 func NewTreeSitterParser() *TreeSitterParser {
-	return &TreeSitterParser{
+	p := &TreeSitterParser{
 		queries: map[string]LanguageQuery{
 			"go":         languages.NewGoQuery(),
 			"typescript": languages.NewTypeScriptQuery(),
@@ -74,6 +75,12 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"php":        languages.NewPHPQuery(),
 		},
 	}
+	p.parserPool = sync.Pool{
+		New: func() any {
+			return sitter.NewParser()
+		},
+	}
+	return p
 }
 
 // getOrCreateQuery returns a cached query or creates and caches a new one.
@@ -140,9 +147,9 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 		return nil, fmt.Errorf("unsupported language: %s", lang)
 	}
 
-	// Create parser
-	sitterParser := sitter.NewParser()
-	defer sitterParser.Close()
+	// Get parser from pool
+	sitterParser := p.parserPool.Get().(*sitter.Parser)
+	defer p.parserPool.Put(sitterParser)
 
 	// Set language
 	tsLang := query.Language()
