@@ -269,6 +269,7 @@
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go" language="go">
       <imports>
+        <import>import &quot;bytes&quot;</import>
         <import>import &quot;fmt&quot;</import>
         <import>import &quot;os&quot;</import>
         <import>import &quot;runtime&quot;</import>
@@ -339,6 +340,8 @@
       <function>func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</function>
       <variable>wg sync.WaitGroup</variable>
       <function>func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult</function>
+      <variable>binarySniffSize = 512</variable>
+      <function>func isBinaryContent(content []byte) bool</function>
       <function>func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go" language="go">

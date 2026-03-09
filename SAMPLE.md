@@ -294,6 +294,7 @@ newPrefix string
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go
 
 **Imports:**
+- `import "bytes"`
 - `import "fmt"`
 - `import "os"`
 - `import "runtime"`
@@ -365,6 +366,8 @@ func DefaultExtractOptions() *ExtractOptions
 func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
 wg sync.WaitGroup
 func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult
+binarySniffSize = 512
+func isBinaryContent(content []byte) bool
 func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
 ```
 
