@@ -42,6 +42,10 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -162,6 +166,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalSize:       extractResult.TotalSize,
 		IncludeImports:  opts.IncludeImports,
+		MaxDocLength:    opts.MaxDocLength,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)

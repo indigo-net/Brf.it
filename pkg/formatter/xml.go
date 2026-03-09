@@ -102,7 +102,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 
 					if sig.Doc != "" {
 						buf.WriteString("      <doc>")
-						buf.WriteString(escapeXML(sig.Doc))
+						buf.WriteString(escapeXML(truncateDoc(sig.Doc, data.MaxDocLength)))
 						buf.WriteString("</doc>\n")
 					}
 				}
@@ -156,6 +156,16 @@ func escapeXML(s string) string {
 	}
 
 	return buf.String()
+}
+
+// truncateDoc truncates a documentation string to maxLen characters.
+// If maxLen is 0, the original string is returned unchanged.
+// Truncated strings end with "..." to indicate truncation.
+func truncateDoc(doc string, maxLen int) string {
+	if maxLen <= 0 || len(doc) <= maxLen {
+		return doc
+	}
+	return doc[:maxLen] + "..."
 }
 
 // kindToTag maps a signature Kind to the appropriate XML tag name.
