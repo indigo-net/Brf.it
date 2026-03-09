@@ -53,6 +53,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
