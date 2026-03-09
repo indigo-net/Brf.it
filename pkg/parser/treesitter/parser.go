@@ -677,11 +677,15 @@ func findPythonBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '[':
 			bracketDepth++
 		case ']':
-			bracketDepth--
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
 		case ':':
 			// Only consider : as body start if we're not inside any brackets
 			if parenDepth == 0 && bracketDepth == 0 {
@@ -750,7 +754,9 @@ func findCppBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -783,15 +789,19 @@ func isPythonMethod(signature string) bool {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
-			if parenDepth == 0 {
-				parenEnd = i
-				goto found
+			if parenDepth > 0 {
+				parenDepth--
+				if parenDepth == 0 {
+					parenEnd = i
+					goto found
+				}
 			}
 		case '[':
 			bracketDepth++
 		case ']':
-			bracketDepth--
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
 		}
 	}
 found:
@@ -845,7 +855,9 @@ func findJavaBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -894,7 +906,9 @@ func findRustBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -976,7 +990,9 @@ func findSwiftBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -1027,7 +1043,9 @@ func findKotlinBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -1189,7 +1207,9 @@ func findPHPBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '{':
 			if parenDepth == 0 {
 				return i
@@ -1256,7 +1276,9 @@ func findCSharpBodyStart(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -1292,7 +1314,9 @@ func isExpressionBodied(text string) bool {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
@@ -1331,7 +1355,9 @@ func findCSharpArrowIndex(text string) int {
 		case '(':
 			parenDepth++
 		case ')':
-			parenDepth--
+			if parenDepth > 0 {
+				parenDepth--
+			}
 		case '<':
 			angleDepth++
 		case '>':
