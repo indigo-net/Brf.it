@@ -3322,6 +3322,86 @@
       <variable>funcCaptures map[string]string</variable>
       <function>func TestPythonQueryExtractModuleLevelVariables(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby.go" language="go">
+      <imports>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_ruby &quot;github.com/tree-sitter/tree-sitter-ruby/bindings/go&quot;</import>
+      </imports>
+      <type>type RubyQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewRubyQuery() *RubyQuery</function>
+      <function>func (q *RubyQuery) Language() *sitter.Language</function>
+      <function>func (q *RubyQuery) Query() []byte</function>
+      <function>func (q *RubyQuery) Captures() []string</function>
+      <function>func (q *RubyQuery) KindMapping() map[string]string</function>
+      <function>func (q *RubyQuery) ImportQuery() []byte</function>
+      <variable>rubyImportQueryPattern = `
+; require &quot;library&quot; / require_relative &quot;library&quot;
+(call
+  method: (identifier) @_fn
+  arguments: (argument_list
+    (string)
+  )
+) @import_path
+(#match? @_fn &quot;^require&quot;)
+`</variable>
+      <variable>rubyQueryPattern = `
+; Instance methods and top-level functions: def foo(args) ... end
+(method
+  name: (identifier) @name
+) @signature @kind
+
+; Class methods: def self.foo(args) ... end
+(singleton_method
+  name: (identifier) @name
+) @signature @kind
+
+; Class definitions: class Foo ... end
+(class
+  name: (constant) @name
+) @signature @kind
+
+; Module definitions: module Foo ... end
+(module
+  name: (constant) @name
+) @signature @kind
+
+; Top-level constant assignments: FOO = value
+(program
+  (assignment
+    left: (constant) @name
+  ) @signature @kind
+)
+
+; Comments
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go" language="go">
+      <imports>
+        <import>import &quot;testing&quot;</import>
+        <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
+        <import>import tree_sitter_ruby &quot;github.com/tree-sitter/tree-sitter-ruby/bindings/go&quot;</import>
+      </imports>
+      <function>func extractRubyNames(t *testing.T, code []byte) map[string]bool</function>
+      <function>func extractRubyImports(t *testing.T, code []byte) []string</function>
+      <variable>imports []string</variable>
+      <function>func TestRubyQueryLanguage(t *testing.T)</function>
+      <function>func TestRubyQueryPattern(t *testing.T)</function>
+      <function>func TestRubyQueryImportPattern(t *testing.T)</function>
+      <function>func TestRubyQueryExtractFunction(t *testing.T)</function>
+      <function>func TestRubyQueryExtractTypes(t *testing.T)</function>
+      <function>func TestRubyQueryExtractClassMethods(t *testing.T)</function>
+      <function>func TestRubyQueryExtractModuleMethods(t *testing.T)</function>
+      <function>func TestRubyQueryExtractConstants(t *testing.T)</function>
+      <function>func TestRubyQueryExtractAttrAccessors(t *testing.T)</function>
+      <function>func TestRubyQueryExtractImport(t *testing.T)</function>
+      <function>func TestRubyQueryExtractNestedClasses(t *testing.T)</function>
+      <function>func TestRubyQueryKindMapping(t *testing.T)</function>
+      <function>func TestRubyQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust.go" language="go">
       <imports>
         <import>import sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;</import>
@@ -3807,6 +3887,7 @@
       <function>func refineLuaFunctionKind(text string) string</function>
       <function>func stripLuaBody(text, kind string) string</function>
       <function>func stripPHPBody(text, kind string) string</function>
+      <function>func stripRubyBody(text, kind string) string</function>
       <function>func stripShellBody(text, kind string) string</function>
       <function>func findPHPBodyStart(text string) int</function>
       <function>func stripCSharpBody(text, kind string) string</function>
@@ -3901,6 +3982,8 @@
       <variable>foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool</variable>
       <function>func TestTreeSitterParserParsePHPImports(t *testing.T)</function>
       <function>func TestPHPBodyStripping(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseRuby(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseRubyImports(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>

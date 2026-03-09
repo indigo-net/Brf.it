@@ -3596,6 +3596,96 @@ func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"`
+
+```go
+type RubyQuery struct {
+	language *sitter.Language
+	query    []byte
+}
+func NewRubyQuery() *RubyQuery
+func (q *RubyQuery) Language() *sitter.Language
+func (q *RubyQuery) Query() []byte
+func (q *RubyQuery) Captures() []string
+func (q *RubyQuery) KindMapping() map[string]string
+func (q *RubyQuery) ImportQuery() []byte
+rubyImportQueryPattern = `
+; require "library" / require_relative "library"
+(call
+  method: (identifier) @_fn
+  arguments: (argument_list
+    (string)
+  )
+) @import_path
+(#match? @_fn "^require")
+`
+rubyQueryPattern = `
+; Instance methods and top-level functions: def foo(args) ... end
+(method
+  name: (identifier) @name
+) @signature @kind
+
+; Class methods: def self.foo(args) ... end
+(singleton_method
+  name: (identifier) @name
+) @signature @kind
+
+; Class definitions: class Foo ... end
+(class
+  name: (constant) @name
+) @signature @kind
+
+; Module definitions: module Foo ... end
+(module
+  name: (constant) @name
+) @signature @kind
+
+; Top-level constant assignments: FOO = value
+(program
+  (assignment
+    left: (constant) @name
+  ) @signature @kind
+)
+
+; Comments
+(comment) @doc
+`
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go
+
+**Imports:**
+- `import "testing"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"`
+
+```go
+func extractRubyNames(t *testing.T, code []byte) map[string]bool
+func extractRubyImports(t *testing.T, code []byte) []string
+imports []string
+func TestRubyQueryLanguage(t *testing.T)
+func TestRubyQueryPattern(t *testing.T)
+func TestRubyQueryImportPattern(t *testing.T)
+func TestRubyQueryExtractFunction(t *testing.T)
+func TestRubyQueryExtractTypes(t *testing.T)
+func TestRubyQueryExtractClassMethods(t *testing.T)
+func TestRubyQueryExtractModuleMethods(t *testing.T)
+func TestRubyQueryExtractConstants(t *testing.T)
+func TestRubyQueryExtractAttrAccessors(t *testing.T)
+func TestRubyQueryExtractImport(t *testing.T)
+func TestRubyQueryExtractNestedClasses(t *testing.T)
+func TestRubyQueryKindMapping(t *testing.T)
+func TestRubyQueryCaptures(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust.go
 
 **Imports:**
@@ -4123,6 +4213,7 @@ func refineKotlinClassKind(text string) string
 func refineLuaFunctionKind(text string) string
 func stripLuaBody(text, kind string) string
 func stripPHPBody(text, kind string) string
+func stripRubyBody(text, kind string) string
 func stripShellBody(text, kind string) string
 func findPHPBodyStart(text string) int
 func stripCSharpBody(text, kind string) string
@@ -4222,6 +4313,8 @@ func TestTreeSitterParserParsePHP(t *testing.T)
 foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool
 func TestTreeSitterParserParsePHPImports(t *testing.T)
 func TestPHPBodyStripping(t *testing.T)
+func TestTreeSitterParserParseRuby(t *testing.T)
+func TestTreeSitterParserParseRubyImports(t *testing.T)
 ```
 
 ---
