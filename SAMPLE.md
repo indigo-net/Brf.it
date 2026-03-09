@@ -641,6 +641,23 @@ type Formatter interface {
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_bench_test.go
+
+```go
+import (
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func createBenchmarkData(numFiles, numSigsPerFile int) *PackageData
+func BenchmarkXMLFormatter(b *testing.B)
+func BenchmarkMarkdownFormatter(b *testing.B)
+func BenchmarkJSONFormatter(b *testing.B)
+func BenchmarkXMLFormatterWithImports(b *testing.B)
+func BenchmarkFormatterComparison(b *testing.B)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_fuzz_test.go
 
 ```go
@@ -4878,6 +4895,26 @@ buf strings.Builder
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go
+
+```go
+import (
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func BenchmarkParseGo(b *testing.B)
+code strings.Builder
+func BenchmarkParseTypeScript(b *testing.B)
+code strings.Builder
+func BenchmarkParsePython(b *testing.B)
+code strings.Builder
+func BenchmarkParseWithImports(b *testing.B)
+code strings.Builder
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go
 
 ```go
@@ -5107,6 +5144,21 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
 func (s *FileScanner) Scan() (*ScanResult, error)
 warning string
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go
+
+```go
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+func BenchmarkScanDirectory(b *testing.B)
+func BenchmarkScanLargeFile(b *testing.B)
+func BenchmarkScanWithIgnore(b *testing.B)
 ```
 
 ---

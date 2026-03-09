@@ -595,6 +595,18 @@ main &quot;$@&quot;</imports>
 	Name() string
 }</type>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_bench_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func createBenchmarkData(numFiles, numSigsPerFile int) *PackageData</function>
+      <function>func BenchmarkXMLFormatter(b *testing.B)</function>
+      <function>func BenchmarkMarkdownFormatter(b *testing.B)</function>
+      <function>func BenchmarkJSONFormatter(b *testing.B)</function>
+      <function>func BenchmarkXMLFormatterWithImports(b *testing.B)</function>
+      <function>func BenchmarkFormatterComparison(b *testing.B)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_fuzz_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
@@ -4502,6 +4514,21 @@ import &quot;unsafe&quot;</imports>
       <function>func removeBlankLines(text string) string</function>
       <variable>buf strings.Builder</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go" language="go">
+      <imports>import (
+	&quot;strings&quot;
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func BenchmarkParseGo(b *testing.B)</function>
+      <variable>code strings.Builder</variable>
+      <function>func BenchmarkParseTypeScript(b *testing.B)</function>
+      <variable>code strings.Builder</variable>
+      <function>func BenchmarkParsePython(b *testing.B)</function>
+      <variable>code strings.Builder</variable>
+      <function>func BenchmarkParseWithImports(b *testing.B)</function>
+      <variable>code strings.Builder</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
@@ -4709,6 +4736,16 @@ import &quot;unsafe&quot;</imports>
       <function>func (s *FileScanner) Scan() (*ScanResult, error)</function>
       <variable>warning string</variable>
       <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go" language="go">
+      <imports>import (
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;testing&quot;
+)</imports>
+      <function>func BenchmarkScanDirectory(b *testing.B)</function>
+      <function>func BenchmarkScanLargeFile(b *testing.B)</function>
+      <function>func BenchmarkScanWithIgnore(b *testing.B)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go" language="go">
       <imports>import (
