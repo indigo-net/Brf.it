@@ -231,6 +231,12 @@ func (p *TreeSitterParser) extractSignatures(
 		for _, capture := range match.Captures {
 			name := captureNames[capture.Index]
 			node := capture.Node
+
+			if name == CaptureKind {
+				kindNode = &node
+				continue
+			}
+
 			start, end := node.StartByte(), node.EndByte()
 			if end > uint(len(content)) || start > end {
 				continue
@@ -248,8 +254,6 @@ func (p *TreeSitterParser) extractSignatures(
 				if text != "" {
 					sig.Doc = cleanComment(text)
 				}
-			case CaptureKind:
-				kindNode = &node
 			}
 		}
 
