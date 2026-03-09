@@ -28,6 +28,7 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | Shell | `.sh`, `.bash`, `.zsh` | [Shell Guide](shell) |
 | PHP | `.php` | [PHP Guide](php) |
 | Ruby | `.rb` | [Ruby Guide](ruby) |
+| Scala | `.scala`, `.sc` | [Scala Guide](scala) |
 
 ## Extraction Capabilities
 
@@ -56,3 +57,4 @@ Each language may have unique features:
 - **Shell** — Functions, variables
 - **PHP** — Classes, interfaces, traits, enums, constants
 - **Ruby** — Classes, modules, methods, class methods, constants
+- **Scala** — Classes, traits, objects, methods, vals, type aliases

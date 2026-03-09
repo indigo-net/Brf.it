@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby", "scala"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -2474,6 +2474,123 @@ end
 
 	opts := &parser.Options{
 		Language:       "ruby",
+		IncludeImports: true,
+	}
+
+	result, err := p.Parse(code, opts)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if len(result.RawImports) < 3 {
+		t.Errorf("expected at least 3 imports, got %d: %v", len(result.RawImports), result.RawImports)
+	}
+}
+
+func TestTreeSitterParserParseScala(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`// User management
+trait Greeter {
+  def greet(name: String): String
+}
+
+sealed trait Shape
+
+abstract class Vehicle(val wheels: Int) {
+  def description: String
+}
+
+class Person(val name: String, var age: Int) extends Greeter {
+  def greet(name: String): String = s"Hello, $name"
+  private def helper(): Unit = ()
+}
+
+case class Point(x: Double, y: Double) {
+  def distance: Double = math.sqrt(x * x + y * y)
+}
+
+object MathUtils {
+  val PI: Double = 3.14159
+  var counter: Int = 0
+  def add(a: Int, b: Int): Int = a + b
+}
+
+type StringList = List[String]
+
+enum Color {
+  case Red, Green, Blue
+}
+
+lazy val expensive: String = "computed"
+`)
+
+	opts := &parser.Options{
+		Language: "scala",
+	}
+
+	result, err := p.Parse(code, opts)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if result.Language != "scala" {
+		t.Errorf("expected language 'scala', got '%s'", result.Language)
+	}
+
+	expectedNames := map[string]bool{
+		"Greeter": false, "greet": false, "Shape": false,
+		"Vehicle": false, "description": false,
+		"Person": false, "helper": false,
+		"Point": false, "distance": false,
+		"MathUtils": false, "PI": false, "counter": false, "add": false,
+		"StringList": false, "Color": false, "expensive": false,
+	}
+
+	for _, sig := range result.Signatures {
+		if _, ok := expectedNames[sig.Name]; ok {
+			expectedNames[sig.Name] = true
+		}
+	}
+
+	for name, found := range expectedNames {
+		if !found {
+			t.Errorf("expected to find signature '%s'", name)
+		}
+	}
+
+	// Verify stripBody works for methods
+	for _, sig := range result.Signatures {
+		if sig.Name == "add" {
+			if strings.Contains(sig.Text, "a + b") {
+				t.Errorf("expected body to be stripped from 'add', got: %s", sig.Text)
+			}
+			if !strings.Contains(sig.Text, "def add(a: Int, b: Int): Int") {
+				t.Errorf("expected signature to contain 'def add(a: Int, b: Int): Int', got: %s", sig.Text)
+			}
+		}
+		if sig.Name == "Person" {
+			if strings.Contains(sig.Text, "def greet") {
+				t.Errorf("expected class body to be stripped from 'Person', got: %s", sig.Text)
+			}
+		}
+	}
+}
+
+func TestTreeSitterParserParseScalaImports(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`import scala.collection.mutable
+import scala.collection.mutable.{ListBuffer, ArrayBuffer}
+import java.util._
+
+class App {
+  def run(): Unit = ()
+}
+`)
+
+	opts := &parser.Options{
+		Language:       "scala",
 		IncludeImports: true,
 	}
 

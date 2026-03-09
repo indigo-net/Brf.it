@@ -154,6 +154,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Lua | `.lua` | [Lua गाइड](languages/lua.md) |
 | PHP | `.php` | [PHP गाइड](languages/php.md) |
 | Ruby | `.rb` | [Ruby गाइड](languages/ruby.md) |
+| Scala | `.scala`, `.sc` | [Scala गाइड](languages/scala.md) |
 
 ---
 

@@ -30,6 +30,7 @@ func init() {
 	parser.RegisterParser("shell", NewTreeSitterParser())
 	parser.RegisterParser("php", NewTreeSitterParser())
 	parser.RegisterParser("ruby", NewTreeSitterParser())
+	parser.RegisterParser("scala", NewTreeSitterParser())
 }
 
 // queryType distinguishes between signature and import queries for caching.
@@ -76,6 +77,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"shell":      languages.NewShellQuery(),
 			"php":        languages.NewPHPQuery(),
 			"ruby":       languages.NewRubyQuery(),
+			"scala":      languages.NewScalaQuery(),
 		},
 	}
 	p.parserPool = sync.Pool{
@@ -485,6 +487,9 @@ func isExported(name, language string) bool {
 	case "ruby":
 		// Ruby: all elements are considered public (visibility modifiers not filtered)
 		return true
+	case "scala":
+		// Scala: all elements are considered exported (visibility modifiers preserved in signature text)
+		return true
 	default:
 		return false
 	}
@@ -522,6 +527,8 @@ func stripBody(text, kind, language string) string {
 		return stripPHPBody(text, kind)
 	case "ruby":
 		return stripRubyBody(text, kind)
+	case "scala":
+		return stripScalaBody(text, kind)
 	default:
 		return text
 	}
@@ -1228,6 +1235,95 @@ func stripRubyBody(text, kind string) string {
 		return text
 	}
 	return text
+}
+
+// stripScalaBody removes the body from Scala declarations.
+// Scala uses { } blocks for class/trait/object bodies, and = for def/val/var bodies.
+func stripScalaBody(text, kind string) string {
+	switch kind {
+	case "method":
+		// For methods: strip body after = (but keep return type)
+		// e.g., "def add(a: Int, b: Int): Int = a + b" → "def add(a: Int, b: Int): Int"
+		// e.g., "def greet(name: String): String = { ... }" → "def greet(name: String): String"
+		bodyIdx := findScalaBodyStart(text)
+		if bodyIdx >= 0 {
+			return strings.TrimSpace(text[:bodyIdx])
+		}
+		// Abstract method or no body: keep first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "class", "trait", "enum":
+		// For class/trait/object/enum: strip { ... } body, keep declaration line
+		braceIdx := findScalaBodyStart(text)
+		if braceIdx >= 0 {
+			return strings.TrimSpace(text[:braceIdx])
+		}
+		// No body (e.g., sealed trait Shape): keep first line
+		if nlIdx := strings.Index(text, "\n"); nlIdx > 0 {
+			return strings.TrimSpace(text[:nlIdx])
+		}
+	case "type":
+		// Type aliases: keep full text
+		return text
+	case "variable":
+		// val/var: keep full text with value
+		return text
+	}
+	return text
+}
+
+// findScalaBodyStart finds the index of the body start in a Scala declaration.
+// For methods: finds = that is not part of => or >=/<= operator.
+// For classes/traits: finds opening {.
+// Returns -1 if not found.
+func findScalaBodyStart(text string) int {
+	parenDepth := 0
+	bracketDepth := 0
+	inString := false
+	prevCh := rune(0)
+	for i, ch := range text {
+		if inString {
+			if ch == '"' && prevCh != '\\' {
+				inString = false
+			}
+			prevCh = ch
+			continue
+		}
+		switch ch {
+		case '"':
+			inString = true
+		case '(':
+			parenDepth++
+		case ')':
+			if parenDepth > 0 {
+				parenDepth--
+			}
+		case '[':
+			bracketDepth++
+		case ']':
+			if bracketDepth > 0 {
+				bracketDepth--
+			}
+		case '{':
+			if parenDepth == 0 && bracketDepth == 0 {
+				return i
+			}
+		case '=':
+			if parenDepth == 0 && bracketDepth == 0 {
+				// Skip => (lambda arrow) and operators like >=, <=
+				if i+1 < len(text) && text[i+1] == '>' {
+					// => arrow, skip
+				} else if i > 0 && (text[i-1] == '>' || text[i-1] == '<' || text[i-1] == '!' || text[i-1] == '=') {
+					// >=, <=, !=, == operators, skip
+				} else {
+					return i
+				}
+			}
+		}
+		prevCh = ch
+	}
+	return -1
 }
 
 // stripShellBody removes the body from Shell/Bash declarations.
