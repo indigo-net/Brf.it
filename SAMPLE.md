@@ -258,6 +258,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -340,6 +343,13 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
+
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -610,6 +620,9 @@ type PackageData struct {
 	// MaxDocLength is the maximum length of documentation comments.
 	// 0 means no limit (default).
 	MaxDocLength int
+
+	// NoSchema indicates whether to omit the schema section in output.
+	NoSchema bool
 }
 type ImportCount struct {
 	// Import is the raw import statement text.
@@ -663,9 +676,7 @@ func TestJSONFormatterKindNormalization(t *testing.T)
 func TestJSONFormatterWithImports(t *testing.T)
 func TestJSONFormatterWithError(t *testing.T)
 func TestJSONFormatterName(t *testing.T)
-func TestXMLFormatterDedupeImports(t *testing.T)
-func TestMarkdownFormatterDedupeImports(t *testing.T)
-func TestJSONFormatterDedupeImports(t *testing.T)
+func TestXMLFormatterWithNoSchema(t *testing.T)
 ```
 
 ---
@@ -715,11 +726,11 @@ type jsonImportCount struct {
 	Count  int    `json:"count"`
 }
 type jsonFile struct {
-	Path       string        `json:"path"`
-	Language   string        `json:"language"`
-	Signatures []jsonSig     `json:"signatures,omitempty"`
-	Imports    []string      `json:"imports,omitempty"`
-	Error      string        `json:"error,omitempty"`
+	Path       string    `json:"path"`
+	Language   string    `json:"language"`
+	Signatures []jsonSig `json:"signatures,omitempty"`
+	Imports    []string  `json:"imports,omitempty"`
+	Error      string    `json:"error,omitempty"`
 }
 type jsonSig struct {
 	Kind string `json:"kind"`
@@ -756,6 +767,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
@@ -765,6 +777,7 @@ buf bytes.Buffer
 func escapeXML(s string) string
 needsEscape bool
 buf strings.Builder
+func truncateDoc(doc string, maxLen int) string
 func kindToTag(kind string) string
 ```
 
@@ -3394,8 +3407,8 @@ func TestCppQueryCaptures(t *testing.T)
 
 ```go
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type CSharpQuery struct {
 	language *sitter.Language
@@ -3521,8 +3534,8 @@ csharpQueryPattern = `
 ```go
 import (
 	"testing"
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 func extractCSharpNames(t *testing.T, code []byte) map[string]bool
 func TestCSharpQueryLanguage(t *testing.T)
@@ -3726,8 +3739,8 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 
 ```go
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type KotlinQuery struct {
 	language *sitter.Language
@@ -3799,8 +3812,8 @@ kotlinQueryPattern = `
 ```go
 import (
 	"testing"
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 func extractKotlinNames(t *testing.T, code []byte) map[string]bool
 func TestKotlinQueryLanguage(t *testing.T)
@@ -3825,8 +3838,8 @@ func TestKotlinQueryCaptures(t *testing.T)
 
 ```go
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type LuaQuery struct {
 	language *sitter.Language
@@ -3895,8 +3908,8 @@ luaQueryPattern = `
 ```go
 import (
 	"testing"
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 func extractLuaNames(t *testing.T, code []byte) map[string]bool
 func TestLuaQueryLanguage(t *testing.T)
@@ -4323,8 +4336,8 @@ func TestRustQueryCaptures(t *testing.T)
 
 ```go
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type ScalaQuery struct {
 	language *sitter.Language
@@ -4414,8 +4427,8 @@ scalaQueryPattern = `
 import (
 	"testing"
 	"unsafe"
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 func extractScalaNames(t *testing.T, code []byte) map[string]bool
 func extractScalaImports(t *testing.T, code []byte) []string
@@ -4511,8 +4524,8 @@ func TestShellQueryExtractMixed(t *testing.T)
 
 ```go
 import (
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type SwiftQuery struct {
 	language *sitter.Language
@@ -4597,8 +4610,8 @@ swiftQueryPattern = `
 ```go
 import (
 	"testing"
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 func TestSwiftQueryLanguage(t *testing.T)
 func TestSwiftQueryPattern(t *testing.T)
@@ -4779,11 +4792,11 @@ type queryCacheKey struct {
 	typ  queryType
 }
 type TreeSitterParser struct {
-	queries          map[string]LanguageQuery
-	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
-	queryCacheMutex  sync.RWMutex
-	parserPool       sync.Pool
-	cursorPool       sync.Pool
+	queries         map[string]LanguageQuery
+	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex sync.RWMutex
+	parserPool      sync.Pool
+	cursorPool      sync.Pool
 }
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)

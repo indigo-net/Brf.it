@@ -250,6 +250,9 @@ main &quot;$@&quot;</imports>
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -322,6 +325,13 @@ main &quot;$@&quot;</imports>
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
+
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -567,6 +577,9 @@ main &quot;$@&quot;</imports>
 	// MaxDocLength is the maximum length of documentation comments.
 	// 0 means no limit (default).
 	MaxDocLength int
+
+	// NoSchema indicates whether to omit the schema section in output.
+	NoSchema bool
 }</type>
       <type>type ImportCount struct {
 	// Import is the raw import statement text.
@@ -615,9 +628,7 @@ main &quot;$@&quot;</imports>
       <function>func TestJSONFormatterWithImports(t *testing.T)</function>
       <function>func TestJSONFormatterWithError(t *testing.T)</function>
       <function>func TestJSONFormatterName(t *testing.T)</function>
-      <function>func TestXMLFormatterDedupeImports(t *testing.T)</function>
-      <function>func TestMarkdownFormatterDedupeImports(t *testing.T)</function>
-      <function>func TestJSONFormatterDedupeImports(t *testing.T)</function>
+      <function>func TestXMLFormatterWithNoSchema(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
       <imports>import (
@@ -652,11 +663,11 @@ main &quot;$@&quot;</imports>
 	Count  int    `json:&quot;count&quot;`
 }</type>
       <type>type jsonFile struct {
-	Path       string        `json:&quot;path&quot;`
-	Language   string        `json:&quot;language&quot;`
-	Signatures []jsonSig     `json:&quot;signatures,omitempty&quot;`
-	Imports    []string      `json:&quot;imports,omitempty&quot;`
-	Error      string        `json:&quot;error,omitempty&quot;`
+	Path       string    `json:&quot;path&quot;`
+	Language   string    `json:&quot;language&quot;`
+	Signatures []jsonSig `json:&quot;signatures,omitempty&quot;`
+	Imports    []string  `json:&quot;imports,omitempty&quot;`
+	Error      string    `json:&quot;error,omitempty&quot;`
 }</type>
       <type>type jsonSig struct {
 	Kind string `json:&quot;kind&quot;`
@@ -683,6 +694,7 @@ main &quot;$@&quot;</imports>
 	&quot;bytes&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
+	&quot;unicode/utf8&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
       <function>func NewXMLFormatter() *XMLFormatter</function>
@@ -692,6 +704,7 @@ main &quot;$@&quot;</imports>
       <function>func escapeXML(s string) string</function>
       <variable>needsEscape bool</variable>
       <variable>buf strings.Builder</variable>
+      <function>func truncateDoc(doc string, maxLen int) string</function>
       <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
@@ -3156,8 +3169,8 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp.go" language="go">
       <imports>import (
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_c_sharp &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type CSharpQuery struct {
 	language *sitter.Language
@@ -3278,8 +3291,8 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_c_sharp &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <function>func extractCSharpNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestCSharpQueryLanguage(t *testing.T)</function>
@@ -3458,8 +3471,8 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin.go" language="go">
       <imports>import (
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_kotlin &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type KotlinQuery struct {
 	language *sitter.Language
@@ -3526,8 +3539,8 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_kotlin &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <function>func extractKotlinNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestKotlinQueryLanguage(t *testing.T)</function>
@@ -3547,8 +3560,8 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua.go" language="go">
       <imports>import (
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_lua &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type LuaQuery struct {
 	language *sitter.Language
@@ -3612,8 +3625,8 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_lua &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <function>func extractLuaNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestLuaQueryLanguage(t *testing.T)</function>
@@ -3995,8 +4008,8 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala.go" language="go">
       <imports>import (
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_scala &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type ScalaQuery struct {
 	language *sitter.Language
@@ -4081,8 +4094,8 @@ import &quot;unsafe&quot;</imports>
       <imports>import (
 	&quot;testing&quot;
 	&quot;unsafe&quot;
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_scala &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <function>func extractScalaNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func extractScalaImports(t *testing.T, code []byte) []string</function>
@@ -4163,8 +4176,8 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go" language="go">
       <imports>import (
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_swift &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type SwiftQuery struct {
 	language *sitter.Language
@@ -4244,8 +4257,8 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go" language="go">
       <imports>import (
 	&quot;testing&quot;
-	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_swift &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <function>func TestSwiftQueryLanguage(t *testing.T)</function>
       <function>func TestSwiftQueryPattern(t *testing.T)</function>
@@ -4411,11 +4424,11 @@ import &quot;unsafe&quot;</imports>
 	typ  queryType
 }</type>
       <type>type TreeSitterParser struct {
-	queries          map[string]LanguageQuery
-	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
-	queryCacheMutex  sync.RWMutex
-	parserPool       sync.Pool
-	cursorPool       sync.Pool
+	queries         map[string]LanguageQuery
+	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex sync.RWMutex
+	parserPool      sync.Pool
+	cursorPool      sync.Pool
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
