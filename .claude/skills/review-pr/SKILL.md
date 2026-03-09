@@ -2,8 +2,6 @@
 name: review-pr
 description: PR을 프로젝트 컨벤션 기준으로 리뷰하고, 리뷰 결과에 응답(수정 또는 반박)하는 2단계 워크플로우
 argument-hint: "[PR-number or leave blank for current branch]"
-disable-model-invocation: true
-allowed-tools: Bash(gh *), Bash(git *)
 ---
 
 # PR Review Automation
