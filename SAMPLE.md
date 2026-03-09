@@ -4080,6 +4080,7 @@ type TreeSitterParser struct {
 	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
 	queryCacheMutex  sync.RWMutex
 	parserPool       sync.Pool
+	cursorPool       sync.Pool
 }
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
