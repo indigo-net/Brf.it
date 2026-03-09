@@ -3,8 +3,8 @@ package languages
 import (
 	"testing"
 
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // extractCSharpNames is a test helper that parses C# code and returns

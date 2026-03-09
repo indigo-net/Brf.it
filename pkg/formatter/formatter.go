@@ -57,6 +57,9 @@ type PackageData struct {
 	// MaxDocLength is the maximum length of documentation comments.
 	// 0 means no limit (default).
 	MaxDocLength int
+
+	// NoSchema indicates whether to omit the schema section in output.
+	NoSchema bool
 }
 
 // ImportCount represents an import with its usage count across files.

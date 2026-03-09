@@ -49,11 +49,11 @@ type queryCacheKey struct {
 
 // TreeSitterParser implements parser.Parser using Tree-sitter.
 type TreeSitterParser struct {
-	queries          map[string]LanguageQuery
-	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
-	queryCacheMutex  sync.RWMutex
-	parserPool       sync.Pool
-	cursorPool       sync.Pool
+	queries         map[string]LanguageQuery
+	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
+	queryCacheMutex sync.RWMutex
+	parserPool      sync.Pool
+	cursorPool      sync.Pool
 }
 
 // NewTreeSitterParser creates a new Tree-sitter based parser.

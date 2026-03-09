@@ -34,11 +34,11 @@ type jsonImportCount struct {
 
 // jsonFile represents a single file in the JSON output.
 type jsonFile struct {
-	Path       string        `json:"path"`
-	Language   string        `json:"language"`
-	Signatures []jsonSig     `json:"signatures,omitempty"`
-	Imports    []string      `json:"imports,omitempty"`
-	Error      string        `json:"error,omitempty"`
+	Path       string    `json:"path"`
+	Language   string    `json:"language"`
+	Signatures []jsonSig `json:"signatures,omitempty"`
+	Imports    []string  `json:"imports,omitempty"`
+	Error      string    `json:"error,omitempty"`
 }
 
 // jsonSig represents a signature in the JSON output.
@@ -103,4 +103,3 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 
 	return json.Marshal(output)
 }
-

@@ -53,6 +53,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -109,17 +112,17 @@ func (c *Config) Validate() error {
 // SupportedExtensions returns a map of file extensions to language names.
 func (c *Config) SupportedExtensions() map[string]string {
 	return map[string]string{
-		".go":   "go",
-		".ts":   "typescript",
-		".tsx":  "typescript",
-		".js":   "javascript",
-		".jsx":  "javascript",
-		".py":   "python",
-		".c":    "c",
-		".cpp":  "cpp",
-		".hpp":  "cpp",
-		".h":    "cpp",
-		".java": "java",
+		".go":    "go",
+		".ts":    "typescript",
+		".tsx":   "typescript",
+		".js":    "javascript",
+		".jsx":   "javascript",
+		".py":    "python",
+		".c":     "c",
+		".cpp":   "cpp",
+		".hpp":   "cpp",
+		".h":     "cpp",
+		".java":  "java",
 		".rs":    "rust",
 		".swift": "swift",
 		".kt":    "kotlin",
@@ -152,5 +155,6 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludePrivate: false, // Future: add --include-private flag
 		MaxFileSize:    c.MaxFileSize,
 		MaxDocLength:   c.MaxDocLength,
+		NoSchema:       c.NoSchema,
 	}
 }

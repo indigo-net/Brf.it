@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 // XMLFormatter implements Formatter for XML output.
@@ -28,7 +29,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	buf.WriteString("<brfit>\n")
 
 	// Metadata section (only output if any metadata exists)
-	hasMetadata := data.Version != "" || data.RootPath != "" || data.Tree != "" || (data.DedupeImports && len(data.GlobalImports) > 0)
+	hasMetadata := data.Version != "" || data.RootPath != "" || data.Tree != ""
 	if hasMetadata {
 		buf.WriteString("  <metadata>\n")
 
@@ -49,32 +50,24 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString("</tree>\n")
 		}
 
-		// Global imports (when dedupe mode is enabled)
-		if data.DedupeImports && len(data.GlobalImports) > 0 {
-			buf.WriteString("    <imports-global>\n")
-			for _, ic := range data.GlobalImports {
-				buf.WriteString(fmt.Sprintf("      <import count=\"%d\">%s</import>\n", ic.Count, escapeXML(ic.Import)))
-			}
-			buf.WriteString("    </imports-global>\n")
+		// Schema (optional - can be disabled with --no-schema)
+		if !data.NoSchema {
+			buf.WriteString("    <schema>\n")
+			buf.WriteString(`      <tag name="metadata" description="Project metadata container" />` + "\n")
+			buf.WriteString(`      <tag name="version" description="brf.it version" />` + "\n")
+			buf.WriteString(`      <tag name="path" description="Root path of the scanned project" />` + "\n")
+			buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
+			buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
+			buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
+			buf.WriteString(`      <tag name="function" description="Function, method, or constructor declaration" />` + "\n")
+			buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
+			buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
+			buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
+			buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
+			buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
+			buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
+			buf.WriteString("    </schema>\n")
 		}
-
-		// Schema
-		buf.WriteString("    <schema>\n")
-		buf.WriteString(`      <tag name="metadata" description="Project metadata container" />` + "\n")
-		buf.WriteString(`      <tag name="version" description="brf.it version" />` + "\n")
-		buf.WriteString(`      <tag name="path" description="Root path of the scanned project" />` + "\n")
-		buf.WriteString(`      <tag name="tree" description="Directory tree structure" />` + "\n")
-		buf.WriteString(`      <tag name="imports-global" description="Deduplicated global imports (with count attribute)" />` + "\n")
-		buf.WriteString(`      <tag name="files" description="Source files container" />` + "\n")
-		buf.WriteString(`      <tag name="file" description="Source file (path, language attributes)" />` + "\n")
-		buf.WriteString(`      <tag name="function" description="Function, method, or constructor declaration" />` + "\n")
-		buf.WriteString(`      <tag name="type" description="Type, class, interface, struct, or enum declaration" />` + "\n")
-		buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
-		buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
-		buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
-		buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
-		buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
-		buf.WriteString("    </schema>\n")
 
 		buf.WriteString("  </metadata>\n")
 	}
@@ -84,9 +77,9 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	for _, file := range data.Files {
 		buf.WriteString(fmt.Sprintf("    <file path=%q language=%q>\n", file.Path, file.Language))
 
-		// Imports section (within file block) - only if not deduping
+		// Imports section (within file block)
 		hasRenderedImports := false
-		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports {
+		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
 			hasRenderedImports = true
 			buf.WriteString("      <imports>")
 			buf.WriteString(escapeXML(strings.Join(file.RawImports, "\n")))
@@ -166,6 +159,17 @@ func escapeXML(s string) string {
 	}
 
 	return buf.String()
+}
+
+// truncateDoc truncates a documentation string to maxLen characters (Unicode code points).
+// If maxLen is 0 or negative, the original string is returned unchanged.
+// Truncated strings end with "..." to indicate truncation.
+func truncateDoc(doc string, maxLen int) string {
+	if maxLen <= 0 || utf8.RuneCountInString(doc) <= maxLen {
+		return doc
+	}
+	runes := []rune(doc)
+	return string(runes[:maxLen]) + "..."
 }
 
 // kindToTag maps a signature Kind to the appropriate XML tag name.

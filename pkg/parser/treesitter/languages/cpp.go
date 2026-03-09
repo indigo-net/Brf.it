@@ -43,17 +43,17 @@ func (q *CppQuery) Captures() []string {
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *CppQuery) KindMapping() map[string]string {
 	return map[string]string{
-		"function_definition":      "function",
-		"declaration":              "function",
-		"struct_specifier":         "struct",
-		"enum_specifier":           "enum",
-		"type_definition":          "typedef",
-		"preproc_function_def":     "macro",
-		"preproc_def":              "macro",
-		"class_specifier":          "class",
-		"field_declaration":        "method",
-		"template_declaration":     "template",
-		"namespace_definition":     "namespace",
+		"function_definition":  "function",
+		"declaration":          "function",
+		"struct_specifier":     "struct",
+		"enum_specifier":       "enum",
+		"type_definition":      "typedef",
+		"preproc_function_def": "macro",
+		"preproc_def":          "macro",
+		"class_specifier":      "class",
+		"field_declaration":    "method",
+		"template_declaration": "template",
+		"namespace_definition": "namespace",
 	}
 }
 

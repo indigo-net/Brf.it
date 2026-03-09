@@ -3,8 +3,8 @@ package languages
 import (
 	"testing"
 
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // extractLuaNames is a test helper that parses Lua code and returns

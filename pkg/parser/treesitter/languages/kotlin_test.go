@@ -3,8 +3,8 @@ package languages
 import (
 	"testing"
 
-	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
+	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
 // extractKotlinNames is a test helper that parses Kotlin code and returns

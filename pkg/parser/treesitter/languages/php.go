@@ -51,7 +51,7 @@ func (q *PHPQuery) KindMapping() map[string]string {
 		"enum_declaration":          "enum",
 		"const_declaration":         "variable",
 		"property_declaration":      "variable",
-		"namespace_use_declaration":  "import",
+		"namespace_use_declaration": "import",
 	}
 }
 

@@ -46,6 +46,13 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
+
+	// NoSchema skips the schema section in XML output.
+	NoSchema bool
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -174,6 +181,8 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		IncludeImports:  opts.IncludeImports,
 		DedupeImports:   opts.DedupeImports,
 		GlobalImports:   globalImports,
+		MaxDocLength:    opts.MaxDocLength,
+		NoSchema:        opts.NoSchema,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)
