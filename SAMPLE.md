@@ -248,6 +248,10 @@ type Config struct {
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// NoTree skips directory tree generation in output.
 	NoTree bool
 
@@ -324,6 +328,10 @@ type Options struct {
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// IncludeTree determines whether to include directory tree.
 	IncludeTree bool
 
@@ -332,10 +340,6 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
-
-	// MaxDocLength is the maximum length of documentation comments.
-	// 0 means no limit (default).
-	MaxDocLength int
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -369,8 +373,10 @@ func NewPackager(
 func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
 func (p *Packager) Package(opts *Options) (*Result, error)
 treeStr string
+globalImports []formatter.ImportCount
 func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
 func normalizeFormat(format string) string
+func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount
 ```
 
 ---
@@ -379,6 +385,7 @@ func normalizeFormat(format string) string
 
 ```go
 import (
+	"fmt"
 	"strings"
 	"testing"
 	"github.com/indigo-net/Brf.it/pkg/extractor"
@@ -409,6 +416,8 @@ func TestBuildTreeStructure(t *testing.T)
 func TestPackagerNoStdImportsPassthrough(t *testing.T)
 func TestDefaultOptions(t *testing.T)
 func TestNormalizeFormat(t *testing.T)
+func TestBuildGlobalImports(t *testing.T)
+func TestBuildGlobalImportsSorting(t *testing.T)
 ```
 
 ---
@@ -590,9 +599,23 @@ type PackageData struct {
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
 
+	// DedupeImports indicates whether imports should be deduplicated across files.
+	// When true, imports are collected globally and shown in a separate section.
+	DedupeImports bool
+
+	// GlobalImports holds deduplicated imports with their usage counts.
+	// Only populated when DedupeImports is true.
+	GlobalImports []ImportCount
+
 	// MaxDocLength is the maximum length of documentation comments.
 	// 0 means no limit (default).
 	MaxDocLength int
+}
+type ImportCount struct {
+	// Import is the raw import statement text.
+	Import string
+	// Count is the number of files that use this import.
+	Count int
 }
 type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -640,10 +663,9 @@ func TestJSONFormatterKindNormalization(t *testing.T)
 func TestJSONFormatterWithImports(t *testing.T)
 func TestJSONFormatterWithError(t *testing.T)
 func TestJSONFormatterName(t *testing.T)
-func TestTruncateDoc(t *testing.T)
-func TestXMLFormatterWithMaxDocLength(t *testing.T)
-func TestMarkdownFormatterWithMaxDocLength(t *testing.T)
-func TestJSONFormatterWithMaxDocLength(t *testing.T)
+func TestXMLFormatterDedupeImports(t *testing.T)
+func TestMarkdownFormatterDedupeImports(t *testing.T)
+func TestJSONFormatterDedupeImports(t *testing.T)
 ```
 
 ---
@@ -651,8 +673,12 @@ func TestJSONFormatterWithMaxDocLength(t *testing.T)
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
 ```go
+import (
+	"unicode/utf8"
+)
 func normalizeKind(kind string) string
 func getEmptyComment(lang string) string
+func truncateDoc(doc string, maxLen int) string
 ```
 
 ---
@@ -678,10 +704,15 @@ type JSONFormatter struct{}
 func NewJSONFormatter() *JSONFormatter
 func (f *JSONFormatter) Name() string
 type jsonOutput struct {
-	Version string     `json:"version,omitempty"`
-	Path    string     `json:"path,omitempty"`
-	Tree    string     `json:"tree,omitempty"`
-	Files   []jsonFile `json:"files"`
+	Version       string            `json:"version,omitempty"`
+	Path          string            `json:"path,omitempty"`
+	Tree          string            `json:"tree,omitempty"`
+	GlobalImports []jsonImportCount `json:"globalImports,omitempty"`
+	Files         []jsonFile        `json:"files"`
+}
+type jsonImportCount struct {
+	Import string `json:"import"`
+	Count  int    `json:"count"`
 }
 type jsonFile struct {
 	Path       string        `json:"path"`
@@ -725,7 +756,6 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-	"unicode/utf8"
 )
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
@@ -735,7 +765,6 @@ buf bytes.Buffer
 func escapeXML(s string) string
 needsEscape bool
 buf strings.Builder
-func truncateDoc(doc string, maxLen int) string
 func kindToTag(kind string) string
 ```
 

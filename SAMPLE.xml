@@ -240,6 +240,10 @@ main &quot;$@&quot;</imports>
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// NoTree skips directory tree generation in output.
 	NoTree bool
 
@@ -306,6 +310,10 @@ main &quot;$@&quot;</imports>
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// IncludeTree determines whether to include directory tree.
 	IncludeTree bool
 
@@ -314,10 +322,6 @@ main &quot;$@&quot;</imports>
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
-
-	// MaxDocLength is the maximum length of documentation comments.
-	// 0 means no limit (default).
-	MaxDocLength int
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -351,11 +355,14 @@ main &quot;$@&quot;</imports>
       <function>func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)</function>
       <function>func (p *Packager) Package(opts *Options) (*Result, error)</function>
       <variable>treeStr string</variable>
+      <variable>globalImports []formatter.ImportCount</variable>
       <function>func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)</function>
       <function>func normalizeFormat(format string) string</function>
+      <function>func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context_test.go" language="go">
       <imports>import (
+	&quot;fmt&quot;
 	&quot;strings&quot;
 	&quot;testing&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
@@ -386,6 +393,8 @@ main &quot;$@&quot;</imports>
       <function>func TestPackagerNoStdImportsPassthrough(t *testing.T)</function>
       <function>func TestDefaultOptions(t *testing.T)</function>
       <function>func TestNormalizeFormat(t *testing.T)</function>
+      <function>func TestBuildGlobalImports(t *testing.T)</function>
+      <function>func TestBuildGlobalImportsSorting(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/tree.go" language="go">
       <imports>import (
@@ -547,9 +556,23 @@ main &quot;$@&quot;</imports>
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
 
+	// DedupeImports indicates whether imports should be deduplicated across files.
+	// When true, imports are collected globally and shown in a separate section.
+	DedupeImports bool
+
+	// GlobalImports holds deduplicated imports with their usage counts.
+	// Only populated when DedupeImports is true.
+	GlobalImports []ImportCount
+
 	// MaxDocLength is the maximum length of documentation comments.
 	// 0 means no limit (default).
 	MaxDocLength int
+}</type>
+      <type>type ImportCount struct {
+	// Import is the raw import statement text.
+	Import string
+	// Count is the number of files that use this import.
+	Count int
 }</type>
       <type>type Formatter interface {
 	// Format formats the package data and returns the output bytes.
@@ -592,14 +615,17 @@ main &quot;$@&quot;</imports>
       <function>func TestJSONFormatterWithImports(t *testing.T)</function>
       <function>func TestJSONFormatterWithError(t *testing.T)</function>
       <function>func TestJSONFormatterName(t *testing.T)</function>
-      <function>func TestTruncateDoc(t *testing.T)</function>
-      <function>func TestXMLFormatterWithMaxDocLength(t *testing.T)</function>
-      <function>func TestMarkdownFormatterWithMaxDocLength(t *testing.T)</function>
-      <function>func TestJSONFormatterWithMaxDocLength(t *testing.T)</function>
+      <function>func TestXMLFormatterDedupeImports(t *testing.T)</function>
+      <function>func TestMarkdownFormatterDedupeImports(t *testing.T)</function>
+      <function>func TestJSONFormatterDedupeImports(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
+      <imports>import (
+	&quot;unicode/utf8&quot;
+)</imports>
       <function>func normalizeKind(kind string) string</function>
       <function>func getEmptyComment(lang string) string</function>
+      <function>func truncateDoc(doc string, maxLen int) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go" language="go">
       <imports>import (
@@ -615,10 +641,15 @@ main &quot;$@&quot;</imports>
       <function>func NewJSONFormatter() *JSONFormatter</function>
       <function>func (f *JSONFormatter) Name() string</function>
       <type>type jsonOutput struct {
-	Version string     `json:&quot;version,omitempty&quot;`
-	Path    string     `json:&quot;path,omitempty&quot;`
-	Tree    string     `json:&quot;tree,omitempty&quot;`
-	Files   []jsonFile `json:&quot;files&quot;`
+	Version       string            `json:&quot;version,omitempty&quot;`
+	Path          string            `json:&quot;path,omitempty&quot;`
+	Tree          string            `json:&quot;tree,omitempty&quot;`
+	GlobalImports []jsonImportCount `json:&quot;globalImports,omitempty&quot;`
+	Files         []jsonFile        `json:&quot;files&quot;`
+}</type>
+      <type>type jsonImportCount struct {
+	Import string `json:&quot;import&quot;`
+	Count  int    `json:&quot;count&quot;`
 }</type>
       <type>type jsonFile struct {
 	Path       string        `json:&quot;path&quot;`
@@ -652,7 +683,6 @@ main &quot;$@&quot;</imports>
 	&quot;bytes&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
-	&quot;unicode/utf8&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
       <function>func NewXMLFormatter() *XMLFormatter</function>
@@ -662,7 +692,6 @@ main &quot;$@&quot;</imports>
       <function>func escapeXML(s string) string</function>
       <variable>needsEscape bool</variable>
       <variable>buf strings.Builder</variable>
-      <function>func truncateDoc(doc string, maxLen int) string</function>
       <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
