@@ -2,6 +2,7 @@
 package extractor
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"runtime"
@@ -176,6 +177,19 @@ func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *Extra
 	return result
 }
 
+// binarySniffSize is the number of bytes inspected for NUL to detect binary content.
+const binarySniffSize = 512
+
+// isBinaryContent reports whether content appears to be binary by checking
+// for a NUL byte in the first 512 bytes.
+func isBinaryContent(content []byte) bool {
+	sniff := content
+	if len(sniff) > binarySniffSize {
+		sniff = sniff[:binarySniffSize]
+	}
+	return bytes.ContainsRune(sniff, 0)
+}
+
 // extractFile extracts signatures from a single file.
 func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile {
 	extracted := ExtractedFile{
@@ -195,6 +209,12 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	content, err := os.ReadFile(entry.Path)
 	if err != nil {
 		extracted.Error = fmt.Errorf("failed to read file: %w", err)
+		return extracted
+	}
+
+	// Skip binary files
+	if isBinaryContent(content) {
+		extracted.Error = fmt.Errorf("skipping binary file: %s", entry.Path)
 		return extracted
 	}
 
