@@ -1527,13 +1527,17 @@ func (p *TreeSitterParser) extractImports(
 // This is used to clean up Go import blocks that may have blank lines
 // between import groups.
 func removeBlankLines(text string) string {
-	lines := strings.Split(text, "\n")
-	var result []string
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if trimmed != "" {
-			result = append(result, line)
+	var buf strings.Builder
+	buf.Grow(len(text))
+	first := true
+	for _, line := range strings.Split(text, "\n") {
+		if strings.TrimSpace(line) != "" {
+			if !first {
+				buf.WriteByte('\n')
+			}
+			buf.WriteString(line)
+			first = false
 		}
 	}
-	return strings.Join(result, "\n")
+	return buf.String()
 }
