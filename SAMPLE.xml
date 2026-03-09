@@ -3763,6 +3763,7 @@
 	queries          map[string]LanguageQuery
 	compiledQueries  sync.Map // map[queryCacheKey]*sitter.Query
 	queryCacheMutex  sync.RWMutex
+	parserPool       sync.Pool
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
