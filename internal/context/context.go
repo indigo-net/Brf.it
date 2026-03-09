@@ -34,6 +34,10 @@ type Options struct {
 	// IncludeImports determines whether to include import/export statements.
 	IncludeImports bool
 
+	// DedupeImports deduplicates imports across files and shows them globally.
+	// Requires IncludeImports to be true.
+	DedupeImports bool
+
 	// IncludeTree determines whether to include directory tree.
 	IncludeTree bool
 
@@ -42,10 +46,6 @@ type Options struct {
 
 	// MaxFileSize is the maximum file size in bytes.
 	MaxFileSize int64
-
-	// MaxDocLength is the maximum length of documentation comments.
-	// 0 means no limit (default).
-	MaxDocLength int
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -157,6 +157,12 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		}
 	}
 
+	// 4.5 Build global imports if DedupeImports is enabled
+	var globalImports []formatter.ImportCount
+	if opts.IncludeImports && opts.DedupeImports {
+		globalImports = buildGlobalImports(files)
+	}
+
 	// 5. Create PackageData
 	packageData := &formatter.PackageData{
 		RootPath:        opts.Path,
@@ -166,7 +172,8 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalSize:       extractResult.TotalSize,
 		IncludeImports:  opts.IncludeImports,
-		MaxDocLength:    opts.MaxDocLength,
+		DedupeImports:   opts.DedupeImports,
+		GlobalImports:   globalImports,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)
@@ -228,4 +235,45 @@ func normalizeFormat(format string) string {
 	default:
 		return format
 	}
+}
+
+// buildGlobalImports collects and deduplicates imports from all files.
+// Returns a list of unique imports with their usage counts, sorted by count (descending).
+func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount {
+	importCounts := make(map[string]int)
+
+	for _, file := range files {
+		if file.Error != nil {
+			continue
+		}
+		// Use a set to count each import only once per file
+		seen := make(map[string]bool)
+		for _, imp := range file.RawImports {
+			if !seen[imp] {
+				seen[imp] = true
+				importCounts[imp]++
+			}
+		}
+	}
+
+	// Convert to slice and sort by count (descending)
+	result := make([]formatter.ImportCount, 0, len(importCounts))
+	for imp, count := range importCounts {
+		result = append(result, formatter.ImportCount{
+			Import: imp,
+			Count:  count,
+		})
+	}
+
+	// Sort by count descending, then by import string for stability
+	for i := 0; i < len(result); i++ {
+		for j := i + 1; j < len(result); j++ {
+			if result[j].Count > result[i].Count ||
+				(result[j].Count == result[i].Count && result[j].Import < result[i].Import) {
+				result[i], result[j] = result[j], result[i]
+			}
+		}
+	}
+
+	return result
 }

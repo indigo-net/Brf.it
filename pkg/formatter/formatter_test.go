@@ -754,99 +754,34 @@ func TestJSONFormatterName(t *testing.T) {
 	}
 }
 
-func TestTruncateDoc(t *testing.T) {
-	tests := []struct {
-		name     string
-		doc      string
-		maxLen   int
-		expected string
-	}{
-		{
-			name:     "no_limit",
-			doc:      "This is a doc comment",
-			maxLen:   0,
-			expected: "This is a doc comment",
-		},
-		{
-			name:     "within_limit",
-			doc:      "Short doc",
-			maxLen:   100,
-			expected: "Short doc",
-		},
-		{
-			name:     "exact_limit",
-			doc:      "12345",
-			maxLen:   5,
-			expected: "12345",
-		},
-		{
-			name:     "exceeds_limit",
-			doc:      "This is a very long documentation comment that exceeds the limit",
-			maxLen:   20,
-			expected: "This is a very long ...",
-		},
-		{
-			name:     "empty_doc",
-			doc:      "",
-			maxLen:   10,
-			expected: "",
-		},
-		{
-			name:     "limit_smaller_than_ellipsis",
-			doc:      "Hello",
-			maxLen:   2,
-			expected: "He...",
-		},
-		{
-			name:     "multibyte_korean",
-			doc:      "한글 테스트 문장입니다",
-			maxLen:   5,
-			expected: "한글 테스...",
-		},
-		{
-			name:     "multibyte_emoji",
-			doc:      "Hello 😀🎉 World",
-			maxLen:   8,
-			expected: "Hello 😀🎉...",
-		},
-		{
-			name:     "negative_limit",
-			doc:      "Some text",
-			maxLen:   -1,
-			expected: "Some text",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := truncateDoc(tt.doc, tt.maxLen)
-			if result != tt.expected {
-				t.Errorf("truncateDoc(%q, %d) = %q, want %q", tt.doc, tt.maxLen, result, tt.expected)
-			}
-		})
-	}
-}
-
-func TestXMLFormatterWithMaxDocLength(t *testing.T) {
+func TestXMLFormatterDedupeImports(t *testing.T) {
 	formatter := NewXMLFormatter()
 
-	longDoc := "This is a very long documentation comment that should be truncated when the max doc length limit is set to a smaller value than the actual content length."
-
 	data := &PackageData{
-		MaxDocLength: 30,
 		Files: []FileData{
 			{
-				Path:     "test.go",
+				Path:     "a.go",
 				Language: "go",
 				Signatures: []parser.Signature{
-					{
-						Name: "Test",
-						Kind: "function",
-						Text: "func Test()",
-						Doc:  longDoc,
-					},
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
 				},
+				RawImports: []string{`import "fmt"`, `import "os"`},
 			},
+			{
+				Path:     "b.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncB", Kind: "function", Text: "func FuncB()"},
+				},
+				RawImports: []string{`import "fmt"`, `import "strings"`},
+			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 2},
+			{Import: `import "os"`, Count: 1},
+			{Import: `import "strings"`, Count: 1},
 		},
 	}
 
@@ -857,38 +792,48 @@ func TestXMLFormatterWithMaxDocLength(t *testing.T) {
 
 	outputStr := string(output)
 
-	// Doc should be truncated (30 chars + "...")
-	expected := "This is a very long documentat..."
-	if !strings.Contains(outputStr, expected) {
-		t.Errorf("expected truncated doc %q in output:\n%s", expected, outputStr)
+	// Should have global imports section
+	if !strings.Contains(outputStr, "<imports-global>") {
+		t.Error("expected <imports-global> section")
 	}
 
-	// Full doc should NOT be present
-	if strings.Contains(outputStr, "limit is set to a smaller value") {
-		t.Error("full doc should not be present when truncated")
+	// Should have count attribute
+	if !strings.Contains(outputStr, `count="2"`) {
+		t.Error("expected count=\"2\" for fmt import")
+	}
+
+	// Should NOT have imports in individual files
+	if strings.Contains(outputStr, "<imports>") {
+		t.Error("should not have <imports> in individual files when deduping")
 	}
 }
 
-func TestMarkdownFormatterWithMaxDocLength(t *testing.T) {
+func TestMarkdownFormatterDedupeImports(t *testing.T) {
 	formatter := NewMarkdownFormatter()
 
-	longDoc := "This is a very long documentation comment that should be truncated when the max doc length limit is set to a smaller value than the actual content length."
-
 	data := &PackageData{
-		MaxDocLength: 30,
 		Files: []FileData{
 			{
-				Path:     "test.go",
+				Path:     "a.go",
 				Language: "go",
 				Signatures: []parser.Signature{
-					{
-						Name: "Test",
-						Kind: "function",
-						Text: "func Test()",
-						Doc:  longDoc,
-					},
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
 				},
+				RawImports: []string{`import "fmt"`},
 			},
+			{
+				Path:     "b.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "FuncB", Kind: "function", Text: "func FuncB()"},
+				},
+				RawImports: []string{`import "fmt"`},
+			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 2},
 		},
 	}
 
@@ -899,38 +844,40 @@ func TestMarkdownFormatterWithMaxDocLength(t *testing.T) {
 
 	outputStr := string(output)
 
-	// Doc should be truncated (30 chars + "...")
-	expected := "This is a very long documentat..."
-	if !strings.Contains(outputStr, expected) {
-		t.Errorf("expected truncated doc %q in output:\n%s", expected, outputStr)
+	// Should have Global Imports section
+	if !strings.Contains(outputStr, "## Global Imports") {
+		t.Error("expected '## Global Imports' section")
 	}
 
-	// Full doc should NOT be present
-	if strings.Contains(outputStr, "limit is set to a smaller value") {
-		t.Error("full doc should not be present when truncated")
+	// Should have table format
+	if !strings.Contains(outputStr, "| Import | Files |") {
+		t.Error("expected import table header")
+	}
+
+	// Should show count
+	if !strings.Contains(outputStr, "| 2 |") {
+		t.Error("expected count of 2 in table")
 	}
 }
 
-func TestJSONFormatterWithMaxDocLength(t *testing.T) {
+func TestJSONFormatterDedupeImports(t *testing.T) {
 	formatter := NewJSONFormatter()
 
-	longDoc := "This is a very long documentation comment that should be truncated when the max doc length limit is set."
-
 	data := &PackageData{
-		MaxDocLength: 30,
 		Files: []FileData{
 			{
-				Path:     "test.go",
+				Path:     "a.go",
 				Language: "go",
 				Signatures: []parser.Signature{
-					{
-						Name: "Test",
-						Kind: "function",
-						Text: "func Test()",
-						Doc:  longDoc,
-					},
+					{Name: "FuncA", Kind: "function", Text: "func FuncA()"},
 				},
+				RawImports: []string{`import "fmt"`},
 			},
+		},
+		IncludeImports: true,
+		DedupeImports:  true,
+		GlobalImports: []ImportCount{
+			{Import: `import "fmt"`, Count: 1},
 		},
 	}
 
@@ -941,9 +888,18 @@ func TestJSONFormatterWithMaxDocLength(t *testing.T) {
 
 	outputStr := string(output)
 
-	// Doc should be truncated (30 chars + "...")
-	expected := "This is a very long documentat..."
-	if !strings.Contains(outputStr, expected) {
-		t.Errorf("expected truncated doc %q in output:\n%s", expected, outputStr)
+	// Should have globalImports field
+	if !strings.Contains(outputStr, `"globalImports":[`) {
+		t.Error("expected globalImports array in JSON output")
+	}
+
+	// Should have count field
+	if !strings.Contains(outputStr, `"count":1`) {
+		t.Error("expected count field in globalImports")
+	}
+
+	// Should NOT have imports in individual files when deduping
+	if strings.Contains(outputStr, `"imports":[`) {
+		t.Error("should not have imports array in files when deduping")
 	}
 }

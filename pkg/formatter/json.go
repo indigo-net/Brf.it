@@ -19,10 +19,17 @@ func (f *JSONFormatter) Name() string {
 
 // jsonOutput represents the top-level JSON output structure.
 type jsonOutput struct {
-	Version string     `json:"version,omitempty"`
-	Path    string     `json:"path,omitempty"`
-	Tree    string     `json:"tree,omitempty"`
-	Files   []jsonFile `json:"files"`
+	Version       string            `json:"version,omitempty"`
+	Path          string            `json:"path,omitempty"`
+	Tree          string            `json:"tree,omitempty"`
+	GlobalImports []jsonImportCount `json:"globalImports,omitempty"`
+	Files         []jsonFile        `json:"files"`
+}
+
+// jsonImportCount represents a global import with usage count.
+type jsonImportCount struct {
+	Import string `json:"import"`
+	Count  int    `json:"count"`
 }
 
 // jsonFile represents a single file in the JSON output.
@@ -50,6 +57,17 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 		Files:   make([]jsonFile, 0, len(data.Files)),
 	}
 
+	// Add global imports when dedupe mode is enabled
+	if data.DedupeImports && len(data.GlobalImports) > 0 {
+		output.GlobalImports = make([]jsonImportCount, 0, len(data.GlobalImports))
+		for _, ic := range data.GlobalImports {
+			output.GlobalImports = append(output.GlobalImports, jsonImportCount{
+				Import: ic.Import,
+				Count:  ic.Count,
+			})
+		}
+	}
+
 	for _, file := range data.Files {
 		jf := jsonFile{
 			Path:     file.Path,
@@ -74,8 +92,8 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 				}
 			}
 
-			// Add imports if requested
-			if data.IncludeImports && len(file.RawImports) > 0 {
+			// Add imports if requested (skip if deduping)
+			if data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports {
 				jf.Imports = file.RawImports
 			}
 		}
