@@ -1,6 +1,6 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.18.0*
+*brf.it 0.19.0*
 
 ---
 
@@ -19,17 +19,18 @@ func main()
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root.go
 
-**Imports:**
-- `import "fmt"`
-- `import "os"`
-- `import "path/filepath"`
-- `import "github.com/indigo-net/Brf.it/internal/config"`
-- `import "github.com/indigo-net/Brf.it/internal/context"`
-- `import "github.com/indigo-net/Brf.it/pkg/scanner"`
-- `import "github.com/spf13/cobra"`
-- `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
-
 ```go
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"github.com/indigo-net/Brf.it/internal/config"
+	"github.com/indigo-net/Brf.it/internal/context"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/spf13/cobra"
+	// Import treesitter parser to register Go/TypeScript parsers
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+)
 Version = "dev"
 Commit  = "none"
 Date    = "unknown"
@@ -50,17 +51,18 @@ func writeToFile(path string, content []byte) error
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go
 
-**Imports:**
-- `import "bytes"`
-- `import "os"`
-- `import "path/filepath"`
-- `import "strings"`
-- `import "testing"`
-- `import "time"`
-- `import "github.com/indigo-net/Brf.it/internal/config"`
-- `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
-
 ```go
+import (
+	"bytes"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+	"github.com/indigo-net/Brf.it/internal/config"
+	// Import treesitter parser to register it
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+)
 func TestExecuteHelp(t *testing.T)
 func TestExecuteVersion(t *testing.T)
 buf bytes.Buffer
@@ -76,15 +78,146 @@ func TestWriteToFile(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/install.sh
+
+```shell
+set -e
+printf "${GREEN}==>${NC} %s\n" "$1"
+printf "${YELLOW}==>${NC} %s\n" "$1"
+printf "${RED}Error:${NC} %s\n" "$1"
+exit 1
+uname -s
+tr '[:upper:]' '[:lower:]'
+echo "$OS"
+error "Unsupported OS: $OS. Use Linux or macOS."
+uname -m
+echo "amd64"
+echo "arm64"
+error "Unsupported architecture: $ARCH. Use x86_64 or arm64."
+command -v curl
+curl -fsSL "https://api.github.com/repos/${REPO}/releases/latest"
+grep '"tag_name":'
+sed -E 's/.*"([^"]+)".*/\1/'
+    elif command -v wget
+then
+wget -qO- "https://api.github.com/repos/${REPO}/releases/latest"
+grep '"tag_name":'
+sed -E 's/.*"([^"]+)".*/\1/'
+error "Neither curl nor wget found. Please install one of them."
+command -v curl
+curl -fsSL "$URL" -o "$OUTPUT"
+command -v wget
+wget -q "$URL" -O "$OUTPUT"
+error "Neither curl nor wget found. Please install one of them."
+command -v sha256sum
+sha256sum "$FILE"
+awk '{print $1}'
+command -v shasum
+shasum -a 256 "$FILE"
+awk '{print $1}'
+error "Neither sha256sum nor shasum found. Cannot verify checksum."
+sha256 "$FILE"
+error "Checksum mismatch!\n  Expected: $EXPECTED\n  Actual:   $ACTUAL"
+info "Checksum verified"
+echo ""
+echo "sudo"
+return 0
+return 1
+info "Fetching latest version..."
+get_latest_version
+error "Failed to get latest version. Please specify version manually."
+detect_os
+detect_arch
+info "Detected: ${OS}/${ARCH}"
+info "Installing brfit $VERSION"
+mktemp -d
+trap 'rm -rf "$TMP_DIR"' EXIT
+info "Downloading $ARCHIVE_NAME..."
+download "$DOWNLOAD_URL" "$TMP_DIR/$ARCHIVE_NAME"
+info "Downloading checksums..."
+download "$CHECKSUM_URL" "$TMP_DIR/checksums.txt"
+grep "$ARCHIVE_NAME" "$TMP_DIR/checksums.txt"
+awk '{print $1}'
+error "Checksum not found for $ARCHIVE_NAME"
+info "Verifying checksum..."
+verify_checksum "$TMP_DIR/$ARCHIVE_NAME" "$EXPECTED_CHECKSUM"
+info "Extracting..."
+tar -xzf "$TMP_DIR/$ARCHIVE_NAME" -C "$TMP_DIR"
+need_sudo
+info "Installing to $INSTALL_DIR (requires sudo)..."
+info "Installing to $INSTALL_DIR..."
+$SUDO mkdir -p "$INSTALL_DIR"
+$SUDO mv "$TMP_DIR/$BINARY_NAME" "$INSTALL_DIR/$BINARY_NAME"
+$SUDO chmod +x "$INSTALL_DIR/$BINARY_NAME"
+info "brfit $VERSION installed successfully!"
+echo ""
+warn "macOS users: If 'brfit' is blocked, run:"
+echo "    xattr -d com.apple.quarantine $INSTALL_DIR/brfit"
+check_path
+echo ""
+warn "$INSTALL_DIR is not in your PATH."
+echo ""
+echo "Add this line to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
+echo "  export PATH=\"$INSTALL_DIR:\$PATH\""
+echo ""
+echo "Then restart your terminal or run:"
+echo "  source ~/.bashrc  # or ~/.zshrc"
+echo ""
+echo "Run 'brfit --help' to get started."
+main "$@"
+REPO="indigo-net/Brf.it"
+INSTALL_DIR="${BRFIT_INSTALL_DIR:-/usr/local/bin}"
+BINARY_NAME="brfit"
+ARCHIVE_PREFIX="Brf.it"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+info()
+warn()
+error()
+detect_os()
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+detect_arch()
+ARCH=$(uname -m)
+get_latest_version()
+download()
+URL="$1"
+OUTPUT="$2"
+sha256()
+FILE="$1"
+verify_checksum()
+FILE="$1"
+EXPECTED="$2"
+ACTUAL=$(sha256 "$FILE")
+need_sudo()
+check_path()
+main()
+VERSION="${1:-}"
+VERSION=$(get_latest_version)
+VERSION="v$VERSION"
+OS=$(detect_os)
+ARCH=$(detect_arch)
+VERSION_NUM="${VERSION#v}"
+ARCHIVE_NAME="${ARCHIVE_PREFIX}_${VERSION_NUM}_${OS}_${ARCH}.tar.gz"
+DOWNLOAD_URL="https://github.com/${REPO}/releases/download/${VERSION}/${ARCHIVE_NAME}"
+CHECKSUM_URL="https://github.com/${REPO}/releases/download/${VERSION}/checksums.txt"
+TMP_DIR=$(mktemp -d)
+EXPECTED_CHECKSUM=$(grep "$ARCHIVE_NAME" "$TMP_DIR/checksums.txt" | awk '{print $1}')
+SUDO=$(need_sudo)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/internal/config/config.go
 
-**Imports:**
-- `import "errors"`
-- `import "fmt"`
-- `import "os"`
-- `import pkgcontext "github.com/indigo-net/Brf.it/internal/context"`
-
 ```go
+import (
+	"errors"
+	"fmt"
+	"os"
+	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
+)
 MaxFileSizeUpperBound = 10 * 1024 * 1024
 type Config struct {
 	// Path is the root directory or file to process.
@@ -134,13 +267,13 @@ func (c *Config) ToOptions() *pkgcontext.Options
 
 ### /home/runner/work/Brf.it/Brf.it/internal/config/config_test.go
 
-**Imports:**
-- `import "bytes"`
-- `import "os"`
-- `import "strings"`
-- `import "testing"`
-
 ```go
+import (
+	"bytes"
+	"os"
+	"strings"
+	"testing"
+)
 func TestDefaultConfig(t *testing.T)
 expectedMaxSize = 512000
 func TestConfigValidate(t *testing.T)
@@ -155,13 +288,13 @@ func containsSubstring(s, substr string) bool
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context.go
 
-**Imports:**
-- `import "github.com/indigo-net/Brf.it/pkg/extractor"`
-- `import "github.com/indigo-net/Brf.it/pkg/formatter"`
-- `import "github.com/indigo-net/Brf.it/pkg/scanner"`
-- `import "github.com/indigo-net/Brf.it/pkg/tokenizer"`
-
 ```go
+import (
+	"github.com/indigo-net/Brf.it/pkg/extractor"
+	"github.com/indigo-net/Brf.it/pkg/formatter"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
+)
 type Options struct {
 	// Path is the target path to scan.
 	Path string
@@ -236,16 +369,16 @@ func normalizeFormat(format string) string
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context_test.go
 
-**Imports:**
-- `import "strings"`
-- `import "testing"`
-- `import "github.com/indigo-net/Brf.it/pkg/extractor"`
-- `import "github.com/indigo-net/Brf.it/pkg/formatter"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-- `import "github.com/indigo-net/Brf.it/pkg/scanner"`
-- `import "github.com/indigo-net/Brf.it/pkg/tokenizer"`
-
 ```go
+import (
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/extractor"
+	"github.com/indigo-net/Brf.it/pkg/formatter"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
+)
 type mockScanner struct {
 	result *scanner.ScanResult
 	err    error
@@ -274,12 +407,12 @@ func TestNormalizeFormat(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/tree.go
 
-**Imports:**
-- `import "path/filepath"`
-- `import "sort"`
-- `import "strings"`
-
 ```go
+import (
+	"path/filepath"
+	"sort"
+	"strings"
+)
 type treeNode struct {
 	children map[string]*treeNode
 }
@@ -293,16 +426,16 @@ newPrefix string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go
 
-**Imports:**
-- `import "bytes"`
-- `import "fmt"`
-- `import "os"`
-- `import "runtime"`
-- `import "sync"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-- `import "github.com/indigo-net/Brf.it/pkg/scanner"`
-
 ```go
+import (
+	"bytes"
+	"fmt"
+	"os"
+	"runtime"
+	"sync"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+)
 type ExtractedFile struct {
 	// Path is the file path.
 	Path string
@@ -375,17 +508,17 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go
 
-**Imports:**
-- `import "fmt"`
-- `import "os"`
-- `import "path/filepath"`
-- `import "strings"`
-- `import "testing"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-- `import _ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"`
-- `import "github.com/indigo-net/Brf.it/pkg/scanner"`
-
 ```go
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter" // Register Tree-sitter parsers
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+)
 func TestFileExtractorImplementsExtractor(t *testing.T)
 _ Extractor = (*FileExtractor)(nil)
 func TestFileExtractorExtract(t *testing.T)
@@ -407,10 +540,10 @@ func TestFileExtractorUnsupportedLanguage(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go
 
-**Imports:**
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-
 ```go
+import (
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
 type FileData struct {
 	// Path is the file path.
 	Path string
@@ -462,13 +595,13 @@ type Formatter interface {
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_test.go
 
-**Imports:**
-- `import "fmt"`
-- `import "strings"`
-- `import "testing"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-
 ```go
+import (
+	"fmt"
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
 func TestXMLFormatterImplementsFormatter(t *testing.T)
 _ Formatter = (*XMLFormatter)(nil)
 func TestMarkdownFormatterImplementsFormatter(t *testing.T)
@@ -510,10 +643,10 @@ func getEmptyComment(lang string) string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go
 
-**Imports:**
-- `import "testing"`
-
 ```go
+import (
+	"testing"
+)
 func TestGetEmptyComment(t *testing.T)
 ```
 
@@ -521,10 +654,10 @@ func TestGetEmptyComment(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/json.go
 
-**Imports:**
-- `import "encoding/json"`
-
 ```go
+import (
+	"encoding/json"
+)
 type JSONFormatter struct{}
 func NewJSONFormatter() *JSONFormatter
 func (f *JSONFormatter) Name() string
@@ -553,12 +686,12 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go
 
-**Imports:**
-- `import "bytes"`
-- `import "fmt"`
-- `import "strings"`
-
 ```go
+import (
+	"bytes"
+	"fmt"
+	"strings"
+)
 type MarkdownFormatter struct{}
 func NewMarkdownFormatter() *MarkdownFormatter
 func (f *MarkdownFormatter) Name() string
@@ -571,12 +704,12 @@ func escapeMarkdown(s string) string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go
 
-**Imports:**
-- `import "bytes"`
-- `import "fmt"`
-- `import "strings"`
-
 ```go
+import (
+	"bytes"
+	"fmt"
+	"strings"
+)
 type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
 func (f *XMLFormatter) Name() string
@@ -592,11 +725,11 @@ func kindToTag(kind string) string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go
 
-**Imports:**
-- `import "path/filepath"`
-- `import "sync"`
-
 ```go
+import (
+	"path/filepath"
+	"sync"
+)
 type Signature struct {
 	// Name is the identifier name (e.g., "Scan", "FileScanner").
 	Name string
@@ -729,10 +862,10 @@ func DetectLanguage(path string) string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/parser_test.go
 
-**Imports:**
-- `import "testing"`
-
 ```go
+import (
+	"testing"
+)
 func TestSignatureDefaults(t *testing.T)
 func TestParseResultDefaults(t *testing.T)
 func TestNodeKind(t *testing.T)
@@ -754,11 +887,9 @@ func TestDetectLanguage(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/binding.go
 
-**Imports:**
-- `import "C"`
-- `import "unsafe"`
-
 ```go
+import "C"
+import "unsafe"
 func Language() unsafe.Pointer
 ```
 
@@ -766,13 +897,11 @@ func Language() unsafe.Pointer
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/scanner.c
 
-**Imports:**
-- `#include "tree_sitter/alloc.h"`
-- `#include "tree_sitter/array.h"`
-- `#include "tree_sitter/parser.h"`
-- `#include <wctype.h>`
-
 ```c
+#include "tree_sitter/alloc.h"
+#include "tree_sitter/array.h"
+#include "tree_sitter/parser.h"
+#include <wctype.h>
 enum TokenType {
     OPT_SEMI,
     INTERPOLATION_REGULAR_START,
@@ -818,12 +947,10 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/alloc.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdio.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define TREE_SITTER_ALLOC_H_
 #define ts_malloc  ts_current_malloc
 #define ts_calloc  ts_current_calloc
@@ -839,15 +966,13 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/array.h
 
-**Imports:**
-- `#include "./alloc.h"`
-- `#include <assert.h>`
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-- `#include <string.h>`
-
 ```cpp
+#include "./alloc.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
@@ -980,12 +1105,10 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/parser.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #define TREE_SITTER_PARSER_H_
 #define ts_builtin_sym_error ((TSSymbol)-1)
 #define ts_builtin_sym_end 0
@@ -1144,11 +1267,9 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go
 
-**Imports:**
-- `import "C"`
-- `import "unsafe"`
-
 ```go
+import "C"
+import "unsafe"
 func Language() unsafe.Pointer
 ```
 
@@ -1156,13 +1277,11 @@ func Language() unsafe.Pointer
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/scanner.c
 
-**Imports:**
-- `#include "tree_sitter/array.h"`
-- `#include "tree_sitter/parser.h"`
-- `#include <string.h>`
-- `#include <wctype.h>`
-
 ```c
+#include "tree_sitter/array.h"
+#include "tree_sitter/parser.h"
+#include <string.h>
+#include <wctype.h>
 enum TokenType {
   AUTOMATIC_SEMICOLON,
   IMPORT_LIST_DELIMITER,
@@ -1205,12 +1324,10 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/alloc.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdio.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define TREE_SITTER_ALLOC_H_
 #define ts_malloc  ts_current_malloc
 #define ts_calloc  ts_current_calloc
@@ -1226,15 +1343,13 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/array.h
 
-**Imports:**
-- `#include "./alloc.h"`
-- `#include <assert.h>`
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-- `#include <string.h>`
-
 ```cpp
+#include "./alloc.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
@@ -1337,12 +1452,10 @@ static inline void _array__splice(Array *self, size_t element_size,
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/parser.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #define TREE_SITTER_PARSER_H_
 #define ts_builtin_sym_error ((TSSymbol)-1)
 #define ts_builtin_sym_end 0
@@ -1495,11 +1608,9 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/binding.go
 
-**Imports:**
-- `import "C"`
-- `import "unsafe"`
-
 ```go
+import "C"
+import "unsafe"
 func Language() unsafe.Pointer
 ```
 
@@ -1507,10 +1618,8 @@ func Language() unsafe.Pointer
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/parser.c
 
-**Imports:**
-- `#include "tree_sitter/parser.h"`
-
 ```c
+#include "tree_sitter/parser.h"
 #define LANGUAGE_VERSION 15
 #define STATE_COUNT 282
 #define LARGE_STATE_COUNT 2
@@ -1717,13 +1826,11 @@ TS_PUBLIC const TSLanguage *tree_sitter_lua(void)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/scanner.c
 
-**Imports:**
-- `#include <stdio.h>`
-- `#include "tree_sitter/alloc.h"`
-- `#include "tree_sitter/parser.h"`
-- `#include <wctype.h>`
-
 ```c
+#include <stdio.h>
+#include "tree_sitter/alloc.h"
+#include "tree_sitter/parser.h"
+#include <wctype.h>
 enum TokenType {
   BLOCK_COMMENT_START,
   BLOCK_COMMENT_CONTENT,
@@ -1759,12 +1866,10 @@ bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const 
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/alloc.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdio.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define TREE_SITTER_ALLOC_H_
 #define ts_malloc  ts_current_malloc
 #define ts_calloc  ts_current_calloc
@@ -1780,15 +1885,13 @@ bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const 
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/array.h
 
-**Imports:**
-- `#include "./alloc.h"`
-- `#include <assert.h>`
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-- `#include <string.h>`
-
 ```cpp
+#include "./alloc.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
@@ -1924,12 +2027,10 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/parser.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #define TREE_SITTER_PARSER_H_
 #define ts_builtin_sym_error ((TSSymbol)-1)
 #define ts_builtin_sym_end 0
@@ -2088,11 +2189,9 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/binding.go
 
-**Imports:**
-- `import "C"`
-- `import "unsafe"`
-
 ```go
+import "C"
+import "unsafe"
 func Language() unsafe.Pointer
 ```
 
@@ -2100,13 +2199,11 @@ func Language() unsafe.Pointer
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/scanner.c
 
-**Imports:**
-- `#include "tree_sitter/alloc.h"`
-- `#include "tree_sitter/array.h"`
-- `#include "tree_sitter/parser.h"`
-- `#include <wctype.h>`
-
 ```c
+#include "tree_sitter/alloc.h"
+#include "tree_sitter/array.h"
+#include "tree_sitter/parser.h"
+#include <wctype.h>
 #define LOG(...) fprintf(stderr, __VA_ARGS__)
 #define LOG(...)
 enum TokenType {
@@ -2161,12 +2258,10 @@ bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/alloc.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdio.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define TREE_SITTER_ALLOC_H_
 #define ts_malloc  ts_current_malloc
 #define ts_calloc  ts_current_calloc
@@ -2182,15 +2277,13 @@ bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/array.h
 
-**Imports:**
-- `#include "./alloc.h"`
-- `#include <assert.h>`
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-- `#include <string.h>`
-
 ```cpp
+#include "./alloc.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
@@ -2293,12 +2386,10 @@ static inline void _array__splice(Array *self, size_t element_size,
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/parser.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #define TREE_SITTER_PARSER_H_
 #define ts_builtin_sym_error ((TSSymbol)-1)
 #define ts_builtin_sym_end 0
@@ -2451,11 +2542,9 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go
 
-**Imports:**
-- `import "C"`
-- `import "unsafe"`
-
 ```go
+import "C"
+import "unsafe"
 func Language() unsafe.Pointer
 ```
 
@@ -2463,12 +2552,10 @@ func Language() unsafe.Pointer
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/scanner.c
 
-**Imports:**
-- `#include "tree_sitter/parser.h"`
-- `#include <string.h>`
-- `#include <wctype.h>`
-
 ```c
+#include "tree_sitter/parser.h"
+#include <string.h>
+#include <wctype.h>
 #define TOKEN_COUNT 33
 enum TokenType {
     BLOCK_COMMENT,
@@ -2596,12 +2683,10 @@ enum TokenType
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/alloc.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdio.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #define TREE_SITTER_ALLOC_H_
 #define ts_malloc  ts_current_malloc
 #define ts_calloc  ts_current_calloc
@@ -2617,15 +2702,13 @@ enum TokenType
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/array.h
 
-**Imports:**
-- `#include "./alloc.h"`
-- `#include <assert.h>`
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-- `#include <string.h>`
-
 ```cpp
+#include "./alloc.h"
+#include <assert.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #define TREE_SITTER_ARRAY_H_
 #define Array(T)       \
   struct {             \
@@ -2728,12 +2811,10 @@ static inline void _array__splice(Array *self, size_t element_size,
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/parser.h
 
-**Imports:**
-- `#include <stdbool.h>`
-- `#include <stdint.h>`
-- `#include <stdlib.h>`
-
 ```cpp
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
 #define TREE_SITTER_PARSER_H_
 #define ts_builtin_sym_error ((TSSymbol)-1)
 #define ts_builtin_sym_end 0
@@ -2886,11 +2967,11 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"
+)
 type CQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3008,12 +3089,12 @@ cQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"
+)
 func TestCQueryLanguage(t *testing.T)
 func TestCQueryPattern(t *testing.T)
 func TestCQueryExtractFunction(t *testing.T)
@@ -3029,11 +3110,11 @@ func TestCQueryExtractGlobalVariables(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"
+)
 type CppQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3229,12 +3310,12 @@ cppQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"
+)
 func TestCppQueryLanguage(t *testing.T)
 func TestCppQueryPattern(t *testing.T)
 func TestCppQueryExtractFunction(t *testing.T)
@@ -3264,11 +3345,11 @@ func TestCppQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+)
 type CSharpQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3390,12 +3471,12 @@ csharpQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
+)
 func extractCSharpNames(t *testing.T, code []byte) map[string]bool
 func TestCSharpQueryLanguage(t *testing.T)
 func TestCSharpQueryPattern(t *testing.T)
@@ -3420,11 +3501,11 @@ func TestCSharpQueryExtractRecords(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"
+)
 captureName      = "name"
 captureSignature = "signature"
 captureDoc       = "doc"
@@ -3480,12 +3561,12 @@ goQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"
+)
 func TestGoQueryLanguage(t *testing.T)
 func TestGoQueryPattern(t *testing.T)
 func TestGoQueryExtractFunction(t *testing.T)
@@ -3499,11 +3580,11 @@ func TestGoQueryExtractConstAndVar(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"
+)
 type JavaQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3571,12 +3652,12 @@ javaQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"
+)
 func TestJavaQueryLanguage(t *testing.T)
 func TestJavaQueryPattern(t *testing.T)
 func TestJavaQueryKindMapping(t *testing.T)
@@ -3596,11 +3677,11 @@ func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
+)
 type KotlinQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3668,12 +3749,12 @@ kotlinQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
+)
 func extractKotlinNames(t *testing.T, code []byte) map[string]bool
 func TestKotlinQueryLanguage(t *testing.T)
 func TestKotlinQueryPattern(t *testing.T)
@@ -3695,11 +3776,11 @@ func TestKotlinQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+)
 type LuaQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3764,12 +3845,12 @@ luaQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
+)
 func extractLuaNames(t *testing.T, code []byte) map[string]bool
 func TestLuaQueryLanguage(t *testing.T)
 func TestLuaQueryPattern(t *testing.T)
@@ -3792,11 +3873,11 @@ func TestLuaQueryExtractMixed(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"
+)
 type PHPQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3865,12 +3946,12 @@ phpQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"
+)
 func extractPHPNames(t *testing.T, code []byte) map[string]bool
 func TestPHPQueryLanguage(t *testing.T)
 func TestPHPQueryPattern(t *testing.T)
@@ -3890,11 +3971,11 @@ func TestPHPQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"
+)
 type PythonQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -3941,12 +4022,12 @@ pythonQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"
+)
 func TestPythonQueryLanguage(t *testing.T)
 func TestPythonQueryPattern(t *testing.T)
 func TestPythonQueryExtractFunction(t *testing.T)
@@ -3961,11 +4042,11 @@ func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"
+)
 type RubyQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4023,12 +4104,12 @@ rubyQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"
+)
 func extractRubyNames(t *testing.T, code []byte) map[string]bool
 func extractRubyImports(t *testing.T, code []byte) []string
 imports []string
@@ -4051,11 +4132,11 @@ func TestRubyQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"
+)
 type RustQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4167,12 +4248,12 @@ rustQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"
+)
 func TestRustQueryLanguage(t *testing.T)
 func TestRustQueryPattern(t *testing.T)
 func TestRustQueryImportPattern(t *testing.T)
@@ -4193,11 +4274,11 @@ func TestRustQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
+)
 type ScalaQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4282,13 +4363,13 @@ scalaQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala_test.go
 
-**Imports:**
-- `import "testing"`
-- `import "unsafe"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"`
-
 ```go
+import (
+	"testing"
+	"unsafe"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
+)
 func extractScalaNames(t *testing.T, code []byte) map[string]bool
 func extractScalaImports(t *testing.T, code []byte) []string
 imports []string
@@ -4315,11 +4396,11 @@ func TestScalaQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"
+)
 type ShellQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4357,12 +4438,12 @@ shellQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"
+)
 func extractShellNames(t *testing.T, code []byte) map[string]bool
 func TestShellQueryLanguage(t *testing.T)
 func TestShellQueryPattern(t *testing.T)
@@ -4381,11 +4462,11 @@ func TestShellQueryExtractMixed(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
+)
 type SwiftQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4466,12 +4547,12 @@ swiftQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_swift "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift"
+)
 func TestSwiftQueryLanguage(t *testing.T)
 func TestSwiftQueryPattern(t *testing.T)
 func TestSwiftQueryImportPattern(t *testing.T)
@@ -4492,11 +4573,11 @@ func TestSwiftQueryCaptures(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"
+)
 type TypeScriptQuery struct {
 	language *sitter.Language
 	query    []byte
@@ -4616,12 +4697,12 @@ typeScriptQueryPattern = `
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript_test.go
 
-**Imports:**
-- `import "testing"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"`
-
 ```go
+import (
+	"testing"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"
+)
 func TestTypeScriptQueryLanguage(t *testing.T)
 func TestTypeScriptQueryPattern(t *testing.T)
 func TestTypeScriptQueryExtractFunction(t *testing.T)
@@ -4633,15 +4714,15 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser.go
 
-**Imports:**
-- `import "fmt"`
-- `import "strings"`
-- `import "sync"`
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"`
-
 ```go
+import (
+	"fmt"
+	"strings"
+	"sync"
+	sitter "github.com/tree-sitter/go-tree-sitter"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+	"github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"
+)
 func init()
 type queryType int
 queryTypeSignature queryType = iota
@@ -4725,12 +4806,12 @@ buf strings.Builder
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go
 
-**Imports:**
-- `import "strings"`
-- `import "testing"`
-- `import "github.com/indigo-net/Brf.it/pkg/parser"`
-
 ```go
+import (
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
 func TestTreeSitterParserImplementsParser(t *testing.T)
 _ parser.Parser = (*TreeSitterParser)(nil)
 func TestTreeSitterParserLanguages(t *testing.T)
@@ -4810,10 +4891,10 @@ func TestTreeSitterParserParseScalaImports(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go
 
-**Imports:**
-- `import sitter "github.com/tree-sitter/go-tree-sitter"`
-
 ```go
+import (
+	sitter "github.com/tree-sitter/go-tree-sitter"
+)
 type LanguageQuery interface {
 	// Language returns the Tree-sitter language for parsing.
 	Language() *sitter.Language
@@ -4854,10 +4935,10 @@ DefaultKindMapping = map[string]string{
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query_test.go
 
-**Imports:**
-- `import "testing"`
-
 ```go
+import (
+	"testing"
+)
 func TestCaptureDefinitions(t *testing.T)
 ```
 
@@ -4865,17 +4946,17 @@ func TestCaptureDefinitions(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go
 
-**Imports:**
-- `import "errors"`
-- `import "fmt"`
-- `import "io/fs"`
-- `import "log"`
-- `import "os"`
-- `import "path/filepath"`
-- `import "strings"`
-- `import ignore "github.com/sabhiram/go-gitignore"`
-
 ```go
+import (
+	"errors"
+	"fmt"
+	"io/fs"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	ignore "github.com/sabhiram/go-gitignore"
+)
 type FileEntry struct {
 	// Path is the absolute or relative path to the file.
 	Path string
@@ -4940,15 +5021,15 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go
 
-**Imports:**
-- `import "bytes"`
-- `import "log"`
-- `import "os"`
-- `import "path/filepath"`
-- `import "strings"`
-- `import "testing"`
-
 ```go
+import (
+	"bytes"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
 func TestGetBaseName(t *testing.T)
 func TestNewFileScanner(t *testing.T)
 func TestNewFileScannerNilOptions(t *testing.T)
@@ -4983,10 +5064,10 @@ func TestFilepathBaseEdgeCases(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tiktoken.go
 
-**Imports:**
-- `import "github.com/pkoukk/tiktoken-go"`
-
 ```go
+import (
+	"github.com/pkoukk/tiktoken-go"
+)
 type TiktokenTokenizer struct {
 	encoding string
 	tke      *tiktoken.Tiktoken
@@ -5021,11 +5102,11 @@ func (t *NoOpTokenizer) Name() string
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tokenizer_test.go
 
-**Imports:**
-- `import "strings"`
-- `import "testing"`
-
 ```go
+import (
+	"strings"
+	"testing"
+)
 func TestNoOpTokenizerImplementsTokenizer(t *testing.T)
 _ Tokenizer = (*NoOpTokenizer)(nil)
 func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)
@@ -5042,12 +5123,10 @@ func TestTiktokenTokenizerSpecialCharacters(t *testing.T)
 
 ### /home/runner/work/Brf.it/Brf.it/website/docusaurus.config.ts
 
-**Imports:**
-- `import {themes as prismThemes} from 'prism-react-renderer';`
-- `import type {Config} from '@docusaurus/types';`
-- `import type * as Preset from '@docusaurus/preset-classic';`
-
 ```typescript
+import {themes as prismThemes} from 'prism-react-renderer';
+import type {Config} from '@docusaurus/types';
+import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'Brf.it',
   tagline: 'Give AI the gist, not the bloat',
@@ -5179,10 +5258,8 @@ const config: Config = {
 
 ### /home/runner/work/Brf.it/Brf.it/website/sidebars.ts
 
-**Imports:**
-- `import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';`
-
 ```typescript
+import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 const sidebars: SidebarsConfig = {
   docsSidebar: [
     {
@@ -5221,11 +5298,9 @@ const sidebars: SidebarsConfig = {
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/FeaturesSection.tsx
 
-**Imports:**
-- `import React from 'react';`
-- `import Translate from '@docusaurus/Translate';`
-
 ```typescript
+import React from 'react';
+import Translate from '@docusaurus/Translate';
 interface Feature {
   title: string;
   description: string;
@@ -5237,15 +5312,10 @@ interface Feature {
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/Hero.tsx
 
-**Imports:**
-- `import React from 'react';`
-- `import Link from '@docusaurus/Link';`
-- `import Translate, {translate} from '@docusaurus/Translate';`
-
-**Exports:**
-- `Hero`
-
 ```typescript
+import React from 'react';
+import Link from '@docusaurus/Link';
+import Translate, {translate} from '@docusaurus/Translate';
 export default function Hero(): JSX.Element
 ```
 
@@ -5253,11 +5323,9 @@ export default function Hero(): JSX.Element
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/InstallSection.tsx
 
-**Imports:**
-- `import React, {useState} from 'react';`
-- `import Translate from '@docusaurus/Translate';`
-
 ```typescript
+import React, {useState} from 'react';
+import Translate from '@docusaurus/Translate';
 type Platform = keyof typeof installCommands;
 const copyToClipboard = (text: string)
 ```
@@ -5266,14 +5334,9 @@ const copyToClipboard = (text: string)
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/LanguageGrid.tsx
 
-**Imports:**
-- `import React from 'react';`
-- `import Translate from '@docusaurus/Translate';`
-
-**Exports:**
-- `LanguageGrid`
-
 ```typescript
+import React from 'react';
+import Translate from '@docusaurus/Translate';
 interface Language {
   name: string;
   icon: string;
@@ -5313,11 +5376,9 @@ export default function LanguageGrid(): JSX.Element {
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/TokenComparison.tsx
 
-**Imports:**
-- `import React, {useState} from 'react';`
-- `import Translate, {translate} from '@docusaurus/Translate';`
-
 ```typescript
+import React, {useState} from 'react';
+import Translate, {translate} from '@docusaurus/Translate';
 interface CodeExample {
   language: string;
   label: string;
@@ -5334,20 +5395,15 @@ interface CodeExample {
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/pages/index.tsx
 
-**Imports:**
-- `import type {ReactNode} from 'react';`
-- `import useDocusaurusContext from '@docusaurus/useDocusaurusContext';`
-- `import Layout from '@theme/Layout';`
-- `import Hero from '@site/src/components/Hero';`
-- `import TokenComparison from '@site/src/components/TokenComparison';`
-- `import FeaturesSection from '@site/src/components/FeaturesSection';`
-- `import LanguageGrid from '@site/src/components/LanguageGrid';`
-- `import InstallSection from '@site/src/components/InstallSection';`
-
-**Exports:**
-- `Home`
-
 ```typescript
+import type {ReactNode} from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Layout from '@theme/Layout';
+import Hero from '@site/src/components/Hero';
+import TokenComparison from '@site/src/components/TokenComparison';
+import FeaturesSection from '@site/src/components/FeaturesSection';
+import LanguageGrid from '@site/src/components/LanguageGrid';
+import InstallSection from '@site/src/components/InstallSection';
 export default function Home(): ReactNode
 ```
 
