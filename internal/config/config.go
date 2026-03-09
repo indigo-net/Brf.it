@@ -51,6 +51,10 @@ type Config struct {
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
+
+	// MaxDocLength is the maximum length of documentation comments in characters.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 
 // DefaultConfig returns a Config with all default values set.
@@ -66,6 +70,7 @@ func DefaultConfig() *Config {
 		NoTree:         false,
 		NoTokens:       false,
 		MaxFileSize:    512000, // 500KB
+		MaxDocLength:   0,      // no limit
 	}
 }
 
@@ -141,5 +146,6 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludeTree:    !c.NoTree,
 		IncludePrivate: false, // Future: add --include-private flag
 		MaxFileSize:    c.MaxFileSize,
+		MaxDocLength:   c.MaxDocLength,
 	}
 }

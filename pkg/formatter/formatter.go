@@ -45,6 +45,10 @@ type PackageData struct {
 
 	// IncludeImports indicates whether imports should be rendered.
 	IncludeImports bool
+
+	// MaxDocLength is the maximum length of documentation comments.
+	// 0 means no limit (default).
+	MaxDocLength int
 }
 
 // Formatter defines the interface for output formatting.
