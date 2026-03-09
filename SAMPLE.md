@@ -2086,6 +2086,369 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/binding.go
+
+**Imports:**
+- `import "C"`
+- `import "unsafe"`
+
+```go
+func Language() unsafe.Pointer
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/scanner.c
+
+**Imports:**
+- `#include "tree_sitter/alloc.h"`
+- `#include "tree_sitter/array.h"`
+- `#include "tree_sitter/parser.h"`
+- `#include <wctype.h>`
+
+```c
+#define LOG(...) fprintf(stderr, __VA_ARGS__)
+#define LOG(...)
+enum TokenType {
+  AUTOMATIC_SEMICOLON,
+  INDENT,
+  OUTDENT,
+  SIMPLE_STRING_START,
+  SIMPLE_STRING_MIDDLE,
+  SIMPLE_MULTILINE_STRING_START,
+  INTERPOLATED_STRING_MIDDLE,
+  INTERPOLATED_MULTILINE_STRING_MIDDLE,
+  RAW_STRING_START,
+  RAW_STRING_MIDDLE,
+  RAW_STRING_MULTILINE_MIDDLE,
+  SINGLE_LINE_STRING_END,
+  MULTILINE_STRING_END,
+  ELSE,
+  CATCH,
+  FINALLY,
+  EXTENDS,
+  DERIVES,
+  WITH,
+  ERROR_SENTINEL
+}
+typedef struct {
+  Array(int16_t) indents;
+  int16_t last_indentation_size;
+  int16_t last_newline_count;
+  int16_t last_column;
+} Scanner;
+void *tree_sitter_scala_external_scanner_create()
+void tree_sitter_scala_external_scanner_destroy(void *payload)
+unsigned tree_sitter_scala_external_scanner_serialize(void *payload, char *buffer)
+void tree_sitter_scala_external_scanner_deserialize(void *payload, const char *buffer,
+                                                    unsigned length)
+static inline void advance(TSLexer *lexer)
+static inline void skip(TSLexer *lexer)
+typedef enum {
+  STRING_MODE_SIMPLE,
+  STRING_MODE_INTERPOLATED,
+  STRING_MODE_RAW
+} StringMode;
+static bool scan_string_content(TSLexer *lexer, bool is_multiline, StringMode string_mode)
+static bool detect_comment_start(TSLexer *lexer)
+static bool scan_word(TSLexer *lexer, const char* const word)
+static inline void debug_indents(Scanner *scanner)
+bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
+                                             const bool *valid_symbols)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/alloc.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdio.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_ALLOC_H_
+#define ts_malloc  ts_current_malloc
+#define ts_calloc  ts_current_calloc
+#define ts_realloc ts_current_realloc
+#define ts_free    ts_current_free
+#define ts_malloc  malloc
+#define ts_calloc  calloc
+#define ts_realloc realloc
+#define ts_free    free
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/array.h
+
+**Imports:**
+- `#include "./alloc.h"`
+- `#include <assert.h>`
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+- `#include <string.h>`
+
+```cpp
+#define TREE_SITTER_ARRAY_H_
+#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }
+#define array_init(self) \
+  ((self)->size = 0, (self)->capacity = 0, (self)->contents = NULL)
+#define array_new() \
+  { NULL, 0, 0 }
+#define array_get(self, _index) \
+  (assert((uint32_t)(_index) < (self)->size), &(self)->contents[_index])
+#define array_front(self) array_get(self, 0)
+#define array_back(self) array_get(self, (self)->size - 1)
+#define array_clear(self) ((self)->size = 0)
+#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)
+#define array_delete(self) _array__delete((Array *)(self))
+#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)->contents[(self)->size++] = (element))
+#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)->contents + (self)->size, 0, (count) * array_elem_size(self)); \
+    (self)->size += (count); \
+  } while (0)
+#define array_push_all(self, other)                                       \
+  array_extend((self), (other)->size, (other)->contents)
+#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)->size, \
+    0, count,  contents                                        \
+  )
+#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )
+#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &(element))
+#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)
+#define array_pop(self) ((self)->contents[--(self)->size])
+#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))
+#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))
+#define array_elem_size(self) (sizeof *(self)->contents)
+#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)
+#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)
+#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &(value), &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)
+#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)
+static inline void _array__delete(Array *self)
+static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)
+static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
+static inline void _array__assign(Array *self, const Array *other, size_t element_size)
+static inline void _array__swap(Array *self, Array *other)
+static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
+static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)
+#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)->size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size > 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&((self)->contents[mid_index] suffix), (needle)); \
+      if (comparison <= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&((self)->contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison < 0) *(_index) += 1; \
+  } while (0)
+#define _compare_int(a, b) ((int)*(a) - (int)(b))
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/parser.h
+
+**Imports:**
+- `#include <stdbool.h>`
+- `#include <stdint.h>`
+- `#include <stdlib.h>`
+
+```cpp
+#define TREE_SITTER_PARSER_H_
+#define ts_builtin_sym_error ((TSSymbol)-1)
+#define ts_builtin_sym_end 0
+#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024
+typedef uint16_t TSStateId;
+typedef uint16_t TSSymbol;
+typedef uint16_t TSFieldId;
+struct TSLanguage
+typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;
+typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice;
+typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;
+struct TSLexer
+struct TSLexer
+typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;
+typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;
+typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;
+typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;
+typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;
+struct TSLanguage
+static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
+#define UNUSED __pragma(warning(suppress : 4101))
+#define UNUSED __attribute__((unused))
+#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer->advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer->lookahead;
+#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }
+#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i < sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }
+#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }
+#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer->result_symbol = symbol_value; \
+  lexer->mark_end(lexer);
+#define END_STATE() return result;
+#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)
+#define STATE(id) id
+#define ACTIONS(id) id
+#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}
+#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}
+#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}
+#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}
+#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}
+#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go
 
 **Imports:**
@@ -3828,6 +4191,128 @@ func TestRustQueryCaptures(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala.go
+
+**Imports:**
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"`
+
+```go
+type ScalaQuery struct {
+	language *sitter.Language
+	query    []byte
+}
+func NewScalaQuery() *ScalaQuery
+func (q *ScalaQuery) Language() *sitter.Language
+func (q *ScalaQuery) Query() []byte
+func (q *ScalaQuery) Captures() []string
+func (q *ScalaQuery) KindMapping() map[string]string
+func (q *ScalaQuery) ImportQuery() []byte
+scalaImportQueryPattern = `
+; Import statements
+(import_declaration) @import_path
+`
+scalaQueryPattern = `
+; Function definitions (def with body)
+(function_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Function declarations (abstract methods in traits/classes, no body)
+(function_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Class definitions (class, abstract class, case class, sealed class, implicit class)
+(class_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Trait definitions (trait, sealed trait)
+(trait_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Object definitions (singleton, companion)
+(object_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Val definitions (val, lazy val, implicit val)
+(val_definition
+  pattern: (identifier) @name
+) @signature @kind
+
+; Val declarations (abstract val in traits)
+(val_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Var definitions
+(var_definition
+  pattern: (identifier) @name
+) @signature @kind
+
+; Var declarations (abstract var in traits)
+(var_declaration
+  name: (identifier) @name
+) @signature @kind
+
+; Type aliases
+(type_definition
+  name: (type_identifier) @name
+) @signature @kind
+
+; Enum definitions (Scala 3)
+(enum_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Given definitions (Scala 3)
+(given_definition
+  name: (identifier) @name
+) @signature @kind
+
+; Line comments
+(comment) @doc
+`
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala_test.go
+
+**Imports:**
+- `import "testing"`
+- `import "unsafe"`
+- `import sitter "github.com/tree-sitter/go-tree-sitter"`
+- `import tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"`
+
+```go
+func extractScalaNames(t *testing.T, code []byte) map[string]bool
+func extractScalaImports(t *testing.T, code []byte) []string
+imports []string
+func TestScalaQueryLanguage(t *testing.T)
+func TestScalaQueryPattern(t *testing.T)
+func TestScalaQueryImportPattern(t *testing.T)
+func TestScalaQueryExtractFunction(t *testing.T)
+func TestScalaQueryExtractTypes(t *testing.T)
+func TestScalaQueryExtractClassBody(t *testing.T)
+func TestScalaQueryExtractTraitMembers(t *testing.T)
+func TestScalaQueryExtractObjectMembers(t *testing.T)
+func TestScalaQueryExtractValVar(t *testing.T)
+func TestScalaQueryExtractTypeAlias(t *testing.T)
+func TestScalaQueryExtractEnum(t *testing.T)
+func TestScalaQueryExtractCaseClass(t *testing.T)
+func TestScalaQueryExtractExtension(t *testing.T)
+func TestScalaQueryExtractImport(t *testing.T)
+func TestScalaQueryExtractGenerics(t *testing.T)
+func TestScalaQueryKindMapping(t *testing.T)
+func TestScalaQueryCaptures(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell.go
 
 **Imports:**
@@ -4214,6 +4699,8 @@ func refineLuaFunctionKind(text string) string
 func stripLuaBody(text, kind string) string
 func stripPHPBody(text, kind string) string
 func stripRubyBody(text, kind string) string
+func stripScalaBody(text, kind string) string
+func findScalaBodyStart(text string) int
 func stripShellBody(text, kind string) string
 func findPHPBodyStart(text string) int
 func stripCSharpBody(text, kind string) string
@@ -4315,6 +4802,8 @@ func TestTreeSitterParserParsePHPImports(t *testing.T)
 func TestPHPBodyStripping(t *testing.T)
 func TestTreeSitterParserParseRuby(t *testing.T)
 func TestTreeSitterParserParseRubyImports(t *testing.T)
+func TestTreeSitterParserParseScala(t *testing.T)
+func TestTreeSitterParserParseScalaImports(t *testing.T)
 ```
 
 ---
