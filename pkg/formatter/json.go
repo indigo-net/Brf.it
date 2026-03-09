@@ -86,16 +86,3 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 	return json.Marshal(output)
 }
 
-// normalizeKind normalizes signature kinds for JSON output.
-func normalizeKind(kind string) string {
-	switch kind {
-	case "function", "method", "constructor", "destructor", "arrow", "local_function", "module_function":
-		return "function"
-	case "class", "interface", "type", "struct", "enum", "record", "annotation", "typedef", "namespace", "template":
-		return "type"
-	case "variable", "field", "macro", "export":
-		return "variable"
-	default:
-		return kind
-	}
-}
