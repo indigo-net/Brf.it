@@ -103,6 +103,15 @@ const elixirQueryPattern = `
   (do_block)
 ) @signature @kind
 
+; defimpl with keyword options: defimpl Protocol, for: Module do...end
+(call
+  target: (identifier)
+  (arguments
+    (alias) @name
+    (keywords))
+  (do_block)
+) @signature @kind
+
 ; Function/macro definitions with arguments: def foo(args) do...end
 (call
   target: (identifier)

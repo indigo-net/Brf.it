@@ -1691,6 +1691,22 @@ func (p *TreeSitterParser) extractImports(
 			seenPositions[startByte] = true
 
 			rawText := string(content[startByte:(*importNode).EndByte()])
+
+			// Elixir: the broad import query pattern also matches defmodule/defprotocol/defimpl
+			// (since they also take alias arguments). Filter them out.
+			if opts.Language == "elixir" {
+				skip := false
+				for _, defKw := range []string{"defmodule ", "defprotocol ", "defimpl "} {
+					if strings.HasPrefix(rawText, defKw) {
+						skip = true
+						break
+					}
+				}
+				if skip {
+					continue
+				}
+			}
+
 			// Remove blank lines (Go module group separators, etc.)
 			rawText = removeBlankLines(rawText)
 			if rawText != "" {

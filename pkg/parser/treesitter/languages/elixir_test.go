@@ -238,6 +238,19 @@ end
 	if !names["to_string"] {
 		t.Errorf("expected to find function 'to_string', found: %v", names)
 	}
+
+	// Verify defimpl is captured (alias "Printable" from the defimpl arguments)
+	sigs := extractElixirSignatures(t, code)
+	foundDefimpl := false
+	for _, sig := range sigs {
+		if strings.Contains(sig, "defimpl Printable") {
+			foundDefimpl = true
+			break
+		}
+	}
+	if !foundDefimpl {
+		t.Errorf("expected to find defimpl signature, got: %v", sigs)
+	}
 }
 
 func TestElixirQueryExtractMacro(t *testing.T) {

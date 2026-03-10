@@ -2697,4 +2697,105 @@ end
 	if len(result.RawImports) < 2 {
 		t.Errorf("expected at least 2 imports, got %d: %v", len(result.RawImports), result.RawImports)
 	}
+
+	// Verify defmodule is NOT included in imports
+	for _, imp := range result.RawImports {
+		if strings.HasPrefix(imp, "defmodule") {
+			t.Errorf("defmodule should not be in imports: %q", imp)
+		}
+	}
+
+	// Verify actual imports are present
+	foundImport := false
+	for _, imp := range result.RawImports {
+		if strings.HasPrefix(imp, "import ") || strings.HasPrefix(imp, "alias ") ||
+			strings.HasPrefix(imp, "use ") || strings.HasPrefix(imp, "require ") {
+			foundImport = true
+			break
+		}
+	}
+	if !foundImport {
+		t.Errorf("expected at least one import/alias/use/require statement, got: %v", result.RawImports)
+	}
+}
+
+func TestRefineElixirCallKind(t *testing.T) {
+	tests := []struct {
+		text string
+		want string
+	}{
+		{"defmodule MyApp do", "class"},
+		{"defprotocol Printable do", "interface"},
+		{"defimpl Printable, for: Integer do", "impl"},
+		{"def hello(name) do", "function"},
+		{"defp validate(x) when is_number(x) do", "function"},
+		{"defmacro unless(condition, do: block) do", "macro"},
+		{"defmacrop private_macro(x) do", "macro"},
+		{"defguard is_positive(x) when is_integer(x) and x > 0", "function"},
+		{"defguardp is_even(x) when rem(x, 2) == 0", "function"},
+		{"defdelegate keys(map), to: Map", "function"},
+		{"defstruct [:name, :email]", "struct"},
+		{"if condition do", ""},
+		{"case value do", ""},
+		{"Enum.map(list, fn x -> x end)", ""},
+		{"IO.puts(\"hello\")", ""},
+	}
+
+	for _, tt := range tests {
+		got := refineElixirCallKind(tt.text)
+		if got != tt.want {
+			t.Errorf("refineElixirCallKind(%q) = %q, want %q", tt.text, got, tt.want)
+		}
+	}
+}
+
+func TestRefineElixirAttrKind(t *testing.T) {
+	tests := []struct {
+		text         string
+		capturedName string
+		wantKind     string
+		wantName     string
+	}{
+		{"@spec add(integer(), integer()) :: integer()", "spec", "type", "add"},
+		{"@spec foo :: bar", "spec", "type", "foo"},
+		{"@type color :: :red | :green | :blue", "type", "type", "color"},
+		{"@typep internal_state :: map()", "typep", "type", "internal_state"},
+		{"@opaque hidden :: %__MODULE__{}", "opaque", "type", "hidden"},
+		{"@callback handle_event(term()) :: {:ok, term()}", "callback", "type", "handle_event"},
+		{"@doc \"Some documentation\"", "doc", "", ""},
+		{"@moduledoc \"Module docs\"", "moduledoc", "", ""},
+		{"@behaviour GenServer", "behaviour", "", ""},
+	}
+
+	for _, tt := range tests {
+		gotKind, gotName := refineElixirAttrKind(tt.text, tt.capturedName)
+		if gotKind != tt.wantKind || gotName != tt.wantName {
+			t.Errorf("refineElixirAttrKind(%q, %q) = (%q, %q), want (%q, %q)",
+				tt.text, tt.capturedName, gotKind, gotName, tt.wantKind, tt.wantName)
+		}
+	}
+}
+
+func TestStripElixirBody(t *testing.T) {
+	tests := []struct {
+		text string
+		kind string
+		want string
+	}{
+		{"def add(a, b) do\n  a + b\nend", "function", "def add(a, b)"},
+		{"defp validate(x) do\n  :ok\nend", "function", "defp validate(x)"},
+		{"defmodule MyApp do\n  use GenServer\nend", "class", "defmodule MyApp"},
+		{"def add(a, b), do: a + b", "function", "def add(a, b)"},
+		{"@spec add(integer(), integer()) :: integer()", "type", "@spec add(integer(), integer()) :: integer()"},
+		{"@type color :: :red | :green | :blue", "type", "@type color :: :red | :green | :blue"},
+		{"defstruct [:name, :email]", "struct", "defstruct [:name, :email]"},
+		{"def zero_arity do\n  :ok\nend", "function", "def zero_arity"},
+	}
+
+	for _, tt := range tests {
+		got := stripElixirBody(tt.text, tt.kind)
+		if got != tt.want {
+			t.Errorf("stripElixirBody(%q, %q) = %q, want %q", tt.text, tt.kind, got, tt.want)
+		}
+	}
 }
