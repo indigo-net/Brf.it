@@ -420,6 +420,51 @@ main &quot;$@&quot;</imports>
       <function>func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
       <variable>newPrefix string</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/internal/profiling/profiling.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;os&quot;
+	&quot;runtime&quot;
+	&quot;runtime/pprof&quot;
+)</imports>
+      <type>type MemoryStats struct {
+	// Alloc is bytes of allocated heap objects.
+	Alloc uint64
+
+	// TotalAlloc is cumulative bytes allocated for heap objects.
+	TotalAlloc uint64
+
+	// Sys is total bytes of memory obtained from the OS.
+	Sys uint64
+
+	// NumGC is the number of completed GC cycles.
+	NumGC uint32
+
+	// GoroutineCount is the number of goroutines.
+	GoroutineCount int
+
+	// HeapObjects is the number of allocated heap objects.
+	HeapObjects uint64
+}</type>
+      <function>func GetMemoryStats() MemoryStats</function>
+      <variable>m runtime.MemStats</variable>
+      <function>func FormatBytes(b uint64) string</function>
+      <variable>unit = 1024</variable>
+      <function>func WriteHeapProfile(filename string) error</function>
+      <function>func StartCPUProfile(filename string) (func(), error)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/internal/profiling/profiling_test.go" language="go">
+      <imports>import (
+	&quot;os&quot;
+	&quot;testing&quot;
+)</imports>
+      <function>func TestGetMemoryStats(t *testing.T)</function>
+      <function>func TestFormatBytes(t *testing.T)</function>
+      <function>func TestWriteHeapProfile(t *testing.T)</function>
+      <function>func TestWriteHeapProfileInvalidPath(t *testing.T)</function>
+      <function>func TestStartCPUProfile(t *testing.T)</function>
+      <function>func TestStartCPUProfileInvalidPath(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go" language="go">
       <imports>import (
 	&quot;bytes&quot;

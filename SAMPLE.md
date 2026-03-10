@@ -451,6 +451,61 @@ newPrefix string
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/internal/profiling/profiling.go
+
+```go
+import (
+	"fmt"
+	"os"
+	"runtime"
+	"runtime/pprof"
+)
+type MemoryStats struct {
+	// Alloc is bytes of allocated heap objects.
+	Alloc uint64
+
+	// TotalAlloc is cumulative bytes allocated for heap objects.
+	TotalAlloc uint64
+
+	// Sys is total bytes of memory obtained from the OS.
+	Sys uint64
+
+	// NumGC is the number of completed GC cycles.
+	NumGC uint32
+
+	// GoroutineCount is the number of goroutines.
+	GoroutineCount int
+
+	// HeapObjects is the number of allocated heap objects.
+	HeapObjects uint64
+}
+func GetMemoryStats() MemoryStats
+m runtime.MemStats
+func FormatBytes(b uint64) string
+unit = 1024
+func WriteHeapProfile(filename string) error
+func StartCPUProfile(filename string) (func(), error)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/internal/profiling/profiling_test.go
+
+```go
+import (
+	"os"
+	"testing"
+)
+func TestGetMemoryStats(t *testing.T)
+func TestFormatBytes(t *testing.T)
+func TestWriteHeapProfile(t *testing.T)
+func TestWriteHeapProfileInvalidPath(t *testing.T)
+func TestStartCPUProfile(t *testing.T)
+func TestStartCPUProfileInvalidPath(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go
 
 ```go
