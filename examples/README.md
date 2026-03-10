@@ -48,6 +48,8 @@ done
 
 Body content (function implementations, view queries) is stripped — only signatures and type definitions are preserved.
 
+> **Note**: In TypeScript, top-level `export function` declarations are classified as `<variable>` (via the `export_statement` wrapper node). Class methods are classified as `<function>` as expected.
+
 ## Languages
 
 | Language | Source | Signatures | Highlights |
@@ -57,4 +59,4 @@ Body content (function implementations, view queries) is stripped — only signa
 | Python | `api.py` | 9 | dataclass, enum, type hints |
 | Java | `ShapeService.java` | 18 | interface hierarchy, generics, streams |
 | Rust | `lib.rs` | 13 | generic struct, enum, trait, impl block |
-| SQL | `schema.sql` | 6 | DDL: tables, functions, views, indexes, types |
+| SQL | `schema.sql` | 7 | DDL: tables, functions, views, indexes, types |

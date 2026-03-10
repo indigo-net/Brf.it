@@ -23,6 +23,12 @@ CREATE TABLE orders (
     status VARCHAR(50) DEFAULT 'pending',
     ordered_at TIMESTAMP DEFAULT NOW()
 )
+CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1
+)
 CREATE FUNCTION revenue_by_category(cat VARCHAR)
 RETURNS DECIMAL LANGUAGE sql
 CREATE VIEW top_products

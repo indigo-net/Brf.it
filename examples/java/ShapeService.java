@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * Represents a geometric shape with area and perimeter.
  */
-public interface Shape {
+interface Shape {
     double area();
     double perimeter();
     String name();
@@ -16,7 +16,7 @@ public interface Shape {
 /**
  * A circle defined by its radius.
  */
-public class Circle implements Shape {
+class Circle implements Shape {
     private final double radius;
 
     public Circle(double radius) {
@@ -43,7 +43,7 @@ public class Circle implements Shape {
 /**
  * A rectangle defined by width and height.
  */
-public class Rectangle implements Shape {
+class Rectangle implements Shape {
     private final double width;
     private final double height;
 

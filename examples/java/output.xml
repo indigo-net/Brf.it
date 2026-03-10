@@ -21,11 +21,11 @@
   </metadata>
   <files>
     <file path="examples/java/ShapeService.java" language="java">
-      <type>public interface Shape</type>
+      <type>interface Shape</type>
       <function>double area();</function>
       <function>double perimeter();</function>
       <function>String name();</function>
-      <type>public class Circle implements Shape</type>
+      <type>class Circle implements Shape</type>
       <function>public Circle(double radius)</function>
       <function>@Override
     public double area()</function>
@@ -33,7 +33,7 @@
     public double perimeter()</function>
       <function>@Override
     public String name()</function>
-      <type>public class Rectangle implements Shape</type>
+      <type>class Rectangle implements Shape</type>
       <function>public Rectangle(double width, double height)</function>
       <function>@Override
     public double area()</function>

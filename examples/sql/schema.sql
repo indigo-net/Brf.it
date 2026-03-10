@@ -16,6 +16,13 @@ CREATE TABLE orders (
     ordered_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1
+);
+
 -- Get total revenue by category
 CREATE FUNCTION revenue_by_category(cat VARCHAR)
 RETURNS DECIMAL AS $$

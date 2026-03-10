@@ -9,11 +9,11 @@
 ### examples/java/ShapeService.java
 
 ```java
-public interface Shape
+interface Shape
 double area();
 double perimeter();
 String name();
-public class Circle implements Shape
+class Circle implements Shape
 public Circle(double radius)
 @Override
     public double area()
@@ -21,7 +21,7 @@ public Circle(double radius)
     public double perimeter()
 @Override
     public String name()
-public class Rectangle implements Shape
+class Rectangle implements Shape
 public Rectangle(double width, double height)
 @Override
     public double area()
