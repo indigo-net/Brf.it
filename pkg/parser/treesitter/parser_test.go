@@ -3041,6 +3041,14 @@ func TestStripSQLFunctionBody(t *testing.T) {
 			"CREATE FUNCTION simple() RETURNS void",
 			"CREATE FUNCTION simple() RETURNS void",
 		},
+		{
+			"CREATE FUNCTION body_tag(id INT) RETURNS TEXT AS $BODY$ BEGIN RETURN 'x'; END; $BODY$ LANGUAGE plpgsql",
+			"CREATE FUNCTION body_tag(id INT) RETURNS TEXT LANGUAGE plpgsql",
+		},
+		{
+			"CREATE FUNCTION newline_as(id INT) RETURNS TEXT AS\n$$ BEGIN RETURN 'x'; END; $$ LANGUAGE plpgsql",
+			"CREATE FUNCTION newline_as(id INT) RETURNS TEXT LANGUAGE plpgsql",
+		},
 	}
 
 	for _, tt := range tests {

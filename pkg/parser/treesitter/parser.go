@@ -1860,12 +1860,7 @@ func extractSQLDDLName(text string) string {
 	upper := strings.ToUpper(text)
 
 	// CREATE [UNIQUE] INDEX [IF NOT EXISTS] name ON ...
-	if strings.Contains(upper, "INDEX") {
-		// Find "INDEX" keyword, skip optional "IF NOT EXISTS", take next word
-		idx := strings.Index(upper, "INDEX")
-		if idx < 0 {
-			return ""
-		}
+	if idx := strings.Index(upper, "INDEX"); idx >= 0 {
 		rest := strings.TrimSpace(text[idx+5:])
 		// Skip optional "IF NOT EXISTS"
 		upperRest := strings.ToUpper(rest)
@@ -1885,11 +1880,7 @@ func extractSQLDDLName(text string) string {
 	}
 
 	// CREATE SCHEMA [IF NOT EXISTS] name
-	if strings.Contains(upper, "SCHEMA") {
-		idx := strings.Index(upper, "SCHEMA")
-		if idx < 0 {
-			return ""
-		}
+	if idx := strings.Index(upper, "SCHEMA"); idx >= 0 {
 		rest := strings.TrimSpace(text[idx+6:])
 		upperRest := strings.ToUpper(rest)
 		if strings.HasPrefix(upperRest, "IF NOT EXISTS") {
@@ -1971,29 +1962,40 @@ func stripSQLBody(text, kind string) string {
 
 // stripSQLFunctionBody strips the function/procedure body.
 // Keeps: CREATE [OR REPLACE] FUNCTION name(args) RETURNS type [LANGUAGE lang]
-// Strips: AS $$ ... $$ or function_body content
+// Strips: AS $$ ... $$ or AS $tag$ ... $tag$ or function_body content
 func stripSQLFunctionBody(text string) string {
 	upper := strings.ToUpper(text)
 
-	// Find "AS " followed by body delimiter ($$ or ')
+	// Find "AS" followed by body delimiter ($$, $tag$, ', or BEGIN)
+	// Try newline variants first to handle multi-line formatting
 	asIdx := -1
 	searchFrom := 0
 	for {
-		idx := strings.Index(upper[searchFrom:], " AS ")
-		if idx < 0 {
+		// Try " AS\n", " AS\r\n", " AS " in order
+		bestIdx := -1
+		bestLen := 0
+		for _, sep := range []string{" AS\n", " AS\r\n", " AS "} {
+			idx := strings.Index(upper[searchFrom:], sep)
+			if idx >= 0 && (bestIdx < 0 || idx < bestIdx) {
+				bestIdx = idx
+				bestLen = len(sep)
+			}
+		}
+		if bestIdx < 0 {
 			break
 		}
-		pos := searchFrom + idx
-		after := strings.TrimSpace(text[pos+4:])
-		if strings.HasPrefix(after, "$$") || strings.HasPrefix(after, "'") ||
+		pos := searchFrom + bestIdx
+		after := strings.TrimSpace(text[pos+bestLen:])
+		// Check for dollar-quote ($$, $tag$), single-quote, or BEGIN
+		if strings.HasPrefix(after, "$") || strings.HasPrefix(after, "'") ||
 			strings.HasPrefix(strings.ToUpper(after), "BEGIN") {
 			asIdx = pos
 			break
 		}
-		searchFrom = pos + 4
+		searchFrom = pos + bestLen
 	}
 
-	if asIdx > 0 {
+	if asIdx >= 0 {
 		result := strings.TrimSpace(text[:asIdx])
 		// Check if LANGUAGE clause is after the body — append it
 		langIdx := strings.LastIndex(upper, "LANGUAGE ")
@@ -2026,7 +2028,7 @@ func stripSQLViewBody(text string) string {
 	// Search newline variants first to avoid matching column alias AS inside SELECT
 	for _, sep := range []string{" AS\n", " AS\r\n", " AS "} {
 		idx := strings.Index(upper, sep)
-		if idx > 0 {
+		if idx >= 0 {
 			return strings.TrimSpace(text[:idx])
 		}
 	}
