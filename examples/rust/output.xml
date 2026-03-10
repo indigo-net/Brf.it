@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+    <version>dev</version>
+    <path>examples/rust</path>
+    <schema>
+      <tag name="metadata" description="Project metadata container" />
+      <tag name="version" description="brf.it version" />
+      <tag name="path" description="Root path of the scanned project" />
+      <tag name="tree" description="Directory tree structure" />
+      <tag name="files" description="Source files container" />
+      <tag name="file" description="Source file (path, language attributes)" />
+      <tag name="function" description="Function, method, or constructor declaration" />
+      <tag name="type" description="Type, class, interface, struct, or enum declaration" />
+      <tag name="variable" description="Variable, constant, or field declaration" />
+      <tag name="signature" description="Fallback for unknown declaration kinds" />
+      <tag name="imports" description="Raw import/export statements (verbatim text)" />
+      <tag name="doc" description="Documentation comment" />
+      <tag name="error" description="Parse error message" />
+    </schema>
+  </metadata>
+  <files>
+    <file path="examples/rust/lib.rs" language="rust">
+      <type>pub struct Cache&lt;V&gt;</type>
+      <type>pub enum CacheError</type>
+      <type>impl fmt::Display for CacheError</type>
+      <function>fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;&apos;_&gt;) -&gt; fmt::Result</function>
+      <type>pub trait Cacheable: Clone + fmt::Debug</type>
+      <function>fn size(&amp;self) -&gt; usize;</function>
+      <type>impl&lt;V: Clone&gt; Cache&lt;V&gt;</type>
+      <function>pub fn new(capacity: usize) -&gt; Self</function>
+      <function>pub fn get(&amp;self, key: &amp;str) -&gt; Option&lt;&amp;V&gt;</function>
+      <function>pub fn insert(&amp;mut self, key: String, value: V) -&gt; Result&lt;(), CacheError&gt;</function>
+      <function>pub fn remove(&amp;mut self, key: &amp;str) -&gt; Result&lt;V, CacheError&gt;</function>
+      <function>pub fn len(&amp;self) -&gt; usize</function>
+      <function>pub fn is_empty(&amp;self) -&gt; bool</function>
+    </file>
+  </files>
+</brfit>
