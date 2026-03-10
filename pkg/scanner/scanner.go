@@ -174,7 +174,7 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 	// Check if root path is a file
 	info, err := os.Stat(s.opts.RootPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot access path %q: %w", s.opts.RootPath, err)
 	}
 
 	if !info.IsDir() {
@@ -194,9 +194,9 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 			var warning string
 			switch {
 			case os.IsPermission(err):
-				warning = fmt.Sprintf("permission denied: %s", path)
+				warning = fmt.Sprintf("permission denied: %s (check file permissions or run with appropriate privileges)", path)
 			case os.IsNotExist(err):
-				warning = fmt.Sprintf("file not found: %s", path)
+				warning = fmt.Sprintf("file not found: %s (may have been deleted during scan)", path)
 			default:
 				warning = fmt.Sprintf("skipping: %s: %v", path, err)
 			}
@@ -207,7 +207,7 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 
 		// Skip symlinks
 		if d.Type()&os.ModeSymlink != 0 {
-			warning := fmt.Sprintf("skipping symlink: %s", path)
+			warning := fmt.Sprintf("skipping symlink: %s (symlinks are not followed for security)", path)
 			s.logger.Printf("WARN: %s", warning)
 			result.Warnings = append(result.Warnings, warning)
 			if d.IsDir() {
