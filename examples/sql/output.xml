@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+    <version>dev</version>
+    <path>examples/sql</path>
+    <schema>
+      <tag name="metadata" description="Project metadata container" />
+      <tag name="version" description="brf.it version" />
+      <tag name="path" description="Root path of the scanned project" />
+      <tag name="tree" description="Directory tree structure" />
+      <tag name="files" description="Source files container" />
+      <tag name="file" description="Source file (path, language attributes)" />
+      <tag name="function" description="Function, method, or constructor declaration" />
+      <tag name="type" description="Type, class, interface, struct, or enum declaration" />
+      <tag name="variable" description="Variable, constant, or field declaration" />
+      <tag name="signature" description="Fallback for unknown declaration kinds" />
+      <tag name="imports" description="Raw import/export statements (verbatim text)" />
+      <tag name="doc" description="Documentation comment" />
+      <tag name="error" description="Parse error message" />
+    </schema>
+  </metadata>
+  <files>
+    <file path="examples/sql/schema.sql" language="sql">
+      <type>CREATE TABLE products (
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    category VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+)</type>
+      <type>CREATE TABLE orders (
+    id BIGINT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    total DECIMAL(10, 2),
+    status VARCHAR(50) DEFAULT &apos;pending&apos;,
+    ordered_at TIMESTAMP DEFAULT NOW()
+)</type>
+      <type>CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1
+)</type>
+      <function>CREATE FUNCTION revenue_by_category(cat VARCHAR)
+RETURNS DECIMAL LANGUAGE sql</function>
+      <type>CREATE VIEW top_products</type>
+      <variable>CREATE INDEX idx_products_category ON products (category)</variable>
+      <type>CREATE TYPE order_status AS ENUM (&apos;pending&apos;, &apos;confirmed&apos;, &apos;shipped&apos;, &apos;delivered&apos;)</type>
+    </file>
+  </files>
+</brfit>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<brfit>
+  <metadata>
+    <version>dev</version>
+    <path>examples/typescript</path>
+    <schema>
+      <tag name="metadata" description="Project metadata container" />
+      <tag name="version" description="brf.it version" />
+      <tag name="path" description="Root path of the scanned project" />
+      <tag name="tree" description="Directory tree structure" />
+      <tag name="files" description="Source files container" />
+      <tag name="file" description="Source file (path, language attributes)" />
+      <tag name="function" description="Function, method, or constructor declaration" />
+      <tag name="type" description="Type, class, interface, struct, or enum declaration" />
+      <tag name="variable" description="Variable, constant, or field declaration" />
+      <tag name="signature" description="Fallback for unknown declaration kinds" />
+      <tag name="imports" description="Raw import/export statements (verbatim text)" />
+      <tag name="doc" description="Documentation comment" />
+      <tag name="error" description="Parse error message" />
+    </schema>
+  </metadata>
+  <files>
+    <file path="examples/typescript/app.ts" language="typescript">
+      <type>interface AppConfig {
+  port: number;
+  host: string;
+  debug: boolean;
+}</type>
+      <type>interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+}</type>
+      <variable>export function createDefaultConfig(): AppConfig</variable>
+      <type>class Repository&lt;T extends { id: string }&gt;</type>
+      <function>async findById(id: string): Promise&lt;T | undefined&gt;</function>
+      <function>async save(item: T): Promise&lt;T&gt;</function>
+      <function>async delete(id: string): Promise&lt;boolean&gt;</function>
+      <function>async findAll(): Promise&lt;T[]&gt;</function>
+      <variable>export const formatUser = (user: User): string</variable>
+      <variable>export function isUser(value: unknown): value is User</variable>
+    </file>
+  </files>
+</brfit>
