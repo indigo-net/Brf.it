@@ -2817,6 +2817,341 @@ import &quot;unsafe&quot;</imports>
     .type = TSParseActionTypeAccept \
   }}</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/binding.go" language="go">
+      <imports>import &quot;C&quot;
+import &quot;unsafe&quot;</imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/scanner.c" language="c">
+      <imports>#include &quot;tree_sitter/parser.h&quot;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;wctype.h&gt;</imports>
+      <type>enum TokenType {
+  DOLLAR_QUOTED_STRING_START_TAG,
+  DOLLAR_QUOTED_STRING_END_TAG,
+  DOLLAR_QUOTED_STRING
+}</type>
+      <variable>#define MALLOC_STRING_SIZE 1024</variable>
+      <type>struct LexerState {
+  char* start_tag;
+}</type>
+      <function>void *tree_sitter_sql_external_scanner_create()</function>
+      <function>void tree_sitter_sql_external_scanner_destroy(void *payload)</function>
+      <function>static char* add_char(char* text, size_t* text_size, char c, int index)</function>
+      <function>static char* scan_dollar_string_tag(TSLexer *lexer)</function>
+      <function>bool tree_sitter_sql_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>unsigned tree_sitter_sql_external_scanner_serialize(void *payload, char *buffer)</function>
+      <function>void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/alloc.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/array.h" language="cpp">
+      <imports>#include &quot;./alloc.h&quot;
+#include &lt;assert.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;</imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity)        \
+  ((self)-&gt;contents = _array__reserve(           \
+    (void *)(self)-&gt;contents, &amp;(self)-&gt;capacity, \
+    array_elem_size(self), new_capacity)         \
+  )</variable>
+      <variable>#define array_delete(self)                           \
+  do {                                               \
+    if ((self)-&gt;contents) ts_free((self)-&gt;contents); \
+    (self)-&gt;contents = NULL;                         \
+    (self)-&gt;size = 0;                                \
+    (self)-&gt;capacity = 0;                            \
+  } while (0)</variable>
+      <variable>#define array_push(self, element)                                 \
+  do {                                                            \
+    (self)-&gt;contents = _array__grow(                              \
+      (void *)(self)-&gt;contents, (self)-&gt;size, &amp;(self)-&gt;capacity,  \
+      1, array_elem_size(self)                                    \
+    );                                                            \
+   (self)-&gt;contents[(self)-&gt;size++] = (element);                  \
+  } while(0)</variable>
+      <variable>#define array_grow_by(self, count)                                               \
+  do {                                                                           \
+    if ((count) == 0) break;                                                     \
+    (self)-&gt;contents = _array__grow(                                             \
+      (self)-&gt;contents, (self)-&gt;size, &amp;(self)-&gt;capacity,                         \
+      count, array_elem_size(self)                                               \
+    );                                                                           \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count);                                                     \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other) \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, other_contents)                 \
+  (self)-&gt;contents = _array__splice(                              \
+    (void*)(self)-&gt;contents, &amp;(self)-&gt;size, &amp;(self)-&gt;capacity,    \
+    array_elem_size(self), (self)-&gt;size, 0, count, other_contents \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents) \
+  (self)-&gt;contents = _array__splice(                                   \
+    (void *)(self)-&gt;contents, &amp;(self)-&gt;size, &amp;(self)-&gt;capacity,        \
+    array_elem_size(self), _index, old_count, new_count, new_contents  \
+  )</variable>
+      <variable>#define array_insert(self, _index, element)                     \
+  (self)-&gt;contents = _array__splice(                            \
+    (void *)(self)-&gt;contents, &amp;(self)-&gt;size, &amp;(self)-&gt;capacity, \
+    array_elem_size(self), _index, 0, 1, &amp;(element)             \
+  )</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((void *)(self)-&gt;contents, &amp;(self)-&gt;size, array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other)                                   \
+  (self)-&gt;contents = _array__assign(                                \
+    (void *)(self)-&gt;contents, &amp;(self)-&gt;size, &amp;(self)-&gt;capacity,     \
+    (const void *)(other)-&gt;contents, (other)-&gt;size, array_elem_size(self) \
+  )</variable>
+      <variable>#define array_swap(self, other)                                     \
+  do {                                                              \
+    void *_array_swap_tmp = (void *)(self)-&gt;contents;               \
+    (self)-&gt;contents = (other)-&gt;contents;                           \
+    (other)-&gt;contents = _array_swap_tmp;                            \
+    _array__swap(&amp;(self)-&gt;size, &amp;(self)-&gt;capacity,                  \
+                 &amp;(other)-&gt;size, &amp;(other)-&gt;capacity);               \
+  } while (0)</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__erase(void* self_contents, uint32_t *size,
+                                size_t element_size, uint32_t index)</function>
+      <function>static inline void *_array__reserve(void *contents, uint32_t *capacity,
+                                  size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
+                                 const void *other_contents, uint32_t other_size, size_t element_size)</function>
+      <function>static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
+                               uint32_t *other_size, uint32_t *other_capacity)</function>
+      <function>static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
+                               uint32_t count, size_t element_size)</function>
+      <function>static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
+                                 size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/parser.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>struct TSLanguageMetadata</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+  uint16_t reserved_word_set_id;
+} TSLexerMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go" language="go">
       <imports>import &quot;C&quot;
 import &quot;unsafe&quot;</imports>
@@ -4739,6 +5074,103 @@ import &quot;unsafe&quot;</imports>
       <function>func TestShellQueryCaptures(t *testing.T)</function>
       <function>func TestShellQueryExtractMixed(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql.go" language="go">
+      <imports>import (
+	tree_sitter_sql &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/sql&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <type>type SQLQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewSQLQuery() *SQLQuery</function>
+      <function>func (q *SQLQuery) Language() *sitter.Language</function>
+      <function>func (q *SQLQuery) Query() []byte</function>
+      <function>func (q *SQLQuery) Captures() []string</function>
+      <function>func (q *SQLQuery) KindMapping() map[string]string</function>
+      <function>func (q *SQLQuery) ImportQuery() []byte</function>
+      <variable>sqlQueryPattern = `
+; CREATE TABLE
+(create_table
+  (object_reference) @name) @signature @kind
+
+; CREATE FUNCTION
+(create_function
+  (object_reference) @name) @signature @kind
+
+; CREATE VIEW
+(create_view
+  (object_reference) @name) @signature @kind
+
+; CREATE MATERIALIZED VIEW
+(create_materialized_view
+  (object_reference) @name) @signature @kind
+
+; CREATE INDEX (name extracted Go-side)
+(create_index) @signature @kind
+
+; CREATE TYPE
+(create_type
+  (object_reference) @name) @signature @kind
+
+; CREATE TRIGGER (first object_reference = trigger name)
+(create_trigger
+  (object_reference) @name) @signature @kind
+
+; CREATE SCHEMA (bare identifier)
+(create_schema
+  (identifier) @name) @signature @kind
+
+; CREATE SEQUENCE
+(create_sequence
+  (object_reference) @name) @signature @kind
+
+; ALTER TABLE
+(alter_table
+  (object_reference) @name) @signature @kind
+
+; SQL comments (-- single-line)
+(comment) @doc
+
+; SQL multi-line comments (/* ... */ are &quot;marginalia&quot; in tree-sitter-sql)
+(marginalia) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;unsafe&quot;
+	tree_sitter_sql &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/sql&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <function>func extractSQLNames(t *testing.T, code string) []string</function>
+      <variable>names []string</variable>
+      <type>type sqlCapture struct {
+	Name      string
+	Signature string
+	Kind      string
+}</type>
+      <function>func extractSQLCaptures(t *testing.T, code string) []sqlCapture</function>
+      <variable>captures []sqlCapture</variable>
+      <variable>sc sqlCapture</variable>
+      <function>func TestSQLQueryLanguage(t *testing.T)</function>
+      <function>func TestSQLQueryPattern(t *testing.T)</function>
+      <function>func TestSQLQueryImportPattern(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateTable(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateFunction(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateView(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateIndex(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateType(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateTrigger(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateSchema(t *testing.T)</function>
+      <function>func TestSQLQueryExtractMaterializedView(t *testing.T)</function>
+      <function>func TestSQLQueryExtractAlterTable(t *testing.T)</function>
+      <function>func TestSQLQueryExtractCreateSequence(t *testing.T)</function>
+      <function>func TestSQLQueryExtractComments(t *testing.T)</function>
+      <function>func TestSQLQueryKindMapping(t *testing.T)</function>
+      <function>func TestSQLQueryCaptures(t *testing.T)</function>
+      <function>func TestSQLQuerySchemaQualifiedName(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go" language="go">
       <imports>import (
 	tree_sitter_swift &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/swift&quot;
@@ -4984,7 +5416,7 @@ import &quot;unsafe&quot;</imports>
       <type>type queryType int</type>
       <variable>queryTypeSignature queryType = iota</variable>
       <variable>queryTypeImport</variable>
-      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir&quot;</variable>
+      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql&quot;</variable>
       <type>type queryCacheKey struct {
 	lang string
 	typ  queryType
@@ -5081,6 +5513,11 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func refineElixirAttrKind(text, capturedName string) (string, string)</function>
       <function>func stripElixirBody(text, kind string) string</function>
+      <function>func extractSQLDDLName(text string) string</function>
+      <function>func extractNextSQLIdentifier(text string) string</function>
+      <function>func stripSQLBody(text, kind string) string</function>
+      <function>func stripSQLFunctionBody(text string) string</function>
+      <function>func stripSQLViewBody(text string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go" language="go">
       <imports>import (
@@ -5194,6 +5631,12 @@ import &quot;unsafe&quot;</imports>
       <function>func TestRefineElixirCallKind(t *testing.T)</function>
       <function>func TestRefineElixirAttrKind(t *testing.T)</function>
       <function>func TestStripElixirBody(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseSQL(t *testing.T)</function>
+      <variable>names []string</variable>
+      <function>func TestExtractSQLDDLName(t *testing.T)</function>
+      <function>func TestExtractNextSQLIdentifier(t *testing.T)</function>
+      <function>func TestStripSQLBody(t *testing.T)</function>
+      <function>func TestStripSQLFunctionBody(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (
