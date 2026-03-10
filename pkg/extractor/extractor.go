@@ -201,26 +201,26 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 	// Get parser for language
 	p, ok := e.registry.Get(entry.Language)
 	if !ok {
-		extracted.Error = fmt.Errorf("no parser for language: %s", entry.Language)
+		extracted.Error = fmt.Errorf("no parser for language %q in %q. Available parsers: go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala", entry.Language, entry.Path)
 		return extracted
 	}
 
 	// Read file content
 	content, err := os.ReadFile(entry.Path)
 	if err != nil {
-		extracted.Error = fmt.Errorf("failed to read file: %w", err)
+		extracted.Error = fmt.Errorf("failed to read file %q: %w", entry.Path, err)
 		return extracted
 	}
 
 	// Skip binary files
 	if isBinaryContent(content) {
-		extracted.Error = fmt.Errorf("skipping binary file: %s", entry.Path)
+		extracted.Error = fmt.Errorf("skipping binary file %q (detected NUL byte in content)", entry.Path)
 		return extracted
 	}
 
 	// TOCTOU guard: re-check file size after reading
 	if opts.MaxFileSize > 0 && int64(len(content)) > opts.MaxFileSize {
-		extracted.Error = fmt.Errorf("file size changed since scan: %s (%d > %d)",
+		extracted.Error = fmt.Errorf("file size changed since scan: %q (%d > %d bytes limit)",
 			entry.Path, len(content), opts.MaxFileSize)
 		return extracted
 	}
@@ -233,7 +233,7 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 		IncludeImports: opts.IncludeImports,
 	})
 	if err != nil {
-		extracted.Error = fmt.Errorf("failed to parse: %w", err)
+		extracted.Error = fmt.Errorf("failed to parse %q: %w", entry.Path, err)
 		return extracted
 	}
 

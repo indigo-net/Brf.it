@@ -41,6 +41,9 @@ const (
 	queryTypeImport
 )
 
+// supportedLangs is the list of languages with Tree-sitter parsers available.
+const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala"
+
 // queryCacheKey combines language and query type for cache lookup.
 type queryCacheKey struct {
 	lang string
@@ -148,13 +151,13 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 	// Determine language
 	lang := opts.Language
 	if lang == "" {
-		return nil, fmt.Errorf("language must be specified")
+		return nil, fmt.Errorf("language must be specified in Options.Language (received empty string). Supported: %s", supportedLangs)
 	}
 
 	// Get language query
 	query, ok := p.queries[lang]
 	if !ok {
-		return nil, fmt.Errorf("unsupported language: %s", lang)
+		return nil, fmt.Errorf("unsupported language %q. Available parsers: %s", lang, supportedLangs)
 	}
 
 	// Get parser from pool
@@ -164,13 +167,13 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 	// Set language
 	tsLang := query.Language()
 	if err := sitterParser.SetLanguage(tsLang); err != nil {
-		return nil, fmt.Errorf("failed to set language: %w", err)
+		return nil, fmt.Errorf("failed to initialize %q parser: %w (grammar may be corrupted or incompatible)", lang, err)
 	}
 
 	// Parse content (no conversion needed - already []byte)
 	tree := sitterParser.Parse(content, nil)
 	if tree == nil {
-		return nil, fmt.Errorf("failed to parse content")
+		return nil, fmt.Errorf("failed to parse content for language %q (content may be malformed or parser error occurred)", lang)
 	}
 	defer tree.Close()
 
