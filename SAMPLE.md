@@ -4873,6 +4873,7 @@ func init()
 type queryType int
 queryTypeSignature queryType = iota
 queryTypeImport
+supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala"
 type queryCacheKey struct {
 	lang string
 	typ  queryType

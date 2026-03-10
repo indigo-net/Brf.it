@@ -4485,6 +4485,7 @@ import &quot;unsafe&quot;</imports>
       <type>type queryType int</type>
       <variable>queryTypeSignature queryType = iota</variable>
       <variable>queryTypeImport</variable>
+      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala&quot;</variable>
       <type>type queryCacheKey struct {
 	lang string
 	typ  queryType
