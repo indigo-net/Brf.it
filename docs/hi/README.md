@@ -156,6 +156,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Ruby | `.rb` | [Ruby गाइड](languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scala गाइड](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixir गाइड](languages/elixir.md) |
+| SQL | `.sql` | [SQL गाइड](languages/sql.md) |
 
 ---
 

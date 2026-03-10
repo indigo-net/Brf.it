@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala", "elixir"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala", "elixir", "sql"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby", "scala", "elixir"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby", "scala", "elixir", "sql"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -2796,6 +2796,257 @@ func TestStripElixirBody(t *testing.T) {
 		got := stripElixirBody(tt.text, tt.kind)
 		if got != tt.want {
 			t.Errorf("stripElixirBody(%q, %q) = %q, want %q", tt.text, tt.kind, got, tt.want)
+		}
+	}
+}
+
+func TestTreeSitterParserParseSQL(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `-- Users table stores all user data
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email TEXT UNIQUE
+);
+
+CREATE OR REPLACE FUNCTION get_user(user_id INT) RETURNS TEXT AS $$
+BEGIN
+    RETURN 'hello';
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE VIEW active_users AS
+SELECT * FROM users WHERE active = true;
+
+CREATE INDEX idx_users_name ON users (name);
+
+CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');
+
+CREATE TRIGGER audit_trigger
+AFTER INSERT ON users
+FOR EACH ROW EXECUTE FUNCTION audit_log();
+
+ALTER TABLE users ADD COLUMN phone VARCHAR(20);
+
+CREATE SCHEMA analytics;
+
+CREATE MATERIALIZED VIEW user_stats AS
+SELECT count(*) as total FROM users;
+
+CREATE SEQUENCE order_id_seq START WITH 1;
+`
+
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "sql"})
+	if err != nil {
+		t.Fatalf("Parse() error: %v", err)
+	}
+
+	// Verify expected signatures
+	expectedNames := map[string]bool{
+		"users":         false,
+		"get_user":      false,
+		"active_users":  false,
+		"idx_users_name": false,
+		"mood":          false,
+		"audit_trigger": false,
+		"analytics":     false,
+		"user_stats":    false,
+		"order_id_seq":  false,
+	}
+
+	for _, sig := range result.Signatures {
+		if _, ok := expectedNames[sig.Name]; ok {
+			expectedNames[sig.Name] = true
+		}
+	}
+
+	for name, found := range expectedNames {
+		if !found {
+			t.Errorf("expected signature '%s' not found in parsed results", name)
+			t.Logf("All signatures: %v", func() []string {
+				var names []string
+				for _, s := range result.Signatures {
+					names = append(names, s.Name+" ("+s.Kind+")")
+				}
+				return names
+			}())
+		}
+	}
+
+	// Verify kinds (first occurrence only, since ALTER TABLE reuses names)
+	kindChecks := map[string]string{
+		"get_user":      "function",
+		"active_users":  "type",
+		"idx_users_name": "variable",
+		"mood":          "type",
+		"audit_trigger": "function",
+		"analytics":     "namespace",
+		"user_stats":    "type",
+		"order_id_seq":  "variable",
+	}
+
+	seenKind := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		if seenKind[sig.Name] {
+			continue // only check first occurrence
+		}
+		seenKind[sig.Name] = true
+		if expected, ok := kindChecks[sig.Name]; ok {
+			if sig.Kind != expected {
+				t.Errorf("signature '%s': expected kind '%s', got '%s'", sig.Name, expected, sig.Kind)
+			}
+		}
+	}
+
+	// Verify stripBody works for functions (should not contain AS $$)
+	for _, sig := range result.Signatures {
+		if sig.Name == "get_user" {
+			if strings.Contains(sig.Text, "$$") {
+				t.Errorf("function body should be stripped, but found $$ in: %s", sig.Text)
+			}
+			if !strings.Contains(sig.Text, "RETURNS TEXT") {
+				t.Errorf("function return type should be preserved: %s", sig.Text)
+			}
+		}
+	}
+
+	// Verify stripBody works for views (should not contain SELECT)
+	for _, sig := range result.Signatures {
+		if sig.Name == "active_users" {
+			if strings.Contains(sig.Text, "SELECT") {
+				t.Errorf("view query should be stripped, but found SELECT in: %s", sig.Text)
+			}
+		}
+	}
+
+}
+
+func TestExtractSQLDDLName(t *testing.T) {
+	tests := []struct {
+		text string
+		want string
+	}{
+		{"CREATE INDEX idx_users_name ON users (name)", "idx_users_name"},
+		{"CREATE UNIQUE INDEX idx_email ON users (email)", "idx_email"},
+		{"CREATE INDEX IF NOT EXISTS idx_test ON users (id)", "idx_test"},
+		{"CREATE INDEX CONCURRENTLY idx_concurrent ON users (id)", "idx_concurrent"},
+		{"CREATE SCHEMA myschema", "myschema"},
+		{"CREATE SCHEMA IF NOT EXISTS analytics", "analytics"},
+		{"CREATE INDEX my_schema.idx_name ON users (name)", "my_schema.idx_name"},
+		{"", ""},
+		{"CREATE TABLE users (id INT)", ""},
+	}
+
+	for _, tt := range tests {
+		got := extractSQLDDLName(tt.text)
+		if got != tt.want {
+			t.Errorf("extractSQLDDLName(%q) = %q, want %q", tt.text, got, tt.want)
+		}
+	}
+}
+
+func TestExtractNextSQLIdentifier(t *testing.T) {
+	tests := []struct {
+		text string
+		want string
+	}{
+		{"users", "users"},
+		{"my_table", "my_table"},
+		{"schema.table", "schema.table"},
+		{`"quoted_name"`, "quoted_name"},
+		{"ON users", "users"},
+		{"CONCURRENTLY idx_test", "idx_test"},
+		{"", ""},
+	}
+
+	for _, tt := range tests {
+		got := extractNextSQLIdentifier(tt.text)
+		if got != tt.want {
+			t.Errorf("extractNextSQLIdentifier(%q) = %q, want %q", tt.text, got, tt.want)
+		}
+	}
+}
+
+func TestStripSQLBody(t *testing.T) {
+	tests := []struct {
+		text string
+		kind string
+		want string
+	}{
+		{
+			"CREATE FUNCTION add(a INT, b INT) RETURNS INT AS $$ BEGIN RETURN a+b; END; $$ LANGUAGE plpgsql",
+			"function",
+			"CREATE FUNCTION add(a INT, b INT) RETURNS INT LANGUAGE plpgsql",
+		},
+		{
+			"CREATE VIEW active_users AS SELECT * FROM users WHERE active = true",
+			"type",
+			"CREATE VIEW active_users",
+		},
+		{
+			"CREATE VIEW active_users AS\nSELECT * FROM users WHERE active = true",
+			"type",
+			"CREATE VIEW active_users",
+		},
+		{
+			"CREATE MATERIALIZED VIEW stats AS SELECT count(*) FROM users",
+			"type",
+			"CREATE MATERIALIZED VIEW stats",
+		},
+		{
+			"CREATE TABLE users (id INT, name TEXT)",
+			"struct",
+			"CREATE TABLE users (id INT, name TEXT)",
+		},
+		{
+			"CREATE INDEX idx_name ON users (name)",
+			"variable",
+			"CREATE INDEX idx_name ON users (name)",
+		},
+		{
+			"CREATE TRIGGER audit_trigger AFTER INSERT ON users FOR EACH ROW EXECUTE FUNCTION audit_log()",
+			"function",
+			"CREATE TRIGGER audit_trigger AFTER INSERT ON users FOR EACH ROW EXECUTE FUNCTION audit_log()",
+		},
+		{
+			"CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy')",
+			"type",
+			"CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy')",
+		},
+	}
+
+	for _, tt := range tests {
+		got := stripSQLBody(tt.text, tt.kind)
+		if got != tt.want {
+			t.Errorf("stripSQLBody(%q, %q) = %q, want %q", tt.text, tt.kind, got, tt.want)
+		}
+	}
+}
+
+func TestStripSQLFunctionBody(t *testing.T) {
+	tests := []struct {
+		text string
+		want string
+	}{
+		{
+			"CREATE FUNCTION add(a INT) RETURNS INT AS $$ BEGIN RETURN a; END; $$ LANGUAGE plpgsql",
+			"CREATE FUNCTION add(a INT) RETURNS INT LANGUAGE plpgsql",
+		},
+		{
+			"CREATE OR REPLACE FUNCTION get_name(id INT) RETURNS TEXT AS 'SELECT name FROM users' LANGUAGE sql",
+			"CREATE OR REPLACE FUNCTION get_name(id INT) RETURNS TEXT LANGUAGE sql",
+		},
+		{
+			"CREATE FUNCTION simple() RETURNS void",
+			"CREATE FUNCTION simple() RETURNS void",
+		},
+	}
+
+	for _, tt := range tests {
+		got := stripSQLFunctionBody(tt.text)
+		if got != tt.want {
+			t.Errorf("stripSQLFunctionBody(%q) = %q, want %q", tt.text, got, tt.want)
 		}
 	}
 }

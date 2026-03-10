@@ -88,6 +88,7 @@ func DefaultScanOptions() *ScanOptions {
 			".sc":    "scala",
 			".ex":    "elixir",
 			".exs":   "elixir",
+			".sql":   "sql",
 		},
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,

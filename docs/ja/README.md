@@ -156,6 +156,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Ruby | `.rb` | [Rubyガイド](languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scalaガイド](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixirガイド](languages/elixir.md) |
+| SQL | `.sql` | [SQLガイド](languages/sql.md) |
 
 ---
 

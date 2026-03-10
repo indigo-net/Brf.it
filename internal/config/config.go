@@ -138,6 +138,7 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".sc":    "scala",
 		".ex":    "elixir",
 		".exs":   "elixir",
+		".sql":   "sql",
 	}
 }
 
