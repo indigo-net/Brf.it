@@ -78,6 +78,136 @@ func TestWriteToFile(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/examples/go/main.go
+
+```go
+import (
+	"fmt"
+	"math"
+)
+type Point struct {
+	X, Y float64
+}
+func (p Point) Distance() float64
+func (p Point) Add(other Point) Point
+type Shape interface {
+	Area() float64
+	Perimeter() float64
+}
+type Circle struct {
+	Center Point
+	Radius float64
+}
+func (c Circle) Area() float64
+func (c Circle) Perimeter() float64
+func NewCircle(center Point, radius float64) (*Circle, error)
+func main()
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/examples/java/ShapeService.java
+
+```java
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
+interface Shape
+double area();
+double perimeter();
+String name();
+class Circle implements Shape
+public Circle(double radius)
+@Override
+    public double area()
+@Override
+    public double perimeter()
+@Override
+    public String name()
+class Rectangle implements Shape
+public Rectangle(double width, double height)
+@Override
+    public double area()
+@Override
+    public double perimeter()
+@Override
+    public String name()
+public class ShapeService
+public void addShape(Shape shape)
+public double totalArea()
+public Optional<Shape> largestShape()
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/examples/python/api.py
+
+```python
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Optional
+from enum import Enum
+class TaskStatus(Enum)
+class Task
+class TaskRepository
+def __init__(self)
+def create(self, title: str) -> Task
+def get(self, task_id: int) -> Optional[Task]
+def complete(self, task_id: int) -> bool
+def list_by_status(self, status: TaskStatus) -> list[Task]
+def format_task(task: Task) -> str
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/examples/rust/lib.rs
+
+```rust
+use std::collections::HashMap;
+use std::fmt;
+pub struct Cache<V>
+pub enum CacheError
+impl fmt::Display for CacheError
+fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+pub trait Cacheable: Clone + fmt::Debug
+fn size(&self) -> usize;
+impl<V: Clone> Cache<V>
+pub fn new(capacity: usize) -> Self
+pub fn get(&self, key: &str) -> Option<&V>
+pub fn insert(&mut self, key: String, value: V) -> Result<(), CacheError>
+pub fn remove(&mut self, key: &str) -> Result<V, CacheError>
+pub fn len(&self) -> usize
+pub fn is_empty(&self) -> bool
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/examples/typescript/app.ts
+
+```typescript
+interface AppConfig {
+  port: number;
+  host: string;
+  debug: boolean;
+}
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+}
+export function createDefaultConfig(): AppConfig
+class Repository<T extends { id: string }>
+async findById(id: string): Promise<T | undefined>
+async save(item: T): Promise<T>
+async delete(id: string): Promise<boolean>
+async findAll(): Promise<T[]>
+export const formatUser = (user: User): string
+export function isUser(value: unknown): value is User
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/install.sh
 
 ```shell

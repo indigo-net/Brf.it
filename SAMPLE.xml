@@ -77,6 +77,111 @@
       <function>func TestRootCommandPathNotFound(t *testing.T)</function>
       <function>func TestWriteToFile(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/go/main.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;math&quot;
+)</imports>
+      <type>type Point struct {
+	X, Y float64
+}</type>
+      <function>func (p Point) Distance() float64</function>
+      <function>func (p Point) Add(other Point) Point</function>
+      <type>type Shape interface {
+	Area() float64
+	Perimeter() float64
+}</type>
+      <type>type Circle struct {
+	Center Point
+	Radius float64
+}</type>
+      <function>func (c Circle) Area() float64</function>
+      <function>func (c Circle) Perimeter() float64</function>
+      <function>func NewCircle(center Point, radius float64) (*Circle, error)</function>
+      <function>func main()</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/java/ShapeService.java" language="java">
+      <imports>import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;</imports>
+      <type>interface Shape</type>
+      <function>double area();</function>
+      <function>double perimeter();</function>
+      <function>String name();</function>
+      <type>class Circle implements Shape</type>
+      <function>public Circle(double radius)</function>
+      <function>@Override
+    public double area()</function>
+      <function>@Override
+    public double perimeter()</function>
+      <function>@Override
+    public String name()</function>
+      <type>class Rectangle implements Shape</type>
+      <function>public Rectangle(double width, double height)</function>
+      <function>@Override
+    public double area()</function>
+      <function>@Override
+    public double perimeter()</function>
+      <function>@Override
+    public String name()</function>
+      <type>public class ShapeService</type>
+      <function>public void addShape(Shape shape)</function>
+      <function>public double totalArea()</function>
+      <function>public Optional&lt;Shape&gt; largestShape()</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/python/api.py" language="python">
+      <imports>from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Optional
+from enum import Enum</imports>
+      <type>class TaskStatus(Enum)</type>
+      <type>class Task</type>
+      <type>class TaskRepository</type>
+      <function>def __init__(self)</function>
+      <function>def create(self, title: str) -&gt; Task</function>
+      <function>def get(self, task_id: int) -&gt; Optional[Task]</function>
+      <function>def complete(self, task_id: int) -&gt; bool</function>
+      <function>def list_by_status(self, status: TaskStatus) -&gt; list[Task]</function>
+      <function>def format_task(task: Task) -&gt; str</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/rust/lib.rs" language="rust">
+      <imports>use std::collections::HashMap;
+use std::fmt;</imports>
+      <type>pub struct Cache&lt;V&gt;</type>
+      <type>pub enum CacheError</type>
+      <type>impl fmt::Display for CacheError</type>
+      <function>fn fmt(&amp;self, f: &amp;mut fmt::Formatter&lt;&apos;_&gt;) -&gt; fmt::Result</function>
+      <type>pub trait Cacheable: Clone + fmt::Debug</type>
+      <function>fn size(&amp;self) -&gt; usize;</function>
+      <type>impl&lt;V: Clone&gt; Cache&lt;V&gt;</type>
+      <function>pub fn new(capacity: usize) -&gt; Self</function>
+      <function>pub fn get(&amp;self, key: &amp;str) -&gt; Option&lt;&amp;V&gt;</function>
+      <function>pub fn insert(&amp;mut self, key: String, value: V) -&gt; Result&lt;(), CacheError&gt;</function>
+      <function>pub fn remove(&amp;mut self, key: &amp;str) -&gt; Result&lt;V, CacheError&gt;</function>
+      <function>pub fn len(&amp;self) -&gt; usize</function>
+      <function>pub fn is_empty(&amp;self) -&gt; bool</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/typescript/app.ts" language="typescript">
+      <type>interface AppConfig {
+  port: number;
+  host: string;
+  debug: boolean;
+}</type>
+      <type>interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+}</type>
+      <variable>export function createDefaultConfig(): AppConfig</variable>
+      <type>class Repository&lt;T extends { id: string }&gt;</type>
+      <function>async findById(id: string): Promise&lt;T | undefined&gt;</function>
+      <function>async save(item: T): Promise&lt;T&gt;</function>
+      <function>async delete(id: string): Promise&lt;boolean&gt;</function>
+      <function>async findAll(): Promise&lt;T[]&gt;</function>
+      <variable>export const formatUser = (user: User): string</variable>
+      <variable>export function isUser(value: unknown): value is User</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/install.sh" language="shell">
       <imports>set -e
 printf &quot;${GREEN}==&gt;${NC} %s\n&quot; &quot;$1&quot;
