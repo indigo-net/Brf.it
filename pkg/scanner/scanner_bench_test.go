@@ -43,7 +43,10 @@ func Func` + string(rune('A'+i%26)) + `() int {
 
 			opts := DefaultScanOptions()
 			opts.RootPath = tmpDir
-			s := NewScannerWithOptions(opts)
+			s, err := NewFileScanner(opts)
+			if err != nil {
+				b.Fatal(err)
+			}
 
 			b.ResetTimer()
 			b.ReportAllocs()
@@ -89,7 +92,10 @@ func Func`+string(rune('A'+i%26))+string(rune('a'+(i/26)%26))+`() int {
 
 	opts := DefaultScanOptions()
 	opts.RootPath = tmpDir
-	s := NewScannerWithOptions(opts)
+	s, err := NewFileScanner(opts)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.ReportAllocs()
@@ -140,7 +146,10 @@ node_modules/
 
 	opts := DefaultScanOptions()
 	opts.RootPath = tmpDir
-	s := NewScannerWithOptions(opts)
+	s, err := NewFileScanner(opts)
+	if err != nil {
+		b.Fatal(err)
+	}
 
 	b.ResetTimer()
 	b.ReportAllocs()
