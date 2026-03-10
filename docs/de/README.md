@@ -156,6 +156,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Ruby | `.rb` | [Ruby-Leitfaden](languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scala-Leitfaden](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixir-Leitfaden](languages/elixir.md) |
+| SQL | `.sql` | [SQL-Leitfaden](languages/sql.md) |
 
 ---
 

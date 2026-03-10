@@ -158,6 +158,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Ruby | `.rb` | [Ruby Guide](docs/languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scala Guide](docs/languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixir Guide](docs/languages/elixir.md) |
+| SQL | `.sql` | [SQL Guide](docs/languages/sql.md) |
 
 ---
 

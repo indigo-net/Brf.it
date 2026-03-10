@@ -32,6 +32,7 @@ func init() {
 	parser.RegisterParser("ruby", NewTreeSitterParser())
 	parser.RegisterParser("scala", NewTreeSitterParser())
 	parser.RegisterParser("elixir", NewTreeSitterParser())
+	parser.RegisterParser("sql", NewTreeSitterParser())
 }
 
 // queryType distinguishes between signature and import queries for caching.
@@ -43,7 +44,7 @@ const (
 )
 
 // supportedLangs is the list of languages with Tree-sitter parsers available.
-const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir"
+const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql"
 
 // queryCacheKey combines language and query type for cache lookup.
 type queryCacheKey struct {
@@ -83,6 +84,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"ruby":       languages.NewRubyQuery(),
 			"scala":      languages.NewScalaQuery(),
 			"elixir":     languages.NewElixirQuery(),
+			"sql":        languages.NewSQLQuery(),
 		},
 	}
 	p.parserPool = sync.Pool{
@@ -402,6 +404,12 @@ func (p *TreeSitterParser) extractSignatures(
 					}
 				}
 			}
+
+			// SQL: extract name from DDL text when not captured by query
+			// (CREATE INDEX and CREATE SCHEMA have bare identifiers)
+			if opts.Language == "sql" && sig.Name == "" && sig.Text != "" {
+				sig.Name = extractSQLDDLName(sig.Text)
+			}
 		}
 
 		// Only add if we have a name and signature
@@ -525,6 +533,9 @@ func isExported(name, language string) bool {
 	case "elixir":
 		// Elixir: all elements are considered exported (defp/defmacrop preserved in signature text)
 		return true
+	case "sql":
+		// SQL: all DDL statements are considered public
+		return true
 	default:
 		return false
 	}
@@ -566,6 +577,8 @@ func stripBody(text, kind, language string) string {
 		return stripScalaBody(text, kind)
 	case "elixir":
 		return stripElixirBody(text, kind)
+	case "sql":
+		return stripSQLBody(text, kind)
 	default:
 		return text
 	}
@@ -1837,5 +1850,187 @@ func stripElixirBody(text, kind string) string {
 		return strings.TrimRight(text[:idx], " \t")
 	}
 
+	return text
+}
+
+// extractSQLDDLName extracts the object name from a SQL DDL statement text.
+// Used for CREATE INDEX and CREATE SCHEMA where the name is not captured
+// by the tree-sitter query pattern.
+func extractSQLDDLName(text string) string {
+	upper := strings.ToUpper(text)
+
+	// CREATE [UNIQUE] INDEX [IF NOT EXISTS] name ON ...
+	if idx := strings.Index(upper, "INDEX"); idx >= 0 {
+		rest := strings.TrimSpace(text[idx+5:])
+		// Skip optional "IF NOT EXISTS"
+		upperRest := strings.ToUpper(rest)
+		if strings.HasPrefix(upperRest, "IF NOT EXISTS") {
+			rest = strings.TrimSpace(rest[13:])
+		} else if strings.HasPrefix(upperRest, "IF") {
+			rest = strings.TrimSpace(rest[2:])
+			if upperRestAfterIf := strings.ToUpper(rest); strings.HasPrefix(upperRestAfterIf, "NOT") {
+				rest = strings.TrimSpace(rest[3:])
+				if upperRestAfterNot := strings.ToUpper(rest); strings.HasPrefix(upperRestAfterNot, "EXISTS") {
+					rest = strings.TrimSpace(rest[6:])
+				}
+			}
+		}
+		// Take the next word (possibly schema.name)
+		return extractNextSQLIdentifier(rest)
+	}
+
+	// CREATE SCHEMA [IF NOT EXISTS] name
+	if idx := strings.Index(upper, "SCHEMA"); idx >= 0 {
+		rest := strings.TrimSpace(text[idx+6:])
+		upperRest := strings.ToUpper(rest)
+		if strings.HasPrefix(upperRest, "IF NOT EXISTS") {
+			rest = strings.TrimSpace(rest[13:])
+		}
+		return extractNextSQLIdentifier(rest)
+	}
+
+	return ""
+}
+
+// extractNextSQLIdentifier extracts the next SQL identifier from text.
+// Handles plain identifiers, schema-qualified (schema.name), and quoted identifiers.
+func extractNextSQLIdentifier(text string) string {
+	if len(text) == 0 {
+		return ""
+	}
+
+	// Handle quoted identifier
+	if text[0] == '"' || text[0] == '`' {
+		quote := text[0]
+		end := strings.IndexByte(text[1:], quote)
+		if end < 0 {
+			return ""
+		}
+		name := text[1 : end+1]
+		// Check for schema.name after closing quote
+		rest := text[end+2:]
+		if len(rest) > 0 && rest[0] == '.' {
+			return name + "." + extractNextSQLIdentifier(rest[1:])
+		}
+		return name
+	}
+
+	// Plain identifier: letters, digits, underscores
+	end := 0
+	for end < len(text) && (text[end] == '_' || text[end] == '.' ||
+		(text[end] >= 'a' && text[end] <= 'z') ||
+		(text[end] >= 'A' && text[end] <= 'Z') ||
+		(text[end] >= '0' && text[end] <= '9')) {
+		end++
+	}
+	if end == 0 {
+		return ""
+	}
+
+	name := text[:end]
+	// Don't include trailing dot
+	name = strings.TrimRight(name, ".")
+	// Skip SQL keywords that might appear as "next word"
+	upper := strings.ToUpper(name)
+	if upper == "ON" || upper == "CONCURRENTLY" {
+		rest := strings.TrimSpace(text[end:])
+		return extractNextSQLIdentifier(rest)
+	}
+	return name
+}
+
+// stripSQLBody removes the body from SQL DDL statements.
+// - Functions/Procedures: strips AS $$ ... $$ or BEGIN...END body
+// - Views: strips AS SELECT... query
+// - Tables: keeps column definitions (they ARE the schema)
+// - Others: keeps full text
+func stripSQLBody(text, kind string) string {
+	upper := strings.ToUpper(text)
+
+	// Functions/Procedures: strip body
+	if kind == "function" && !strings.Contains(upper, "TRIGGER") {
+		return stripSQLFunctionBody(text)
+	}
+
+	// Views: strip AS SELECT...
+	if kind == "type" && strings.Contains(upper, " VIEW ") {
+		return stripSQLViewBody(text)
+	}
+
+	return text
+}
+
+// stripSQLFunctionBody strips the function/procedure body.
+// Keeps: CREATE [OR REPLACE] FUNCTION name(args) RETURNS type [LANGUAGE lang]
+// Strips: AS $$ ... $$ or AS $tag$ ... $tag$ or function_body content
+func stripSQLFunctionBody(text string) string {
+	upper := strings.ToUpper(text)
+
+	// Find "AS" followed by body delimiter ($$, $tag$, ', or BEGIN)
+	// Try newline variants first to handle multi-line formatting
+	asIdx := -1
+	searchFrom := 0
+	for {
+		// Try " AS\n", " AS\r\n", " AS " in order
+		bestIdx := -1
+		bestLen := 0
+		for _, sep := range []string{" AS\n", " AS\r\n", " AS "} {
+			idx := strings.Index(upper[searchFrom:], sep)
+			if idx >= 0 && (bestIdx < 0 || idx < bestIdx) {
+				bestIdx = idx
+				bestLen = len(sep)
+			}
+		}
+		if bestIdx < 0 {
+			break
+		}
+		pos := searchFrom + bestIdx
+		after := strings.TrimSpace(text[pos+bestLen:])
+		// Check for dollar-quote ($$, $tag$), single-quote, or BEGIN
+		if strings.HasPrefix(after, "$") || strings.HasPrefix(after, "'") ||
+			strings.HasPrefix(strings.ToUpper(after), "BEGIN") {
+			asIdx = pos
+			break
+		}
+		searchFrom = pos + bestLen
+	}
+
+	if asIdx >= 0 {
+		result := strings.TrimSpace(text[:asIdx])
+		// Check if LANGUAGE clause is after the body — append it
+		langIdx := strings.LastIndex(upper, "LANGUAGE ")
+		if langIdx > asIdx {
+			// Extract "LANGUAGE plpgsql" part
+			langPart := text[langIdx:]
+			// Take until semicolon or end
+			if semi := strings.IndexByte(langPart, ';'); semi > 0 {
+				langPart = langPart[:semi]
+			}
+			if nl := strings.IndexByte(langPart, '\n'); nl > 0 {
+				langPart = langPart[:nl]
+			}
+			result += " " + strings.TrimSpace(langPart)
+		}
+		return result
+	}
+
+	// Fallback: first line only
+	if idx := strings.IndexByte(text, '\n'); idx > 0 {
+		return strings.TrimSpace(text[:idx])
+	}
+
+	return text
+}
+
+// stripSQLViewBody strips the AS SELECT... part from CREATE VIEW statements.
+func stripSQLViewBody(text string) string {
+	upper := strings.ToUpper(text)
+	// Search newline variants first to avoid matching column alias AS inside SELECT
+	for _, sep := range []string{" AS\n", " AS\r\n", " AS "} {
+		idx := strings.Index(upper, sep)
+		if idx >= 0 {
+			return strings.TrimSpace(text[:idx])
+		}
+	}
 	return text
 }
