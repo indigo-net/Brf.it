@@ -136,6 +136,8 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".rb":    "ruby",
 		".scala": "scala",
 		".sc":    "scala",
+		".ex":    "elixir",
+		".exs":   "elixir",
 	}
 }
 

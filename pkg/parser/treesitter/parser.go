@@ -31,6 +31,7 @@ func init() {
 	parser.RegisterParser("php", NewTreeSitterParser())
 	parser.RegisterParser("ruby", NewTreeSitterParser())
 	parser.RegisterParser("scala", NewTreeSitterParser())
+	parser.RegisterParser("elixir", NewTreeSitterParser())
 }
 
 // queryType distinguishes between signature and import queries for caching.
@@ -42,7 +43,7 @@ const (
 )
 
 // supportedLangs is the list of languages with Tree-sitter parsers available.
-const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala"
+const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir"
 
 // queryCacheKey combines language and query type for cache lookup.
 type queryCacheKey struct {
@@ -81,6 +82,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"php":        languages.NewPHPQuery(),
 			"ruby":       languages.NewRubyQuery(),
 			"scala":      languages.NewScalaQuery(),
+			"elixir":     languages.NewElixirQuery(),
 		},
 	}
 	p.parserPool = sync.Pool{
@@ -378,6 +380,28 @@ func (p *TreeSitterParser) extractSignatures(
 			if opts.Language == "lua" && kind == "function_declaration" {
 				sig.Kind = refineLuaFunctionKind(sig.Text)
 			}
+
+			// Elixir: call and unary_operator are generic node types.
+			// Refine kind based on signature text prefix (def, defmodule, @spec, etc.)
+			// and filter out non-definition calls (if, case, for, etc.)
+			if opts.Language == "elixir" {
+				if kind == "call" {
+					refinedKind := refineElixirCallKind(sig.Text)
+					if refinedKind == "" {
+						sig.Name = "" // filter out non-definition calls
+					} else {
+						sig.Kind = refinedKind
+					}
+				} else if kind == "unary_operator" {
+					refinedKind, realName := refineElixirAttrKind(sig.Text, sig.Name)
+					if refinedKind == "" {
+						sig.Name = "" // filter out @doc, @moduledoc, etc.
+					} else {
+						sig.Kind = refinedKind
+						sig.Name = realName
+					}
+				}
+			}
 		}
 
 		// Only add if we have a name and signature
@@ -422,6 +446,11 @@ func cleanComment(text string) string {
 	// Lua single-line (-- prefix)
 	if strings.HasPrefix(text, "--") {
 		return strings.TrimSpace(strings.TrimPrefix(text, "--"))
+	}
+
+	// Elixir single-line (# prefix)
+	if strings.HasPrefix(text, "#") {
+		return strings.TrimSpace(strings.TrimPrefix(text, "#"))
 	}
 
 	// Remove // prefix for single-line comments
@@ -493,6 +522,9 @@ func isExported(name, language string) bool {
 	case "scala":
 		// Scala: all elements are considered exported (visibility modifiers preserved in signature text)
 		return true
+	case "elixir":
+		// Elixir: all elements are considered exported (defp/defmacrop preserved in signature text)
+		return true
 	default:
 		return false
 	}
@@ -532,6 +564,8 @@ func stripBody(text, kind, language string) string {
 		return stripRubyBody(text, kind)
 	case "scala":
 		return stripScalaBody(text, kind)
+	case "elixir":
+		return stripElixirBody(text, kind)
 	default:
 		return text
 	}
@@ -1657,6 +1691,22 @@ func (p *TreeSitterParser) extractImports(
 			seenPositions[startByte] = true
 
 			rawText := string(content[startByte:(*importNode).EndByte()])
+
+			// Elixir: the broad import query pattern also matches defmodule/defprotocol/defimpl
+			// (since they also take alias arguments). Filter them out.
+			if opts.Language == "elixir" {
+				skip := false
+				for _, defKw := range []string{"defmodule ", "defprotocol ", "defimpl "} {
+					if strings.HasPrefix(rawText, defKw) {
+						skip = true
+						break
+					}
+				}
+				if skip {
+					continue
+				}
+			}
+
 			// Remove blank lines (Go module group separators, etc.)
 			rawText = removeBlankLines(rawText)
 			if rawText != "" {
@@ -1685,4 +1735,107 @@ func removeBlankLines(text string) string {
 		}
 	}
 	return buf.String()
+}
+
+// elixirDefKeywords is the set of Elixir definition macro names.
+var elixirDefKeywords = map[string]string{
+	"defmodule":   "class",
+	"defprotocol": "interface",
+	"defimpl":     "impl",
+	"def":         "function",
+	"defp":        "function",
+	"defmacro":    "macro",
+	"defmacrop":   "macro",
+	"defguard":    "function",
+	"defguardp":   "function",
+	"defdelegate": "function",
+	"defstruct":   "struct",
+}
+
+// refineElixirCallKind determines the actual kind for an Elixir call node
+// by checking the first word of the signature text. Returns "" for
+// non-definition calls (if, case, for, etc.) which should be filtered out.
+func refineElixirCallKind(text string) string {
+	// Extract the first word (the macro name)
+	firstWord := text
+	if idx := strings.IndexAny(text, " \t\n("); idx > 0 {
+		firstWord = text[:idx]
+	}
+	if kind, ok := elixirDefKeywords[firstWord]; ok {
+		return kind
+	}
+	return ""
+}
+
+// elixirAttrKeywords is the set of Elixir module attribute names that are declarations.
+var elixirAttrKeywords = map[string]bool{
+	"spec":     true,
+	"type":     true,
+	"typep":    true,
+	"opaque":   true,
+	"callback": true,
+}
+
+// refineElixirAttrKind determines the kind and real name for an Elixir
+// module attribute (@spec, @type, etc.). Returns "" kind for non-declaration
+// attributes (@doc, @moduledoc, etc.) which should be filtered out.
+func refineElixirAttrKind(text, capturedName string) (string, string) {
+	if !elixirAttrKeywords[capturedName] {
+		return "", ""
+	}
+
+	// Extract the real name from the text after "@attr_name "
+	// e.g., "@spec hello(integer()) :: atom()" → "hello"
+	// e.g., "@type my_type :: integer()" → "my_type"
+	prefix := "@" + capturedName + " "
+	if !strings.HasPrefix(text, prefix) {
+		return "type", capturedName
+	}
+	rest := text[len(prefix):]
+
+	// Extract the identifier (name before '(' or ' ' or '::')
+	realName := rest
+	for i, ch := range rest {
+		if ch == '(' || ch == ' ' || ch == ':' {
+			realName = rest[:i]
+			break
+		}
+	}
+	if realName == "" {
+		return "type", capturedName
+	}
+	return "type", realName
+}
+
+// stripElixirBody removes the do...end block from Elixir declarations.
+func stripElixirBody(text, kind string) string {
+	// @spec, @type, etc. — no body to strip
+	if strings.HasPrefix(text, "@") {
+		return text
+	}
+
+	// defstruct — keep full text (no body block)
+	if kind == "struct" {
+		return text
+	}
+
+	// Find " do\n" pattern (block-style body)
+	if idx := strings.Index(text, " do\n"); idx >= 0 {
+		return strings.TrimRight(text[:idx], " \t")
+	}
+	if idx := strings.Index(text, " do\r\n"); idx >= 0 {
+		return strings.TrimRight(text[:idx], " \t")
+	}
+
+	// Handle ", do:" (inline body)
+	if idx := strings.Index(text, ", do:"); idx >= 0 {
+		return strings.TrimRight(text[:idx], " \t")
+	}
+
+	// Multiline — return first line
+	if idx := strings.IndexByte(text, '\n'); idx > 0 {
+		return strings.TrimRight(text[:idx], " \t")
+	}
+
+	return text
 }

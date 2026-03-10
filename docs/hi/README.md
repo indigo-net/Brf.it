@@ -155,6 +155,7 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | PHP | `.php` | [PHP गाइड](languages/php.md) |
 | Ruby | `.rb` | [Ruby गाइड](languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scala गाइड](languages/scala.md) |
+| Elixir | `.ex`, `.exs` | [Elixir गाइड](languages/elixir.md) |
 
 ---
 

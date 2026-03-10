@@ -155,6 +155,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | PHP | `.php` | [PHPガイド](languages/php.md) |
 | Ruby | `.rb` | [Rubyガイド](languages/ruby.md) |
 | Scala | `.scala`, `.sc` | [Scalaガイド](languages/scala.md) |
+| Elixir | `.ex`, `.exs` | [Elixirガイド](languages/elixir.md) |
 
 ---
 
