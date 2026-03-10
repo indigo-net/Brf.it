@@ -1280,6 +1280,348 @@ import &quot;unsafe&quot;</imports>
     .type = TSParseActionTypeAccept \
   }}</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/binding.go" language="go">
+      <imports>import &quot;C&quot;
+import &quot;unsafe&quot;</imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/scanner.c" language="c">
+      <imports>#include &quot;tree_sitter/parser.h&quot;</imports>
+      <type>enum TokenType {
+  QUOTED_CONTENT_I_SINGLE,
+  QUOTED_CONTENT_I_DOUBLE,
+  QUOTED_CONTENT_I_HEREDOC_SINGLE,
+  QUOTED_CONTENT_I_HEREDOC_DOUBLE,
+  QUOTED_CONTENT_I_PARENTHESIS,
+  QUOTED_CONTENT_I_CURLY,
+  QUOTED_CONTENT_I_SQUARE,
+  QUOTED_CONTENT_I_ANGLE,
+  QUOTED_CONTENT_I_BAR,
+  QUOTED_CONTENT_I_SLASH,
+  QUOTED_CONTENT_SINGLE,
+  QUOTED_CONTENT_DOUBLE,
+  QUOTED_CONTENT_HEREDOC_SINGLE,
+  QUOTED_CONTENT_HEREDOC_DOUBLE,
+  QUOTED_CONTENT_PARENTHESIS,
+  QUOTED_CONTENT_CURLY,
+  QUOTED_CONTENT_SQUARE,
+  QUOTED_CONTENT_ANGLE,
+  QUOTED_CONTENT_BAR,
+  QUOTED_CONTENT_SLASH,
+
+  NEWLINE_BEFORE_DO,
+  NEWLINE_BEFORE_BINARY_OPERATOR,
+  NEWLINE_BEFORE_COMMENT,
+
+  BEFORE_UNARY_OPERATOR,
+
+  NOT_IN,
+
+  QUOTED_ATOM_START
+}</type>
+      <function>static inline void advance(TSLexer *lexer)</function>
+      <function>static inline void skip(TSLexer *lexer)</function>
+      <function>static inline bool is_whitespace(int32_t c)</function>
+      <function>static inline bool is_inline_whitespace(int32_t c)</function>
+      <function>static inline bool is_newline(int32_t c)</function>
+      <function>static inline bool is_digit(int32_t c)</function>
+      <function>static inline bool check_keyword_end(TSLexer *lexer)</function>
+      <function>static bool check_operator_end(TSLexer *lexer)</function>
+      <function>const uint8_t token_terminators_length =
+    sizeof(token_terminators) / sizeof(char);</function>
+      <function>static inline bool is_token_end(int32_t c)</function>
+      <type>enum TokenType</type>
+      <type>typedef struct {
+  const enum TokenType token_type;
+  const bool supports_interpol;
+  const int32_t end_delimiter;
+  const uint8_t delimiter_length;
+} QuotedContentInfo;</type>
+      <function>const uint8_t quoted_content_infos_length =
+    sizeof(quoted_content_infos) / sizeof(QuotedContentInfo);</function>
+      <function>static inline int8_t find_quoted_token_info(const bool *valid_symbols)</function>
+      <function>static bool scan_quoted_content(TSLexer *lexer, const QuotedContentInfo *info)</function>
+      <function>static bool scan_newline(TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>static bool scan(TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>void *tree_sitter_elixir_external_scanner_create()</function>
+      <function>bool tree_sitter_elixir_external_scanner_scan(void *payload, TSLexer *lexer,
+                                              const bool *valid_symbols)</function>
+      <function>unsigned tree_sitter_elixir_external_scanner_serialize(void *payload,
+                                                       char *buffer)</function>
+      <function>void tree_sitter_elixir_external_scanner_deserialize(void *payload,
+                                                     const char *buffer,
+                                                     unsigned length)</function>
+      <function>void tree_sitter_elixir_external_scanner_destroy(void *payload)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/alloc.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/array.h" language="cpp">
+      <imports>#include &quot;./alloc.h&quot;
+#include &lt;assert.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;</imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)</variable>
+      <variable>#define array_delete(self) _array__delete((Array *)(self))</variable>
+      <variable>#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)-&gt;contents[(self)-&gt;size++] = (element))</variable>
+      <variable>#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count); \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other)                                       \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)-&gt;size, \
+    0, count,  contents                                        \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )</variable>
+      <variable>#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &amp;(element))</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))</variable>
+      <variable>#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__delete(Array *self)</function>
+      <function>static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)</function>
+      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
+      <function>static inline void _array__swap(Array *self, Array *other)</function>
+      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
+      <function>static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/parser.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go" language="go">
       <imports>import &quot;C&quot;
 import &quot;unsafe&quot;</imports>
@@ -3379,6 +3721,163 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCSharpQueryExtractNamespace(t *testing.T)</function>
       <function>func TestCSharpQueryExtractRecords(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir.go" language="go">
+      <imports>import (
+	tree_sitter_elixir &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <type>type ElixirQuery struct {
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewElixirQuery() *ElixirQuery</function>
+      <function>func (q *ElixirQuery) Language() *sitter.Language</function>
+      <function>func (q *ElixirQuery) Query() []byte</function>
+      <function>func (q *ElixirQuery) Captures() []string</function>
+      <function>func (q *ElixirQuery) KindMapping() map[string]string</function>
+      <function>func (q *ElixirQuery) ImportQuery() []byte</function>
+      <variable>elixirImportQueryPattern = `
+; import statements: import Module
+(call
+  target: (identifier)
+  (arguments
+    (alias))) @import_path
+
+; import with options: import Module, only: [...]
+(call
+  target: (identifier)
+  (arguments
+    (alias)
+    (keywords))) @import_path
+`</variable>
+      <variable>elixirQueryPattern = `
+; Module/protocol/impl definitions: defmodule MyModule do...end
+(call
+  target: (identifier)
+  (arguments
+    (alias) @name)
+  (do_block)
+) @signature @kind
+
+; defimpl with keyword options: defimpl Protocol, for: Module do...end
+(call
+  target: (identifier)
+  (arguments
+    (alias) @name
+    (keywords))
+  (do_block)
+) @signature @kind
+
+; Function/macro definitions with arguments: def foo(args) do...end
+(call
+  target: (identifier)
+  (arguments
+    (call
+      target: (identifier) @name))
+  (do_block)
+) @signature @kind
+
+; Function/macro definitions with guard clause: def foo(args) when guard do...end
+(call
+  target: (identifier)
+  (arguments
+    (binary_operator
+      left: (call
+        target: (identifier) @name)
+      operator: &quot;when&quot;))
+  (do_block)
+) @signature @kind
+
+; Zero-arity function definitions: def foo do...end
+(call
+  target: (identifier)
+  (arguments
+    (identifier) @name)
+  (do_block)
+) @signature @kind
+
+; Zero-arity function with guard: def foo when guard do...end
+(call
+  target: (identifier)
+  (arguments
+    (binary_operator
+      left: (identifier) @name
+      operator: &quot;when&quot;))
+  (do_block)
+) @signature @kind
+
+; Guard definitions without do_block: defguard is_positive(x) when ...
+(call
+  target: (identifier)
+  (arguments
+    (binary_operator
+      left: (call
+        target: (identifier) @name)
+      operator: &quot;when&quot;))
+) @signature @kind
+
+; defdelegate: defdelegate foo(args), to: Bar
+(call
+  target: (identifier)
+  (arguments
+    (call
+      target: (identifier) @name)
+    (keywords))
+) @signature @kind
+
+; defstruct with list: defstruct [:field1, :field2]
+(call
+  target: (identifier) @name
+  (arguments
+    (list))
+) @signature @kind
+
+; defstruct with keywords: defstruct field: default_value
+(call
+  target: (identifier) @name
+  (arguments
+    (keywords))
+) @signature @kind
+
+; Module attributes: @spec, @type, @typep, @opaque, @callback
+(unary_operator
+  operator: &quot;@&quot;
+  operand: (call
+    target: (identifier) @name)
+) @signature @kind
+
+; Line comments
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir_test.go" language="go">
+      <imports>import (
+	&quot;strings&quot;
+	&quot;testing&quot;
+	tree_sitter_elixir &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <function>func extractElixirNames(t *testing.T, code []byte) map[string]bool</function>
+      <function>func extractElixirSignatures(t *testing.T, code []byte) []string</function>
+      <variable>sigs []string</variable>
+      <function>func extractElixirImportNames(t *testing.T, code []byte) []string</function>
+      <variable>imports []string</variable>
+      <function>func TestElixirQueryLanguage(t *testing.T)</function>
+      <function>func TestElixirQueryPattern(t *testing.T)</function>
+      <function>func TestElixirQueryImportPattern(t *testing.T)</function>
+      <function>func TestElixirQueryExtractFunction(t *testing.T)</function>
+      <function>func TestElixirQueryExtractModule(t *testing.T)</function>
+      <function>func TestElixirQueryExtractProtocol(t *testing.T)</function>
+      <function>func TestElixirQueryExtractMacro(t *testing.T)</function>
+      <function>func TestElixirQueryExtractGuard(t *testing.T)</function>
+      <function>func TestElixirQueryExtractDelegate(t *testing.T)</function>
+      <function>func TestElixirQueryExtractStruct(t *testing.T)</function>
+      <function>func TestElixirQueryExtractTypeSpec(t *testing.T)</function>
+      <function>func TestElixirQueryExtractImport(t *testing.T)</function>
+      <function>func TestElixirQueryExtractZeroArityWithGuard(t *testing.T)</function>
+      <function>func TestElixirQueryKindMapping(t *testing.T)</function>
+      <function>func TestElixirQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go.go" language="go">
       <imports>import (
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
@@ -4485,7 +4984,7 @@ import &quot;unsafe&quot;</imports>
       <type>type queryType int</type>
       <variable>queryTypeSignature queryType = iota</variable>
       <variable>queryTypeImport</variable>
-      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala&quot;</variable>
+      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir&quot;</variable>
       <type>type queryCacheKey struct {
 	lang string
 	typ  queryType
@@ -4559,6 +5058,29 @@ import &quot;unsafe&quot;</imports>
       <variable>importNode *sitter.Node</variable>
       <function>func removeBlankLines(text string) string</function>
       <variable>buf strings.Builder</variable>
+      <variable>elixirDefKeywords = map[string]string{
+	&quot;defmodule&quot;:   &quot;class&quot;,
+	&quot;defprotocol&quot;: &quot;interface&quot;,
+	&quot;defimpl&quot;:     &quot;impl&quot;,
+	&quot;def&quot;:         &quot;function&quot;,
+	&quot;defp&quot;:        &quot;function&quot;,
+	&quot;defmacro&quot;:    &quot;macro&quot;,
+	&quot;defmacrop&quot;:   &quot;macro&quot;,
+	&quot;defguard&quot;:    &quot;function&quot;,
+	&quot;defguardp&quot;:   &quot;function&quot;,
+	&quot;defdelegate&quot;: &quot;function&quot;,
+	&quot;defstruct&quot;:   &quot;struct&quot;,
+}</variable>
+      <function>func refineElixirCallKind(text string) string</function>
+      <variable>elixirAttrKeywords = map[string]bool{
+	&quot;spec&quot;:     true,
+	&quot;type&quot;:     true,
+	&quot;typep&quot;:    true,
+	&quot;opaque&quot;:   true,
+	&quot;callback&quot;: true,
+}</variable>
+      <function>func refineElixirAttrKind(text, capturedName string) (string, string)</function>
+      <function>func stripElixirBody(text, kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go" language="go">
       <imports>import (
@@ -4667,6 +5189,11 @@ import &quot;unsafe&quot;</imports>
       <function>func TestTreeSitterParserParseRubyImports(t *testing.T)</function>
       <function>func TestTreeSitterParserParseScala(t *testing.T)</function>
       <function>func TestTreeSitterParserParseScalaImports(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseElixir(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseElixirImports(t *testing.T)</function>
+      <function>func TestRefineElixirCallKind(t *testing.T)</function>
+      <function>func TestRefineElixirAttrKind(t *testing.T)</function>
+      <function>func TestStripElixirBody(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (
