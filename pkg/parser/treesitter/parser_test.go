@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala", "elixir"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -137,7 +137,7 @@ func TestTreeSitterParserAutoRegistration(t *testing.T) {
 	// Verify parser is registered in default registry
 	registry := parser.DefaultRegistry()
 
-	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby", "scala"} {
+	for _, lang := range []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "ruby", "scala", "elixir"} {
 		p, ok := registry.Get(lang)
 		if !ok {
 			t.Errorf("expected parser for '%s' to be registered", lang)
@@ -2601,5 +2601,100 @@ class App {
 
 	if len(result.RawImports) < 3 {
 		t.Errorf("expected at least 3 imports, got %d: %v", len(result.RawImports), result.RawImports)
+	}
+}
+
+func TestTreeSitterParserParseElixir(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`defmodule Calculator do
+  @moduledoc "A simple calculator module"
+
+  @type number :: integer() | float()
+  @spec add(number(), number()) :: number()
+
+  def add(a, b) do
+    a + b
+  end
+
+  defp validate(x) when is_number(x) do
+    :ok
+  end
+
+  defstruct [:value, :operation]
+end
+`)
+
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "elixir"})
+	if err != nil {
+		t.Fatalf("Parse returned error: %v", err)
+	}
+
+	if len(result.Signatures) < 3 {
+		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
+		for _, sig := range result.Signatures {
+			t.Logf("  sig: name=%s kind=%s text=%q", sig.Name, sig.Kind, sig.Text)
+		}
+	}
+
+	// Verify specific signatures
+	foundModule := false
+	foundFunc := false
+	foundType := false
+	for _, sig := range result.Signatures {
+		if sig.Name == "Calculator" && sig.Kind == "class" {
+			foundModule = true
+		}
+		if sig.Name == "add" && sig.Kind == "function" {
+			foundFunc = true
+			// Body should be stripped (no "do...end")
+			if strings.Contains(sig.Text, "\n") {
+				t.Errorf("expected stripped body for add, got: %q", sig.Text)
+			}
+		}
+		if sig.Name == "number" && sig.Kind == "type" {
+			foundType = true
+		}
+	}
+
+	if !foundModule {
+		t.Error("expected to find module 'Calculator'")
+	}
+	if !foundFunc {
+		t.Error("expected to find function 'add'")
+	}
+	if !foundType {
+		t.Error("expected to find type 'number'")
+	}
+}
+
+func TestTreeSitterParserParseElixirImports(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte(`defmodule MyApp do
+  import Enum
+  import String, only: [trim: 1]
+  alias MyApp.Accounts.User
+  use GenServer
+  require Logger
+
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts)
+  end
+end
+`)
+
+	opts := &parser.Options{
+		Language:       "elixir",
+		IncludeImports: true,
+	}
+
+	result, err := p.Parse(code, opts)
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	if len(result.RawImports) < 2 {
+		t.Errorf("expected at least 2 imports, got %d: %v", len(result.RawImports), result.RawImports)
 	}
 }
