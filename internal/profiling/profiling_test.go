@@ -21,21 +21,26 @@ func TestGetMemoryStats(t *testing.T) {
 
 func TestFormatBytes(t *testing.T) {
 	tests := []struct {
+		name     string
 		bytes    uint64
 		expected string
 	}{
-		{0, "0 B"},
-		{512, "512 B"},
-		{1024, "1.0 KB"},
-		{1048576, "1.0 MB"},
-		{1073741824, "1.0 GB"},
+		{"zero", 0, "0 B"},
+		{"bytes", 512, "512 B"},
+		{"kilobytes", 1024, "1.0 KB"},
+		{"megabytes", 1048576, "1.0 MB"},
+		{"gigabytes", 1073741824, "1.0 GB"},
+		{"terabytes", 1099511627776, "1.0 TB"},
+		{"petabytes", 1125899906842624, "1.0 PB"},
 	}
 
 	for _, tt := range tests {
-		result := FormatBytes(tt.bytes)
-		if result != tt.expected {
-			t.Errorf("FormatBytes(%d) = %s, want %s", tt.bytes, result, tt.expected)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			result := FormatBytes(tt.bytes)
+			if result != tt.expected {
+				t.Errorf("FormatBytes(%d) = %s, want %s", tt.bytes, result, tt.expected)
+			}
+		})
 	}
 }
 
@@ -58,6 +63,13 @@ func TestWriteHeapProfile(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Error("heap profile file is empty")
+	}
+}
+
+func TestWriteHeapProfileInvalidPath(t *testing.T) {
+	err := WriteHeapProfile("/nonexistent/directory/heap.prof")
+	if err == nil {
+		t.Error("expected error for invalid path")
 	}
 }
 
@@ -88,5 +100,12 @@ func TestStartCPUProfile(t *testing.T) {
 	}
 	if info.Size() == 0 {
 		t.Error("CPU profile file is empty")
+	}
+}
+
+func TestStartCPUProfileInvalidPath(t *testing.T) {
+	_, err := StartCPUProfile("/nonexistent/directory/cpu.prof")
+	if err == nil {
+		t.Error("expected error for invalid path")
 	}
 }
