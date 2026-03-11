@@ -2,7 +2,7 @@ package formatter
 
 import (
 	"bytes"
-	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -25,14 +25,18 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 
 	// Header with path
 	if data.RootPath != "" {
-		buf.WriteString(fmt.Sprintf("# Code Summary: %s\n\n", data.RootPath))
+		buf.WriteString("# Code Summary: ")
+		buf.WriteString(data.RootPath)
+		buf.WriteString("\n\n")
 	} else {
 		buf.WriteString("# Code Summary\n\n")
 	}
 
 	// Version info
 	if data.Version != "" {
-		buf.WriteString(fmt.Sprintf("*brf.it %s*\n\n", data.Version))
+		buf.WriteString("*brf.it ")
+		buf.WriteString(data.Version)
+		buf.WriteString("*\n\n")
 	}
 
 	// Directory Tree
@@ -49,7 +53,11 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 		buf.WriteString("| Import | Files |\n")
 		buf.WriteString("|--------|-------|\n")
 		for _, ic := range data.GlobalImports {
-			buf.WriteString(fmt.Sprintf("| `%s` | %d |\n", escapeMarkdown(ic.Import), ic.Count))
+			buf.WriteString("| `")
+			buf.WriteString(escapeMarkdown(ic.Import))
+			buf.WriteString("` | ")
+			buf.WriteString(strconv.Itoa(ic.Count))
+			buf.WriteString(" |\n")
 		}
 		buf.WriteString("\n")
 	}
@@ -58,7 +66,9 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 	buf.WriteString("---\n\n")
 	buf.WriteString("## Files\n\n")
 	for _, file := range data.Files {
-		buf.WriteString(fmt.Sprintf("### %s\n\n", file.Path))
+		buf.WriteString("### ")
+		buf.WriteString(file.Path)
+		buf.WriteString("\n\n")
 
 		// Imports (within file block) - only if not deduping
 		hasRenderedImports := false
@@ -74,7 +84,9 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 			// 빈 파일 확인
 			isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
 
-			buf.WriteString(fmt.Sprintf("```%s\n", file.Language))
+			buf.WriteString("```")
+		buf.WriteString(file.Language)
+		buf.WriteByte('\n')
 			if isEmpty {
 				buf.WriteString(getEmptyComment(file.Language))
 				buf.WriteString("\n")
