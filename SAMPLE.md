@@ -431,6 +431,7 @@ func containsSubstring(s, substr string) bool
 
 ```go
 import (
+	"context"
 	"sort"
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
@@ -526,6 +527,7 @@ func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount
 
 ```go
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -544,7 +546,7 @@ type mockExtractor struct {
 	result *extractor.ExtractResult
 	err    error
 }
-func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
+func (m *mockExtractor) Extract(_ context.Context, _ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
 func TestPackagerPackage(t *testing.T)
 func TestPackagerPackageMarkdown(t *testing.T)
 func TestPackagerPackageMarkdownFull(t *testing.T)
@@ -642,6 +644,7 @@ func TestStartCPUProfileInvalidPath(t *testing.T)
 ```go
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"runtime"
@@ -701,7 +704,8 @@ type ExtractOptions struct {
 }
 type Extractor interface {
 	// Extract extracts signatures from the given scan result.
-	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+	// The context controls cancellation and timeout for the extraction.
+	Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
 }
 type FileExtractor struct {
 	registry *parser.Registry
@@ -709,9 +713,11 @@ type FileExtractor struct {
 func NewFileExtractor(registry *parser.Registry) *FileExtractor
 func NewDefaultFileExtractor() *FileExtractor
 func DefaultExtractOptions() *ExtractOptions
-func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
 wg sync.WaitGroup
-func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult
+cancelErr error
+cancelOnce sync.Once
+func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)
 binarySniffSize = 512
 func isBinaryContent(content []byte) bool
 func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
@@ -723,11 +729,13 @@ func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOption
 
 ```go
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter" // Register Tree-sitter parsers
 	"github.com/indigo-net/Brf.it/pkg/scanner"
@@ -747,6 +755,8 @@ func TestExtractNegativeConcurrency(t *testing.T)
 func TestDefaultExtractOptions(t *testing.T)
 func TestExtractConcurrencyWithErrors(t *testing.T)
 func TestFileExtractorUnsupportedLanguage(t *testing.T)
+func TestExtractCanceledContext(t *testing.T)
+func TestExtractDeadlineExceededContext(t *testing.T)
 ```
 
 ---

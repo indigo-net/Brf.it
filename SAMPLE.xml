@@ -388,6 +388,7 @@ main &quot;$@&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context.go" language="go">
       <imports>import (
+	&quot;context&quot;
 	&quot;sort&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;
@@ -478,6 +479,7 @@ main &quot;$@&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context_test.go" language="go">
       <imports>import (
+	&quot;context&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
 	&quot;testing&quot;
@@ -496,7 +498,7 @@ main &quot;$@&quot;</imports>
 	result *extractor.ExtractResult
 	err    error
 }</type>
-      <function>func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)</function>
+      <function>func (m *mockExtractor) Extract(_ context.Context, _ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)</function>
       <function>func TestPackagerPackage(t *testing.T)</function>
       <function>func TestPackagerPackageMarkdown(t *testing.T)</function>
       <function>func TestPackagerPackageMarkdownFull(t *testing.T)</function>
@@ -574,6 +576,7 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
+	&quot;context&quot;
 	&quot;fmt&quot;
 	&quot;os&quot;
 	&quot;runtime&quot;
@@ -633,7 +636,8 @@ main &quot;$@&quot;</imports>
 }</type>
       <type>type Extractor interface {
 	// Extract extracts signatures from the given scan result.
-	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+	// The context controls cancellation and timeout for the extraction.
+	Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
 }</type>
       <type>type FileExtractor struct {
 	registry *parser.Registry
@@ -641,20 +645,24 @@ main &quot;$@&quot;</imports>
       <function>func NewFileExtractor(registry *parser.Registry) *FileExtractor</function>
       <function>func NewDefaultFileExtractor() *FileExtractor</function>
       <function>func DefaultExtractOptions() *ExtractOptions</function>
-      <function>func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</function>
+      <function>func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</function>
       <variable>wg sync.WaitGroup</variable>
-      <function>func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult</function>
+      <variable>cancelErr error</variable>
+      <variable>cancelOnce sync.Once</variable>
+      <function>func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)</function>
       <variable>binarySniffSize = 512</variable>
       <function>func isBinaryContent(content []byte) bool</function>
       <function>func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go" language="go">
       <imports>import (
+	&quot;context&quot;
 	&quot;fmt&quot;
 	&quot;os&quot;
 	&quot;path/filepath&quot;
 	&quot;strings&quot;
 	&quot;testing&quot;
+	&quot;time&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot; // Register Tree-sitter parsers
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
@@ -674,6 +682,8 @@ main &quot;$@&quot;</imports>
       <function>func TestDefaultExtractOptions(t *testing.T)</function>
       <function>func TestExtractConcurrencyWithErrors(t *testing.T)</function>
       <function>func TestFileExtractorUnsupportedLanguage(t *testing.T)</function>
+      <function>func TestExtractCanceledContext(t *testing.T)</function>
+      <function>func TestExtractDeadlineExceededContext(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go" language="go">
       <imports>import (
