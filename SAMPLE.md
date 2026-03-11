@@ -902,9 +902,6 @@ func TestXMLFormatterWithNoSchema(t *testing.T)
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
 ```go
-import (
-	"unicode/utf8"
-)
 func normalizeKind(kind string) string
 func getEmptyComment(lang string) string
 func truncateDoc(doc string, maxLen int) string
