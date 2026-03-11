@@ -963,7 +963,7 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
 ```go
 import (
 	"bytes"
-	"fmt"
+	"strconv"
 	"strings"
 )
 type MarkdownFormatter struct{}
@@ -981,7 +981,6 @@ func escapeMarkdown(s string) string
 ```go
 import (
 	"bytes"
-	"fmt"
 	"strings"
 )
 type XMLFormatter struct{}

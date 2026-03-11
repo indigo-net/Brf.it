@@ -850,7 +850,7 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
-	&quot;fmt&quot;
+	&quot;strconv&quot;
 	&quot;strings&quot;
 )</imports>
       <type>type MarkdownFormatter struct{}</type>
@@ -863,7 +863,6 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
-	&quot;fmt&quot;
 	&quot;strings&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
