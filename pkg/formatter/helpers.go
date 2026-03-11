@@ -1,9 +1,5 @@
 package formatter
 
-import (
-	"unicode/utf8"
-)
-
 // normalizeKind normalizes a signature kind string to one of the canonical
 // categories: "function", "type", or "variable". If the kind does not match
 // any known category, it is returned unchanged.
@@ -35,13 +31,10 @@ func getEmptyComment(lang string) string {
 }
 
 // truncateDoc truncates a documentation string to maxLen characters (Unicode code points).
-// If maxLen <= 0 or the doc is longer than maxLen, returns doc unchanged.
+// If maxLen <= 0 or the doc is shorter than or equal to maxLen, returns doc unchanged.
 // If truncation occurs, "..." is appended.
 func truncateDoc(doc string, maxLen int) string {
-	if maxLen <= 0 || utf8.RuneCountInString(doc) <= maxLen {
-		return doc
-	}
-	if len(doc) <= maxLen {
+	if maxLen <= 0 {
 		return doc
 	}
 
@@ -50,7 +43,5 @@ func truncateDoc(doc string, maxLen int) string {
 		return doc
 	}
 
-	// Truncate and add ellipsis
-	truncated := string(runes[:maxLen])
-	return truncated + "..."
+	return string(runes[:maxLen]) + "..."
 }
