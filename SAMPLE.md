@@ -431,6 +431,7 @@ func containsSubstring(s, substr string) bool
 
 ```go
 import (
+	"sort"
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/scanner"

@@ -388,6 +388,7 @@ main &quot;$@&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context.go" language="go">
       <imports>import (
+	&quot;sort&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
