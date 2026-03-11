@@ -2,7 +2,6 @@ package formatter
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 )
 
@@ -34,12 +33,16 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 
 		// Version
 		if data.Version != "" {
-			buf.WriteString(fmt.Sprintf("    <version>%s</version>\n", escapeXML(data.Version)))
+			buf.WriteString("    <version>")
+			buf.WriteString(escapeXML(data.Version))
+			buf.WriteString("</version>\n")
 		}
 
 		// Path
 		if data.RootPath != "" {
-			buf.WriteString(fmt.Sprintf("    <path>%s</path>\n", escapeXML(data.RootPath)))
+			buf.WriteString("    <path>")
+			buf.WriteString(escapeXML(data.RootPath))
+			buf.WriteString("</path>\n")
 		}
 
 		// Tree
@@ -74,7 +77,11 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	// Files section
 	buf.WriteString("  <files>\n")
 	for _, file := range data.Files {
-		buf.WriteString(fmt.Sprintf("    <file path=%q language=%q>\n", file.Path, file.Language))
+		buf.WriteString("    <file path=\"")
+		buf.WriteString(escapeXML(file.Path))
+		buf.WriteString("\" language=\"")
+		buf.WriteString(escapeXML(file.Language))
+		buf.WriteString("\">\n")
 
 		// Imports section (within file block)
 		hasRenderedImports := false
@@ -98,9 +105,13 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			} else {
 				for _, sig := range file.Signatures {
 					tag := kindToTag(sig.Kind)
-					buf.WriteString(fmt.Sprintf("      <%s>", tag))
+					buf.WriteString("      <")
+					buf.WriteString(tag)
+					buf.WriteByte('>')
 					buf.WriteString(escapeXML(sig.Text))
-					buf.WriteString(fmt.Sprintf("</%s>\n", tag))
+					buf.WriteString("</")
+					buf.WriteString(tag)
+					buf.WriteString(">\n")
 
 					if sig.Doc != "" {
 						buf.WriteString("      <doc>")
