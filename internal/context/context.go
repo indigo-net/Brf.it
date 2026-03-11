@@ -2,6 +2,8 @@
 package context
 
 import (
+	"sort"
+
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
@@ -275,14 +277,12 @@ func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount {
 	}
 
 	// Sort by count descending, then by import string for stability
-	for i := 0; i < len(result); i++ {
-		for j := i + 1; j < len(result); j++ {
-			if result[j].Count > result[i].Count ||
-				(result[j].Count == result[i].Count && result[j].Import < result[i].Import) {
-				result[i], result[j] = result[j], result[i]
-			}
+	sort.Slice(result, func(i, j int) bool {
+		if result[i].Count != result[j].Count {
+			return result[i].Count > result[j].Count
 		}
-	}
+		return result[i].Import < result[j].Import
+	})
 
 	return result
 }
