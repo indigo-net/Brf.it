@@ -588,7 +588,10 @@ func stripBody(text, kind, language string) string {
 func stripGoBody(text, kind string) string {
 	switch kind {
 	case "function", "method":
-		// Find the opening brace and remove everything from there
+		// Find the opening brace and remove everything from there.
+		// Use > 0 (not >= 0): if '{' is at index 0, there's no signature
+		// text to keep, so we return the original text unchanged.
+		// This pattern is intentionally used in all stripXxxBody functions.
 		braceIdx := strings.Index(text, "{")
 		if braceIdx > 0 {
 			return strings.TrimSpace(text[:braceIdx])
@@ -651,6 +654,7 @@ func stripTypeScriptBody(text, kind string) string {
 // It handles regular functions, methods, and arrow functions.
 func stripTSFunctionBody(text string) string {
 	// Handle arrow functions: const foo = (args): type => { body } or const foo = (args): type => expr
+	// > 0: '=>' at index 0 means no signature before the arrow
 	if arrowIdx := strings.Index(text, "=>"); arrowIdx > 0 {
 		// Remove everything from => onwards, keep only the signature
 		return strings.TrimSpace(text[:arrowIdx])
@@ -897,6 +901,7 @@ found:
 	firstParam := strings.TrimSpace(strings.Split(params, ",")[0])
 
 	// Remove type annotation if present (e.g., "self: Self" -> "self")
+	// > 0: ':' at index 0 means no parameter name before the colon
 	if colonIdx := strings.Index(firstParam, ":"); colonIdx > 0 {
 		firstParam = strings.TrimSpace(firstParam[:colonIdx])
 	}
