@@ -3,6 +3,7 @@ package extractor
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"runtime"
@@ -71,7 +72,8 @@ type ExtractOptions struct {
 // Extractor defines the interface for signature extraction.
 type Extractor interface {
 	// Extract extracts signatures from the given scan result.
-	Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
+	// The context controls cancellation and timeout for the extraction.
+	Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
 }
 
 // FileExtractor implements Extractor using Scanner and Parser Registry.
@@ -100,7 +102,7 @@ func DefaultExtractOptions() *ExtractOptions {
 }
 
 // Extract implements Extractor interface.
-func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) {
+func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error) {
 	if opts == nil {
 		opts = &ExtractOptions{}
 	}
@@ -120,6 +122,11 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 		return &ExtractResult{}, nil
 	}
 
+	// Check context before starting work
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
 	// Resolve concurrency
 	concurrency := opts.Concurrency
 	if concurrency == 0 {
@@ -131,17 +138,28 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 
 	// Sequential fast path
 	if concurrency == 1 {
-		return e.extractSequential(files, opts), nil
+		return e.extractSequential(ctx, files, opts)
 	}
 
 	// Concurrent path: semaphore + indexed goroutines
 	extracted := make([]ExtractedFile, n)
 	sem := make(chan struct{}, concurrency)
 	var wg sync.WaitGroup
+	var cancelErr error
+	var cancelOnce sync.Once
 
 	for i, fileEntry := range files {
+		// Check context before launching each goroutine
+		select {
+		case <-ctx.Done():
+			cancelOnce.Do(func() { cancelErr = ctx.Err() })
+		case sem <- struct{}{}: // Acquire
+		}
+		if cancelErr != nil {
+			break
+		}
+
 		wg.Add(1)
-		sem <- struct{}{} // Acquire
 		go func(idx int, entry scanner.FileEntry) {
 			defer wg.Done()
 			defer func() { <-sem }() // Release
@@ -149,6 +167,12 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 		}(i, fileEntry)
 	}
 	wg.Wait()
+
+	// On context cancellation, discard partial results. The caller
+	// requested cancellation, so incomplete extraction is not useful.
+	if cancelErr != nil {
+		return nil, cancelErr
+	}
 
 	// Aggregate (sequential)
 	result := &ExtractResult{Files: extracted}
@@ -163,9 +187,12 @@ func (e *FileExtractor) Extract(scanResult *scanner.ScanResult, opts *ExtractOpt
 }
 
 // extractSequential processes files sequentially.
-func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *ExtractOptions) *ExtractResult {
+func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error) {
 	result := &ExtractResult{}
 	for _, fileEntry := range files {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
 		extracted := e.extractFile(fileEntry, opts)
 		result.Files = append(result.Files, extracted)
 		result.TotalSignatures += len(extracted.Signatures)
@@ -174,7 +201,7 @@ func (e *FileExtractor) extractSequential(files []scanner.FileEntry, opts *Extra
 			result.ErrorCount++
 		}
 	}
-	return result
+	return result, nil
 }
 
 // binarySniffSize is the number of bytes inspected for NUL to detect binary content.

@@ -2,6 +2,7 @@
 package context
 
 import (
+	"context"
 	"sort"
 
 	"github.com/indigo-net/Brf.it/pkg/extractor"
@@ -139,7 +140,8 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		IncludeImports: opts.IncludeImports,
 		MaxFileSize:    opts.MaxFileSize,
 	}
-	extractResult, err := p.extractor.Extract(scanResult, extractOpts)
+	// TODO: propagate context from Package() caller once Package accepts context.Context
+	extractResult, err := p.extractor.Extract(context.TODO(), scanResult, extractOpts)
 	if err != nil {
 		return nil, err
 	}
