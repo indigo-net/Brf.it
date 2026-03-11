@@ -1,6 +1,7 @@
 package context
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"testing"
@@ -28,7 +29,7 @@ type mockExtractor struct {
 	err    error
 }
 
-func (m *mockExtractor) Extract(_ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error) {
+func (m *mockExtractor) Extract(_ context.Context, _ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error) {
 	return m.result, m.err
 }
 

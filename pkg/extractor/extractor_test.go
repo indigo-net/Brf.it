@@ -1,6 +1,7 @@
 package extractor
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -60,7 +61,7 @@ type Point struct {
 
 	// Extract signatures
 	extractor := NewDefaultFileExtractor()
-	result, err := extractor.Extract(scanResult, nil)
+	result, err := extractor.Extract(context.Background(), scanResult, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -114,7 +115,7 @@ func TestFileExtractorTOCTOUGuard(t *testing.T) {
 		MaxFileSize: 50,
 	}
 
-	result, err := extractor.Extract(scanResult, opts)
+	result, err := extractor.Extract(context.Background(), scanResult, opts)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -152,7 +153,7 @@ func TestFileExtractorTOCTOUGuardDisabled(t *testing.T) {
 	extractor := NewDefaultFileExtractor()
 	opts := &ExtractOptions{MaxFileSize: 0}
 
-	result, err := extractor.Extract(scanResult, opts)
+	result, err := extractor.Extract(context.Background(), scanResult, opts)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -185,7 +186,7 @@ func Hello() string { return "hello" }
 	}
 
 	extractor := NewDefaultFileExtractor()
-	result, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: 1})
+	result, err := extractor.Extract(context.Background(), scanResult, &ExtractOptions{Concurrency: 1})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -223,7 +224,7 @@ func TestExtractConcurrencyDeterministicOrder(t *testing.T) {
 
 	scanResult := &scanner.ScanResult{Files: entries}
 	extractor := NewDefaultFileExtractor()
-	result, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: 2})
+	result, err := extractor.Extract(context.Background(), scanResult, &ExtractOptions{Concurrency: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -245,7 +246,7 @@ func TestExtractConcurrencyEmptyFiles(t *testing.T) {
 	scanResult := &scanner.ScanResult{Files: []scanner.FileEntry{}}
 	extractor := NewDefaultFileExtractor()
 
-	result, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: 4})
+	result, err := extractor.Extract(context.Background(), scanResult, &ExtractOptions{Concurrency: 4})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -260,7 +261,7 @@ func TestExtractConcurrencyEmptyFiles(t *testing.T) {
 
 func TestExtractNilScanResult(t *testing.T) {
 	extractor := NewDefaultFileExtractor()
-	result, err := extractor.Extract(nil, nil)
+	result, err := extractor.Extract(context.Background(), nil, nil)
 	if err != nil {
 		t.Fatalf("expected no error for nil scanResult, got: %v", err)
 	}
@@ -275,7 +276,7 @@ func TestExtractNilScanResult(t *testing.T) {
 func TestExtractNegativeConcurrency(t *testing.T) {
 	scanResult := &scanner.ScanResult{Files: []scanner.FileEntry{}}
 	extractor := NewDefaultFileExtractor()
-	_, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: -1})
+	_, err := extractor.Extract(context.Background(), scanResult, &ExtractOptions{Concurrency: -1})
 	if err == nil {
 		t.Fatal("expected error for negative concurrency, got nil")
 	}
@@ -315,7 +316,7 @@ func TestExtractConcurrencyWithErrors(t *testing.T) {
 	}
 
 	extractor := NewDefaultFileExtractor()
-	result, err := extractor.Extract(scanResult, &ExtractOptions{Concurrency: 2})
+	result, err := extractor.Extract(context.Background(), scanResult, &ExtractOptions{Concurrency: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -350,7 +351,7 @@ func TestFileExtractorUnsupportedLanguage(t *testing.T) {
 		},
 	}
 
-	result, err := extractor.Extract(scanResult, nil)
+	result, err := extractor.Extract(context.Background(), scanResult, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -361,5 +362,48 @@ func TestFileExtractorUnsupportedLanguage(t *testing.T) {
 
 	if result.Files[0].Error == nil {
 		t.Error("expected error for unsupported language")
+	}
+}
+
+func TestExtractCanceledContext(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	testFile := filepath.Join(tmpDir, "test.go")
+	testCode := "package test\n\nfunc Foo() {}\n"
+	if err := os.WriteFile(testFile, []byte(testCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	scanResult := &scanner.ScanResult{
+		Files: []scanner.FileEntry{
+			{Path: testFile, Language: "go", Size: int64(len(testCode))},
+		},
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // Cancel immediately
+
+	ext := NewDefaultFileExtractor()
+
+	// Sequential path
+	_, err = ext.Extract(ctx, scanResult, &ExtractOptions{Concurrency: 1})
+	if err == nil {
+		t.Fatal("expected error for canceled context, got nil")
+	}
+	if err != context.Canceled {
+		t.Errorf("expected context.Canceled, got: %v", err)
+	}
+
+	// Concurrent path
+	_, err = ext.Extract(ctx, scanResult, &ExtractOptions{Concurrency: 2})
+	if err == nil {
+		t.Fatal("expected error for canceled context (concurrent), got nil")
+	}
+	if err != context.Canceled {
+		t.Errorf("expected context.Canceled (concurrent), got: %v", err)
 	}
 }
