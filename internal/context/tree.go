@@ -18,7 +18,7 @@ func BuildTree(root string, paths []string) string {
 		return ""
 	}
 
-	rootNode := &treeNode{children: make(map[string]*treeNode)}
+	rootNode := &treeNode{}
 
 	// Insert all paths into the tree
 	for _, path := range paths {
@@ -31,10 +31,11 @@ func BuildTree(root string, paths []string) string {
 		current := rootNode
 
 		for _, part := range parts {
+			if current.children == nil {
+				current.children = make(map[string]*treeNode)
+			}
 			if _, exists := current.children[part]; !exists {
-				current.children[part] = &treeNode{
-					children: make(map[string]*treeNode),
-				}
+				current.children[part] = &treeNode{}
 			}
 			current = current.children[part]
 		}
