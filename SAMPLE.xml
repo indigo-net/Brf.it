@@ -573,6 +573,13 @@ main &quot;$@&quot;</imports>
       <function>func TestStartCPUProfile(t *testing.T)</function>
       <function>func TestStartCPUProfileInvalidPath(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/example_test.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
+)</imports>
+      <function>func ExampleDefaultExtractOptions()</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
@@ -684,6 +691,16 @@ main &quot;$@&quot;</imports>
       <function>func TestFileExtractorUnsupportedLanguage(t *testing.T)</function>
       <function>func TestExtractCanceledContext(t *testing.T)</function>
       <function>func TestExtractDeadlineExceededContext(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;
+)</imports>
+      <function>func ExampleNewXMLFormatter()</function>
+      <function>func ExampleNewMarkdownFormatter()</function>
+      <function>func ExampleNewJSONFormatter()</function>
+      <function>func ExampleXMLFormatter_Format()</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go" language="go">
       <imports>import (
@@ -884,6 +901,14 @@ main &quot;$@&quot;</imports>
       <variable>needsEscape bool</variable>
       <variable>buf strings.Builder</variable>
       <function>func kindToTag(kind string) string</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/example_test.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func ExampleDetectLanguage()</function>
+      <function>func ExampleNewRegistry()</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
       <imports>import (
@@ -5795,6 +5820,14 @@ import &quot;unsafe&quot;</imports>
 )</imports>
       <function>func TestCaptureDefinitions(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/example_test.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
+)</imports>
+      <function>func ExampleDefaultScanOptions()</function>
+      <function>func ExampleIsHidden()</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go" language="go">
       <imports>import (
 	&quot;errors&quot;
@@ -5912,6 +5945,13 @@ import &quot;unsafe&quot;</imports>
       <function>func TestLogOutputNoDoubleNewline(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
       <function>func TestFilepathBaseEdgeCases(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;
+)</imports>
+      <function>func ExampleNewNoOpTokenizer()</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tiktoken.go" language="go">
       <imports>import (

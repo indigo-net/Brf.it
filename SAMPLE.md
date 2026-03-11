@@ -639,6 +639,18 @@ func TestStartCPUProfileInvalidPath(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/extractor/example_test.go
+
+```go
+import (
+	"fmt"
+	"github.com/indigo-net/Brf.it/pkg/extractor"
+)
+func ExampleDefaultExtractOptions()
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go
 
 ```go
@@ -757,6 +769,21 @@ func TestExtractConcurrencyWithErrors(t *testing.T)
 func TestFileExtractorUnsupportedLanguage(t *testing.T)
 func TestExtractCanceledContext(t *testing.T)
 func TestExtractDeadlineExceededContext(t *testing.T)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go
+
+```go
+import (
+	"fmt"
+	"github.com/indigo-net/Brf.it/pkg/formatter"
+)
+func ExampleNewXMLFormatter()
+func ExampleNewMarkdownFormatter()
+func ExampleNewJSONFormatter()
+func ExampleXMLFormatter_Format()
 ```
 
 ---
@@ -1002,6 +1029,19 @@ func escapeXML(s string) string
 needsEscape bool
 buf strings.Builder
 func kindToTag(kind string) string
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/example_test.go
+
+```go
+import (
+	"fmt"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func ExampleDetectLanguage()
+func ExampleNewRegistry()
 ```
 
 ---
@@ -6306,6 +6346,19 @@ func TestCaptureDefinitions(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/scanner/example_test.go
+
+```go
+import (
+	"fmt"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+)
+func ExampleDefaultScanOptions()
+func ExampleIsHidden()
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go
 
 ```go
@@ -6435,6 +6488,18 @@ func TestScanNestedDirectories(t *testing.T)
 func TestLogOutputNoDoubleNewline(t *testing.T)
 buf bytes.Buffer
 func TestFilepathBaseEdgeCases(t *testing.T)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go
+
+```go
+import (
+	"fmt"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
+)
+func ExampleNewNoOpTokenizer()
 ```
 
 ---
