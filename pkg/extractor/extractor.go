@@ -153,7 +153,6 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 		select {
 		case <-ctx.Done():
 			cancelOnce.Do(func() { cancelErr = ctx.Err() })
-			break
 		case sem <- struct{}{}: // Acquire
 		}
 		if cancelErr != nil {
@@ -169,6 +168,8 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 	}
 	wg.Wait()
 
+	// On context cancellation, discard partial results. The caller
+	// requested cancellation, so incomplete extraction is not useful.
 	if cancelErr != nil {
 		return nil, cancelErr
 	}

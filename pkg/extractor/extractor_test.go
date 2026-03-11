@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter" // Register Tree-sitter parsers
@@ -405,5 +406,39 @@ func TestExtractCanceledContext(t *testing.T) {
 	}
 	if err != context.Canceled {
 		t.Errorf("expected context.Canceled (concurrent), got: %v", err)
+	}
+}
+
+func TestExtractDeadlineExceededContext(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	testFile := filepath.Join(tmpDir, "test.go")
+	testCode := "package test\n\nfunc Foo() {}\n"
+	if err := os.WriteFile(testFile, []byte(testCode), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	scanResult := &scanner.ScanResult{
+		Files: []scanner.FileEntry{
+			{Path: testFile, Language: "go", Size: int64(len(testCode))},
+		},
+	}
+
+	// Create an already-expired deadline
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Second))
+	defer cancel()
+
+	ext := NewDefaultFileExtractor()
+
+	_, err = ext.Extract(ctx, scanResult, &ExtractOptions{Concurrency: 1})
+	if err == nil {
+		t.Fatal("expected error for expired deadline, got nil")
+	}
+	if err != context.DeadlineExceeded {
+		t.Errorf("expected context.DeadlineExceeded, got: %v", err)
 	}
 }

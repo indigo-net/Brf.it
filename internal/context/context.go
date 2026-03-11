@@ -140,6 +140,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		IncludeImports: opts.IncludeImports,
 		MaxFileSize:    opts.MaxFileSize,
 	}
+	// TODO: propagate context from Package() caller once Package accepts context.Context
 	extractResult, err := p.extractor.Extract(context.TODO(), scanResult, extractOpts)
 	if err != nil {
 		return nil, err
