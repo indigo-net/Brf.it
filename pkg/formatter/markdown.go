@@ -85,8 +85,8 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 			isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
 
 			buf.WriteString("```")
-		buf.WriteString(file.Language)
-		buf.WriteByte('\n')
+			buf.WriteString(file.Language)
+			buf.WriteByte('\n')
 			if isEmpty {
 				buf.WriteString(getEmptyComment(file.Language))
 				buf.WriteString("\n")
