@@ -402,7 +402,7 @@ func TestScanGitignore(t *testing.T) {
 
 	opts := DefaultScanOptions()
 	opts.RootPath = tmpDir
-	opts.IgnoreFile = gitignore
+	opts.IgnoreFiles = []string{gitignore}
 
 	scanner, _ := NewFileScanner(opts)
 	result, err := scanner.Scan(context.Background())
@@ -434,7 +434,7 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 	t.Run("user-specified ignore file missing warns", func(t *testing.T) {
 		opts := DefaultScanOptions()
 		opts.RootPath = tmpDir
-		opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
+		opts.IgnoreFiles = []string{filepath.Join(tmpDir, "nonexistent-gitignore")}
 
 		sc, err := NewFileScanner(opts)
 		if err != nil {
@@ -457,7 +457,7 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 	t.Run("default gitignore missing does not warn", func(t *testing.T) {
 		opts := DefaultScanOptions()
 		opts.RootPath = tmpDir
-		// IgnoreFile defaults to ".gitignore" which doesn't exist in tmpDir
+		// IgnoreFiles defaults to [".gitignore"] which doesn't exist in tmpDir
 
 		sc, err := NewFileScanner(opts)
 		if err != nil {
@@ -480,7 +480,7 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 	t.Run("warning emitted only once on repeated Scan calls", func(t *testing.T) {
 		opts := DefaultScanOptions()
 		opts.RootPath = tmpDir
-		opts.IgnoreFile = filepath.Join(tmpDir, "nonexistent-gitignore")
+		opts.IgnoreFiles = []string{filepath.Join(tmpDir, "nonexistent-gitignore")}
 
 		sc, err := NewFileScanner(opts)
 		if err != nil {

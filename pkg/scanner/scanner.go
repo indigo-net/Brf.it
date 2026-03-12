@@ -50,8 +50,8 @@ type ScanOptions struct {
 	// SupportedExtensions maps file extensions to language names.
 	SupportedExtensions map[string]string
 
-	// IgnoreFile is the path to the gitignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -65,7 +65,7 @@ type ScanOptions struct {
 func DefaultScanOptions() *ScanOptions {
 	return &ScanOptions{
 		SupportedExtensions: copyLanguageMapping(),
-		IgnoreFile:    ".gitignore",
+		IgnoreFiles:   []string{".gitignore"},
 		IncludeHidden: false,
 		MaxFileSize:   512000, // 500KB
 	}
@@ -108,11 +108,11 @@ type Scanner interface {
 
 // FileScanner implements Scanner for file system traversal.
 type FileScanner struct {
-	opts             *ScanOptions
-	ignorer          *ignore.GitIgnore
-	ignorerErr       error
-	ignorerErrWarned bool
-	logger           *log.Logger
+	opts              *ScanOptions
+	ignorers          []*ignore.GitIgnore
+	ignorerErrs       []error
+	ignorerErrsWarned bool
+	logger            *log.Logger
 }
 
 // NewFileScanner creates a new FileScanner with the given options.
@@ -122,26 +122,29 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 		opts = DefaultScanOptions()
 	}
 
-	scanner := &FileScanner{
+	s := &FileScanner{
 		opts:   opts,
 		logger: log.New(os.Stderr, "[brfit] ", 0),
 	}
 
-	// Try to load gitignore file
-	if opts.IgnoreFile != "" {
-		ignorer, err := ignore.CompileIgnoreFile(opts.IgnoreFile)
+	// Try to load each ignore file
+	for _, ignoreFile := range opts.IgnoreFiles {
+		if ignoreFile == "" {
+			continue
+		}
+		ignorer, err := ignore.CompileIgnoreFile(ignoreFile)
 		if err != nil {
 			// Default .gitignore not found is normal; only store error for
 			// user-specified ignore files or non-file-not-found errors.
-			if !(errors.Is(err, os.ErrNotExist) && opts.IgnoreFile == ".gitignore") {
-				scanner.ignorerErr = err
+			if !(errors.Is(err, os.ErrNotExist) && ignoreFile == ".gitignore") {
+				s.ignorerErrs = append(s.ignorerErrs, fmt.Errorf("%s: %w", ignoreFile, err))
 			}
 		} else {
-			scanner.ignorer = ignorer
+			s.ignorers = append(s.ignorers, ignorer)
 		}
 	}
 
-	return scanner, nil
+	return s, nil
 }
 
 // Scan implements the Scanner interface.
@@ -149,10 +152,12 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 	result := &ScanResult{}
 
-	// Warn once if gitignore loading failed
-	if s.ignorerErr != nil && !s.ignorerErrWarned {
-		s.logger.Printf("WARN: failed to load ignore file: %v", s.ignorerErr)
-		s.ignorerErrWarned = true
+	// Warn once if any ignore file loading failed
+	if len(s.ignorerErrs) > 0 && !s.ignorerErrsWarned {
+		for _, err := range s.ignorerErrs {
+			s.logger.Printf("WARN: failed to load ignore file: %v", err)
+		}
+		s.ignorerErrsWarned = true
 	}
 
 	// Check if root path is a file
@@ -218,8 +223,8 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 				if !s.opts.IncludeHidden && IsHidden(name) {
 					return filepath.SkipDir
 				}
-				// Check gitignore for directory
-				if s.ignorer != nil && s.ignorer.MatchesPath(path) {
+				// Check gitignore for directory (skip if ANY ignorer matches)
+				if s.matchesIgnore(path) {
 					return filepath.SkipDir
 				}
 			}
@@ -249,6 +254,16 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 	return result, err
 }
 
+// matchesIgnore returns true if the path matches any of the loaded ignore patterns.
+func (s *FileScanner) matchesIgnore(path string) bool {
+	for _, ig := range s.ignorers {
+		if ig.MatchesPath(path) {
+			return true
+		}
+	}
+	return false
+}
+
 // checkFile checks if a file should be included in the scan results.
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool) {
 	// Check hidden
@@ -260,8 +275,8 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 		return FileEntry{}, false
 	}
 
-	// Check gitignore
-	if s.ignorer != nil && s.ignorer.MatchesPath(path) {
+	// Check gitignore (skip if ANY ignorer matches)
+	if s.matchesIgnore(path) {
 		return FileEntry{}, false
 	}
 

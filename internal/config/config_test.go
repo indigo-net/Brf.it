@@ -22,8 +22,8 @@ func TestDefaultConfig(t *testing.T) {
 		t.Errorf("expected default output empty, got '%s'", cfg.Output)
 	}
 
-	if cfg.IgnoreFile != ".gitignore" {
-		t.Errorf("expected default ignore file '.gitignore', got '%s'", cfg.IgnoreFile)
+	if len(cfg.IgnoreFiles) != 1 || cfg.IgnoreFiles[0] != ".gitignore" {
+		t.Errorf("expected default ignore files ['.gitignore'], got %v", cfg.IgnoreFiles)
 	}
 
 	if cfg.IncludeHidden {
