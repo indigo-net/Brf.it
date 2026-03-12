@@ -134,16 +134,10 @@ func BuildTokenTree(root string, files []FileTokenCount) string {
 	// Calculate directory totals bottom-up
 	calcDirTokens(rootNode)
 
-	// Calculate grand total
-	var total int
-	for _, child := range rootNode.children {
-		total += child.tokens
-	}
-
 	// Build the output string
 	var buf strings.Builder
 	renderTokenNode(&buf, rootNode, "", true)
-	buf.WriteString(fmt.Sprintf("\nTotal: %s tokens\n", formatNumber(total)))
+	buf.WriteString(fmt.Sprintf("\nTotal: %s tokens\n", formatNumber(rootNode.tokens)))
 	return strings.TrimSuffix(buf.String(), "\n")
 }
 

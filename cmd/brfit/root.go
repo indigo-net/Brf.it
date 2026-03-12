@@ -308,6 +308,11 @@ func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath
 		})
 	}
 
+	if len(fileCounts) == 0 {
+		fmt.Fprintln(os.Stderr, "No files could be tokenized.")
+		return nil
+	}
+
 	// Build and output the token tree
 	tree := context.BuildTokenTree(rootPath, fileCounts)
 	fmt.Println(tree)
