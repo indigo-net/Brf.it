@@ -5,7 +5,7 @@ title: Supported Languages
 
 # Supported Languages
 
-Brf.it uses Tree-sitter for accurate syntax parsing across 12 programming languages.
+Brf.it uses Tree-sitter for accurate syntax parsing across 14 programming languages.
 
 ## Overview
 
@@ -23,6 +23,8 @@ Brf.it uses Tree-sitter for accurate syntax parsing across 12 programming langua
 | Swift | `.swift` | ✅ Full support |
 | Scala | `.scala`, `.sc` | ✅ Full support |
 | C/C++ | `.c`, `.cpp`, `.cc`, `.cxx`, `.h`, `.hpp` | ✅ Full support |
+| YAML | `.yaml`, `.yml` | ✅ Full support |
+| TOML | `.toml` | ✅ Full support |
 
 ## Extracted Elements
 

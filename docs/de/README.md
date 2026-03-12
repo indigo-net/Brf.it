@@ -157,6 +157,8 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Scala | `.scala`, `.sc` | [Scala-Leitfaden](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixir-Leitfaden](languages/elixir.md) |
 | SQL | `.sql` | [SQL-Leitfaden](languages/sql.md) |
+| YAML | `.yaml`, `.yml` | [YAML-Leitfaden](languages/yaml.md) |
+| TOML | `.toml` | [TOML-Leitfaden](languages/toml.md) |
 
 ---
 

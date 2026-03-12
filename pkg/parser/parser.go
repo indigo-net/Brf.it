@@ -199,6 +199,9 @@ var languageMapping = map[string]string{
 	".ex":    "elixir",
 	".exs":   "elixir",
 	".sql":   "sql",
+	".yaml":  "yaml",
+	".yml":   "yaml",
+	".toml":  "toml",
 }
 
 // LanguageMapping returns a copy of the canonical extension-to-language mapping.

@@ -157,6 +157,8 @@ brfit . -o briefing.xml    # फाइल में सेव करें
 | Scala | `.scala`, `.sc` | [Scala गाइड](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixir गाइड](languages/elixir.md) |
 | SQL | `.sql` | [SQL गाइड](languages/sql.md) |
+| YAML | `.yaml`, `.yml` | [YAML गाइड](languages/yaml.md) |
+| TOML | `.toml` | [TOML गाइड](languages/toml.md) |
 
 ---
 

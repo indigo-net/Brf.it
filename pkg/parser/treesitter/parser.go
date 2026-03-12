@@ -39,7 +39,7 @@ var elixirDefPrefixes = [][]byte{
 }
 
 // supportedLangs is the list of languages with Tree-sitter parsers available.
-const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql"
+const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql, yaml, toml"
 
 // queryCacheKey combines language and query type for cache lookup.
 type queryCacheKey struct {
@@ -79,6 +79,8 @@ func NewTreeSitterParser() *TreeSitterParser {
 			"scala":      languages.NewScalaQuery(),
 			"elixir":     languages.NewElixirQuery(),
 			"sql":        languages.NewSQLQuery(),
+			"yaml":       languages.NewYAMLQuery(),
+			"toml":       languages.NewTOMLQuery(),
 		},
 	}
 	p.parserPool = sync.Pool{
@@ -514,6 +516,10 @@ func stripBody(text, kind, language string) string {
 		return stripElixirBody(text, kind)
 	case "sql":
 		return stripSQLBody(text, kind)
+	case "yaml":
+		return stripYAMLBody(text, kind)
+	case "toml":
+		return stripTOMLBody(text, kind)
 	default:
 		return text
 	}
@@ -1979,4 +1985,34 @@ func stripSQLViewBody(text string) string {
 		}
 	}
 	return text
+}
+
+// stripYAMLBody strips nested block values from YAML mapping pairs.
+// For "key: value" pairs, keeps the full line. For container keys with
+// nested block mappings, keeps only "key:" (first line).
+// The kind parameter is unused because all YAML captures are
+// block_mapping_pair nodes and share the same stripping logic.
+func stripYAMLBody(text, _ string) string {
+	idx := strings.IndexByte(text, '\n')
+	if idx < 0 {
+		return text // single-line pair, keep as-is
+	}
+	return strings.TrimSpace(text[:idx])
+}
+
+// stripTOMLBody strips the body of TOML table/table_array sections.
+// For [table] and [[array]] headers, keeps only the header line.
+// For key=value pairs, keeps the full text.
+func stripTOMLBody(text, kind string) string {
+	switch kind {
+	case "namespace":
+		// Table or table_array_element: keep only the header line ([section] or [[section]])
+		idx := strings.IndexByte(text, '\n')
+		if idx < 0 {
+			return text
+		}
+		return strings.TrimSpace(text[:idx])
+	default:
+		return text
+	}
 }

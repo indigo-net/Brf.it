@@ -29,6 +29,10 @@ Brf.it supports multiple programming languages with Tree-sitter based parsing. E
 | PHP | `.php` | [PHP Guide](php) |
 | Ruby | `.rb` | [Ruby Guide](ruby) |
 | Scala | `.scala`, `.sc` | [Scala Guide](scala) |
+| SQL | `.sql` | [SQL Guide](sql) |
+| Elixir | `.ex`, `.exs` | [Elixir Guide](elixir) |
+| YAML | `.yaml`, `.yml` | [YAML Guide](yaml) |
+| TOML | `.toml` | [TOML Guide](toml) |
 
 ## Extraction Capabilities
 
@@ -58,3 +62,7 @@ Each language may have unique features:
 - **PHP** — Classes, interfaces, traits, enums, constants
 - **Ruby** — Classes, modules, methods, class methods, constants
 - **Scala** — Classes, traits, objects, methods, vals, type aliases
+- **SQL** — Tables, functions, views, indexes, triggers, schemas
+- **Elixir** — Modules, functions, macros, protocols, structs
+- **YAML** — Key-value pairs (top-level keys)
+- **TOML** — Tables, array of tables, key-value pairs

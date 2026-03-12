@@ -157,6 +157,8 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | Scala | `.scala`, `.sc` | [Scalaガイド](languages/scala.md) |
 | Elixir | `.ex`, `.exs` | [Elixirガイド](languages/elixir.md) |
 | SQL | `.sql` | [SQLガイド](languages/sql.md) |
+| YAML | `.yaml`、`.yml` | [YAMLガイド](languages/yaml.md) |
+| TOML | `.toml` | [TOMLガイド](languages/toml.md) |
 
 ---
 

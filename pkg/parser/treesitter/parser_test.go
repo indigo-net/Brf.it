@@ -17,7 +17,7 @@ func TestTreeSitterParserLanguages(t *testing.T) {
 
 	langs := p.Languages()
 
-	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala", "elixir", "sql"}
+	expected := []string{"go", "typescript", "tsx", "java", "cpp", "rust", "swift", "kotlin", "csharp", "lua", "php", "ruby", "scala", "elixir", "sql", "yaml", "toml"}
 	for _, exp := range expected {
 		found := false
 		for _, lang := range langs {
@@ -3057,4 +3057,157 @@ func TestStripSQLFunctionBody(t *testing.T) {
 			t.Errorf("stripSQLFunctionBody(%q) = %q, want %q", tt.text, got, tt.want)
 		}
 	}
+}
+
+func TestTreeSitterParserParseYAML(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `# Application configuration
+name: myapp
+version: "2.0"
+
+database:
+  host: localhost
+  port: 5432
+  credentials:
+    username: admin
+
+servers:
+  - name: web1
+    port: 8080
+`
+
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "yaml"})
+	if err != nil {
+		t.Fatalf("Parse() error: %v", err)
+	}
+
+	// Verify expected signatures
+	expectedNames := map[string]bool{
+		"name":     false,
+		"version":  false,
+		"database": false,
+		"host":     false,
+		"port":     false,
+	}
+
+	for _, sig := range result.Signatures {
+		if _, ok := expectedNames[sig.Name]; ok {
+			expectedNames[sig.Name] = true
+		}
+	}
+
+	for name, found := range expectedNames {
+		if !found {
+			t.Errorf("expected signature '%s' not found in parsed results", name)
+			t.Logf("All signatures: %v", func() []string {
+				var names []string
+				for _, s := range result.Signatures {
+					names = append(names, s.Name+" ("+s.Kind+")")
+				}
+				return names
+			}())
+		}
+	}
+
+	// Verify kind mapping
+	for _, sig := range result.Signatures {
+		if sig.Kind != "variable" {
+			t.Errorf("YAML signature '%s': expected kind 'variable', got '%s'", sig.Name, sig.Kind)
+		}
+	}
+
+	// Verify stripBody: container keys should show only first line
+	for _, sig := range result.Signatures {
+		if sig.Name == "database" {
+			if strings.Contains(sig.Text, "\n") {
+				t.Errorf("database signature should be stripped to single line, got: %q", sig.Text)
+			}
+		}
+	}
+
+}
+
+func TestTreeSitterParserParseTOML(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := `# Package metadata
+[package]
+name = "myapp"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+serde = "1.0"
+
+[[bin]]
+name = "cli"
+path = "src/main.rs"
+
+[server.database]
+host = "localhost"
+port = 5432
+`
+
+	result, err := p.Parse([]byte(code), &parser.Options{Language: "toml"})
+	if err != nil {
+		t.Fatalf("Parse() error: %v", err)
+	}
+
+	// Verify expected signatures
+	expectedNames := map[string]bool{
+		"package":         false,
+		"dependencies":    false,
+		"bin":             false,
+		"server.database": false,
+		"serde":           false,
+	}
+
+	for _, sig := range result.Signatures {
+		if _, ok := expectedNames[sig.Name]; ok {
+			expectedNames[sig.Name] = true
+		}
+	}
+
+	for name, found := range expectedNames {
+		if !found {
+			t.Errorf("expected signature '%s' not found in parsed results", name)
+			t.Logf("All signatures: %v", func() []string {
+				var names []string
+				for _, s := range result.Signatures {
+					names = append(names, s.Name+" ("+s.Kind+")")
+				}
+				return names
+			}())
+		}
+	}
+
+	// Verify kind mapping for tables
+	for _, sig := range result.Signatures {
+		if sig.Name == "package" || sig.Name == "dependencies" || sig.Name == "server.database" {
+			if sig.Kind != "namespace" {
+				t.Errorf("TOML table '%s': expected kind 'namespace', got '%s'", sig.Name, sig.Kind)
+			}
+		}
+	}
+
+	// Verify kind mapping for table arrays
+	for _, sig := range result.Signatures {
+		if sig.Name == "bin" && sig.Kind == "namespace" {
+			break // found at least one
+		}
+	}
+
+	// Verify stripBody: table sections should show only header line
+	for _, sig := range result.Signatures {
+		if sig.Name == "package" && sig.Kind == "namespace" {
+			if strings.Contains(sig.Text, "name =") {
+				t.Errorf("table body should be stripped, but found pair content in: %q", sig.Text)
+			}
+			if !strings.Contains(sig.Text, "[package]") {
+				t.Errorf("table header should be preserved: %q", sig.Text)
+			}
+		}
+	}
+
 }

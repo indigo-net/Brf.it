@@ -149,6 +149,9 @@ func (c *Config) SupportedExtensions() map[string]string {
 		".ex":    "elixir",
 		".exs":   "elixir",
 		".sql":   "sql",
+		".yaml":  "yaml",
+		".yml":   "yaml",
+		".toml":  "toml",
 	}
 }
 
