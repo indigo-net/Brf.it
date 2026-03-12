@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- 보안 민감 정보 감지 및 마스킹 (`--security-check`) — 기본 활성화, AWS/GitHub/API 키 등 12종 패턴 감지 후 `[REDACTED]` 마스킹 (#190)
 - `--token-tree` flag to display per-file token counts in tree format (#187)
 - `--changed` flag to scan only git-modified files (#179)
 - `--since <ref>` flag to scan files changed since a specific commit/tag (#179)

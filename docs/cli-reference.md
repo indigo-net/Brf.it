@@ -32,6 +32,7 @@ brfit [path] [options]
 | `--changed` | | Only scan git-modified files (tracked + untracked) | `false` |
 | `--since` | | Only scan files changed since commit/tag (e.g., `v1.0.0`, `HEAD~5`) | |
 | `--token-tree` | | Show per-file token count tree with directory totals | `false` |
+| `--security-check` / `--no-security-check` | | Detect and redact secrets in extracted code | `true` |
 | `--version` | `-v` | Show version | |
 | `--help` | `-h` | Show help | |
 
@@ -156,6 +157,29 @@ brfit . --changed -f md -o changes.md
 # Only changes since 5 commits ago
 brfit . --since HEAD~5
 ```
+
+### Security Check
+
+```bash
+# Security check is enabled by default
+# Detected secrets are replaced with [REDACTED] and warnings are printed to stderr
+brfit . --include-body
+
+# Disable security check
+brfit . --include-body --no-security-check
+```
+
+**Detected patterns (12 types):**
+- AWS Access Key ID (`AKIA...`)
+- AWS Secret Access Key
+- GitHub Token (`ghp_`, `gho_`, `ghs_`, `ghr_`, `github_pat_`)
+- Generic API Key patterns (`api_key`, `apikey`, `api-key`)
+- Password patterns (`password`, `passwd`, `pwd`)
+- Bearer tokens (`Bearer ...`)
+- Private keys (`-----BEGIN ... PRIVATE KEY-----`)
+- Slack tokens (`xoxb-`, `xoxp-`, `xoxo-`, `xapp-`)
+- Google API Key (`AIza...`)
+- Heroku API Key
 
 ### Custom Ignore File
 

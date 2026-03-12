@@ -132,6 +132,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Token-Zählung | Automatische Berechnung der Ausgabe-Token |
 | Gitignore-fähig | Automatischer Ausschluss unnötiger Dateien |
 | Plattformübergreifend | Linux-, macOS- und Windows-Unterstützung |
+| Sicherheitsprüfung | Erkennt und maskiert sicherheitsrelevante Informationen (AWS-Schlüssel, GitHub-Token, API-Schlüssel usw.) im extrahierten Code mit `[REDACTED]` |
 
 ---
 
@@ -189,6 +190,7 @@ brfit [Pfad] [Optionen]
 | `--changed` | | Nur git-geänderte Dateien scannen | `false` |
 | `--since` | | Nur seit Commit/Tag geänderte Dateien scannen | |
 | `--token-tree` | | Token-Anzahl pro Datei als Baum anzeigen | `false` |
+| `--security-check` / `--no-security-check` | | Sicherheitsrelevante Informationen erkennen und maskieren (API-Schlüssel, Token usw.) | `true` |
 | `--version` | `-v` | Version anzeigen | |
 
 ### Beispiele

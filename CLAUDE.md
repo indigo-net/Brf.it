@@ -155,6 +155,7 @@ Options:
   --token-tree            파일별 토큰 수 트리 출력
   --changed               Git 변경 파일만 스캔
   --since <ref>           특정 커밋/태그 이후 변경된 파일만 스캔
+  --security-check        보안 민감 정보 감지 및 마스킹 (기본값: 활성화, --no-security-check으로 비활성화)
 ```
 
 ---
