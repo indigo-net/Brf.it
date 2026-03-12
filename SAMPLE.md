@@ -388,6 +388,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// IncludePrivate determines whether to include non-exported/private symbols.
+	IncludePrivate bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -421,6 +424,7 @@ func TestConfigValidate(t *testing.T)
 func TestConfigSupportedLanguages(t *testing.T)
 func TestValidateMaxFileSizeUpperBound(t *testing.T)
 buf bytes.Buffer
+func TestToOptionsIncludePrivate(t *testing.T)
 func containsString(s, substr string) bool
 func containsSubstring(s, substr string) bool
 ```

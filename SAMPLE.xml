@@ -355,6 +355,9 @@ main &quot;$@&quot;</imports>
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// IncludePrivate determines whether to include non-exported/private symbols.
+	IncludePrivate bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -383,6 +386,7 @@ main &quot;$@&quot;</imports>
       <function>func TestConfigSupportedLanguages(t *testing.T)</function>
       <function>func TestValidateMaxFileSizeUpperBound(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
+      <function>func TestToOptionsIncludePrivate(t *testing.T)</function>
       <function>func containsString(s, substr string) bool</function>
       <function>func containsSubstring(s, substr string) bool</function>
     </file>
