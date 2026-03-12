@@ -31,20 +31,22 @@ func (q *SQLQuery) Query() []byte {
 	return q.query
 }
 
+var sqlKindMapping = map[string]string{
+	"create_table":             "struct",
+	"create_function":          "function",
+	"create_view":              "type",
+	"create_materialized_view": "type",
+	"create_index":             "variable",
+	"create_trigger":           "function",
+	"create_type":              "type",
+	"create_schema":            "namespace",
+	"create_sequence":          "variable",
+	"alter_table":              "type",
+}
+
 // KindMapping returns the mapping from SQL DDL node types to Signature kinds.
 func (q *SQLQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"create_table":             "struct",
-		"create_function":          "function",
-		"create_view":              "type",
-		"create_materialized_view": "type",
-		"create_index":             "variable",
-		"create_trigger":           "function",
-		"create_type":              "type",
-		"create_schema":            "namespace",
-		"create_sequence":          "variable",
-		"alter_table":              "type",
-	}
+	return sqlKindMapping
 }
 
 // ImportQuery returns nil since SQL has no import system.

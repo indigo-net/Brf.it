@@ -30,14 +30,16 @@ func (q *PythonQuery) Query() []byte {
 	return q.query
 }
 
+var pythonKindMapping = map[string]string{
+	"function_definition":  "function",
+	"class_definition":     "class",
+	"expression_statement": "variable",
+	"assignment":           "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *PythonQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition":  "function",
-		"class_definition":     "class",
-		"expression_statement": "variable",
-		"assignment":           "variable",
-	}
+	return pythonKindMapping
 }
 
 // ImportQuery returns the Python import query pattern.

@@ -31,21 +31,23 @@ func (q *CppQuery) Query() []byte {
 	return q.query
 }
 
+var cppKindMapping = map[string]string{
+	"function_definition":  "function",
+	"declaration":          "function",
+	"struct_specifier":     "struct",
+	"enum_specifier":       "enum",
+	"type_definition":      "typedef",
+	"preproc_function_def": "macro",
+	"preproc_def":          "macro",
+	"class_specifier":      "class",
+	"field_declaration":    "method",
+	"template_declaration": "template",
+	"namespace_definition": "namespace",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *CppQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition":  "function",
-		"declaration":          "function",
-		"struct_specifier":     "struct",
-		"enum_specifier":       "enum",
-		"type_definition":      "typedef",
-		"preproc_function_def": "macro",
-		"preproc_def":          "macro",
-		"class_specifier":      "class",
-		"field_declaration":    "method",
-		"template_declaration": "template",
-		"namespace_definition": "namespace",
-	}
+	return cppKindMapping
 }
 
 // ImportQuery returns the C++ import query pattern.

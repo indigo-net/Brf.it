@@ -39,17 +39,19 @@ func (q *GoQuery) Query() []byte {
 	return q.query
 }
 
+var goKindMapping = map[string]string{
+	"function_declaration": "function",
+	"method_declaration":   "method",
+	"type_declaration":     "type",
+	"const_declaration":    "variable",
+	"var_declaration":      "variable",
+	"const_spec":           "variable",
+	"var_spec":             "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *GoQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_declaration": "function",
-		"method_declaration":   "method",
-		"type_declaration":     "type",
-		"const_declaration":    "variable",
-		"var_declaration":      "variable",
-		"const_spec":           "variable",
-		"var_spec":             "variable",
-	}
+	return goKindMapping
 }
 
 // ImportQuery returns the Go import query pattern.

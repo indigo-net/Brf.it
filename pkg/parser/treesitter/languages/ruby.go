@@ -30,15 +30,17 @@ func (q *RubyQuery) Query() []byte {
 	return q.query
 }
 
+var rubyKindMapping = map[string]string{
+	"method":           "method",
+	"singleton_method": "method",
+	"class":            "class",
+	"module":           "namespace",
+	"assignment":       "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *RubyQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"method":           "method",
-		"singleton_method": "method",
-		"class":            "class",
-		"module":           "namespace",
-		"assignment":       "variable",
-	}
+	return rubyKindMapping
 }
 
 // ImportQuery returns the Ruby import query pattern.

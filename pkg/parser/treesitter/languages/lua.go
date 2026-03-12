@@ -31,13 +31,15 @@ func (q *LuaQuery) Query() []byte {
 	return q.query
 }
 
+var luaKindMapping = map[string]string{
+	"function_declaration": "function",
+	"variable_declaration": "variable",
+	"assignment_statement": "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *LuaQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_declaration": "function",
-		"variable_declaration": "variable",
-		"assignment_statement": "variable",
-	}
+	return luaKindMapping
 }
 
 // ImportQuery returns the Lua import query pattern.

@@ -31,14 +31,16 @@ func (q *ElixirQuery) Query() []byte {
 	return q.query
 }
 
+var elixirKindMapping = map[string]string{
+	"call":           "function",
+	"unary_operator": "type",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 // Elixir uses generic node types (call, unary_operator) which are refined
 // on the Go side in parser.go based on the signature text.
 func (q *ElixirQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"call":           "function",
-		"unary_operator": "type",
-	}
+	return elixirKindMapping
 }
 
 // ImportQuery returns the Elixir import query pattern.
