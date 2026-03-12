@@ -6238,6 +6238,7 @@ func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 
 ```go
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"sync"
@@ -6249,6 +6250,11 @@ func init()
 type queryType int
 queryTypeSignature queryType = iota
 queryTypeImport
+elixirDefPrefixes = [][]byte{
+	[]byte("defmodule "),
+	[]byte("defprotocol "),
+	[]byte("defimpl "),
+}
 supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql"
 type queryCacheKey struct {
 	lang string

@@ -5735,6 +5735,7 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser.go" language="go">
       <imports>import (
+	&quot;bytes&quot;
 	&quot;fmt&quot;
 	&quot;strings&quot;
 	&quot;sync&quot;
@@ -5746,6 +5747,11 @@ import &quot;unsafe&quot;</imports>
       <type>type queryType int</type>
       <variable>queryTypeSignature queryType = iota</variable>
       <variable>queryTypeImport</variable>
+      <variable>elixirDefPrefixes = [][]byte{
+	[]byte(&quot;defmodule &quot;),
+	[]byte(&quot;defprotocol &quot;),
+	[]byte(&quot;defimpl &quot;),
+}</variable>
       <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql&quot;</variable>
       <type>type queryCacheKey struct {
 	lang string
