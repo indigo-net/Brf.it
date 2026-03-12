@@ -70,13 +70,9 @@ func DefaultScanOptions() *ScanOptions {
 	}
 }
 
-// copyLanguageMapping returns a shallow copy of parser.LanguageMapping.
+// copyLanguageMapping returns a copy of parser.LanguageMapping().
 func copyLanguageMapping() map[string]string {
-	m := make(map[string]string, len(parser.LanguageMapping))
-	for k, v := range parser.LanguageMapping {
-		m[k] = v
-	}
-	return m
+	return parser.LanguageMapping()
 }
 
 // GetLanguage returns the language for a given file path and whether it's supported.

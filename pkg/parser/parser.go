@@ -3,6 +3,7 @@ package parser
 
 import (
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -167,10 +168,10 @@ func GetParser(lang string) (Parser, bool) {
 	return defaultRegistry.Get(lang)
 }
 
-// LanguageMapping maps file extensions to language names.
+// languageMapping maps file extensions to language names.
 // This is the canonical source of truth for extension-to-language mapping.
-// Scanner's DefaultScanOptions references this map.
-var LanguageMapping = map[string]string{
+// Immutable after package initialization; safe for concurrent reads.
+var languageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
 	".tsx":   "typescript",
@@ -200,10 +201,19 @@ var LanguageMapping = map[string]string{
 	".sql":   "sql",
 }
 
+// LanguageMapping returns a copy of the canonical extension-to-language mapping.
+func LanguageMapping() map[string]string {
+	m := make(map[string]string, len(languageMapping))
+	for k, v := range languageMapping {
+		m[k] = v
+	}
+	return m
+}
+
 // DetectLanguage returns the language for a given file path.
 func DetectLanguage(path string) string {
-	ext := filepath.Ext(path)
-	if lang, ok := LanguageMapping[ext]; ok {
+	ext := strings.ToLower(filepath.Ext(path))
+	if lang, ok := languageMapping[ext]; ok {
 		return lang
 	}
 	return ""
