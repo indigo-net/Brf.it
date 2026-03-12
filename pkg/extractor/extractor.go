@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"sort"
+	"strings"
 	"sync"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
@@ -234,7 +236,9 @@ func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry
 	// Get parser for language
 	p, ok := e.registry.Get(entry.Language)
 	if !ok {
-		extracted.Error = fmt.Errorf("no parser for language %q in %q. Available parsers: go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala", entry.Language, entry.Path)
+		langs := e.registry.Languages()
+		sort.Strings(langs)
+		extracted.Error = fmt.Errorf("no parser for language %q in %q. Available parsers: %s", entry.Language, entry.Path, strings.Join(langs, ", "))
 		return extracted
 	}
 
