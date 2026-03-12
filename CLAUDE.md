@@ -156,6 +156,7 @@ Options:
   --changed               Git 변경 파일만 스캔
   --since <ref>           특정 커밋/태그 이후 변경된 파일만 스캔
   --security-check        보안 민감 정보 감지 및 마스킹 (기본값: 활성화, --no-security-check으로 비활성화)
+  --call-graph            함수 호출 참조 그래프 출력 (기본값: 비활성화)
 ```
 
 ---

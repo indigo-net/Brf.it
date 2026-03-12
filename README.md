@@ -134,6 +134,7 @@ This project, packaged by brfit itself. Auto-generated on every commit.
 | Gitignore Aware | Automatically excludes unnecessary files |
 | Cross-Platform | Linux, macOS, and Windows support |
 | Security Check | Detects and redacts secrets (AWS keys, GitHub tokens, API keys, etc.) in extracted code |
+| Call Graph | Extracts function/method call relationships using Tree-sitter queries (Go, TS, Python, Java, Rust, C) |
 
 ---
 
@@ -193,6 +194,7 @@ brfit [path] [options]
 | `--since` | | Only scan files changed since commit/tag | |
 | `--token-tree` | | Show per-file token count tree | `false` |
 | `--security-check` / `--no-security-check` | | Detect and redact secrets (API keys, tokens, etc.) | `true` |
+| `--call-graph` | | Extract function call relationships per file | `false` |
 | `--version` | `-v` | Show version | |
 
 ### Examples
