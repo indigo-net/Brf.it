@@ -239,3 +239,54 @@ brfit . -o context.xml
 # Use in scripts
 brfit . --no-tokens --no-tree > signatures.xml
 ```
+
+---
+
+## MCP Server (`brfit-mcp`)
+
+`brfit-mcp` is a standalone [Model Context Protocol](https://modelcontextprotocol.io/) server binary that exposes brfit's code analysis as tools for AI agents. It communicates over stdio using JSON-RPC.
+
+### Usage
+
+```bash
+brfit-mcp --root /path/to/project
+```
+
+### Tools
+
+#### `summarize_project`
+
+Extract signatures from a project directory.
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `path` | Project directory path | Server `--root` value |
+| `format` | Output format (`xml`, `md`) | `xml` |
+| `include_body` | Include function bodies | `false` |
+| `include_imports` | Include import statements | `false` |
+| `call_graph` | Extract function call relationships | `false` |
+
+#### `summarize_file`
+
+Extract signatures from files matching a glob pattern.
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `path` | Base directory path | Server `--root` value |
+| `include` | Glob pattern(s) to match files | |
+| `format` | Output format (`xml`, `md`) | `xml` |
+
+### Claude Desktop Configuration
+
+Add to your Claude Desktop `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "brfit": {
+      "command": "brfit-mcp",
+      "args": ["--root", "/path/to/project"]
+    }
+  }
+}
+```

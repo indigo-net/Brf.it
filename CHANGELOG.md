@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `brfit-mcp` MCP (Model Context Protocol) 서버 바이너리 — AI 에이전트용 stdio JSON-RPC 서버, `summarize_project`/`summarize_file` 도구 제공 (#192)
 - 함수 호출 참조 그래프 출력 (`--call-graph`) — Tree-sitter 기반 함수 호출 관계 추출 (Go, TypeScript, Python, Java, Rust, C) (#191)
 - 보안 민감 정보 감지 및 마스킹 (`--security-check`) — 기본 활성화, AWS/GitHub/API 키 등 12종 패턴 감지 후 `[REDACTED]` 마스킹 (#190)
 - `--token-tree` flag to display per-file token counts in tree format (#187)

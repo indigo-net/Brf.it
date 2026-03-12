@@ -228,6 +228,40 @@ brfit . --include-imports
 
 <br/>
 
+## MCP Server
+
+`brfit-mcp` is a standalone [Model Context Protocol](https://modelcontextprotocol.io/) server that exposes brfit's code analysis as tools for AI agents. It communicates over stdio (JSON-RPC).
+
+### Tools
+
+| Tool | Description |
+|------|-------------|
+| `summarize_project` | Extract signatures from a project directory. Options: `path`, `format`, `include_body`, `include_imports`, `call_graph` |
+| `summarize_file` | Extract signatures from files matching a glob pattern. Options: `path`, `include`, `format` |
+
+### Usage
+
+```bash
+brfit-mcp --root /path/to/project
+```
+
+### Claude Desktop Configuration
+
+```json
+{
+  "mcpServers": {
+    "brfit": {
+      "command": "brfit-mcp",
+      "args": ["--root", "/path/to/project"]
+    }
+  }
+}
+```
+
+---
+
+<br/>
+
 ## License
 
 MIT License — Use freely in personal and commercial projects.

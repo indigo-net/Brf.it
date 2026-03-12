@@ -220,6 +220,40 @@ brfit . --include-imports
 
 <br/>
 
+## MCP 서버
+
+`brfit-mcp`는 brfit의 코드 분석을 AI 에이전트용 도구로 제공하는 독립 실행형 [Model Context Protocol](https://modelcontextprotocol.io/) 서버입니다. stdio (JSON-RPC)로 통신합니다.
+
+### 도구
+
+| 도구 | 설명 |
+|------|------|
+| `summarize_project` | 프로젝트 디렉토리에서 시그니처 추출. 옵션: `path`, `format`, `include_body`, `include_imports`, `call_graph` |
+| `summarize_file` | glob 패턴에 매칭되는 파일에서 시그니처 추출. 옵션: `path`, `include`, `format` |
+
+### 사용법
+
+```bash
+brfit-mcp --root /path/to/project
+```
+
+### Claude Desktop 설정
+
+```json
+{
+  "mcpServers": {
+    "brfit": {
+      "command": "brfit-mcp",
+      "args": ["--root", "/path/to/project"]
+    }
+  }
+}
+```
+
+---
+
+<br/>
+
 ## 라이선스
 
 MIT 라이선스 — 개인 및 상업 프로젝트에서 자유롭게 사용 가능합니다.
