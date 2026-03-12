@@ -25,14 +25,13 @@ func defaultPatterns() []Pattern {
 		{Name: "AWS Access Key ID", Regex: regexp.MustCompile(`AKIA[0-9A-Z]{16}`)},
 		{Name: "AWS Secret Access Key", Regex: regexp.MustCompile(`(?i)aws_secret_access_key\s*[=:]\s*[A-Za-z0-9/+=]{40}`)},
 		{Name: "GitHub Token", Regex: regexp.MustCompile(`gh[pousr]_[A-Za-z0-9_]{36,255}`)},
-		{Name: "GitHub Personal Access Token (classic)", Regex: regexp.MustCompile(`ghp_[A-Za-z0-9]{36}`)},
 		{Name: "Generic API Key", Regex: regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[=:]\s*["']?[A-Za-z0-9_\-]{20,}["']?`)},
-		{Name: "Generic Secret", Regex: regexp.MustCompile(`(?i)(?:secret|password|passwd|pwd)\s*[=:]\s*["']?[^\s"']{8,}["']?`)},
-		{Name: "Bearer Token", Regex: regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9\-._~+/]+=*`)},
+		{Name: "Generic Secret", Regex: regexp.MustCompile(`(?i)\b(?:secret|password|passwd|pwd)\s*[=:]\s*["']?[^\s"']{8,}["']?`)},
+		{Name: "Bearer Token", Regex: regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9\-._~+/]{20,}=*`)},
 		{Name: "Private Key", Regex: regexp.MustCompile(`-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----`)},
 		{Name: "Slack Token", Regex: regexp.MustCompile(`xox[bporas]-[0-9]{10,}-[A-Za-z0-9-]+`)},
 		{Name: "Google API Key", Regex: regexp.MustCompile(`AIza[0-9A-Za-z_-]{35}`)},
-		{Name: "Heroku API Key", Regex: regexp.MustCompile(`(?i)heroku.*[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)},
+		{Name: "Heroku API Key", Regex: regexp.MustCompile(`(?i)heroku.{0,100}[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)},
 		{Name: "Generic Token Assignment", Regex: regexp.MustCompile(`(?i)(?:token|auth)\s*[=:]\s*["']?[A-Za-z0-9_\-]{20,}["']?`)},
 	}
 }
@@ -44,9 +43,6 @@ type Finding struct {
 
 	// PatternName is the name of the matched pattern.
 	PatternName string
-
-	// MatchedText is the matched secret text.
-	MatchedText string
 }
 
 // ScanResult contains the results of a security scan.
@@ -71,6 +67,11 @@ func NewScanner(warnings io.Writer) *Scanner {
 		patterns: defaultPatterns(),
 		warnings: warnings,
 	}
+}
+
+// SetWarnings sets the writer for warning output.
+func (s *Scanner) SetWarnings(w io.Writer) {
+	s.warnings = w
 }
 
 // Scan scans extracted files for secrets, redacts them, and returns findings.
@@ -139,11 +140,10 @@ func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string {
 	for _, p := range s.patterns {
 		matches := p.Regex.FindAllString(result, -1)
 		if len(matches) > 0 {
-			for _, m := range matches {
+			for range matches {
 				sr.Findings = append(sr.Findings, Finding{
 					FilePath:    filePath,
 					PatternName: p.Name,
-					MatchedText: m,
 				})
 			}
 			result = p.Regex.ReplaceAllString(result, "[REDACTED]")

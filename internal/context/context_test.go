@@ -502,6 +502,10 @@ func TestDefaultOptions(t *testing.T) {
 	if !opts.IncludeTree {
 		t.Error("expected IncludeTree to be true by default")
 	}
+
+	if !opts.SecurityCheck {
+		t.Error("expected SecurityCheck to be true by default")
+	}
 }
 
 func TestNormalizeFormat(t *testing.T) {

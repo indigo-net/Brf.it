@@ -72,6 +72,7 @@ func DefaultOptions() *Options {
 		IncludeTree:   true,
 		IncludeHidden: false,
 		MaxFileSize:   512000, // 500KB
+		SecurityCheck: true,
 	}
 }
 
