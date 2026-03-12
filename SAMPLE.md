@@ -513,7 +513,7 @@ func NewPackager(
 	f map[string]formatter.Formatter,
 ) *Packager
 func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
-func (p *Packager) Package(opts *Options) (*Result, error)
+func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error)
 treeStr string
 globalImports []formatter.ImportCount
 func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)

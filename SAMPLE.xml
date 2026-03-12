@@ -470,7 +470,7 @@ main &quot;$@&quot;</imports>
 	f map[string]formatter.Formatter,
 ) *Packager</function>
       <function>func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)</function>
-      <function>func (p *Packager) Package(opts *Options) (*Result, error)</function>
+      <function>func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error)</function>
       <variable>treeStr string</variable>
       <variable>globalImports []formatter.ImportCount</variable>
       <function>func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)</function>
