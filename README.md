@@ -190,6 +190,7 @@ brfit [path] [options]
 | `--max-size` | | Max file size (bytes) | `512000` |
 | `--changed` | | Only scan git-modified files | `false` |
 | `--since` | | Only scan files changed since commit/tag | |
+| `--token-tree` | | Show per-file token count tree | `false` |
 | `--version` | `-v` | Show version | |
 
 ### Examples
