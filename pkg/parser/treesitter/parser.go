@@ -207,7 +207,7 @@ func (p *TreeSitterParser) extractSignatures(
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]parser.Signature, error) {
-	var signatures []parser.Signature
+	signatures := make([]parser.Signature, 0, 32)
 
 	// Get cached query (or create if first time)
 	query, err := p.getOrCreateQuery(opts.Language, langQuery, queryTypeSignature)
@@ -1575,7 +1575,7 @@ func (p *TreeSitterParser) extractImports(
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]string, error) {
-	var imports []string
+	imports := make([]string, 0, 8)
 
 	importQueryBytes := langQuery.ImportQuery()
 	if importQueryBytes == nil || len(importQueryBytes) == 0 {
