@@ -237,21 +237,35 @@ func TestValidateMaxFileSizeUpperBound(t *testing.T) {
 }
 
 func TestToOptionsIncludePrivate(t *testing.T) {
-	cfg := DefaultConfig()
-	cfg.Path = "/test"
-	cfg.Version = "1.0.0"
-
-	// Default: IncludePrivate should be false
-	opts := cfg.ToOptions()
-	if opts.IncludePrivate {
-		t.Error("expected IncludePrivate false by default")
+	tests := []struct {
+		name           string
+		includePrivate bool
+		want           bool
+	}{
+		{
+			name:           "default false",
+			includePrivate: false,
+			want:           false,
+		},
+		{
+			name:           "set true propagates",
+			includePrivate: true,
+			want:           true,
+		},
 	}
 
-	// When set: IncludePrivate should propagate
-	cfg.IncludePrivate = true
-	opts = cfg.ToOptions()
-	if !opts.IncludePrivate {
-		t.Error("expected IncludePrivate true when set")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := DefaultConfig()
+			cfg.Path = "/test"
+			cfg.Version = "1.0.0"
+			cfg.IncludePrivate = tt.includePrivate
+
+			opts := cfg.ToOptions()
+			if opts.IncludePrivate != tt.want {
+				t.Errorf("expected IncludePrivate %v, got %v", tt.want, opts.IncludePrivate)
+			}
+		})
 	}
 }
 

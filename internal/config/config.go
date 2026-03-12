@@ -77,6 +77,7 @@ func DefaultConfig() *Config {
 		IncludeHidden:  false,
 		IncludeBody:    false,
 		IncludeImports: false,
+		IncludePrivate: false,
 		NoTree:         false,
 		NoTokens:       false,
 		MaxFileSize:    512000, // 500KB

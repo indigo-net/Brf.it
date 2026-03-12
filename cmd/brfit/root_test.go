@@ -112,10 +112,11 @@ func TestParseFlags(t *testing.T) {
 		expectedMode string
 		expectedFmt  string
 		expectedOut  string
-		expectedHide bool
-		expectedTree bool
-		expectedTok  bool
-		expectedSize int64
+		expectedHide    bool
+		expectedPrivate bool
+		expectedTree    bool
+		expectedTok     bool
+		expectedSize    int64
 	}{
 		{
 			name:         "default values",
@@ -138,15 +139,16 @@ func TestParseFlags(t *testing.T) {
 		},
 		{
 			name:         "with all flags",
-			args:         []string{"brfit", "/project", "--mode", "sig", "--format", "md", "--output", "out.xml", "--include-hidden", "--no-tree", "--no-tokens", "--max-size", "1000000"},
-			expectedPath: "/project",
-			expectedMode: "sig",
-			expectedFmt:  "md",
-			expectedOut:  "out.xml",
-			expectedHide: true,
-			expectedTree: true,
-			expectedTok:  true,
-			expectedSize: 1000000,
+			args:            []string{"brfit", "/project", "--mode", "sig", "--format", "md", "--output", "out.xml", "--include-hidden", "--include-private", "--no-tree", "--no-tokens", "--max-size", "1000000"},
+			expectedPath:    "/project",
+			expectedMode:    "sig",
+			expectedFmt:     "md",
+			expectedOut:     "out.xml",
+			expectedHide:    true,
+			expectedPrivate: true,
+			expectedTree:    true,
+			expectedTok:     true,
+			expectedSize:    1000000,
 		},
 		{
 			name:         "short flags",
@@ -200,6 +202,9 @@ func TestParseFlags(t *testing.T) {
 			}
 			if testCfg.IncludeHidden != tt.expectedHide {
 				t.Errorf("expected IncludeHidden %v, got %v", tt.expectedHide, testCfg.IncludeHidden)
+			}
+			if testCfg.IncludePrivate != tt.expectedPrivate {
+				t.Errorf("expected IncludePrivate %v, got %v", tt.expectedPrivate, testCfg.IncludePrivate)
 			}
 			if testCfg.NoTree != tt.expectedTree {
 				t.Errorf("expected NoTree %v, got %v", tt.expectedTree, testCfg.NoTree)
