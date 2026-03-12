@@ -187,7 +187,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 	opts := c.ToOptions()
 
 	// Execute packaging
-	result, err := packager.Package(opts)
+	result, err := packager.Package(cmd.Context(), opts)
 	if err != nil {
 		return fmt.Errorf("processing failed: %w", err)
 	}

@@ -122,7 +122,7 @@ func (p *Packager) SetTokenizer(t tokenizer.Tokenizer) {
 }
 
 // Package processes files and returns formatted output.
-func (p *Packager) Package(opts *Options) (*Result, error) {
+func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) {
 	if opts == nil {
 		opts = DefaultOptions()
 	}
@@ -140,8 +140,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 		IncludeImports: opts.IncludeImports,
 		MaxFileSize:    opts.MaxFileSize,
 	}
-	// TODO: propagate context from Package() caller once Package accepts context.Context
-	extractResult, err := p.extractor.Extract(context.TODO(), scanResult, extractOpts)
+	extractResult, err := p.extractor.Extract(ctx, scanResult, extractOpts)
 	if err != nil {
 		return nil, err
 	}
