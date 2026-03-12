@@ -386,6 +386,9 @@ main &quot;$@&quot;</imports>
 	// TokenTree outputs a directory tree with per-file token counts and exits.
 	TokenTree bool
 
+	// SecurityCheck enables secret detection and redaction (default: true).
+	SecurityCheck bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -421,10 +424,13 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context.go" language="go">
       <imports>import (
 	&quot;context&quot;
+	&quot;io&quot;
+	&quot;os&quot;
 	&quot;sort&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/formatter&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/security&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;
 )</imports>
       <type>type Options struct {
@@ -471,6 +477,9 @@ main &quot;$@&quot;</imports>
 
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
+
+	// SecurityCheck enables secret detection and redaction.
+	SecurityCheck bool
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -495,6 +504,7 @@ main &quot;$@&quot;</imports>
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
 	tokenizer  tokenizer.Tokenizer
+	warnings   io.Writer
 }</type>
       <function>func NewPackager(
 	s scanner.Scanner,
@@ -7276,6 +7286,77 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanExcludeDirectory(t *testing.T)</function>
       <function>func TestScanSingleFileWithIncludePattern(t *testing.T)</function>
       <function>func TestScanChangedFilesWhitelist(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go" language="go">
+      <imports>import (
+	&quot;fmt&quot;
+	&quot;io&quot;
+	&quot;regexp&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <type>type Pattern struct {
+	// Name is a human-readable name for the pattern.
+	Name string
+
+	// Regex is the compiled regular expression.
+	Regex *regexp.Regexp
+}</type>
+      <function>func defaultPatterns() []Pattern</function>
+      <type>type Finding struct {
+	// FilePath is the file where the secret was found.
+	FilePath string
+
+	// PatternName is the name of the matched pattern.
+	PatternName string
+}</type>
+      <type>type ScanResult struct {
+	// Findings is the list of detected secrets.
+	Findings []Finding
+
+	// RedactedFiles is the extract result with secrets redacted.
+	RedactedFiles []extractor.ExtractedFile
+}</type>
+      <type>type Scanner struct {
+	patterns []Pattern
+	warnings io.Writer
+}</type>
+      <function>func NewScanner(warnings io.Writer) *Scanner</function>
+      <function>func (s *Scanner) SetWarnings(w io.Writer)</function>
+      <function>func (s *Scanner) Scan(result *extractor.ExtractResult) *ScanResult</function>
+      <function>func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extractor.ExtractedFile</function>
+      <function>func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/security/scanner_test.go" language="go">
+      <imports>import (
+	&quot;bytes&quot;
+	&quot;fmt&quot;
+	&quot;strings&quot;
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/extractor&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func TestScan_NilResult(t *testing.T)</function>
+      <function>func TestScan_NoSecrets(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_AWSAccessKeyDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_GitHubTokenDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_GenericAPIKeyDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_PasswordInDocDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_PrivateKeyDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_ImportRedacted(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_ErrorFileSkipped(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_BearerTokenDetected(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
+      <function>func TestScan_MultipleSecretsInOneFile(t *testing.T)</function>
+      <variable>buf bytes.Buffer</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">
       <imports>import (

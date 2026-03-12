@@ -419,6 +419,9 @@ type Config struct {
 	// TokenTree outputs a directory tree with per-file token counts and exits.
 	TokenTree bool
 
+	// SecurityCheck enables secret detection and redaction (default: true).
+	SecurityCheck bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -464,10 +467,13 @@ func containsSubstring(s, substr string) bool
 ```go
 import (
 	"context"
+	"io"
+	"os"
 	"sort"
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/security"
 	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 )
 type Options struct {
@@ -514,6 +520,9 @@ type Options struct {
 
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
+
+	// SecurityCheck enables secret detection and redaction.
+	SecurityCheck bool
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -538,6 +547,7 @@ type Packager struct {
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
 	tokenizer  tokenizer.Tokenizer
+	warnings   io.Writer
 }
 func NewPackager(
 	s scanner.Scanner,
@@ -7919,6 +7929,87 @@ func TestScanIncludePatterns(t *testing.T)
 func TestScanExcludeDirectory(t *testing.T)
 func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go
+
+```go
+import (
+	"fmt"
+	"io"
+	"regexp"
+	"github.com/indigo-net/Brf.it/pkg/extractor"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+type Pattern struct {
+	// Name is a human-readable name for the pattern.
+	Name string
+
+	// Regex is the compiled regular expression.
+	Regex *regexp.Regexp
+}
+func defaultPatterns() []Pattern
+type Finding struct {
+	// FilePath is the file where the secret was found.
+	FilePath string
+
+	// PatternName is the name of the matched pattern.
+	PatternName string
+}
+type ScanResult struct {
+	// Findings is the list of detected secrets.
+	Findings []Finding
+
+	// RedactedFiles is the extract result with secrets redacted.
+	RedactedFiles []extractor.ExtractedFile
+}
+type Scanner struct {
+	patterns []Pattern
+	warnings io.Writer
+}
+func NewScanner(warnings io.Writer) *Scanner
+func (s *Scanner) SetWarnings(w io.Writer)
+func (s *Scanner) Scan(result *extractor.ExtractResult) *ScanResult
+func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extractor.ExtractedFile
+func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner_test.go
+
+```go
+import (
+	"bytes"
+	"fmt"
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/extractor"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func TestScan_NilResult(t *testing.T)
+func TestScan_NoSecrets(t *testing.T)
+buf bytes.Buffer
+func TestScan_AWSAccessKeyDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_GitHubTokenDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_GenericAPIKeyDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_PasswordInDocDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_PrivateKeyDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_ImportRedacted(t *testing.T)
+buf bytes.Buffer
+func TestScan_ErrorFileSkipped(t *testing.T)
+buf bytes.Buffer
+func TestScan_BearerTokenDetected(t *testing.T)
+buf bytes.Buffer
+func TestScan_MultipleSecretsInOneFile(t *testing.T)
+buf bytes.Buffer
 ```
 
 ---
