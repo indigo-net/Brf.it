@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -90,7 +91,7 @@ func TestNewRootCommand(t *testing.T) {
 	}
 
 	// Check flags exist
-	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size"}
+	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size", "changed", "since"}
 	for _, flag := range flags {
 		f := cmd.Flags().Lookup(flag)
 		if f == nil {
@@ -310,6 +311,183 @@ func TestRootCommandPathNotFound(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "path not found") {
 		t.Errorf("expected 'path not found' error, got: %v", err)
+	}
+}
+
+func TestResolveChangedFilesPathAnchoring(t *testing.T) {
+	// Create a temporary git repo with a subdirectory, make a change,
+	// and verify resolveChangedFiles returns paths relative to the subdirectory.
+	tmpDir := t.TempDir()
+
+	// Initialize a git repo
+	run := func(args ...string) {
+		t.Helper()
+		cmd := exec.Command(args[0], args[1:]...)
+		cmd.Dir = tmpDir
+		cmd.Env = append(os.Environ(),
+			"GIT_AUTHOR_NAME=test",
+			"GIT_AUTHOR_EMAIL=test@test.com",
+			"GIT_COMMITTER_NAME=test",
+			"GIT_COMMITTER_EMAIL=test@test.com",
+		)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("command %v failed: %v\n%s", args, err, out)
+		}
+	}
+
+	run("git", "init")
+	run("git", "config", "user.email", "test@test.com")
+	run("git", "config", "user.name", "test")
+
+	// Create subdirectory structure
+	subDir := filepath.Join(tmpDir, "pkg", "scanner")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	otherDir := filepath.Join(tmpDir, "cmd")
+	if err := os.MkdirAll(otherDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create initial files and commit
+	for _, f := range []struct {
+		path, content string
+	}{
+		{filepath.Join(subDir, "scanner.go"), "package scanner\n"},
+		{filepath.Join(otherDir, "main.go"), "package main\n"},
+	} {
+		if err := os.WriteFile(f.path, []byte(f.content), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	run("git", "add", "-A")
+	run("git", "commit", "-m", "initial")
+
+	// Modify a file in the subdirectory
+	if err := os.WriteFile(filepath.Join(subDir, "scanner.go"), []byte("package scanner\n// changed\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Test: resolveChangedFiles with rootPath = subDir should return "scanner.go"
+	files, err := resolveChangedFiles(subDir, true, "")
+	if err != nil {
+		t.Fatalf("resolveChangedFiles failed: %v", err)
+	}
+
+	if !files["scanner.go"] {
+		t.Errorf("expected 'scanner.go' in changed files, got: %v", files)
+	}
+
+	// cmd/main.go should NOT appear (it's outside the scan root)
+	if files["../cmd/main.go"] || files["cmd/main.go"] || files["main.go"] {
+		t.Errorf("expected files outside scan root to be excluded, got: %v", files)
+	}
+}
+
+func TestResolveChangedFilesIncludesUntracked(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	run := func(args ...string) {
+		t.Helper()
+		cmd := exec.Command(args[0], args[1:]...)
+		cmd.Dir = tmpDir
+		cmd.Env = append(os.Environ(),
+			"GIT_AUTHOR_NAME=test",
+			"GIT_AUTHOR_EMAIL=test@test.com",
+			"GIT_COMMITTER_NAME=test",
+			"GIT_COMMITTER_EMAIL=test@test.com",
+		)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("command %v failed: %v\n%s", args, err, out)
+		}
+	}
+
+	run("git", "init")
+	run("git", "config", "user.email", "test@test.com")
+	run("git", "config", "user.name", "test")
+
+	// Create initial file and commit
+	if err := os.WriteFile(filepath.Join(tmpDir, "existing.go"), []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	run("git", "add", "-A")
+	run("git", "commit", "-m", "initial")
+
+	// Create a new untracked file
+	if err := os.WriteFile(filepath.Join(tmpDir, "newfile.go"), []byte("package main\n// new\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// --changed (changed=true) should include untracked files
+	files, err := resolveChangedFiles(tmpDir, true, "")
+	if err != nil {
+		t.Fatalf("resolveChangedFiles failed: %v", err)
+	}
+
+	if !files["newfile.go"] {
+		t.Errorf("expected 'newfile.go' in changed files (untracked), got: %v", files)
+	}
+
+	// Modify existing.go and create a second commit so HEAD~1 is valid
+	if err := os.WriteFile(filepath.Join(tmpDir, "existing.go"), []byte("package main\n// modified\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	run("git", "add", "existing.go")
+	run("git", "commit", "-m", "second")
+
+	// --since (changed=false) should NOT include untracked files
+	filesSince, err := resolveChangedFiles(tmpDir, false, "HEAD~1")
+	if err != nil {
+		t.Fatalf("resolveChangedFiles --since failed: %v", err)
+	}
+
+	if filesSince["newfile.go"] {
+		t.Errorf("expected 'newfile.go' to NOT appear in --since mode, got: %v", filesSince)
+	}
+}
+
+func TestResolveChangedFilesEmptyOutput(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	run := func(args ...string) {
+		t.Helper()
+		cmd := exec.Command(args[0], args[1:]...)
+		cmd.Dir = tmpDir
+		cmd.Env = append(os.Environ(),
+			"GIT_AUTHOR_NAME=test",
+			"GIT_AUTHOR_EMAIL=test@test.com",
+			"GIT_COMMITTER_NAME=test",
+			"GIT_COMMITTER_EMAIL=test@test.com",
+		)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("command %v failed: %v\n%s", args, err, out)
+		}
+	}
+
+	run("git", "init")
+	run("git", "config", "user.email", "test@test.com")
+	run("git", "config", "user.name", "test")
+
+	if err := os.WriteFile(filepath.Join(tmpDir, "main.go"), []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	run("git", "add", "-A")
+	run("git", "commit", "-m", "initial")
+
+	// No changes - should return empty map, not nil
+	files, err := resolveChangedFiles(tmpDir, true, "")
+	if err != nil {
+		t.Fatalf("resolveChangedFiles failed: %v", err)
+	}
+
+	if files == nil {
+		t.Error("expected non-nil empty map, got nil")
+	}
+	if len(files) != 0 {
+		t.Errorf("expected empty map, got: %v", files)
 	}
 }
 

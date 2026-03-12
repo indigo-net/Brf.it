@@ -1033,3 +1033,100 @@ func TestScanSingleFileWithIncludePattern(t *testing.T) {
 		})
 	}
 }
+
+func TestScanChangedFilesWhitelist(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create test files
+	for _, f := range []struct {
+		path    string
+		content string
+	}{
+		{"main.go", "package main\nfunc main() {}"},
+		{"util.go", "package main\nfunc util() {}"},
+		{"lib.go", "package main\nfunc lib() {}"},
+		{"test.py", "def test(): pass"},
+	} {
+		if err := os.WriteFile(filepath.Join(tmpDir, f.path), []byte(f.content), 0644); err != nil {
+			t.Fatalf("write %s: %v", f.path, err)
+		}
+	}
+
+	defaultOpts := DefaultScanOptions()
+
+	tests := []struct {
+		name         string
+		changedFiles map[string]bool
+		wantFiles    int
+		wantNames    []string
+	}{
+		{
+			name:         "nil whitelist includes all",
+			changedFiles: nil,
+			wantFiles:    4,
+		},
+		{
+			name:         "whitelist with two Go files",
+			changedFiles: map[string]bool{"main.go": true, "util.go": true},
+			wantFiles:    2,
+			wantNames:    []string{"main.go", "util.go"},
+		},
+		{
+			name:         "whitelist with one file",
+			changedFiles: map[string]bool{"test.py": true},
+			wantFiles:    1,
+			wantNames:    []string{"test.py"},
+		},
+		{
+			name:         "empty whitelist excludes all",
+			changedFiles: map[string]bool{},
+			wantFiles:    0,
+		},
+		{
+			name:         "whitelist with nonexistent file",
+			changedFiles: map[string]bool{"nonexistent.go": true},
+			wantFiles:    0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := &ScanOptions{
+				RootPath:            tmpDir,
+				SupportedExtensions: defaultOpts.SupportedExtensions,
+				MaxFileSize:         defaultOpts.MaxFileSize,
+				ChangedFiles:        tt.changedFiles,
+			}
+
+			s, err := NewFileScanner(opts)
+			if err != nil {
+				t.Fatalf("NewFileScanner: %v", err)
+			}
+
+			result, err := s.Scan(context.Background())
+			if err != nil {
+				t.Fatalf("Scan: %v", err)
+			}
+
+			if len(result.Files) != tt.wantFiles {
+				names := make([]string, len(result.Files))
+				for i, f := range result.Files {
+					names[i] = filepath.Base(f.Path)
+				}
+				t.Errorf("got %d files %v, want %d", len(result.Files), names, tt.wantFiles)
+			}
+
+			if tt.wantNames != nil {
+				gotNames := make(map[string]bool)
+				for _, f := range result.Files {
+					gotNames[filepath.Base(f.Path)] = true
+				}
+				for _, name := range tt.wantNames {
+					if !gotNames[name] {
+						t.Errorf("expected file %q not found in results", name)
+					}
+				}
+			}
+		})
+	}
+}

@@ -62,6 +62,12 @@ type Config struct {
 	// IncludePrivate determines whether to include non-exported/private symbols.
 	IncludePrivate bool
 
+	// Changed restricts scanning to files changed in the git working tree.
+	Changed bool
+
+	// Since restricts scanning to files changed since the specified commit/tag.
+	Since string
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 

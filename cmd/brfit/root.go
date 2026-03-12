@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/indigo-net/Brf.it/internal/config"
 	"github.com/indigo-net/Brf.it/internal/context"
@@ -135,6 +137,13 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
 		"skip XML schema section in output")
 
+	// Git change detection flags
+	cmd.Flags().BoolVar(&c.Changed, "changed", c.Changed,
+		"only scan files changed in git working tree (git diff --name-only HEAD)")
+
+	cmd.Flags().StringVar(&c.Since, "since", c.Since,
+		"only scan files changed since the specified commit/tag (e.g., \"v1.0.0\", \"HEAD~5\")")
+
 	// Version flag
 	cmd.Flags().BoolP("version", "v", false, "print version information")
 }
@@ -173,6 +182,16 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		return fmt.Errorf("configuration error: %w", err)
 	}
 
+	// Resolve git changed files if --changed or --since is specified
+	var changedFiles map[string]bool
+	if c.Changed || c.Since != "" {
+		files, err := resolveChangedFiles(c.Path, c.Changed, c.Since)
+		if err != nil {
+			return fmt.Errorf("failed to resolve changed files: %w", err)
+		}
+		changedFiles = files
+	}
+
 	// Create scan options from config
 	scanOpts := &scanner.ScanOptions{
 		RootPath:            c.Path,
@@ -180,6 +199,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		IgnoreFiles:         c.IgnoreFiles,
 		IncludePatterns:     c.IncludePatterns,
 		ExcludePatterns:     c.ExcludePatterns,
+		ChangedFiles:        changedFiles,
 		IncludeHidden:       c.IncludeHidden,
 		MaxFileSize:         c.MaxFileSize,
 	}
@@ -230,6 +250,124 @@ func writeOutput(result *context.Result, c *config.Config) error {
 
 	// Write to file
 	return writeToFile(c.Output, result.Content)
+}
+
+// resolveChangedFiles runs git diff to get changed file paths and returns them
+// as a set of relative paths (forward-slash separated, relative to rootPath).
+// The resulting map is suitable for ScanOptions.ChangedFiles.
+//
+// When changed is true (--changed flag), untracked files are also included via
+// git ls-files --others --exclude-standard.
+func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error) {
+	// Determine directory to run git in
+	dir := rootPath
+	if info, err := os.Stat(rootPath); err == nil && !info.IsDir() {
+		dir = filepath.Dir(rootPath)
+	}
+
+	// Get the git repository root
+	topCmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	topCmd.Dir = dir
+	topOut, err := topCmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("git not found or not a git repository: %w", err)
+	}
+	repoRoot := strings.TrimSpace(string(topOut))
+	// Resolve symlinks to avoid mismatches (e.g., macOS /var -> /private/var)
+	if resolved, err := filepath.EvalSymlinks(repoRoot); err == nil {
+		repoRoot = resolved
+	}
+
+	// Determine which git diff command to run
+	var diffArgs []string
+	if since != "" {
+		// --since <ref>: files changed between ref and HEAD + working tree
+		diffArgs = []string{"diff", "--name-only", since}
+	} else {
+		// --changed: uncommitted changes (staged + unstaged)
+		diffArgs = []string{"diff", "--name-only", "HEAD"}
+	}
+
+	diffCmd := exec.Command("git", diffArgs...)
+	diffCmd.Dir = dir
+	out, err := diffCmd.Output()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return nil, fmt.Errorf("git diff failed: %s", string(exitErr.Stderr))
+		}
+		return nil, fmt.Errorf("git not found or not a git repository: %w", err)
+	}
+
+	// Collect git-relative paths from diff output
+	gitRelPaths := splitNonEmpty(string(out))
+
+	// For --changed mode, also include untracked files
+	if changed {
+		lsCmd := exec.Command("git", "ls-files", "--others", "--exclude-standard")
+		lsCmd.Dir = dir
+		lsOut, err := lsCmd.Output()
+		if err == nil {
+			gitRelPaths = append(gitRelPaths, splitNonEmpty(string(lsOut))...)
+		}
+	}
+
+	// Early return for empty output
+	if len(gitRelPaths) == 0 {
+		return map[string]bool{}, nil
+	}
+
+	// Resolve absolute rootPath for proper relative path computation
+	absRoot, err := filepath.Abs(rootPath)
+	if err != nil {
+		absRoot = rootPath
+	}
+	// If rootPath is a file, use its parent directory
+	if info, err := os.Stat(absRoot); err == nil && !info.IsDir() {
+		absRoot = filepath.Dir(absRoot)
+	}
+	// Resolve symlinks to match repoRoot (e.g., macOS /var -> /private/var)
+	if resolved, err := filepath.EvalSymlinks(absRoot); err == nil {
+		absRoot = resolved
+	}
+
+	// Convert git-relative paths to rootPath-relative paths
+	files := make(map[string]bool, len(gitRelPaths))
+	for _, gitRel := range gitRelPaths {
+		// Convert git-relative path to absolute path
+		absPath := filepath.Join(repoRoot, filepath.FromSlash(gitRel))
+
+		// Compute path relative to rootPath
+		rel, err := filepath.Rel(absRoot, absPath)
+		if err != nil {
+			continue
+		}
+
+		// Skip entries outside the scan root (paths that start with "..")
+		if strings.HasPrefix(rel, "..") {
+			continue
+		}
+
+		files[filepath.ToSlash(rel)] = true
+	}
+
+	return files, nil
+}
+
+// splitNonEmpty splits output by newlines and returns non-empty trimmed lines.
+func splitNonEmpty(s string) []string {
+	trimmed := strings.TrimSpace(s)
+	if trimmed == "" {
+		return nil
+	}
+	lines := strings.Split(trimmed, "\n")
+	result := make([]string, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			result = append(result, line)
+		}
+	}
+	return result
 }
 
 // writeToFile writes content to a file, creating parent directories if needed.
