@@ -493,7 +493,7 @@ main &quot;$@&quot;</imports>
 	result *scanner.ScanResult
 	err    error
 }</type>
-      <function>func (m *mockScanner) Scan() (*scanner.ScanResult, error)</function>
+      <function>func (m *mockScanner) Scan(_ context.Context) (*scanner.ScanResult, error)</function>
       <type>type mockExtractor struct {
 	result *extractor.ExtractResult
 	err    error
@@ -6026,6 +6026,7 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go" language="go">
       <imports>import (
+	&quot;context&quot;
 	&quot;errors&quot;
 	&quot;fmt&quot;
 	&quot;io/fs&quot;
@@ -6082,7 +6083,8 @@ import &quot;unsafe&quot;</imports>
       <function>func getBaseName(path string) string</function>
       <type>type Scanner interface {
 	// Scan performs the scan and returns scan results.
-	Scan() (*ScanResult, error)
+	// The context allows cancellation of long-running scans.
+	Scan(ctx context.Context) (*ScanResult, error)
 }</type>
       <type>type FileScanner struct {
 	opts             *ScanOptions
@@ -6092,12 +6094,13 @@ import &quot;unsafe&quot;</imports>
 	logger           *log.Logger
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
-      <function>func (s *FileScanner) Scan() (*ScanResult, error)</function>
+      <function>func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)</function>
       <variable>warning string</variable>
       <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go" language="go">
       <imports>import (
+	&quot;context&quot;
 	&quot;os&quot;
 	&quot;path/filepath&quot;
 	&quot;testing&quot;
@@ -6109,6 +6112,7 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
+	&quot;context&quot;
 	&quot;log&quot;
 	&quot;os&quot;
 	&quot;path/filepath&quot;

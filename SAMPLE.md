@@ -541,7 +541,7 @@ type mockScanner struct {
 	result *scanner.ScanResult
 	err    error
 }
-func (m *mockScanner) Scan() (*scanner.ScanResult, error)
+func (m *mockScanner) Scan(_ context.Context) (*scanner.ScanResult, error)
 type mockExtractor struct {
 	result *extractor.ExtractResult
 	err    error
@@ -6564,6 +6564,7 @@ func ExampleIsHidden()
 
 ```go
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -6620,7 +6621,8 @@ func IsHidden(name string) bool
 func getBaseName(path string) string
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
-	Scan() (*ScanResult, error)
+	// The context allows cancellation of long-running scans.
+	Scan(ctx context.Context) (*ScanResult, error)
 }
 type FileScanner struct {
 	opts             *ScanOptions
@@ -6630,7 +6632,7 @@ type FileScanner struct {
 	logger           *log.Logger
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
-func (s *FileScanner) Scan() (*ScanResult, error)
+func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)
 warning string
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
@@ -6641,6 +6643,7 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 
 ```go
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -6657,6 +6660,7 @@ func BenchmarkScanWithIgnore(b *testing.B)
 ```go
 import (
 	"bytes"
+	"context"
 	"log"
 	"os"
 	"path/filepath"
