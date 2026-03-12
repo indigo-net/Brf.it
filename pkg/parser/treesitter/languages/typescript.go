@@ -53,6 +53,26 @@ func (q *TypeScriptQuery) ImportQuery() []byte {
 	return []byte(typeScriptImportQueryPattern)
 }
 
+// CallQuery returns the TypeScript call query pattern.
+func (q *TypeScriptQuery) CallQuery() []byte {
+	return []byte(typeScriptCallQueryPattern)
+}
+
+// typeScriptCallQueryPattern is the Tree-sitter query for extracting TypeScript function calls.
+const typeScriptCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/property calls (e.g., obj.method())
+(call_expression
+  function: (member_expression
+    property: (property_identifier) @callee
+  )
+) @call_node
+`
+
 // typeScriptImportQueryPattern is the Tree-sitter query for extracting TypeScript imports/exports.
 // Captures import/export statements verbatim.
 const typeScriptImportQueryPattern = `

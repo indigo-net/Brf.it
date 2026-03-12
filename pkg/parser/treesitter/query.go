@@ -17,6 +17,10 @@ type LanguageQuery interface {
 	// Returns nil if the language doesn't support import extraction.
 	ImportQuery() []byte
 
+	// CallQuery returns the Tree-sitter query pattern for function call extraction.
+	// Returns nil if the language doesn't support call extraction.
+	CallQuery() []byte
+
 	// Captures returns the list of capture names used in the query.
 	Captures() []string
 
@@ -39,6 +43,11 @@ const (
 	// (e.g., Lua's require()). Used for Go-side filtering when tree-sitter predicates
 	// (such as #eq?) are not evaluated by the binding at runtime.
 	CaptureLuaRequireFn = "_fn"
+)
+
+// Capture names for call queries.
+const (
+	CaptureCallee = "callee"
 )
 
 // DefaultKindMapping provides default kind mappings (can be overridden per language).

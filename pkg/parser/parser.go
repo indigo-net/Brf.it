@@ -58,6 +58,18 @@ type Node struct {
 	Children []Node
 }
 
+// FunctionCall represents a function/method call reference within a file.
+type FunctionCall struct {
+	// Caller is the name of the enclosing function (empty if top-level).
+	Caller string
+
+	// Callee is the called function/method name.
+	Callee string
+
+	// Line is the line number where the call occurs (1-indexed).
+	Line int
+}
+
 // ParseResult contains the result of parsing a single file.
 type ParseResult struct {
 	// FilePath is the path to the parsed file.
@@ -71,6 +83,9 @@ type ParseResult struct {
 
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
+
+	// Calls is the list of function call references.
+	Calls []FunctionCall
 
 	// AST is the root node of the parsed AST (optional).
 	AST *Node
@@ -97,6 +112,9 @@ type Options struct {
 
 	// IncludeImports whether to include import/export statements in the result.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references in the result.
+	IncludeCalls bool
 }
 
 // Parser defines the interface for code parsers.

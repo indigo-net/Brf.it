@@ -28,6 +28,7 @@ type queryType int
 const (
 	queryTypeSignature queryType = iota
 	queryTypeImport
+	queryTypeCall
 )
 
 // elixirDefPrefixes are byte-slice prefixes used to filter out non-import
@@ -107,12 +108,16 @@ func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery
 	}
 
 	// Slow path: create query and attempt to store it
-	var queryStr string
-	if typ == queryTypeSignature {
-		queryStr = string(langQuery.Query())
-	} else {
-		queryStr = string(langQuery.ImportQuery())
+	var queryBytes []byte
+	switch typ {
+	case queryTypeSignature:
+		queryBytes = langQuery.Query()
+	case queryTypeImport:
+		queryBytes = langQuery.ImportQuery()
+	case queryTypeCall:
+		queryBytes = langQuery.CallQuery()
 	}
+	queryStr := string(queryBytes)
 
 	query, err := sitter.NewQuery(langQuery.Language(), queryStr)
 	if err != nil {
@@ -186,10 +191,20 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 		}
 	}
 
+	// Extract calls if requested
+	var calls []parser.FunctionCall
+	if opts.IncludeCalls && query.CallQuery() != nil {
+		calls, err = p.extractCalls(tree.RootNode(), content, query, opts, signatures)
+		if err != nil {
+			return nil, fmt.Errorf("call extraction failed: %w", err)
+		}
+	}
+
 	return &parser.ParseResult{
 		Language:   lang,
 		Signatures: signatures,
 		RawImports: rawImports,
+		Calls:      calls,
 	}, nil
 }
 
@@ -1681,6 +1696,98 @@ func (p *TreeSitterParser) extractImports(
 	}
 
 	return imports, nil
+}
+
+// extractCalls extracts function call references from the AST using the language call query.
+// It matches each call to its enclosing function based on line ranges from signatures.
+func (p *TreeSitterParser) extractCalls(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+	signatures []parser.Signature,
+) ([]parser.FunctionCall, error) {
+	calls := make([]parser.FunctionCall, 0, 16)
+
+	callQueryBytes := langQuery.CallQuery()
+	if len(callQueryBytes) == 0 {
+		return calls, nil
+	}
+
+	// Get cached query (or create if first time)
+	query, err := p.getOrCreateQuery(opts.Language, langQuery, queryTypeCall)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create call query for %s: %w", opts.Language, err)
+	}
+
+	// Execute query
+	qc := p.cursorPool.Get().(*sitter.QueryCursor)
+	defer p.cursorPool.Put(qc)
+
+	matches := qc.Matches(query, root, content)
+	captureNames := query.CaptureNames()
+
+	for {
+		match := matches.Next()
+		if match == nil {
+			break
+		}
+
+		var callee string
+		var callLine int
+
+		for _, capture := range match.Captures {
+			if int(capture.Index) >= len(captureNames) {
+				continue
+			}
+			name := captureNames[capture.Index]
+			node := capture.Node
+
+			if name == CaptureCallee {
+				start, end := node.StartByte(), node.EndByte()
+				if end > uint(len(content)) || start > end {
+					continue
+				}
+				callee = string(content[start:end])
+				callLine = int(node.StartPosition().Row) + 1
+			}
+		}
+
+		if callee == "" {
+			continue
+		}
+
+		// Find enclosing function
+		caller := findEnclosingFunction(signatures, callLine)
+
+		calls = append(calls, parser.FunctionCall{
+			Caller: caller,
+			Callee: callee,
+			Line:   callLine,
+		})
+	}
+
+	return calls, nil
+}
+
+// findEnclosingFunction returns the name of the innermost function/method
+// whose Line..EndLine range contains the given line. When multiple signatures
+// overlap (e.g., a class containing a method), the narrowest range wins.
+// Returns empty string if the call is at top-level (not inside any function).
+func findEnclosingFunction(signatures []parser.Signature, line int) string {
+	bestName := ""
+	bestSpan := int(^uint(0) >> 1) // max int
+
+	for _, sig := range signatures {
+		if sig.Line <= line && line <= sig.EndLine {
+			span := sig.EndLine - sig.Line
+			if span < bestSpan {
+				bestSpan = span
+				bestName = sig.Name
+			}
+		}
+	}
+	return bestName
 }
 
 // removeBlankLines removes empty lines from the import text.

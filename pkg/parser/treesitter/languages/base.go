@@ -13,3 +13,13 @@ func (BaseQuery) Captures() []string {
 		captureKind,
 	}
 }
+
+// ImportQuery returns nil by default (no import extraction support).
+func (BaseQuery) ImportQuery() []byte {
+	return nil
+}
+
+// CallQuery returns nil by default (no call extraction support).
+func (BaseQuery) CallQuery() []byte {
+	return nil
+}

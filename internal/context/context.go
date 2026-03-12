@@ -62,6 +62,9 @@ type Options struct {
 
 	// SecurityCheck enables secret detection and redaction.
 	SecurityCheck bool
+
+	// IncludeCallGraph enables function call graph extraction.
+	IncludeCallGraph bool
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -147,6 +150,7 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
 		IncludeImports: opts.IncludeImports,
+		IncludeCalls:   opts.IncludeCallGraph,
 		MaxFileSize:    opts.MaxFileSize,
 	}
 	extractResult, err := p.extractor.Extract(ctx, scanResult, extractOpts)
@@ -179,6 +183,7 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 			Language:   ef.Language,
 			Signatures: ef.Signatures,
 			RawImports: ef.RawImports,
+			Calls:      ef.Calls,
 			Error:      ef.Error,
 		}
 	}
@@ -191,17 +196,18 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 
 	// 5. Create PackageData
 	packageData := &formatter.PackageData{
-		RootPath:        opts.Path,
-		Version:         opts.Version,
-		Tree:            treeStr,
-		Files:           files,
-		TotalSignatures: extractResult.TotalSignatures,
-		TotalSize:       extractResult.TotalSize,
-		IncludeImports:  opts.IncludeImports,
-		DedupeImports:   opts.DedupeImports,
-		GlobalImports:   globalImports,
-		MaxDocLength:    opts.MaxDocLength,
-		NoSchema:        opts.NoSchema,
+		RootPath:         opts.Path,
+		Version:          opts.Version,
+		Tree:             treeStr,
+		Files:            files,
+		TotalSignatures:  extractResult.TotalSignatures,
+		TotalSize:        extractResult.TotalSize,
+		IncludeImports:   opts.IncludeImports,
+		DedupeImports:    opts.DedupeImports,
+		GlobalImports:    globalImports,
+		MaxDocLength:     opts.MaxDocLength,
+		NoSchema:         opts.NoSchema,
+		IncludeCallGraph: opts.IncludeCallGraph,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)

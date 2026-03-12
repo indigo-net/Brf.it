@@ -143,6 +143,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
 		"skip XML schema section in output")
 
+	// Call graph flag
+	cmd.Flags().BoolVar(&c.CallGraph, "call-graph", c.CallGraph,
+		"include function call graph in output")
+
 	// Security check flag (enabled by default; --no-security-check disables)
 	cmd.Flags().BoolVar(&c.SecurityCheck, "security-check", c.SecurityCheck,
 		"enable secret detection and redaction (use --no-security-check to disable)")

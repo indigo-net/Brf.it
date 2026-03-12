@@ -59,6 +59,26 @@ func (q *GoQuery) ImportQuery() []byte {
 	return []byte(goImportQueryPattern)
 }
 
+// CallQuery returns the Go call query pattern.
+func (q *GoQuery) CallQuery() []byte {
+	return []byte(goCallQueryPattern)
+}
+
+// goCallQueryPattern is the Tree-sitter query for extracting Go function calls.
+const goCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/package calls (e.g., obj.Method(), fmt.Println())
+(call_expression
+  function: (selector_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`
+
 // goImportQueryPattern is the Tree-sitter query for extracting Go imports.
 // Captures the entire import declaration verbatim.
 const goImportQueryPattern = `

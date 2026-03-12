@@ -2,6 +2,7 @@ package formatter
 
 import (
 	"bytes"
+	"strconv"
 	"strings"
 )
 
@@ -66,6 +67,7 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString(`      <tag name="variable" description="Variable, constant, or field declaration" />` + "\n")
 			buf.WriteString(`      <tag name="signature" description="Fallback for unknown declaration kinds" />` + "\n")
 			buf.WriteString(`      <tag name="imports" description="Raw import/export statements (verbatim text)" />` + "\n")
+			buf.WriteString(`      <tag name="call" description="Function/method call reference within the file" />` + "\n")
 			buf.WriteString(`      <tag name="doc" description="Documentation comment" />` + "\n")
 			buf.WriteString(`      <tag name="error" description="Parse error message" />` + "\n")
 			buf.WriteString("    </schema>\n")
@@ -118,6 +120,25 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 						buf.WriteString(escapeXML(truncateDoc(sig.Doc, data.MaxDocLength)))
 						buf.WriteString("</doc>\n")
 					}
+				}
+
+				// Call graph section
+				if data.IncludeCallGraph && len(file.Calls) > 0 {
+					buf.WriteString("      <calls>\n")
+					for _, call := range file.Calls {
+						buf.WriteString("        <call")
+						if call.Caller != "" {
+							buf.WriteString(" caller=\"")
+							buf.WriteString(escapeXML(call.Caller))
+							buf.WriteByte('"')
+						}
+						buf.WriteString(" callee=\"")
+						buf.WriteString(escapeXML(call.Callee))
+						buf.WriteString("\" line=\"")
+						buf.WriteString(strconv.Itoa(call.Line))
+						buf.WriteString("\" />\n")
+					}
+					buf.WriteString("      </calls>\n")
 				}
 			}
 		}

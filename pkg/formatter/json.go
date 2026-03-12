@@ -34,11 +34,19 @@ type jsonImportCount struct {
 
 // jsonFile represents a single file in the JSON output.
 type jsonFile struct {
-	Path       string    `json:"path"`
-	Language   string    `json:"language"`
-	Signatures []jsonSig `json:"signatures,omitempty"`
-	Imports    []string  `json:"imports,omitempty"`
-	Error      string    `json:"error,omitempty"`
+	Path       string     `json:"path"`
+	Language   string     `json:"language"`
+	Signatures []jsonSig  `json:"signatures,omitempty"`
+	Imports    []string   `json:"imports,omitempty"`
+	Calls      []jsonCall `json:"calls,omitempty"`
+	Error      string     `json:"error,omitempty"`
+}
+
+// jsonCall represents a function call reference in the JSON output.
+type jsonCall struct {
+	Caller string `json:"caller,omitempty"`
+	Callee string `json:"callee"`
+	Line   int    `json:"line"`
 }
 
 // jsonSig represents a signature in the JSON output.
@@ -99,6 +107,18 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 			// Add imports if requested (skip if deduping)
 			if data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports {
 				jf.Imports = file.RawImports
+			}
+
+			// Add calls if requested
+			if data.IncludeCallGraph && len(file.Calls) > 0 {
+				jf.Calls = make([]jsonCall, 0, len(file.Calls))
+				for _, call := range file.Calls {
+					jf.Calls = append(jf.Calls, jsonCall{
+						Caller: call.Caller,
+						Callee: call.Callee,
+						Line:   call.Line,
+					})
+				}
 			}
 		}
 

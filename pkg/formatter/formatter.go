@@ -19,6 +19,9 @@ type FileData struct {
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Error is any error that occurred during extraction.
 	Error error
 }
@@ -60,6 +63,9 @@ type PackageData struct {
 
 	// NoSchema indicates whether to omit the schema section in output.
 	NoSchema bool
+
+	// IncludeCallGraph indicates whether to include function call references.
+	IncludeCallGraph bool
 }
 
 // ImportCount represents an import with its usage count across files.
