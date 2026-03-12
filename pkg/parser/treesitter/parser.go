@@ -30,6 +30,14 @@ const (
 	queryTypeImport
 )
 
+// elixirDefPrefixes are byte-slice prefixes used to filter out non-import
+// Elixir definitions (defmodule/defprotocol/defimpl) from import queries.
+var elixirDefPrefixes = [][]byte{
+	[]byte("defmodule "),
+	[]byte("defprotocol "),
+	[]byte("defimpl "),
+}
+
 // supportedLangs is the list of languages with Tree-sitter parsers available.
 const supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql"
 
@@ -1636,14 +1644,18 @@ func (p *TreeSitterParser) extractImports(
 			}
 			seenPositions[startByte] = true
 
-			rawBytes := content[startByte:(*importNode).EndByte()]
+			endByte := (*importNode).EndByte()
+			if endByte > uint(len(content)) || startByte > endByte {
+				continue
+			}
+			rawBytes := content[startByte:endByte]
 
 			// Elixir: the broad import query pattern also matches defmodule/defprotocol/defimpl
 			// (since they also take alias arguments). Filter them out on byte slice
 			// to avoid string conversion for skipped entries.
 			if opts.Language == "elixir" {
 				skip := false
-				for _, defKw := range [][]byte{[]byte("defmodule "), []byte("defprotocol "), []byte("defimpl ")} {
+				for _, defKw := range elixirDefPrefixes {
 					if bytes.HasPrefix(rawBytes, defKw) {
 						skip = true
 						break
