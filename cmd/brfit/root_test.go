@@ -531,6 +531,34 @@ func TestRemoteFlagConflictsWithPath(t *testing.T) {
 	}
 }
 
+func TestRemoteFlagConflictsWithChanged(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	cmd := newRootCommandWithConfig(testCfg)
+	cmd.SetArgs([]string{"--remote", "owner/repo", "--changed"})
+
+	err := cmd.Execute()
+	if err == nil {
+		t.Error("expected error when both --remote and --changed are specified")
+	}
+	if err != nil && !strings.Contains(err.Error(), "cannot use --changed with --remote") {
+		t.Errorf("expected conflict error, got: %v", err)
+	}
+}
+
+func TestRemoteFlagConflictsWithSince(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	cmd := newRootCommandWithConfig(testCfg)
+	cmd.SetArgs([]string{"--remote", "owner/repo", "--since", "v1.0.0"})
+
+	err := cmd.Execute()
+	if err == nil {
+		t.Error("expected error when both --remote and --since are specified")
+	}
+	if err != nil && !strings.Contains(err.Error(), "cannot use --since with --remote") {
+		t.Errorf("expected conflict error, got: %v", err)
+	}
+}
+
 func TestRemoteFlagInvalidURL(t *testing.T) {
 	testCfg := config.DefaultConfig()
 	cmd := newRootCommandWithConfig(testCfg)

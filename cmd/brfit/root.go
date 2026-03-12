@@ -180,6 +180,12 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		if len(args) > 0 {
 			return fmt.Errorf("cannot specify both --remote and a path argument")
 		}
+		if c.Changed {
+			return fmt.Errorf("cannot use --changed with --remote: the cloned repository has no local modifications")
+		}
+		if c.Since != "" {
+			return fmt.Errorf("cannot use --since with --remote: the cloned repository has no local modifications")
+		}
 		tmpDir, cleanup, err := cloneRemote(cmd.Context(), c.Remote)
 		if err != nil {
 			return fmt.Errorf("remote clone failed: %w", err)
@@ -473,7 +479,11 @@ func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error) {
 	if err != nil {
 		return "", nil, fmt.Errorf("failed to create temp directory: %w", err)
 	}
-	cleanup := func() { os.RemoveAll(tmpDir) }
+	cleanup := func() {
+		if err := os.RemoveAll(tmpDir); err != nil {
+			fmt.Fprintf(os.Stderr, "[brfit] WARN: failed to remove temp directory %s: %v\n", tmpDir, err)
+		}
+	}
 
 	fmt.Fprintf(os.Stderr, "Cloning %s...\n", url)
 
