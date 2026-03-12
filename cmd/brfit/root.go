@@ -253,28 +253,44 @@ func writeOutput(result *context.Result, c *config.Config) error {
 }
 
 // resolveChangedFiles runs git diff to get changed file paths and returns them
-// as a set of relative paths (forward-slash separated). The resulting map is
-// suitable for ScanOptions.ChangedFiles.
+// as a set of relative paths (forward-slash separated, relative to rootPath).
+// The resulting map is suitable for ScanOptions.ChangedFiles.
+//
+// When changed is true (--changed flag), untracked files are also included via
+// git ls-files --others --exclude-standard.
 func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error) {
-	// Determine which git command to run
-	var args []string
-	if since != "" {
-		// --since <ref>: files changed between ref and HEAD + working tree
-		args = []string{"diff", "--name-only", since}
-	} else {
-		// --changed: uncommitted changes (staged + unstaged)
-		args = []string{"diff", "--name-only", "HEAD"}
-	}
-
 	// Determine directory to run git in
 	dir := rootPath
 	if info, err := os.Stat(rootPath); err == nil && !info.IsDir() {
 		dir = filepath.Dir(rootPath)
 	}
 
-	cmd := exec.Command("git", args...)
-	cmd.Dir = dir
-	out, err := cmd.Output()
+	// Get the git repository root
+	topCmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	topCmd.Dir = dir
+	topOut, err := topCmd.Output()
+	if err != nil {
+		return nil, fmt.Errorf("git not found or not a git repository: %w", err)
+	}
+	repoRoot := strings.TrimSpace(string(topOut))
+	// Resolve symlinks to avoid mismatches (e.g., macOS /var -> /private/var)
+	if resolved, err := filepath.EvalSymlinks(repoRoot); err == nil {
+		repoRoot = resolved
+	}
+
+	// Determine which git diff command to run
+	var diffArgs []string
+	if since != "" {
+		// --since <ref>: files changed between ref and HEAD + working tree
+		diffArgs = []string{"diff", "--name-only", since}
+	} else {
+		// --changed: uncommitted changes (staged + unstaged)
+		diffArgs = []string{"diff", "--name-only", "HEAD"}
+	}
+
+	diffCmd := exec.Command("git", diffArgs...)
+	diffCmd.Dir = dir
+	out, err := diffCmd.Output()
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			return nil, fmt.Errorf("git diff failed: %s", string(exitErr.Stderr))
@@ -282,17 +298,76 @@ func resolveChangedFiles(rootPath string, changed bool, since string) (map[strin
 		return nil, fmt.Errorf("git not found or not a git repository: %w", err)
 	}
 
-	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
-	files := make(map[string]bool, len(lines))
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line != "" {
-			// git diff output uses forward slashes
-			files[filepath.ToSlash(line)] = true
+	// Collect git-relative paths from diff output
+	gitRelPaths := splitNonEmpty(string(out))
+
+	// For --changed mode, also include untracked files
+	if changed {
+		lsCmd := exec.Command("git", "ls-files", "--others", "--exclude-standard")
+		lsCmd.Dir = dir
+		lsOut, err := lsCmd.Output()
+		if err == nil {
+			gitRelPaths = append(gitRelPaths, splitNonEmpty(string(lsOut))...)
 		}
 	}
 
+	// Early return for empty output
+	if len(gitRelPaths) == 0 {
+		return map[string]bool{}, nil
+	}
+
+	// Resolve absolute rootPath for proper relative path computation
+	absRoot, err := filepath.Abs(rootPath)
+	if err != nil {
+		absRoot = rootPath
+	}
+	// If rootPath is a file, use its parent directory
+	if info, err := os.Stat(absRoot); err == nil && !info.IsDir() {
+		absRoot = filepath.Dir(absRoot)
+	}
+	// Resolve symlinks to match repoRoot (e.g., macOS /var -> /private/var)
+	if resolved, err := filepath.EvalSymlinks(absRoot); err == nil {
+		absRoot = resolved
+	}
+
+	// Convert git-relative paths to rootPath-relative paths
+	files := make(map[string]bool, len(gitRelPaths))
+	for _, gitRel := range gitRelPaths {
+		// Convert git-relative path to absolute path
+		absPath := filepath.Join(repoRoot, filepath.FromSlash(gitRel))
+
+		// Compute path relative to rootPath
+		rel, err := filepath.Rel(absRoot, absPath)
+		if err != nil {
+			continue
+		}
+
+		// Skip entries outside the scan root (paths that start with "..")
+		if strings.HasPrefix(rel, "..") {
+			continue
+		}
+
+		files[filepath.ToSlash(rel)] = true
+	}
+
 	return files, nil
+}
+
+// splitNonEmpty splits output by newlines and returns non-empty trimmed lines.
+func splitNonEmpty(s string) []string {
+	trimmed := strings.TrimSpace(s)
+	if trimmed == "" {
+		return nil
+	}
+	lines := strings.Split(trimmed, "\n")
+	result := make([]string, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			result = append(result, line)
+		}
+	}
+	return result
 }
 
 // writeToFile writes content to a file, creating parent directories if needed.
