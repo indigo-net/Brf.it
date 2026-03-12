@@ -71,6 +71,9 @@ type Config struct {
 	// TokenTree outputs a directory tree with per-file token counts and exits.
 	TokenTree bool
 
+	// SecurityCheck enables secret detection and redaction (default: true).
+	SecurityCheck bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -93,6 +96,7 @@ func DefaultConfig() *Config {
 		IncludeBody:    false,
 		IncludeImports: false,
 		IncludePrivate: false,
+		SecurityCheck:  true,
 		NoTree:         false,
 		NoTokens:       false,
 		MaxFileSize:    512000, // 500KB
@@ -181,5 +185,6 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		MaxFileSize:    c.MaxFileSize,
 		MaxDocLength:   c.MaxDocLength,
 		NoSchema:       c.NoSchema,
+		SecurityCheck:  c.SecurityCheck,
 	}
 }

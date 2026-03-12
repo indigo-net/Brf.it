@@ -3,11 +3,14 @@ package context
 
 import (
 	"context"
+	"io"
+	"os"
 	"sort"
 
 	"github.com/indigo-net/Brf.it/pkg/extractor"
 	"github.com/indigo-net/Brf.it/pkg/formatter"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/security"
 	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 )
 
@@ -56,6 +59,9 @@ type Options struct {
 
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
+
+	// SecurityCheck enables secret detection and redaction.
+	SecurityCheck bool
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -66,6 +72,7 @@ func DefaultOptions() *Options {
 		IncludeTree:   true,
 		IncludeHidden: false,
 		MaxFileSize:   512000, // 500KB
+		SecurityCheck: true,
 	}
 }
 
@@ -94,6 +101,7 @@ type Packager struct {
 	extractor  extractor.Extractor
 	formatters map[string]formatter.Formatter
 	tokenizer  tokenizer.Tokenizer
+	warnings   io.Writer
 }
 
 // NewPackager creates a new Packager with the given dependencies.
@@ -108,6 +116,7 @@ func NewPackager(
 		extractor:  e,
 		formatters: f,
 		tokenizer:  tokenizer.NewNoOpTokenizer(),
+		warnings:   os.Stderr,
 	}
 }
 
@@ -143,6 +152,13 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 	extractResult, err := p.extractor.Extract(ctx, scanResult, extractOpts)
 	if err != nil {
 		return nil, err
+	}
+
+	// 2.5 Security check: detect and redact secrets
+	if opts.SecurityCheck {
+		secScanner := security.NewScanner(p.warnings)
+		secResult := secScanner.Scan(extractResult)
+		extractResult.Files = secResult.RedactedFiles
 	}
 
 	// 3. Build directory tree
