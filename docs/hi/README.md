@@ -220,6 +220,40 @@ brfit . --include-imports
 
 <br/>
 
+## MCP सर्वर
+
+`brfit-mcp` एक स्टैंडअलोन [Model Context Protocol](https://modelcontextprotocol.io/) सर्वर है जो brfit के कोड विश्लेषण को AI एजेंटों के लिए टूल्स के रूप में प्रदान करता है। यह stdio (JSON-RPC) पर संवाद करता है।
+
+### टूल्स
+
+| टूल | विवरण |
+|------|-------|
+| `summarize_project` | प्रोजेक्ट डायरेक्टरी से सिग्नेचर निकालें। विकल्प: `path`, `format`, `include_body`, `include_imports`, `call_graph` |
+| `summarize_file` | glob पैटर्न से मेल खाने वाली फाइलों से सिग्नेचर निकालें। विकल्प: `path`, `include`, `format` |
+
+### उपयोग
+
+```bash
+brfit-mcp --root /path/to/project
+```
+
+### Claude Desktop कॉन्फ़िगरेशन
+
+```json
+{
+  "mcpServers": {
+    "brfit": {
+      "command": "brfit-mcp",
+      "args": ["--root", "/path/to/project"]
+    }
+  }
+}
+```
+
+---
+
+<br/>
+
 ## लाइसेंस
 
 MIT लाइसेंस — व्यक्तिगत और व्यावसायिक प्रोजेक्ट में स्वतंत्र रूप से उपयोग करें।

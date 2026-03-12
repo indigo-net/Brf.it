@@ -14,6 +14,36 @@
 
 ---
 
+## MCP 서버 (`brfit-mcp`)
+
+`brfit-mcp`는 brfit의 코드 분석 기능을 AI 에이전트에 노출하는 독립 실행형 MCP (Model Context Protocol) 서버 바이너리입니다.
+
+- **통신**: stdio (JSON-RPC)
+- **실행**: `brfit-mcp --root /path/to/project`
+- **진입점**: `cmd/brfit-mcp/main.go`
+
+### 제공 도구
+
+| 도구 | 설명 |
+|------|------|
+| `summarize_project` | 프로젝트 디렉토리에서 시그니처 추출. 옵션: `path`, `format`, `include_body`, `include_imports`, `call_graph` |
+| `summarize_file` | glob 패턴 매칭 파일에서 시그니처 추출. 옵션: `path`, `include`, `format` |
+
+### Claude Desktop 연동 설정
+
+```json
+{
+  "mcpServers": {
+    "brfit": {
+      "command": "brfit-mcp",
+      "args": ["--root", "/path/to/project"]
+    }
+  }
+}
+```
+
+---
+
 ## Go Engineering Conventions
 
 Claude, brf.it 프로젝트를 **Go(Golang)**로 구현할 때 준수해야 할 엄격한 컨벤션입니다. Go의 특성을 살려 빠르고, 작고, 견고한 CLI 도구를 만드는 데 집중하세요.
