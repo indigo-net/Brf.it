@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `--include-private` CLI flag to include non-exported/private symbols (#177)
+- `--include` / `--exclude` glob pattern filtering with doublestar support (#176)
 
 ## [0.19.0] - 2026-03-09
 

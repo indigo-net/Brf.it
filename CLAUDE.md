@@ -143,6 +143,8 @@ Options:
   -f, --format <format>   출력 포맷: "xml" (기본값) | "md"
   -o, --output <file>     출력 파일 경로 (기본값: stdout)
   -i, --ignore <file>     커스텀 ignore 파일 (여러 번 지정 가능, 기본값: .gitignore)
+  --include <pattern>     glob 패턴으로 포함할 파일 필터링 (여러 번 지정 가능)
+  --exclude <pattern>     glob 패턴으로 제외할 파일 필터링 (여러 번 지정 가능)
   --include-hidden        숨김 파일 포함
   --include-body          함수 본문 포함 (기본값: 시그니처만)
   --include-imports       import/export 문 포함 (기본값: 미포함)

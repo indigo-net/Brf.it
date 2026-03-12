@@ -803,3 +803,233 @@ func TestFilepathBaseEdgeCases(t *testing.T) {
 		})
 	}
 }
+
+func TestScanIncludePatterns(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create directory structure:
+	// tmpDir/
+	//   pkg/scanner/scanner.go
+	//   pkg/scanner/scanner_test.go
+	//   cmd/main.go
+	//   README.md (unsupported)
+	dirs := []string{
+		filepath.Join(tmpDir, "pkg", "scanner"),
+		filepath.Join(tmpDir, "cmd"),
+	}
+	for _, d := range dirs {
+		if err := os.MkdirAll(d, 0755); err != nil {
+			t.Fatalf("MkdirAll: %v", err)
+		}
+	}
+	files := map[string]string{
+		"pkg/scanner/scanner.go":      "package scanner",
+		"pkg/scanner/scanner_test.go": "package scanner",
+		"cmd/main.go":                 "package main",
+	}
+	for rel, content := range files {
+		if err := os.WriteFile(filepath.Join(tmpDir, rel), []byte(content), 0644); err != nil {
+			t.Fatalf("WriteFile: %v", err)
+		}
+	}
+
+	defaultOpts := DefaultScanOptions()
+
+	tests := []struct {
+		name            string
+		includePatterns []string
+		excludePatterns []string
+		wantFiles       int
+		wantPaths       []string
+	}{
+		{
+			name:      "no patterns - all files",
+			wantFiles: 3,
+		},
+		{
+			name:            "include only pkg/**/*.go",
+			includePatterns: []string{"pkg/**/*.go"},
+			wantFiles:       2,
+			wantPaths:       []string{"pkg/scanner/scanner.go", "pkg/scanner/scanner_test.go"},
+		},
+		{
+			name:            "exclude test files",
+			excludePatterns: []string{"**/*_test.go"},
+			wantFiles:       2,
+			wantPaths:       []string{"pkg/scanner/scanner.go", "cmd/main.go"},
+		},
+		{
+			name:            "include pkg + exclude tests",
+			includePatterns: []string{"pkg/**/*.go"},
+			excludePatterns: []string{"**/*_test.go"},
+			wantFiles:       1,
+			wantPaths:       []string{"pkg/scanner/scanner.go"},
+		},
+		{
+			name:            "include cmd only",
+			includePatterns: []string{"cmd/**/*.go"},
+			wantFiles:       1,
+			wantPaths:       []string{"cmd/main.go"},
+		},
+		{
+			name:            "no match",
+			includePatterns: []string{"nonexistent/**"},
+			wantFiles:       0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := &ScanOptions{
+				RootPath:            tmpDir,
+				SupportedExtensions: defaultOpts.SupportedExtensions,
+				MaxFileSize:         defaultOpts.MaxFileSize,
+				IncludePatterns:     tt.includePatterns,
+				ExcludePatterns:     tt.excludePatterns,
+			}
+
+			s, err := NewFileScanner(opts)
+			if err != nil {
+				t.Fatalf("NewFileScanner: %v", err)
+			}
+
+			result, err := s.Scan(context.Background())
+			if err != nil {
+				t.Fatalf("Scan: %v", err)
+			}
+
+			if len(result.Files) != tt.wantFiles {
+				paths := make([]string, len(result.Files))
+				for i, f := range result.Files {
+					paths[i] = f.Path
+				}
+				t.Errorf("got %d files %v, want %d", len(result.Files), paths, tt.wantFiles)
+			}
+
+			if tt.wantPaths != nil {
+				for _, wantRel := range tt.wantPaths {
+					wantAbs := filepath.Join(tmpDir, wantRel)
+					found := false
+					for _, f := range result.Files {
+						if f.Path == wantAbs {
+							found = true
+							break
+						}
+					}
+					if !found {
+						t.Errorf("expected file %s not found in results", wantRel)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestScanExcludeDirectory(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	dirs := []string{
+		filepath.Join(tmpDir, "src"),
+		filepath.Join(tmpDir, "vendor", "lib"),
+	}
+	for _, d := range dirs {
+		if err := os.MkdirAll(d, 0755); err != nil {
+			t.Fatalf("MkdirAll: %v", err)
+		}
+	}
+	files := map[string]string{
+		"src/main.go":        "package main",
+		"vendor/lib/util.go": "package lib",
+	}
+	for rel, content := range files {
+		if err := os.WriteFile(filepath.Join(tmpDir, rel), []byte(content), 0644); err != nil {
+			t.Fatalf("WriteFile: %v", err)
+		}
+	}
+
+	defaultOpts := DefaultScanOptions()
+	opts := &ScanOptions{
+		RootPath:            tmpDir,
+		SupportedExtensions: defaultOpts.SupportedExtensions,
+		MaxFileSize:         defaultOpts.MaxFileSize,
+		ExcludePatterns:     []string{"vendor/**"},
+	}
+
+	s, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatalf("NewFileScanner: %v", err)
+	}
+
+	result, err := s.Scan(context.Background())
+	if err != nil {
+		t.Fatalf("Scan: %v", err)
+	}
+
+	if len(result.Files) != 1 {
+		t.Errorf("expected 1 file, got %d", len(result.Files))
+	}
+	if len(result.Files) > 0 && !strings.HasSuffix(result.Files[0].Path, "main.go") {
+		t.Errorf("expected main.go, got %s", result.Files[0].Path)
+	}
+}
+
+func TestScanSingleFileWithIncludePattern(t *testing.T) {
+	tmpDir := t.TempDir()
+	goFile := filepath.Join(tmpDir, "main.go")
+	if err := os.WriteFile(goFile, []byte("package main"), 0644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	defaultOpts := DefaultScanOptions()
+
+	tests := []struct {
+		name            string
+		includePatterns []string
+		wantFiles       int
+	}{
+		{
+			name:      "no include pattern",
+			wantFiles: 1,
+		},
+		{
+			name:            "matching include pattern",
+			includePatterns: []string{"**/*.go"},
+			wantFiles:       1,
+		},
+		{
+			name:            "matching simple pattern",
+			includePatterns: []string{"*.go"},
+			wantFiles:       1,
+		},
+		{
+			name:            "non-matching include pattern",
+			includePatterns: []string{"**/*.ts"},
+			wantFiles:       0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := &ScanOptions{
+				RootPath:            goFile,
+				SupportedExtensions: defaultOpts.SupportedExtensions,
+				MaxFileSize:         defaultOpts.MaxFileSize,
+				IncludePatterns:     tt.includePatterns,
+			}
+
+			s, err := NewFileScanner(opts)
+			if err != nil {
+				t.Fatalf("NewFileScanner: %v", err)
+			}
+
+			result, err := s.Scan(context.Background())
+			if err != nil {
+				t.Fatalf("Scan: %v", err)
+			}
+
+			if len(result.Files) != tt.wantFiles {
+				t.Errorf("got %d files, want %d", len(result.Files), tt.wantFiles)
+			}
+		})
+	}
+}

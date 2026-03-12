@@ -178,6 +178,8 @@ brfit [경로] [옵션]
 | `--include-imports` | | import 문 포함 | `false` |
 | `--include-private` | | 비공개/unexported 심볼 포함 | `false` |
 | `--ignore` | `-i` | ignore 파일 경로 (여러 번 지정 가능) | `.gitignore` |
+| `--include` | | 포함할 glob 패턴 (여러 번 지정 가능) | |
+| `--exclude` | | 제외할 glob 패턴 (여러 번 지정 가능) | |
 | `--include-hidden` | | 숨김 파일 포함 | `false` |
 | `--no-tree` | | 디렉토리 트리 생략 | `false` |
 | `--no-tokens` | | 토큰 수 계산 비활성화 | `false` |

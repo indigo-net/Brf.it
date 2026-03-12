@@ -33,6 +33,12 @@ type Config struct {
 	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
 	IgnoreFiles []string
 
+	// IncludePatterns is a list of glob patterns. Only matching files are included.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns. Matching files are excluded.
+	ExcludePatterns []string
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 

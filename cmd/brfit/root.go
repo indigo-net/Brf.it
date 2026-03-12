@@ -94,6 +94,13 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().StringArrayVarP(&c.IgnoreFiles, "ignore", "i", c.IgnoreFiles,
 		"custom ignore file(s), can be specified multiple times (default: .gitignore)")
 
+	// Glob pattern filters
+	cmd.Flags().StringArrayVar(&c.IncludePatterns, "include", c.IncludePatterns,
+		"glob pattern(s) to include, can be specified multiple times (e.g., \"pkg/**/*.go\")")
+
+	cmd.Flags().StringArrayVar(&c.ExcludePatterns, "exclude", c.ExcludePatterns,
+		"glob pattern(s) to exclude, can be specified multiple times (e.g., \"**/*_test.go\")")
+
 	// Boolean flags
 	cmd.Flags().BoolVar(&c.IncludeHidden, "include-hidden", c.IncludeHidden,
 		"include hidden files (dotfiles)")
@@ -171,6 +178,8 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		RootPath:            c.Path,
 		SupportedExtensions: c.SupportedExtensions(),
 		IgnoreFiles:         c.IgnoreFiles,
+		IncludePatterns:     c.IncludePatterns,
+		ExcludePatterns:     c.ExcludePatterns,
 		IncludeHidden:       c.IncludeHidden,
 		MaxFileSize:         c.MaxFileSize,
 	}
