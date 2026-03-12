@@ -587,6 +587,8 @@ main &quot;$@&quot;</imports>
 	&quot;fmt&quot;
 	&quot;os&quot;
 	&quot;runtime&quot;
+	&quot;sort&quot;
+	&quot;strings&quot;
 	&quot;sync&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
