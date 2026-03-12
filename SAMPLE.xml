@@ -332,8 +332,8 @@ main &quot;$@&quot;</imports>
 	// Output is the file path to write output. Empty means stdout.
 	Output string
 
-	// IgnoreFile is the path to the ignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [&quot;.gitignore&quot;]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -408,8 +408,8 @@ main &quot;$@&quot;</imports>
 	// Output is the output file path (empty = stdout).
 	Output string
 
-	// IgnoreFile is the custom ignore file path.
-	IgnoreFile string
+	// IgnoreFiles is the list of custom ignore file paths.
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files.
 	IncludeHidden bool
@@ -6069,8 +6069,8 @@ import &quot;unsafe&quot;</imports>
 	// SupportedExtensions maps file extensions to language names.
 	SupportedExtensions map[string]string
 
-	// IgnoreFile is the path to the gitignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [&quot;.gitignore&quot;]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -6089,15 +6089,16 @@ import &quot;unsafe&quot;</imports>
 	Scan(ctx context.Context) (*ScanResult, error)
 }</type>
       <type>type FileScanner struct {
-	opts             *ScanOptions
-	ignorer          *ignore.GitIgnore
-	ignorerErr       error
-	ignorerErrWarned bool
-	logger           *log.Logger
+	opts              *ScanOptions
+	ignorers          []*ignore.GitIgnore
+	ignorerErrs       []error
+	ignorerErrsWarned bool
+	logger            *log.Logger
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
       <function>func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)</function>
       <variable>warning string</variable>
+      <function>func (s *FileScanner) matchesIgnore(path string) bool</function>
       <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go" language="go">
@@ -6148,6 +6149,7 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanNestedDirectories(t *testing.T)</function>
       <function>func TestLogOutputNoDoubleNewline(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
+      <function>func TestScanMultipleIgnoreFiles(t *testing.T)</function>
       <function>func TestFilepathBaseEdgeCases(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">

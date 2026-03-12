@@ -365,8 +365,8 @@ type Config struct {
 	// Output is the file path to write output. Empty means stdout.
 	Output string
 
-	// IgnoreFile is the path to the ignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -451,8 +451,8 @@ type Options struct {
 	// Output is the output file path (empty = stdout).
 	Output string
 
-	// IgnoreFile is the custom ignore file path.
-	IgnoreFile string
+	// IgnoreFiles is the list of custom ignore file paths.
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files.
 	IncludeHidden bool
@@ -6607,8 +6607,8 @@ type ScanOptions struct {
 	// SupportedExtensions maps file extensions to language names.
 	SupportedExtensions map[string]string
 
-	// IgnoreFile is the path to the gitignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -6627,15 +6627,16 @@ type Scanner interface {
 	Scan(ctx context.Context) (*ScanResult, error)
 }
 type FileScanner struct {
-	opts             *ScanOptions
-	ignorer          *ignore.GitIgnore
-	ignorerErr       error
-	ignorerErrWarned bool
-	logger           *log.Logger
+	opts              *ScanOptions
+	ignorers          []*ignore.GitIgnore
+	ignorerErrs       []error
+	ignorerErrsWarned bool
+	logger            *log.Logger
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
 func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)
 warning string
+func (s *FileScanner) matchesIgnore(path string) bool
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
 
@@ -6696,6 +6697,7 @@ buf bytes.Buffer
 func TestScanNestedDirectories(t *testing.T)
 func TestLogOutputNoDoubleNewline(t *testing.T)
 buf bytes.Buffer
+func TestScanMultipleIgnoreFiles(t *testing.T)
 func TestFilepathBaseEdgeCases(t *testing.T)
 ```
 
