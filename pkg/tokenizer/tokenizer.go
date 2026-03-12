@@ -5,7 +5,7 @@ package tokenizer
 type Tokenizer interface {
 	// Count returns the number of tokens in the given text.
 	// Returns 0 and error if counting fails.
-	Count(text string) (int, error)
+	Count(text []byte) (int, error)
 
 	// Name returns the tokenizer name (e.g., "tiktoken-cl100k", "noop").
 	Name() string
@@ -24,7 +24,7 @@ func NewNoOpTokenizer() *NoOpTokenizer {
 }
 
 // Count returns 0 and nil error (no-op).
-func (t *NoOpTokenizer) Count(_ string) (int, error) {
+func (t *NoOpTokenizer) Count(_ []byte) (int, error) {
 	return 0, nil
 }
 

@@ -10,7 +10,7 @@ func ExampleNewNoOpTokenizer() {
 	t := tokenizer.NewNoOpTokenizer()
 	fmt.Println(t.Name())
 
-	count, err := t.Count("hello world")
+	count, err := t.Count([]byte("hello world"))
 	fmt.Println(count, err)
 	// Output:
 	// noop

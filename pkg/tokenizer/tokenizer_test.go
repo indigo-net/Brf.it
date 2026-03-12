@@ -27,7 +27,7 @@ func TestNoOpTokenizerCount(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			count, err := tokenizer.Count(tt.input)
+			count, err := tokenizer.Count([]byte(tt.input))
 			if err != nil {
 				t.Errorf("unexpected error: %v", err)
 			}
@@ -80,7 +80,7 @@ func TestTiktokenTokenizerCount(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			count, err := tokenizer.Count(tt.input)
+			count, err := tokenizer.Count([]byte(tt.input))
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
@@ -118,12 +118,12 @@ func TestTiktokenTokenizerConsistency(t *testing.T) {
 
 	text := "package main\n\nfunc main() {}\n"
 
-	count1, err := tokenizer.Count(text)
+	count1, err := tokenizer.Count([]byte(text))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	count2, err := tokenizer.Count(text)
+	count2, err := tokenizer.Count([]byte(text))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -151,7 +151,7 @@ func TestTiktokenTokenizerSpecialCharacters(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			count, err := tokenizer.Count(tt.input)
+			count, err := tokenizer.Count([]byte(tt.input))
 			if err != nil {
 				t.Errorf("unexpected error for %s: %v", tt.name, err)
 			}

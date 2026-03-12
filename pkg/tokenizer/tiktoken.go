@@ -1,6 +1,8 @@
 package tokenizer
 
 import (
+	"unsafe"
+
 	"github.com/pkoukk/tiktoken-go"
 )
 
@@ -29,12 +31,14 @@ func NewTiktokenTokenizer() (*TiktokenTokenizer, error) {
 }
 
 // Count returns the number of tokens in the given text.
-func (t *TiktokenTokenizer) Count(text string) (int, error) {
-	if text == "" {
+func (t *TiktokenTokenizer) Count(text []byte) (int, error) {
+	if len(text) == 0 {
 		return 0, nil
 	}
 
-	tokens := t.tke.Encode(text, nil, nil)
+	// Convert []byte to string without allocation. Safe because tiktoken-go's
+	// Encode immediately copies to []rune and does not retain the string.
+	tokens := t.tke.Encode(unsafe.String(unsafe.SliceData(text), len(text)), nil, nil)
 	return len(tokens), nil
 }
 
