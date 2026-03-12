@@ -1051,6 +1051,7 @@ func ExampleNewRegistry()
 ```go
 import (
 	"path/filepath"
+	"strings"
 	"sync"
 )
 type Signature struct {
@@ -1158,12 +1159,12 @@ func (r *Registry) Get(lang string) (Parser, bool)
 func (r *Registry) Languages() []string
 func RegisterParser(lang string, parser Parser)
 func GetParser(lang string) (Parser, bool)
-LanguageMapping = map[string]string{
+languageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
-	".tsx":   "tsx",
+	".tsx":   "typescript",
 	".js":    "javascript",
-	".jsx":   "jsx",
+	".jsx":   "javascript",
 	".py":    "python",
 	".java":  "java",
 	".rs":    "rust",
@@ -1171,13 +1172,23 @@ LanguageMapping = map[string]string{
 	".php":   "php",
 	".c":     "c",
 	".cpp":   "cpp",
-	".h":     "c",
+	".h":     "cpp",
 	".hpp":   "cpp",
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
 	".kts":   "kotlin",
+	".lua":   "lua",
+	".sh":    "shell",
+	".bash":  "shell",
+	".zsh":   "shell",
+	".scala": "scala",
+	".sc":    "scala",
+	".ex":    "elixir",
+	".exs":   "elixir",
+	".sql":   "sql",
 }
+func LanguageMapping() map[string]string
 func DetectLanguage(path string) string
 ```
 
@@ -6078,7 +6089,7 @@ func (p *TreeSitterParser) extractSignatures(
 signatures []parser.Signature
 kindNode *sitter.Node
 func cleanComment(text string) string
-func isExported(name, language string) bool
+func isExported(name, _ string) bool
 func stripBody(text, kind, language string) string
 func stripGoBody(text, kind string) string
 func stripTypeScriptBody(text, kind string) string
@@ -6371,6 +6382,7 @@ import (
 	"path/filepath"
 	"strings"
 	ignore "github.com/sabhiram/go-gitignore"
+	"github.com/indigo-net/Brf.it/pkg/parser"
 )
 type FileEntry struct {
 	// Path is the absolute or relative path to the file.
@@ -6412,6 +6424,7 @@ type ScanOptions struct {
 	MaxFileSize int64
 }
 func DefaultScanOptions() *ScanOptions
+func copyLanguageMapping() map[string]string
 func (o *ScanOptions) GetLanguage(path string) (string, bool)
 func IsHidden(name string) bool
 func getBaseName(path string) string

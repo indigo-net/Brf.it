@@ -913,6 +913,7 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go" language="go">
       <imports>import (
 	&quot;path/filepath&quot;
+	&quot;strings&quot;
 	&quot;sync&quot;
 )</imports>
       <type>type Signature struct {
@@ -1020,12 +1021,12 @@ main &quot;$@&quot;</imports>
       <function>func (r *Registry) Languages() []string</function>
       <function>func RegisterParser(lang string, parser Parser)</function>
       <function>func GetParser(lang string) (Parser, bool)</function>
-      <variable>LanguageMapping = map[string]string{
+      <variable>languageMapping = map[string]string{
 	&quot;.go&quot;:    &quot;go&quot;,
 	&quot;.ts&quot;:    &quot;typescript&quot;,
-	&quot;.tsx&quot;:   &quot;tsx&quot;,
+	&quot;.tsx&quot;:   &quot;typescript&quot;,
 	&quot;.js&quot;:    &quot;javascript&quot;,
-	&quot;.jsx&quot;:   &quot;jsx&quot;,
+	&quot;.jsx&quot;:   &quot;javascript&quot;,
 	&quot;.py&quot;:    &quot;python&quot;,
 	&quot;.java&quot;:  &quot;java&quot;,
 	&quot;.rs&quot;:    &quot;rust&quot;,
@@ -1033,13 +1034,23 @@ main &quot;$@&quot;</imports>
 	&quot;.php&quot;:   &quot;php&quot;,
 	&quot;.c&quot;:     &quot;c&quot;,
 	&quot;.cpp&quot;:   &quot;cpp&quot;,
-	&quot;.h&quot;:     &quot;c&quot;,
+	&quot;.h&quot;:     &quot;cpp&quot;,
 	&quot;.hpp&quot;:   &quot;cpp&quot;,
 	&quot;.cs&quot;:    &quot;csharp&quot;,
 	&quot;.swift&quot;: &quot;swift&quot;,
 	&quot;.kt&quot;:    &quot;kotlin&quot;,
 	&quot;.kts&quot;:   &quot;kotlin&quot;,
+	&quot;.lua&quot;:   &quot;lua&quot;,
+	&quot;.sh&quot;:    &quot;shell&quot;,
+	&quot;.bash&quot;:  &quot;shell&quot;,
+	&quot;.zsh&quot;:   &quot;shell&quot;,
+	&quot;.scala&quot;: &quot;scala&quot;,
+	&quot;.sc&quot;:    &quot;scala&quot;,
+	&quot;.ex&quot;:    &quot;elixir&quot;,
+	&quot;.exs&quot;:   &quot;elixir&quot;,
+	&quot;.sql&quot;:   &quot;sql&quot;,
 }</variable>
+      <function>func LanguageMapping() map[string]string</function>
       <function>func DetectLanguage(path string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/parser_test.go" language="go">
@@ -5580,7 +5591,7 @@ import &quot;unsafe&quot;</imports>
       <variable>signatures []parser.Signature</variable>
       <variable>kindNode *sitter.Node</variable>
       <function>func cleanComment(text string) string</function>
-      <function>func isExported(name, language string) bool</function>
+      <function>func isExported(name, _ string) bool</function>
       <function>func stripBody(text, kind, language string) string</function>
       <function>func stripGoBody(text, kind string) string</function>
       <function>func stripTypeScriptBody(text, kind string) string</function>
@@ -5838,6 +5849,7 @@ import &quot;unsafe&quot;</imports>
 	&quot;path/filepath&quot;
 	&quot;strings&quot;
 	ignore &quot;github.com/sabhiram/go-gitignore&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
       <type>type FileEntry struct {
 	// Path is the absolute or relative path to the file.
@@ -5879,6 +5891,7 @@ import &quot;unsafe&quot;</imports>
 	MaxFileSize int64
 }</type>
       <function>func DefaultScanOptions() *ScanOptions</function>
+      <function>func copyLanguageMapping() map[string]string</function>
       <function>func (o *ScanOptions) GetLanguage(path string) (string, bool)</function>
       <function>func IsHidden(name string) bool</function>
       <function>func getBaseName(path string) string</function>
