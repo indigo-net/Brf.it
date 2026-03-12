@@ -8,6 +8,7 @@ import (
 
 // RustQuery implements LanguageQuery for Rust language.
 type RustQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *RustQuery) Language() *sitter.Language {
 // Query returns the Rust query pattern.
 func (q *RustQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Rust queries.
-func (q *RustQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

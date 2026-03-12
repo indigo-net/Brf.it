@@ -8,6 +8,7 @@ import (
 
 // LuaQuery implements LanguageQuery for Lua language.
 type LuaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *LuaQuery) Language() *sitter.Language {
 // Query returns the Lua query pattern.
 func (q *LuaQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Lua queries.
-func (q *LuaQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

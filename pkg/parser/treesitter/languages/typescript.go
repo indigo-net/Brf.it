@@ -7,6 +7,7 @@ import (
 
 // TypeScriptQuery implements LanguageQuery for TypeScript language.
 type TypeScriptQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -27,16 +28,6 @@ func (q *TypeScriptQuery) Language() *sitter.Language {
 // Query returns the TypeScript query pattern.
 func (q *TypeScriptQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for TypeScript queries.
-func (q *TypeScriptQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

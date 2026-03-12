@@ -7,6 +7,7 @@ import (
 
 // PythonQuery implements LanguageQuery for Python language.
 type PythonQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -27,16 +28,6 @@ func (q *PythonQuery) Language() *sitter.Language {
 // Query returns the Python query pattern.
 func (q *PythonQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Python queries.
-func (q *PythonQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

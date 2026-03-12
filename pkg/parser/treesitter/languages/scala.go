@@ -8,6 +8,7 @@ import (
 
 // ScalaQuery implements LanguageQuery for Scala language.
 type ScalaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *ScalaQuery) Language() *sitter.Language {
 // Query returns the Scala query pattern.
 func (q *ScalaQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Scala queries.
-func (q *ScalaQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

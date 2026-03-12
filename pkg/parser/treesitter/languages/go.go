@@ -16,6 +16,7 @@ const (
 
 // GoQuery implements LanguageQuery for Go language.
 type GoQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -36,16 +37,6 @@ func (q *GoQuery) Language() *sitter.Language {
 // Query returns the Go query pattern.
 func (q *GoQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Go queries.
-func (q *GoQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

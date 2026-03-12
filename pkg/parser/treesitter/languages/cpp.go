@@ -8,6 +8,7 @@ import (
 
 // CppQuery implements LanguageQuery for C++ language.
 type CppQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *CppQuery) Language() *sitter.Language {
 // Query returns the C++ query pattern.
 func (q *CppQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for C++ queries.
-func (q *CppQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

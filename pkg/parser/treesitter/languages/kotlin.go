@@ -8,6 +8,7 @@ import (
 
 // KotlinQuery implements LanguageQuery for Kotlin language.
 type KotlinQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *KotlinQuery) Language() *sitter.Language {
 // Query returns the Kotlin query pattern.
 func (q *KotlinQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Kotlin queries.
-func (q *KotlinQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

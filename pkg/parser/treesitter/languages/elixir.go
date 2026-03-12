@@ -8,6 +8,7 @@ import (
 
 // ElixirQuery implements LanguageQuery for Elixir language.
 type ElixirQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *ElixirQuery) Language() *sitter.Language {
 // Query returns the Elixir query pattern.
 func (q *ElixirQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Elixir queries.
-func (q *ElixirQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.
