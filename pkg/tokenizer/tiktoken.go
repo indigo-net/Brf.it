@@ -36,7 +36,8 @@ func (t *TiktokenTokenizer) Count(text []byte) (int, error) {
 		return 0, nil
 	}
 
-	// Convert []byte to string without allocation using unsafe.String.
+	// Convert []byte to string without allocation. Safe because tiktoken-go's
+	// Encode immediately copies to []rune and does not retain the string.
 	tokens := t.tke.Encode(unsafe.String(unsafe.SliceData(text), len(text)), nil, nil)
 	return len(tokens), nil
 }
