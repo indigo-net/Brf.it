@@ -31,6 +31,7 @@ brfit [path] [options]
 | `--max-size` | | Max file size (bytes) | `512000` |
 | `--changed` | | Only scan git-modified files (tracked + untracked) | `false` |
 | `--since` | | Only scan files changed since commit/tag (e.g., `v1.0.0`, `HEAD~5`) | |
+| `--token-tree` | | Show per-file token count tree with directory totals | `false` |
 | `--version` | `-v` | Show version | |
 | `--help` | `-h` | Show help | |
 
@@ -128,6 +129,16 @@ brfit . --no-tokens
 
 # Increase max file size limit
 brfit . --max-size 1048576  # 1MB
+```
+
+### Token Tree
+
+```bash
+# Show per-file token counts in tree format
+brfit . --token-tree
+
+# Combine with exclude patterns
+brfit . --token-tree --exclude "vendor/**"
 ```
 
 ### Git Change Detection

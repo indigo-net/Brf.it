@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `--token-tree` flag to display per-file token counts in tree format (#187)
 - `--changed` flag to scan only git-modified files (#179)
 - `--since <ref>` flag to scan files changed since a specific commit/tag (#179)
 - YAML 언어 지원 (`.yaml`, `.yml`)

@@ -152,6 +152,7 @@ Options:
   --no-tree               디렉토리 트리 생략
   --no-tokens             토큰 수 계산 비활성화
   --max-size <bytes>      최대 파일 크기 (기본값: 512000 = 500KB)
+  --token-tree            파일별 토큰 수 트리 출력
   --changed               Git 변경 파일만 스캔
   --since <ref>           특정 커밋/태그 이후 변경된 파일만 스캔
 ```

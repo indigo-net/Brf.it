@@ -188,6 +188,7 @@ brfit [Pfad] [Optionen]
 | `--max-size` | | Maximale Dateigröße (Bytes) | `512000` |
 | `--changed` | | Nur git-geänderte Dateien scannen | `false` |
 | `--since` | | Nur seit Commit/Tag geänderte Dateien scannen | |
+| `--token-tree` | | Token-Anzahl pro Datei als Baum anzeigen | `false` |
 | `--version` | `-v` | Version anzeigen | |
 
 ### Beispiele
