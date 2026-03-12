@@ -255,12 +255,13 @@ func normalizeFormat(format string) string {
 func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount {
 	importCounts := make(map[string]int)
 
+	seen := make(map[string]bool)
 	for _, file := range files {
 		if file.Error != nil {
 			continue
 		}
 		// Use a set to count each import only once per file
-		seen := make(map[string]bool)
+		clear(seen)
 		for _, imp := range file.RawImports {
 			if !seen[imp] {
 				seen[imp] = true
