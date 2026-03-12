@@ -1,6 +1,7 @@
 package main
 
 import (
+	gocontext "context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +11,7 @@ import (
 	"github.com/indigo-net/Brf.it/internal/config"
 	"github.com/indigo-net/Brf.it/internal/context"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 	"github.com/spf13/cobra"
 
 	// Import treesitter parser to register Go/TypeScript parsers
@@ -133,6 +135,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().IntVar(&c.MaxDocLength, "max-doc-length", c.MaxDocLength,
 		"maximum documentation comment length in characters (0 = no limit)")
 
+	// Token tree flag
+	cmd.Flags().BoolVar(&c.TokenTree, "token-tree", c.TokenTree,
+		"output directory tree with per-file token counts")
+
 	// No schema flag
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
 		"skip XML schema section in output")
@@ -204,6 +210,11 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		MaxFileSize:         c.MaxFileSize,
 	}
 
+	// Handle --token-tree mode: scan files, count tokens per file, output tree
+	if c.TokenTree {
+		return runTokenTree(cmd.Context(), scanOpts, c.Path)
+	}
+
 	// Create packager with default dependencies
 	packager, err := context.NewDefaultPackager(scanOpts)
 	if err != nil {
@@ -250,6 +261,58 @@ func writeOutput(result *context.Result, c *config.Config) error {
 
 	// Write to file
 	return writeToFile(c.Output, result.Content)
+}
+
+// runTokenTree scans files, counts tokens per file, and outputs a directory tree
+// with per-file token counts. This is a standalone mode that exits after output.
+func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath string) error {
+	// Create scanner
+	s, err := scanner.NewFileScanner(scanOpts)
+	if err != nil {
+		return fmt.Errorf("failed to initialize scanner: %w", err)
+	}
+
+	// Scan files
+	scanResult, err := s.Scan(ctx)
+	if err != nil {
+		return fmt.Errorf("scan failed: %w", err)
+	}
+
+	if len(scanResult.Files) == 0 {
+		fmt.Fprintln(os.Stderr, "No files found.")
+		return nil
+	}
+
+	// Initialize tokenizer
+	tok, err := tokenizer.NewTiktokenTokenizer()
+	if err != nil {
+		return fmt.Errorf("failed to initialize tokenizer: %w", err)
+	}
+
+	// Count tokens for each file
+	fileCounts := make([]context.FileTokenCount, 0, len(scanResult.Files))
+	for _, f := range scanResult.Files {
+		content, err := os.ReadFile(f.Path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[brfit] WARN: cannot read %s: %v\n", f.Path, err)
+			continue
+		}
+		count, err := tok.Count(content)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[brfit] WARN: token count failed for %s: %v\n", f.Path, err)
+			continue
+		}
+		fileCounts = append(fileCounts, context.FileTokenCount{
+			Path:   f.Path,
+			Tokens: count,
+		})
+	}
+
+	// Build and output the token tree
+	tree := context.BuildTokenTree(rootPath, fileCounts)
+	fmt.Println(tree)
+
+	return nil
 }
 
 // resolveChangedFiles runs git diff to get changed file paths and returns them

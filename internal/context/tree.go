@@ -1,6 +1,7 @@
 package context
 
 import (
+	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -9,6 +10,8 @@ import (
 // treeNode represents a node in the directory tree.
 type treeNode struct {
 	children map[string]*treeNode
+	tokens   int  // token count for leaf nodes (files)
+	isFile   bool // true if this node is a file (leaf)
 }
 
 // BuildTree generates a directory tree string from file paths.
@@ -84,4 +87,132 @@ func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) {
 		}
 		renderNode(buf, child, newPrefix, false)
 	}
+}
+
+// FileTokenCount holds a file path and its token count.
+type FileTokenCount struct {
+	Path   string
+	Tokens int
+}
+
+// BuildTokenTree generates a directory tree string with per-file token counts.
+// Each file node shows its token count, and directory nodes show the sum of their children.
+func BuildTokenTree(root string, files []FileTokenCount) string {
+	if len(files) == 0 {
+		return ""
+	}
+
+	rootNode := &treeNode{}
+
+	// Insert all paths into the tree with token counts
+	for _, f := range files {
+		rel, err := filepath.Rel(root, f.Path)
+		if err != nil {
+			rel = f.Path
+		}
+
+		parts := strings.Split(rel, string(filepath.Separator))
+		current := rootNode
+
+		for i, part := range parts {
+			if current.children == nil {
+				current.children = make(map[string]*treeNode)
+			}
+			if _, exists := current.children[part]; !exists {
+				current.children[part] = &treeNode{}
+			}
+			current = current.children[part]
+
+			// Mark leaf node with token count
+			if i == len(parts)-1 {
+				current.tokens = f.Tokens
+				current.isFile = true
+			}
+		}
+	}
+
+	// Calculate directory totals bottom-up
+	calcDirTokens(rootNode)
+
+	// Calculate grand total
+	var total int
+	for _, child := range rootNode.children {
+		total += child.tokens
+	}
+
+	// Build the output string
+	var buf strings.Builder
+	renderTokenNode(&buf, rootNode, "", true)
+	buf.WriteString(fmt.Sprintf("\nTotal: %s tokens\n", formatNumber(total)))
+	return strings.TrimSuffix(buf.String(), "\n")
+}
+
+// calcDirTokens recursively sums token counts for directory nodes.
+func calcDirTokens(n *treeNode) int {
+	if n.isFile {
+		return n.tokens
+	}
+	var sum int
+	for _, child := range n.children {
+		sum += calcDirTokens(child)
+	}
+	n.tokens = sum
+	return sum
+}
+
+// renderTokenNode recursively renders the tree structure with token counts.
+func renderTokenNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) {
+	keys := make([]string, 0, len(n.children))
+	for k := range n.children {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for i, key := range keys {
+		child := n.children[key]
+		isLast := i == len(keys)-1
+
+		label := fmt.Sprintf("%s (%s tokens)", key, formatNumber(child.tokens))
+
+		if isRoot {
+			buf.WriteString(label + "\n")
+		} else {
+			connector := "├── "
+			if isLast {
+				connector = "└── "
+			}
+			buf.WriteString(prefix + connector + label + "\n")
+		}
+
+		var newPrefix string
+		if isRoot {
+			newPrefix = ""
+		} else if isLast {
+			newPrefix = prefix + "    "
+		} else {
+			newPrefix = prefix + "│   "
+		}
+		renderTokenNode(buf, child, newPrefix, false)
+	}
+}
+
+// formatNumber formats an integer with comma separators (e.g., 1234 → "1,234").
+func formatNumber(n int) string {
+	s := fmt.Sprintf("%d", n)
+	if len(s) <= 3 {
+		return s
+	}
+
+	var buf strings.Builder
+	remainder := len(s) % 3
+	if remainder > 0 {
+		buf.WriteString(s[:remainder])
+	}
+	for i := remainder; i < len(s); i += 3 {
+		if buf.Len() > 0 {
+			buf.WriteByte(',')
+		}
+		buf.WriteString(s[i : i+3])
+	}
+	return buf.String()
 }

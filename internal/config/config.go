@@ -68,6 +68,9 @@ type Config struct {
 	// Since restricts scanning to files changed since the specified commit/tag.
 	Since string
 
+	// TokenTree outputs a directory tree with per-file token counts and exits.
+	TokenTree bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
