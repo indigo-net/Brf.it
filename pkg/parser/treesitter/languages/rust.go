@@ -31,24 +31,26 @@ func (q *RustQuery) Query() []byte {
 	return q.query
 }
 
+var rustKindMapping = map[string]string{
+	"function_item":           "function",
+	"struct_item":             "struct",
+	"enum_item":               "enum",
+	"trait_item":              "trait",
+	"type_item":               "type",
+	"impl_item":               "impl",
+	"const_item":              "variable",
+	"static_item":             "variable",
+	"mod_item":                "namespace",
+	"macro_definition":        "macro",
+	"foreign_mod_item":        "namespace",
+	"union_item":              "struct",
+	"associated_type":         "type",
+	"function_signature_item": "function",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *RustQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_item":           "function",
-		"struct_item":             "struct",
-		"enum_item":               "enum",
-		"trait_item":              "trait",
-		"type_item":               "type",
-		"impl_item":               "impl",
-		"const_item":              "variable",
-		"static_item":             "variable",
-		"mod_item":                "namespace",
-		"macro_definition":        "macro",
-		"foreign_mod_item":        "namespace",
-		"union_item":              "struct",
-		"associated_type":         "type",
-		"function_signature_item": "function",
-	}
+	return rustKindMapping
 }
 
 // ImportQuery returns the Rust import query pattern.

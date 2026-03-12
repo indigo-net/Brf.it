@@ -31,20 +31,22 @@ func (q *SwiftQuery) Query() []byte {
 	return q.query
 }
 
+var swiftKindMapping = map[string]string{
+	"function_declaration":          "function",
+	"class_declaration":             "class",
+	"protocol_declaration":          "interface",
+	"typealias_declaration":         "type",
+	"property_declaration":          "variable",
+	"init_declaration":              "constructor",
+	"deinit_declaration":            "destructor",
+	"subscript_declaration":         "method",
+	"operator_declaration":          "function",
+	"protocol_function_declaration": "function",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *SwiftQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_declaration":          "function",
-		"class_declaration":             "class",
-		"protocol_declaration":          "interface",
-		"typealias_declaration":         "type",
-		"property_declaration":          "variable",
-		"init_declaration":              "constructor",
-		"deinit_declaration":            "destructor",
-		"subscript_declaration":         "method",
-		"operator_declaration":          "function",
-		"protocol_function_declaration": "function",
-	}
+	return swiftKindMapping
 }
 
 // ImportQuery returns the Swift import query pattern.

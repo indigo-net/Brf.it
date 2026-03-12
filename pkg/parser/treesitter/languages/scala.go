@@ -31,22 +31,24 @@ func (q *ScalaQuery) Query() []byte {
 	return q.query
 }
 
+var scalaKindMapping = map[string]string{
+	"function_definition":  "method",
+	"function_declaration": "method",
+	"class_definition":     "class",
+	"trait_definition":     "trait",
+	"object_definition":    "class",
+	"val_definition":       "variable",
+	"val_declaration":      "variable",
+	"var_definition":       "variable",
+	"var_declaration":      "variable",
+	"type_definition":      "type",
+	"enum_definition":      "enum",
+	"given_definition":     "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *ScalaQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition":  "method",
-		"function_declaration": "method",
-		"class_definition":     "class",
-		"trait_definition":     "trait",
-		"object_definition":    "class",
-		"val_definition":       "variable",
-		"val_declaration":      "variable",
-		"var_definition":       "variable",
-		"var_declaration":      "variable",
-		"type_definition":      "type",
-		"enum_definition":      "enum",
-		"given_definition":     "variable",
-	}
+	return scalaKindMapping
 }
 
 // ImportQuery returns the Scala import query pattern.

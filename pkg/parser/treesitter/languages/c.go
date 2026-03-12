@@ -31,18 +31,20 @@ func (q *CQuery) Query() []byte {
 	return q.query
 }
 
+var cKindMapping = map[string]string{
+	"function_definition":  "function",
+	"declaration":          "function", // function prototypes
+	"struct_specifier":     "struct",
+	"enum_specifier":       "enum",
+	"type_definition":      "typedef",
+	"preproc_function_def": "macro",
+	"preproc_def":          "macro",
+	"global_variable":      "variable", // mapped from declaration patterns
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *CQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition":  "function",
-		"declaration":          "function", // function prototypes
-		"struct_specifier":     "struct",
-		"enum_specifier":       "enum",
-		"type_definition":      "typedef",
-		"preproc_function_def": "macro",
-		"preproc_def":          "macro",
-		"global_variable":      "variable", // mapped from declaration patterns
-	}
+	return cKindMapping
 }
 
 // ImportQuery returns the C import query pattern.

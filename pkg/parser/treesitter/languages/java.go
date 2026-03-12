@@ -31,18 +31,20 @@ func (q *JavaQuery) Query() []byte {
 	return q.query
 }
 
+var javaKindMapping = map[string]string{
+	"class_declaration":           "class",
+	"interface_declaration":       "interface",
+	"method_declaration":          "method",
+	"constructor_declaration":     "constructor",
+	"enum_declaration":            "enum",
+	"annotation_type_declaration": "annotation",
+	"record_declaration":          "record",
+	"field_declaration":           "field",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *JavaQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"class_declaration":           "class",
-		"interface_declaration":       "interface",
-		"method_declaration":          "method",
-		"constructor_declaration":     "constructor",
-		"enum_declaration":            "enum",
-		"annotation_type_declaration": "annotation",
-		"record_declaration":          "record",
-		"field_declaration":           "field",
-	}
+	return javaKindMapping
 }
 
 // ImportQuery returns the Java import query pattern.

@@ -31,18 +31,20 @@ func (q *KotlinQuery) Query() []byte {
 	return q.query
 }
 
+var kotlinKindMapping = map[string]string{
+	"function_declaration":  "function",
+	"class_declaration":     "class",
+	"object_declaration":    "class",
+	"companion_object":      "class",
+	"property_declaration":  "variable",
+	"type_alias":            "type",
+	"enum_entry":            "variable",
+	"secondary_constructor": "constructor",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *KotlinQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_declaration":  "function",
-		"class_declaration":     "class",
-		"object_declaration":    "class",
-		"companion_object":      "class",
-		"property_declaration":  "variable",
-		"type_alias":            "type",
-		"enum_entry":            "variable",
-		"secondary_constructor": "constructor",
-	}
+	return kotlinKindMapping
 }
 
 // ImportQuery returns the Kotlin import query pattern.

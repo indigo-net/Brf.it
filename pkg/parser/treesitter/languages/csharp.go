@@ -31,29 +31,31 @@ func (q *CSharpQuery) Query() []byte {
 	return q.query
 }
 
+var csharpKindMapping = map[string]string{
+	"class_declaration":                 "class",
+	"struct_declaration":                "struct",
+	"interface_declaration":             "interface",
+	"enum_declaration":                  "enum",
+	"record_declaration":                "record",
+	"delegate_declaration":              "type",
+	"method_declaration":                "method",
+	"constructor_declaration":           "constructor",
+	"destructor_declaration":            "destructor",
+	"property_declaration":              "variable",
+	"field_declaration":                 "field",
+	"event_declaration":                 "variable",
+	"event_field_declaration":           "variable",
+	"indexer_declaration":               "method",
+	"operator_declaration":              "function",
+	"conversion_operator_declaration":   "function",
+	"namespace_declaration":             "namespace",
+	"file_scoped_namespace_declaration": "namespace",
+	"enum_member_declaration":           "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *CSharpQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"class_declaration":                 "class",
-		"struct_declaration":                "struct",
-		"interface_declaration":             "interface",
-		"enum_declaration":                  "enum",
-		"record_declaration":                "record",
-		"delegate_declaration":              "type",
-		"method_declaration":                "method",
-		"constructor_declaration":           "constructor",
-		"destructor_declaration":            "destructor",
-		"property_declaration":              "variable",
-		"field_declaration":                 "field",
-		"event_declaration":                 "variable",
-		"event_field_declaration":           "variable",
-		"indexer_declaration":               "method",
-		"operator_declaration":              "function",
-		"conversion_operator_declaration":   "function",
-		"namespace_declaration":             "namespace",
-		"file_scoped_namespace_declaration": "namespace",
-		"enum_member_declaration":           "variable",
-	}
+	return csharpKindMapping
 }
 
 // ImportQuery returns the C# import query pattern.

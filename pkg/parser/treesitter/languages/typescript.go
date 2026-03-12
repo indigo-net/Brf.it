@@ -30,20 +30,22 @@ func (q *TypeScriptQuery) Query() []byte {
 	return q.query
 }
 
+var tsKindMapping = map[string]string{
+	"function_declaration":   "function",
+	"method_definition":      "method",
+	"class_declaration":      "class",
+	"interface_declaration":  "interface",
+	"type_alias_declaration": "type",
+	"arrow_function":         "function",
+	"variable_declaration":   "variable",
+	"variable_declarator":    "arrow",
+	"lexical_declaration":    "arrow",
+	"export_statement":       "export",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *TypeScriptQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_declaration":   "function",
-		"method_definition":      "method",
-		"class_declaration":      "class",
-		"interface_declaration":  "interface",
-		"type_alias_declaration": "type",
-		"arrow_function":         "function",
-		"variable_declaration":   "variable",
-		"variable_declarator":    "arrow",
-		"lexical_declaration":    "arrow",
-		"export_statement":       "export",
-	}
+	return tsKindMapping
 }
 
 // ImportQuery returns the TypeScript import query pattern.

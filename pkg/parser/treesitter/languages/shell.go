@@ -31,12 +31,14 @@ func (q *ShellQuery) Query() []byte {
 	return q.query
 }
 
+var shellKindMapping = map[string]string{
+	"function_definition": "function",
+	"variable_assignment": "variable",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *ShellQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition": "function",
-		"variable_assignment": "variable",
-	}
+	return shellKindMapping
 }
 
 // ImportQuery returns the Shell/Bash import query pattern.

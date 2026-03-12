@@ -31,19 +31,21 @@ func (q *PHPQuery) Query() []byte {
 	return q.query
 }
 
+var phpKindMapping = map[string]string{
+	"function_definition":       "function",
+	"method_declaration":        "method",
+	"class_declaration":         "class",
+	"interface_declaration":     "interface",
+	"trait_declaration":         "type",
+	"enum_declaration":          "enum",
+	"const_declaration":         "variable",
+	"property_declaration":      "variable",
+	"namespace_use_declaration": "import",
+}
+
 // KindMapping returns the mapping from node types to Signature kinds.
 func (q *PHPQuery) KindMapping() map[string]string {
-	return map[string]string{
-		"function_definition":       "function",
-		"method_declaration":        "method",
-		"class_declaration":         "class",
-		"interface_declaration":     "interface",
-		"trait_declaration":         "type",
-		"enum_declaration":          "enum",
-		"const_declaration":         "variable",
-		"property_declaration":      "variable",
-		"namespace_use_declaration": "import",
-	}
+	return phpKindMapping
 }
 
 // ImportQuery returns the PHP import query pattern.
