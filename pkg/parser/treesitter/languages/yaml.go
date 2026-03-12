@@ -49,7 +49,9 @@ func (q *YAMLQuery) ImportQuery() []byte {
 //
 // YAML structures are captured as block_mapping_pair nodes. The key field
 // provides the name, and the entire pair is the signature.
-// Only top-level keys are captured to avoid excessive noise from nested values.
+// Keys at all nesting depths are captured; the body-stripping pass in
+// stripYAMLBody keeps only the first line for container keys, which
+// prevents excessive noise from deeply nested values.
 const yamlQueryPattern = `
 ; Top-level key-value pairs
 (block_mapping_pair

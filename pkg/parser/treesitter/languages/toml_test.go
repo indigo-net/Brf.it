@@ -124,13 +124,20 @@ name = "server"
 `
 	captures := extractTOMLCaptures(t, code)
 	arrayCount := 0
+	foundBin := false
 	for _, c := range captures {
 		if c.Kind == "table_array_element" {
 			arrayCount++
 		}
+		if c.Name == "bin" && c.Kind == "table_array_element" {
+			foundBin = true
+		}
 	}
 	if arrayCount < 2 {
 		t.Errorf("expected at least 2 table_array_element captures, got %d", arrayCount)
+	}
+	if !foundBin {
+		t.Error("expected to find [[bin]] captured as table_array_element kind")
 	}
 }
 
@@ -252,6 +259,38 @@ func TestTOMLQueryCaptures(t *testing.T) {
 	for name, found := range expected {
 		if !found {
 			t.Errorf("missing capture '%s'", name)
+		}
+	}
+}
+
+// TestTOMLQueryExtractInlineTable verifies that key-value pairs whose values
+// are inline tables (e.g. `serde = { version = "1.0", features = ["derive"] }`)
+// are captured as regular "pair" nodes. The Tree-sitter TOML grammar treats
+// inline tables as opaque values, so only the outer pair key is extracted —
+// inner keys are NOT individually captured.
+func TestTOMLQueryExtractInlineTable(t *testing.T) {
+	code := `
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
+`
+	captures := extractTOMLCaptures(t, code)
+	expected := map[string]bool{"serde": false, "tokio": false, "dependencies": false}
+	for _, c := range captures {
+		if _, ok := expected[c.Name]; ok {
+			expected[c.Name] = true
+		}
+	}
+	for name, found := range expected {
+		if !found {
+			t.Errorf("expected to find key '%s' from inline table syntax", name)
+		}
+	}
+
+	// Verify inline table pairs are captured with "pair" kind
+	for _, c := range captures {
+		if c.Name == "serde" && c.Kind != "pair" {
+			t.Errorf("expected 'serde' to have kind 'pair', got '%s'", c.Kind)
 		}
 	}
 }

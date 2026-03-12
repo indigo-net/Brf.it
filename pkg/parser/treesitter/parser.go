@@ -1990,6 +1990,8 @@ func stripSQLViewBody(text string) string {
 // stripYAMLBody strips nested block values from YAML mapping pairs.
 // For "key: value" pairs, keeps the full line. For container keys with
 // nested block mappings, keeps only "key:" (first line).
+// The kind parameter is unused because all YAML captures are
+// block_mapping_pair nodes and share the same stripping logic.
 func stripYAMLBody(text, _ string) string {
 	idx := strings.IndexByte(text, '\n')
 	if idx < 0 {
