@@ -4026,6 +4026,15 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go
+
+```go
+type BaseQuery struct{}
+func (BaseQuery) Captures() []string
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go
 
 ```go
@@ -4034,13 +4043,13 @@ import (
 	tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"
 )
 type CQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewCQuery() *CQuery
 func (q *CQuery) Language() *sitter.Language
 func (q *CQuery) Query() []byte
-func (q *CQuery) Captures() []string
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
 cImportQueryPattern = `
@@ -4177,13 +4186,13 @@ import (
 	tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"
 )
 type CppQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewCppQuery() *CppQuery
 func (q *CppQuery) Language() *sitter.Language
 func (q *CppQuery) Query() []byte
-func (q *CppQuery) Captures() []string
 func (q *CppQuery) KindMapping() map[string]string
 func (q *CppQuery) ImportQuery() []byte
 cppImportQueryPattern = `
@@ -4412,13 +4421,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type CSharpQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewCSharpQuery() *CSharpQuery
 func (q *CSharpQuery) Language() *sitter.Language
 func (q *CSharpQuery) Query() []byte
-func (q *CSharpQuery) Captures() []string
 func (q *CSharpQuery) KindMapping() map[string]string
 func (q *CSharpQuery) ImportQuery() []byte
 csharpImportQueryPattern = `
@@ -4568,13 +4577,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type ElixirQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewElixirQuery() *ElixirQuery
 func (q *ElixirQuery) Language() *sitter.Language
 func (q *ElixirQuery) Query() []byte
-func (q *ElixirQuery) Captures() []string
 func (q *ElixirQuery) KindMapping() map[string]string
 func (q *ElixirQuery) ImportQuery() []byte
 elixirImportQueryPattern = `
@@ -4739,13 +4748,13 @@ captureSignature = "signature"
 captureDoc       = "doc"
 captureKind      = "kind"
 type GoQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewGoQuery() *GoQuery
 func (q *GoQuery) Language() *sitter.Language
 func (q *GoQuery) Query() []byte
-func (q *GoQuery) Captures() []string
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
 goImportQueryPattern = `
@@ -4814,13 +4823,13 @@ import (
 	tree_sitter_java "github.com/tree-sitter/tree-sitter-java/bindings/go"
 )
 type JavaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewJavaQuery() *JavaQuery
 func (q *JavaQuery) Language() *sitter.Language
 func (q *JavaQuery) Query() []byte
-func (q *JavaQuery) Captures() []string
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
 javaImportQueryPattern = `
@@ -4911,13 +4920,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type KotlinQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewKotlinQuery() *KotlinQuery
 func (q *KotlinQuery) Language() *sitter.Language
 func (q *KotlinQuery) Query() []byte
-func (q *KotlinQuery) Captures() []string
 func (q *KotlinQuery) KindMapping() map[string]string
 func (q *KotlinQuery) ImportQuery() []byte
 kotlinImportQueryPattern = `
@@ -5010,13 +5019,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type LuaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewLuaQuery() *LuaQuery
 func (q *LuaQuery) Language() *sitter.Language
 func (q *LuaQuery) Query() []byte
-func (q *LuaQuery) Captures() []string
 func (q *LuaQuery) KindMapping() map[string]string
 func (q *LuaQuery) ImportQuery() []byte
 luaImportQueryPattern = `
@@ -5107,13 +5116,13 @@ import (
 	tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"
 )
 type PHPQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewPHPQuery() *PHPQuery
 func (q *PHPQuery) Language() *sitter.Language
 func (q *PHPQuery) Query() []byte
-func (q *PHPQuery) Captures() []string
 func (q *PHPQuery) KindMapping() map[string]string
 func (q *PHPQuery) ImportQuery() []byte
 phpImportQueryPattern = `
@@ -5205,13 +5214,13 @@ import (
 	tree_sitter_python "github.com/tree-sitter/tree-sitter-python/bindings/go"
 )
 type PythonQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewPythonQuery() *PythonQuery
 func (q *PythonQuery) Language() *sitter.Language
 func (q *PythonQuery) Query() []byte
-func (q *PythonQuery) Captures() []string
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
 pythonImportQueryPattern = `
@@ -5276,13 +5285,13 @@ import (
 	tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"
 )
 type RubyQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewRubyQuery() *RubyQuery
 func (q *RubyQuery) Language() *sitter.Language
 func (q *RubyQuery) Query() []byte
-func (q *RubyQuery) Captures() []string
 func (q *RubyQuery) KindMapping() map[string]string
 func (q *RubyQuery) ImportQuery() []byte
 rubyImportQueryPattern = `
@@ -5366,13 +5375,13 @@ import (
 	tree_sitter_rust "github.com/tree-sitter/tree-sitter-rust/bindings/go"
 )
 type RustQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewRustQuery() *RustQuery
 func (q *RustQuery) Language() *sitter.Language
 func (q *RustQuery) Query() []byte
-func (q *RustQuery) Captures() []string
 func (q *RustQuery) KindMapping() map[string]string
 func (q *RustQuery) ImportQuery() []byte
 rustImportQueryPattern = `
@@ -5508,13 +5517,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type ScalaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewScalaQuery() *ScalaQuery
 func (q *ScalaQuery) Language() *sitter.Language
 func (q *ScalaQuery) Query() []byte
-func (q *ScalaQuery) Captures() []string
 func (q *ScalaQuery) KindMapping() map[string]string
 func (q *ScalaQuery) ImportQuery() []byte
 scalaImportQueryPattern = `
@@ -5630,13 +5639,13 @@ import (
 	tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"
 )
 type ShellQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewShellQuery() *ShellQuery
 func (q *ShellQuery) Language() *sitter.Language
 func (q *ShellQuery) Query() []byte
-func (q *ShellQuery) Captures() []string
 func (q *ShellQuery) KindMapping() map[string]string
 func (q *ShellQuery) ImportQuery() []byte
 shellImportQueryPattern = `
@@ -5696,13 +5705,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type SQLQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewSQLQuery() *SQLQuery
 func (q *SQLQuery) Language() *sitter.Language
 func (q *SQLQuery) Query() []byte
-func (q *SQLQuery) Captures() []string
 func (q *SQLQuery) KindMapping() map[string]string
 func (q *SQLQuery) ImportQuery() []byte
 sqlQueryPattern = `
@@ -5803,13 +5812,13 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 type SwiftQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewSwiftQuery() *SwiftQuery
 func (q *SwiftQuery) Language() *sitter.Language
 func (q *SwiftQuery) Query() []byte
-func (q *SwiftQuery) Captures() []string
 func (q *SwiftQuery) KindMapping() map[string]string
 func (q *SwiftQuery) ImportQuery() []byte
 swiftImportQueryPattern = `
@@ -5914,13 +5923,13 @@ import (
 	tree_sitter_typescript "github.com/tree-sitter/tree-sitter-typescript/bindings/go"
 )
 type TypeScriptQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
 func NewTypeScriptQuery() *TypeScriptQuery
 func (q *TypeScriptQuery) Language() *sitter.Language
 func (q *TypeScriptQuery) Query() []byte
-func (q *TypeScriptQuery) Captures() []string
 func (q *TypeScriptQuery) KindMapping() map[string]string
 func (q *TypeScriptQuery) ImportQuery() []byte
 typeScriptImportQueryPattern = `

@@ -3700,19 +3700,23 @@ import &quot;unsafe&quot;</imports>
     .type = TSParseActionTypeAccept \
   }}</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go" language="go">
+      <type>type BaseQuery struct{}</type>
+      <function>func (BaseQuery) Captures() []string</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>import (
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_c &quot;github.com/tree-sitter/tree-sitter-c/bindings/go&quot;
 )</imports>
       <type>type CQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewCQuery() *CQuery</function>
       <function>func (q *CQuery) Language() *sitter.Language</function>
       <function>func (q *CQuery) Query() []byte</function>
-      <function>func (q *CQuery) Captures() []string</function>
       <function>func (q *CQuery) KindMapping() map[string]string</function>
       <function>func (q *CQuery) ImportQuery() []byte</function>
       <variable>cImportQueryPattern = `
@@ -3839,13 +3843,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_cpp &quot;github.com/tree-sitter/tree-sitter-cpp/bindings/go&quot;
 )</imports>
       <type>type CppQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewCppQuery() *CppQuery</function>
       <function>func (q *CppQuery) Language() *sitter.Language</function>
       <function>func (q *CppQuery) Query() []byte</function>
-      <function>func (q *CppQuery) Captures() []string</function>
       <function>func (q *CppQuery) KindMapping() map[string]string</function>
       <function>func (q *CppQuery) ImportQuery() []byte</function>
       <variable>cppImportQueryPattern = `
@@ -4064,13 +4068,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type CSharpQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewCSharpQuery() *CSharpQuery</function>
       <function>func (q *CSharpQuery) Language() *sitter.Language</function>
       <function>func (q *CSharpQuery) Query() []byte</function>
-      <function>func (q *CSharpQuery) Captures() []string</function>
       <function>func (q *CSharpQuery) KindMapping() map[string]string</function>
       <function>func (q *CSharpQuery) ImportQuery() []byte</function>
       <variable>csharpImportQueryPattern = `
@@ -4210,13 +4214,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type ElixirQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewElixirQuery() *ElixirQuery</function>
       <function>func (q *ElixirQuery) Language() *sitter.Language</function>
       <function>func (q *ElixirQuery) Query() []byte</function>
-      <function>func (q *ElixirQuery) Captures() []string</function>
       <function>func (q *ElixirQuery) KindMapping() map[string]string</function>
       <function>func (q *ElixirQuery) ImportQuery() []byte</function>
       <variable>elixirImportQueryPattern = `
@@ -4371,13 +4375,13 @@ import &quot;unsafe&quot;</imports>
       <variable>captureDoc       = &quot;doc&quot;</variable>
       <variable>captureKind      = &quot;kind&quot;</variable>
       <type>type GoQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewGoQuery() *GoQuery</function>
       <function>func (q *GoQuery) Language() *sitter.Language</function>
       <function>func (q *GoQuery) Query() []byte</function>
-      <function>func (q *GoQuery) Captures() []string</function>
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
       <variable>goImportQueryPattern = `
@@ -4436,13 +4440,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_java &quot;github.com/tree-sitter/tree-sitter-java/bindings/go&quot;
 )</imports>
       <type>type JavaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewJavaQuery() *JavaQuery</function>
       <function>func (q *JavaQuery) Language() *sitter.Language</function>
       <function>func (q *JavaQuery) Query() []byte</function>
-      <function>func (q *JavaQuery) Captures() []string</function>
       <function>func (q *JavaQuery) KindMapping() map[string]string</function>
       <function>func (q *JavaQuery) ImportQuery() []byte</function>
       <variable>javaImportQueryPattern = `
@@ -4523,13 +4527,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type KotlinQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewKotlinQuery() *KotlinQuery</function>
       <function>func (q *KotlinQuery) Language() *sitter.Language</function>
       <function>func (q *KotlinQuery) Query() []byte</function>
-      <function>func (q *KotlinQuery) Captures() []string</function>
       <function>func (q *KotlinQuery) KindMapping() map[string]string</function>
       <function>func (q *KotlinQuery) ImportQuery() []byte</function>
       <variable>kotlinImportQueryPattern = `
@@ -4612,13 +4616,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type LuaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewLuaQuery() *LuaQuery</function>
       <function>func (q *LuaQuery) Language() *sitter.Language</function>
       <function>func (q *LuaQuery) Query() []byte</function>
-      <function>func (q *LuaQuery) Captures() []string</function>
       <function>func (q *LuaQuery) KindMapping() map[string]string</function>
       <function>func (q *LuaQuery) ImportQuery() []byte</function>
       <variable>luaImportQueryPattern = `
@@ -4699,13 +4703,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_php &quot;github.com/tree-sitter/tree-sitter-php/bindings/go&quot;
 )</imports>
       <type>type PHPQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewPHPQuery() *PHPQuery</function>
       <function>func (q *PHPQuery) Language() *sitter.Language</function>
       <function>func (q *PHPQuery) Query() []byte</function>
-      <function>func (q *PHPQuery) Captures() []string</function>
       <function>func (q *PHPQuery) KindMapping() map[string]string</function>
       <function>func (q *PHPQuery) ImportQuery() []byte</function>
       <variable>phpImportQueryPattern = `
@@ -4787,13 +4791,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_python &quot;github.com/tree-sitter/tree-sitter-python/bindings/go&quot;
 )</imports>
       <type>type PythonQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewPythonQuery() *PythonQuery</function>
       <function>func (q *PythonQuery) Language() *sitter.Language</function>
       <function>func (q *PythonQuery) Query() []byte</function>
-      <function>func (q *PythonQuery) Captures() []string</function>
       <function>func (q *PythonQuery) KindMapping() map[string]string</function>
       <function>func (q *PythonQuery) ImportQuery() []byte</function>
       <variable>pythonImportQueryPattern = `
@@ -4848,13 +4852,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_ruby &quot;github.com/tree-sitter/tree-sitter-ruby/bindings/go&quot;
 )</imports>
       <type>type RubyQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewRubyQuery() *RubyQuery</function>
       <function>func (q *RubyQuery) Language() *sitter.Language</function>
       <function>func (q *RubyQuery) Query() []byte</function>
-      <function>func (q *RubyQuery) Captures() []string</function>
       <function>func (q *RubyQuery) KindMapping() map[string]string</function>
       <function>func (q *RubyQuery) ImportQuery() []byte</function>
       <variable>rubyImportQueryPattern = `
@@ -4928,13 +4932,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_rust &quot;github.com/tree-sitter/tree-sitter-rust/bindings/go&quot;
 )</imports>
       <type>type RustQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewRustQuery() *RustQuery</function>
       <function>func (q *RustQuery) Language() *sitter.Language</function>
       <function>func (q *RustQuery) Query() []byte</function>
-      <function>func (q *RustQuery) Captures() []string</function>
       <function>func (q *RustQuery) KindMapping() map[string]string</function>
       <function>func (q *RustQuery) ImportQuery() []byte</function>
       <variable>rustImportQueryPattern = `
@@ -5060,13 +5064,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type ScalaQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewScalaQuery() *ScalaQuery</function>
       <function>func (q *ScalaQuery) Language() *sitter.Language</function>
       <function>func (q *ScalaQuery) Query() []byte</function>
-      <function>func (q *ScalaQuery) Captures() []string</function>
       <function>func (q *ScalaQuery) KindMapping() map[string]string</function>
       <function>func (q *ScalaQuery) ImportQuery() []byte</function>
       <variable>scalaImportQueryPattern = `
@@ -5172,13 +5176,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_bash &quot;github.com/tree-sitter/tree-sitter-bash/bindings/go&quot;
 )</imports>
       <type>type ShellQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewShellQuery() *ShellQuery</function>
       <function>func (q *ShellQuery) Language() *sitter.Language</function>
       <function>func (q *ShellQuery) Query() []byte</function>
-      <function>func (q *ShellQuery) Captures() []string</function>
       <function>func (q *ShellQuery) KindMapping() map[string]string</function>
       <function>func (q *ShellQuery) ImportQuery() []byte</function>
       <variable>shellImportQueryPattern = `
@@ -5228,13 +5232,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type SQLQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewSQLQuery() *SQLQuery</function>
       <function>func (q *SQLQuery) Language() *sitter.Language</function>
       <function>func (q *SQLQuery) Query() []byte</function>
-      <function>func (q *SQLQuery) Captures() []string</function>
       <function>func (q *SQLQuery) KindMapping() map[string]string</function>
       <function>func (q *SQLQuery) ImportQuery() []byte</function>
       <variable>sqlQueryPattern = `
@@ -5325,13 +5329,13 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
       <type>type SwiftQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewSwiftQuery() *SwiftQuery</function>
       <function>func (q *SwiftQuery) Language() *sitter.Language</function>
       <function>func (q *SwiftQuery) Query() []byte</function>
-      <function>func (q *SwiftQuery) Captures() []string</function>
       <function>func (q *SwiftQuery) KindMapping() map[string]string</function>
       <function>func (q *SwiftQuery) ImportQuery() []byte</function>
       <variable>swiftImportQueryPattern = `
@@ -5426,13 +5430,13 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_typescript &quot;github.com/tree-sitter/tree-sitter-typescript/bindings/go&quot;
 )</imports>
       <type>type TypeScriptQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }</type>
       <function>func NewTypeScriptQuery() *TypeScriptQuery</function>
       <function>func (q *TypeScriptQuery) Language() *sitter.Language</function>
       <function>func (q *TypeScriptQuery) Query() []byte</function>
-      <function>func (q *TypeScriptQuery) Captures() []string</function>
       <function>func (q *TypeScriptQuery) KindMapping() map[string]string</function>
       <function>func (q *TypeScriptQuery) ImportQuery() []byte</function>
       <variable>typeScriptImportQueryPattern = `
