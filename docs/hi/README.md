@@ -176,7 +176,7 @@ brfit [पथ] [विकल्प]
 | `--output` | `-o` | आउटपुट फाइल पथ | stdout |
 | `--include-body` | | फंक्शन बॉडी शामिल करें | `false` |
 | `--include-imports` | | import स्टेटमेंट शामिल करें | `false` |
-| `--ignore` | `-i` | ignore फाइल पथ | `.gitignore` |
+| `--ignore` | `-i` | ignore फाइल पथ (कई बार निर्दिष्ट किया जा सकता है) | `.gitignore` |
 | `--include-hidden` | | हिडन फाइल्स शामिल करें | `false` |
 | `--no-tree` | | डायरेक्टरी ट्री स्किप करें | `false` |
 | `--no-tokens` | | टोकन काउंटिंग अक्षम करें | `false` |

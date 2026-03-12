@@ -176,7 +176,7 @@ brfit [Pfad] [Optionen]
 | `--output` | `-o` | Ausgabedateipfad | stdout |
 | `--include-body` | | Funktionskörper einschließen | `false` |
 | `--include-imports` | | Import-Anweisungen einschließen | `false` |
-| `--ignore` | `-i` | Ignore-Dateipfad | `.gitignore` |
+| `--ignore` | `-i` | Ignore-Dateipfad (kann mehrfach angegeben werden) | `.gitignore` |
 | `--include-hidden` | | Versteckte Dateien einschließen | `false` |
 | `--no-tree` | | Verzeichnisbaum überspringen | `false` |
 | `--no-tokens` | | Token-Zählung deaktivieren | `false` |

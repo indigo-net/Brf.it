@@ -30,8 +30,8 @@ type Config struct {
 	// Output is the file path to write output. Empty means stdout.
 	Output string
 
-	// IgnoreFile is the path to the ignore file (default: .gitignore).
-	IgnoreFile string
+	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -70,7 +70,7 @@ func DefaultConfig() *Config {
 		Mode:           "sig",
 		Format:         "xml",
 		Output:         "",
-		IgnoreFile:     ".gitignore",
+		IgnoreFiles:    []string{".gitignore"},
 		IncludeHidden:  false,
 		IncludeBody:    false,
 		IncludeImports: false,
@@ -149,7 +149,7 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		Version:        c.Version,
 		Format:         c.Format,
 		Output:         c.Output,
-		IgnoreFile:     c.IgnoreFile,
+		IgnoreFiles:    c.IgnoreFiles,
 		IncludeHidden:  c.IncludeHidden,
 		IncludeBody:    c.IncludeBody,
 		IncludeImports: c.IncludeImports,

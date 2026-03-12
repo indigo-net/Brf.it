@@ -42,7 +42,7 @@ brfit [path] [options]
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-i, --ignore <file>` | Custom ignore file path | `.gitignore` |
+| `-i, --ignore <file>` | Custom ignore file path (can be specified multiple times) | `.gitignore` |
 | `--include-hidden` | Include hidden files (starting with `.`) | false |
 | `--max-size <bytes>` | Maximum file size to process | `512000` (500KB) |
 

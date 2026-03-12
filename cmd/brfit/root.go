@@ -90,9 +90,9 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().StringVarP(&c.Output, "output", "o", c.Output,
 		"output file path (default: stdout)")
 
-	// Ignore file flag
-	cmd.Flags().StringVarP(&c.IgnoreFile, "ignore", "i", c.IgnoreFile,
-		"custom ignore file (default: .gitignore)")
+	// Ignore file flag (supports multiple: -i .gitignore -i .myignore)
+	cmd.Flags().StringArrayVarP(&c.IgnoreFiles, "ignore", "i", c.IgnoreFiles,
+		"custom ignore file(s), can be specified multiple times (default: .gitignore)")
 
 	// Boolean flags
 	cmd.Flags().BoolVar(&c.IncludeHidden, "include-hidden", c.IncludeHidden,
@@ -167,7 +167,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 	scanOpts := &scanner.ScanOptions{
 		RootPath:            c.Path,
 		SupportedExtensions: c.SupportedExtensions(),
-		IgnoreFile:          c.IgnoreFile,
+		IgnoreFiles:         c.IgnoreFiles,
 		IncludeHidden:       c.IncludeHidden,
 		MaxFileSize:         c.MaxFileSize,
 	}

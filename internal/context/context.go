@@ -25,8 +25,8 @@ type Options struct {
 	// Output is the output file path (empty = stdout).
 	Output string
 
-	// IgnoreFile is the custom ignore file path.
-	IgnoreFile string
+	// IgnoreFiles is the list of custom ignore file paths.
+	IgnoreFiles []string
 
 	// IncludeHidden determines whether to include hidden files.
 	IncludeHidden bool
@@ -62,7 +62,7 @@ type Options struct {
 func DefaultOptions() *Options {
 	return &Options{
 		Format:        "xml",
-		IgnoreFile:    ".gitignore",
+		IgnoreFiles:   []string{".gitignore"},
 		IncludeTree:   true,
 		IncludeHidden: false,
 		MaxFileSize:   512000, // 500KB
