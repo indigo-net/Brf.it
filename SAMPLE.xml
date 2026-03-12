@@ -90,6 +90,71 @@
       <function>func TestResolveChangedFilesEmptyOutput(t *testing.T)</function>
       <function>func TestWriteToFile(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main.go" language="go">
+      <imports>import (
+	&quot;context&quot;
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;strings&quot;
+	&quot;github.com/indigo-net/Brf.it/internal/config&quot;
+	pkgcontext &quot;github.com/indigo-net/Brf.it/internal/context&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
+	&quot;github.com/modelcontextprotocol/go-sdk/mcp&quot;
+	// Register Tree-sitter parsers.
+	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;
+)</imports>
+      <variable>version = &quot;dev&quot;</variable>
+      <function>func main()</function>
+      <type>type SummarizeProjectInput struct {
+	Path          string `json:&quot;path,omitempty&quot; jsonschema:&quot;project directory path (defaults to server root)&quot;`
+	Format        string `json:&quot;format,omitempty&quot; jsonschema:&quot;output format: xml, md, or json (default: xml)&quot;`
+	IncludeBody   bool   `json:&quot;include_body,omitempty&quot; jsonschema:&quot;include function bodies (default: false)&quot;`
+	IncludeImport bool   `json:&quot;include_imports,omitempty&quot; jsonschema:&quot;include import statements (default: false)&quot;`
+	CallGraph     bool   `json:&quot;call_graph,omitempty&quot; jsonschema:&quot;include function call graph (default: false)&quot;`
+}</type>
+      <type>type SummarizeProjectOutput struct {
+	Content         string `json:&quot;content&quot; jsonschema:&quot;the formatted project summary&quot;`
+	TotalFiles      int    `json:&quot;total_files&quot; jsonschema:&quot;number of files processed&quot;`
+	TotalSignatures int    `json:&quot;total_signatures&quot; jsonschema:&quot;number of signatures extracted&quot;`
+	TokenCount      int    `json:&quot;token_count,omitempty&quot; jsonschema:&quot;estimated token count of output&quot;`
+}</type>
+      <function>func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error)</function>
+      <type>type SummarizeFileInput struct {
+	Path    string `json:&quot;path&quot; jsonschema:&quot;project directory path&quot;`
+	Include string `json:&quot;include&quot; jsonschema:&quot;glob pattern to include (e.g. &apos;pkg/**/*.go&apos;)&quot;`
+	Format  string `json:&quot;format,omitempty&quot; jsonschema:&quot;output format: xml, md, or json (default: xml)&quot;`
+}</type>
+      <type>type SummarizeFileOutput struct {
+	Content         string `json:&quot;content&quot; jsonschema:&quot;the formatted file summary&quot;`
+	TotalFiles      int    `json:&quot;total_files&quot; jsonschema:&quot;number of files processed&quot;`
+	TotalSignatures int    `json:&quot;total_signatures&quot; jsonschema:&quot;number of signatures extracted&quot;`
+}</type>
+      <function>func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error)</function>
+      <variable>validFormats = map[string]bool{&quot;xml&quot;: true, &quot;md&quot;: true, &quot;markdown&quot;: true, &quot;json&quot;: true}</variable>
+      <function>func resolvePath(defaultRoot, inputPath string) (string, error)</function>
+      <function>func validateFormat(format string) (string, error)</function>
+      <function>func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, error)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go" language="go">
+      <imports>import (
+	&quot;context&quot;
+	&quot;os&quot;
+	&quot;path/filepath&quot;
+	&quot;strings&quot;
+	&quot;testing&quot;
+	&quot;github.com/modelcontextprotocol/go-sdk/mcp&quot;
+	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;
+)</imports>
+      <function>func TestSummarizeProject(t *testing.T)</function>
+      <function>func TestSummarizeFile(t *testing.T)</function>
+      <function>func TestSummarizeProjectInvalidPath(t *testing.T)</function>
+      <function>func TestPathTraversal(t *testing.T)</function>
+      <function>func TestInvalidFormat(t *testing.T)</function>
+      <function>func TestValidSubdirectoryPath(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/examples/go/main.go" language="go">
       <imports>import (
 	&quot;fmt&quot;

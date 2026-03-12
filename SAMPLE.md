@@ -91,6 +91,81 @@ func TestWriteToFile(t *testing.T)
 
 ---
 
+### /home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main.go
+
+```go
+import (
+	"context"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+	"github.com/indigo-net/Brf.it/internal/config"
+	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
+	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+	// Register Tree-sitter parsers.
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+)
+version = "dev"
+func main()
+type SummarizeProjectInput struct {
+	Path          string `json:"path,omitempty" jsonschema:"project directory path (defaults to server root)"`
+	Format        string `json:"format,omitempty" jsonschema:"output format: xml, md, or json (default: xml)"`
+	IncludeBody   bool   `json:"include_body,omitempty" jsonschema:"include function bodies (default: false)"`
+	IncludeImport bool   `json:"include_imports,omitempty" jsonschema:"include import statements (default: false)"`
+	CallGraph     bool   `json:"call_graph,omitempty" jsonschema:"include function call graph (default: false)"`
+}
+type SummarizeProjectOutput struct {
+	Content         string `json:"content" jsonschema:"the formatted project summary"`
+	TotalFiles      int    `json:"total_files" jsonschema:"number of files processed"`
+	TotalSignatures int    `json:"total_signatures" jsonschema:"number of signatures extracted"`
+	TokenCount      int    `json:"token_count,omitempty" jsonschema:"estimated token count of output"`
+}
+func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error)
+type SummarizeFileInput struct {
+	Path    string `json:"path" jsonschema:"project directory path"`
+	Include string `json:"include" jsonschema:"glob pattern to include (e.g. 'pkg/**/*.go')"`
+	Format  string `json:"format,omitempty" jsonschema:"output format: xml, md, or json (default: xml)"`
+}
+type SummarizeFileOutput struct {
+	Content         string `json:"content" jsonschema:"the formatted file summary"`
+	TotalFiles      int    `json:"total_files" jsonschema:"number of files processed"`
+	TotalSignatures int    `json:"total_signatures" jsonschema:"number of signatures extracted"`
+}
+func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error)
+validFormats = map[string]bool{"xml": true, "md": true, "markdown": true, "json": true}
+func resolvePath(defaultRoot, inputPath string) (string, error)
+func validateFormat(format string) (string, error)
+func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, error)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go
+
+```go
+import (
+	"context"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+	"github.com/modelcontextprotocol/go-sdk/mcp"
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+)
+func TestSummarizeProject(t *testing.T)
+func TestSummarizeFile(t *testing.T)
+func TestSummarizeProjectInvalidPath(t *testing.T)
+func TestPathTraversal(t *testing.T)
+func TestInvalidFormat(t *testing.T)
+func TestValidSubdirectoryPath(t *testing.T)
+```
+
+---
+
 ### /home/runner/work/Brf.it/Brf.it/examples/go/main.go
 
 ```go
