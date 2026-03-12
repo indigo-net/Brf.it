@@ -63,7 +63,6 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 	}
 
 	// Files
-	buf.WriteString("---\n\n")
 	buf.WriteString("## Files\n\n")
 	for _, file := range data.Files {
 		buf.WriteString("### ")
@@ -104,7 +103,7 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 					buf.WriteString("\n")
 				}
 			}
-			buf.WriteString("```\n\n")
+			buf.WriteString("```\n")
 
 			// Add docs as quotes (빈 파일이면 건너뜀)
 			if !isEmpty {
@@ -112,13 +111,13 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 					if sig.Doc != "" {
 						buf.WriteString("> ")
 						buf.WriteString(escapeMarkdown(truncateDoc(sig.Doc, data.MaxDocLength)))
-						buf.WriteString("\n\n")
+						buf.WriteString("\n")
 					}
 				}
 			}
 		}
 
-		buf.WriteString("---\n\n")
+		buf.WriteByte('\n')
 	}
 
 	return buf.Bytes(), nil
