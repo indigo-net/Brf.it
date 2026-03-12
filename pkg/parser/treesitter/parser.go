@@ -11,28 +11,14 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"
 )
 
-// init registers the TreeSitterParser with the default registry.
+// init registers a single shared TreeSitterParser with the default registry.
+// One instance handles all languages via its internal query map, sharing
+// sync.Pool resources (parsers, cursors) across languages for better reuse.
 func init() {
-	parser.RegisterParser("go", NewTreeSitterParser())
-	parser.RegisterParser("typescript", NewTreeSitterParser())
-	parser.RegisterParser("tsx", NewTreeSitterParser())
-	parser.RegisterParser("javascript", NewTreeSitterParser())
-	parser.RegisterParser("jsx", NewTreeSitterParser())
-	parser.RegisterParser("python", NewTreeSitterParser())
-	parser.RegisterParser("c", NewTreeSitterParser())
-	parser.RegisterParser("java", NewTreeSitterParser())
-	parser.RegisterParser("cpp", NewTreeSitterParser())
-	parser.RegisterParser("rust", NewTreeSitterParser())
-	parser.RegisterParser("swift", NewTreeSitterParser())
-	parser.RegisterParser("kotlin", NewTreeSitterParser())
-	parser.RegisterParser("csharp", NewTreeSitterParser())
-	parser.RegisterParser("lua", NewTreeSitterParser())
-	parser.RegisterParser("shell", NewTreeSitterParser())
-	parser.RegisterParser("php", NewTreeSitterParser())
-	parser.RegisterParser("ruby", NewTreeSitterParser())
-	parser.RegisterParser("scala", NewTreeSitterParser())
-	parser.RegisterParser("elixir", NewTreeSitterParser())
-	parser.RegisterParser("sql", NewTreeSitterParser())
+	p := NewTreeSitterParser()
+	for lang := range p.queries {
+		parser.RegisterParser(lang, p)
+	}
 }
 
 // queryType distinguishes between signature and import queries for caching.
