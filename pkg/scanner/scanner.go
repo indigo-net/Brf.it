@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/bmatcuk/doublestar/v4"
 	ignore "github.com/sabhiram/go-gitignore"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
@@ -52,6 +53,16 @@ type ScanOptions struct {
 
 	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
 	IgnoreFiles []string
+
+	// IncludePatterns is a list of glob patterns to include.
+	// If non-empty, only files matching at least one pattern are included.
+	// Supports doublestar (**) patterns.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns to exclude.
+	// Files matching any pattern are excluded.
+	// Supports doublestar (**) patterns.
+	ExcludePatterns []string
 
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
@@ -227,6 +238,10 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 				if s.matchesIgnore(path) {
 					return filepath.SkipDir
 				}
+				// Check exclude patterns for directory (trailing slash convention)
+				if s.matchesExclude(path) {
+					return filepath.SkipDir
+				}
 			}
 			return nil
 		}
@@ -254,6 +269,45 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 	return result, err
 }
 
+// relPath returns the path relative to the root, using forward slashes.
+// If the path cannot be made relative, returns the original path.
+func (s *FileScanner) relPath(path string) string {
+	rel, err := filepath.Rel(s.opts.RootPath, path)
+	if err != nil {
+		return path
+	}
+	return filepath.ToSlash(rel)
+}
+
+// matchesInclude returns true if the path matches at least one include pattern.
+// Returns true if no include patterns are configured (no filtering).
+func (s *FileScanner) matchesInclude(path string) bool {
+	if len(s.opts.IncludePatterns) == 0 {
+		return true
+	}
+	rel := s.relPath(path)
+	for _, pattern := range s.opts.IncludePatterns {
+		if matched, _ := doublestar.Match(pattern, rel); matched {
+			return true
+		}
+	}
+	return false
+}
+
+// matchesExclude returns true if the path matches any exclude pattern.
+func (s *FileScanner) matchesExclude(path string) bool {
+	if len(s.opts.ExcludePatterns) == 0 {
+		return false
+	}
+	rel := s.relPath(path)
+	for _, pattern := range s.opts.ExcludePatterns {
+		if matched, _ := doublestar.Match(pattern, rel); matched {
+			return true
+		}
+	}
+	return false
+}
+
 // matchesIgnore returns true if the path matches any of the loaded ignore patterns.
 func (s *FileScanner) matchesIgnore(path string) bool {
 	for _, ig := range s.ignorers {
@@ -277,6 +331,16 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 
 	// Check gitignore (skip if ANY ignorer matches)
 	if s.matchesIgnore(path) {
+		return FileEntry{}, false
+	}
+
+	// Check exclude patterns
+	if s.matchesExclude(path) {
+		return FileEntry{}, false
+	}
+
+	// Check include patterns
+	if !s.matchesInclude(path) {
 		return FileEntry{}, false
 	}
 

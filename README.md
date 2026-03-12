@@ -180,6 +180,8 @@ brfit [path] [options]
 | `--include-imports` | | Include import statements | `false` |
 | `--include-private` | | Include non-exported/private symbols | `false` |
 | `--ignore` | `-i` | Ignore file path (can be specified multiple times) | `.gitignore` |
+| `--include` | | Glob pattern(s) to include (can be specified multiple times) | |
+| `--exclude` | | Glob pattern(s) to exclude (can be specified multiple times) | |
 | `--include-hidden` | | Include hidden files | `false` |
 | `--no-tree` | | Skip directory tree | `false` |
 | `--no-tokens` | | Disable token counting | `false` |

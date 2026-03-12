@@ -44,6 +44,8 @@ brfit [path] [options]
 | Option | Description | Default |
 |--------|-------------|---------|
 | `-i, --ignore <file>` | Custom ignore file path (can be specified multiple times) | `.gitignore` |
+| `--include <pattern>` | Glob pattern(s) to include (can be specified multiple times) | |
+| `--exclude <pattern>` | Glob pattern(s) to exclude (can be specified multiple times) | |
 | `--include-hidden` | Include hidden files (starting with `.`) | false |
 | `--max-size <bytes>` | Maximum file size to process | `512000` (500KB) |
 

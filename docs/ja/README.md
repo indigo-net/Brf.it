@@ -178,6 +178,8 @@ brfit [パス] [オプション]
 | `--include-imports` | | import文を含める | `false` |
 | `--include-private` | | 非公開/unexportedシンボルを含める | `false` |
 | `--ignore` | `-i` | ignoreファイルパス（複数回指定可能） | `.gitignore` |
+| `--include` | | 含めるglobパターン（複数指定可能） | |
+| `--exclude` | | 除外するglobパターン（複数指定可能） | |
 | `--include-hidden` | | 隠しファイルを含める | `false` |
 | `--no-tree` | | ディレクトリツリーをスキップ | `false` |
 | `--no-tokens` | | トークンカウントを無効化 | `false` |
