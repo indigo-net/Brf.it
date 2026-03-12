@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- YAML 언어 지원 (`.yaml`, `.yml`)
+- TOML 언어 지원 (`.toml`)
 - `--include-private` CLI flag to include non-exported/private symbols (#177)
 - `--include` / `--exclude` glob pattern filtering with doublestar support (#176)
 
