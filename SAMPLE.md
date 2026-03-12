@@ -21,6 +21,7 @@ func main()
 
 ```go
 import (
+	gocontext "context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -29,6 +30,7 @@ import (
 	"github.com/indigo-net/Brf.it/internal/config"
 	"github.com/indigo-net/Brf.it/internal/context"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
+	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 	"github.com/spf13/cobra"
 	// Import treesitter parser to register Go/TypeScript parsers
 	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
@@ -47,6 +49,7 @@ func addFlags(cmd *cobra.Command, c *config.Config)
 func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
 changedFiles map[string]bool
 func writeOutput(result *context.Result, c *config.Config) error
+func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath string) error
 func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)
 diffArgs []string
 func splitNonEmpty(s string) []string
@@ -413,6 +416,9 @@ type Config struct {
 	// Since restricts scanning to files changed since the specified commit/tag.
 	Since string
 
+	// TokenTree outputs a directory tree with per-file token counts and exits.
+	TokenTree bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -595,17 +601,45 @@ func TestBuildGlobalImportsSorting(t *testing.T)
 
 ```go
 import (
+	"fmt"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 type treeNode struct {
 	children map[string]*treeNode
+	tokens   int  // token count for leaf nodes (files)
+	isFile   bool // true if this node is a file (leaf)
 }
 func BuildTree(root string, paths []string) string
 buf strings.Builder
 func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
 newPrefix string
+type FileTokenCount struct {
+	Path   string
+	Tokens int
+}
+func BuildTokenTree(root string, files []FileTokenCount) string
+buf strings.Builder
+func calcDirTokens(n *treeNode) int
+sum int
+func renderTokenNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
+newPrefix string
+func formatNumber(n int) string
+buf strings.Builder
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/internal/context/tree_test.go
+
+```go
+import (
+	"strings"
+	"testing"
+)
+func TestBuildTokenTree(t *testing.T)
+func TestFormatNumber(t *testing.T)
 ```
 
 ---

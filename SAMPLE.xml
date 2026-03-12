@@ -28,6 +28,7 @@
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/root.go" language="go">
       <imports>import (
+	gocontext &quot;context&quot;
 	&quot;fmt&quot;
 	&quot;os&quot;
 	&quot;os/exec&quot;
@@ -36,6 +37,7 @@
 	&quot;github.com/indigo-net/Brf.it/internal/config&quot;
 	&quot;github.com/indigo-net/Brf.it/internal/context&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;
 	&quot;github.com/spf13/cobra&quot;
 	// Import treesitter parser to register Go/TypeScript parsers
 	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;
@@ -54,6 +56,7 @@
       <function>func runRoot(cmd *cobra.Command, args []string, c *config.Config) error</function>
       <variable>changedFiles map[string]bool</variable>
       <function>func writeOutput(result *context.Result, c *config.Config) error</function>
+      <function>func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath string) error</function>
       <function>func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)</function>
       <variable>diffArgs []string</variable>
       <function>func splitNonEmpty(s string) []string</function>
@@ -380,6 +383,9 @@ main &quot;$@&quot;</imports>
 	// Since restricts scanning to files changed since the specified commit/tag.
 	Since string
 
+	// TokenTree outputs a directory tree with per-file token counts and exits.
+	TokenTree bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -542,17 +548,40 @@ main &quot;$@&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/tree.go" language="go">
       <imports>import (
+	&quot;fmt&quot;
 	&quot;path/filepath&quot;
 	&quot;sort&quot;
 	&quot;strings&quot;
 )</imports>
       <type>type treeNode struct {
 	children map[string]*treeNode
+	tokens   int  // token count for leaf nodes (files)
+	isFile   bool // true if this node is a file (leaf)
 }</type>
       <function>func BuildTree(root string, paths []string) string</function>
       <variable>buf strings.Builder</variable>
       <function>func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
       <variable>newPrefix string</variable>
+      <type>type FileTokenCount struct {
+	Path   string
+	Tokens int
+}</type>
+      <function>func BuildTokenTree(root string, files []FileTokenCount) string</function>
+      <variable>buf strings.Builder</variable>
+      <function>func calcDirTokens(n *treeNode) int</function>
+      <variable>sum int</variable>
+      <function>func renderTokenNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
+      <variable>newPrefix string</variable>
+      <function>func formatNumber(n int) string</function>
+      <variable>buf strings.Builder</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/internal/context/tree_test.go" language="go">
+      <imports>import (
+	&quot;strings&quot;
+	&quot;testing&quot;
+)</imports>
+      <function>func TestBuildTokenTree(t *testing.T)</function>
+      <function>func TestFormatNumber(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/profiling/profiling.go" language="go">
       <imports>import (
