@@ -335,6 +335,12 @@ main &quot;$@&quot;</imports>
 	// IgnoreFiles is the list of ignore file paths (default: [&quot;.gitignore&quot;]).
 	IgnoreFiles []string
 
+	// IncludePatterns is a list of glob patterns. Only matching files are included.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns. Matching files are excluded.
+	ExcludePatterns []string
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -6040,6 +6046,7 @@ import &quot;unsafe&quot;</imports>
 	&quot;os&quot;
 	&quot;path/filepath&quot;
 	&quot;strings&quot;
+	&quot;github.com/bmatcuk/doublestar/v4&quot;
 	ignore &quot;github.com/sabhiram/go-gitignore&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
@@ -6076,6 +6083,16 @@ import &quot;unsafe&quot;</imports>
 	// IgnoreFiles is the list of ignore file paths (default: [&quot;.gitignore&quot;]).
 	IgnoreFiles []string
 
+	// IncludePatterns is a list of glob patterns to include.
+	// If non-empty, only files matching at least one pattern are included.
+	// Supports doublestar (**) patterns.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns to exclude.
+	// Files matching any pattern are excluded.
+	// Supports doublestar (**) patterns.
+	ExcludePatterns []string
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -6102,6 +6119,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
       <function>func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)</function>
       <variable>warning string</variable>
+      <function>func (s *FileScanner) relPath(path string) string</function>
+      <function>func (s *FileScanner) matchesInclude(path string) bool</function>
+      <function>func (s *FileScanner) matchesExclude(path string) bool</function>
+      <function>func (s *FileScanner) matchesExcludeDir(path string) bool</function>
       <function>func (s *FileScanner) matchesIgnore(path string) bool</function>
       <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
     </file>
@@ -6155,6 +6176,9 @@ import &quot;unsafe&quot;</imports>
       <variable>buf bytes.Buffer</variable>
       <function>func TestScanMultipleIgnoreFiles(t *testing.T)</function>
       <function>func TestFilepathBaseEdgeCases(t *testing.T)</function>
+      <function>func TestScanIncludePatterns(t *testing.T)</function>
+      <function>func TestScanExcludeDirectory(t *testing.T)</function>
+      <function>func TestScanSingleFileWithIncludePattern(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">
       <imports>import (

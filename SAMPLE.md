@@ -368,6 +368,12 @@ type Config struct {
 	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
 	IgnoreFiles []string
 
+	// IncludePatterns is a list of glob patterns. Only matching files are included.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns. Matching files are excluded.
+	ExcludePatterns []string
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -6578,6 +6584,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"github.com/bmatcuk/doublestar/v4"
 	ignore "github.com/sabhiram/go-gitignore"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
@@ -6614,6 +6621,16 @@ type ScanOptions struct {
 	// IgnoreFiles is the list of ignore file paths (default: [".gitignore"]).
 	IgnoreFiles []string
 
+	// IncludePatterns is a list of glob patterns to include.
+	// If non-empty, only files matching at least one pattern are included.
+	// Supports doublestar (**) patterns.
+	IncludePatterns []string
+
+	// ExcludePatterns is a list of glob patterns to exclude.
+	// Files matching any pattern are excluded.
+	// Supports doublestar (**) patterns.
+	ExcludePatterns []string
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -6640,6 +6657,10 @@ type FileScanner struct {
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
 func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)
 warning string
+func (s *FileScanner) relPath(path string) string
+func (s *FileScanner) matchesInclude(path string) bool
+func (s *FileScanner) matchesExclude(path string) bool
+func (s *FileScanner) matchesExcludeDir(path string) bool
 func (s *FileScanner) matchesIgnore(path string) bool
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
@@ -6703,6 +6724,9 @@ func TestLogOutputNoDoubleNewline(t *testing.T)
 buf bytes.Buffer
 func TestScanMultipleIgnoreFiles(t *testing.T)
 func TestFilepathBaseEdgeCases(t *testing.T)
+func TestScanIncludePatterns(t *testing.T)
+func TestScanExcludeDirectory(t *testing.T)
+func TestScanSingleFileWithIncludePattern(t *testing.T)
 ```
 
 ---
