@@ -6081,7 +6081,6 @@ type queryCacheKey struct {
 type TreeSitterParser struct {
 	queries         map[string]LanguageQuery
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
-	queryCacheMutex sync.RWMutex
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }
