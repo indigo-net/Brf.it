@@ -142,7 +142,8 @@ namespace outer {
 
 ### Include 문
 
-`--include-imports`를 사용하여 `#include` 지시문 추출:
+`--include-imports`를 사용하여 `#include` 지시문 추출.
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
 
 ```cpp
 #include <iostream>        // 시스템 include

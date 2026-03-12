@@ -115,6 +115,8 @@ Wenn `--include-body` Flag nicht verwendet wird:
 - Arrow-Funktionen: Body nach `=>` entfernt
 - Klassen/Interfaces: Inhalt nach öffnender Klammer `{` entfernt
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### JSDoc-Unterstützung
 
 - `/** ... */` Stil JSDoc-Kommentare werden automatisch verknüpft

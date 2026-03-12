@@ -77,6 +77,8 @@ CREATE INDEX idx_users_name ON users (name);
 - ビュー：`AS SELECT...`クエリが除去され、宣言部のみが保持されます
 - マテリアライズドビュー：ビューと同様にクエリが除去されます
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### コメント
 
 - 単一行コメント（`-- コメント`）はドキュメントとして抽出されます

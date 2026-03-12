@@ -90,6 +90,7 @@ end
 ### インポート抽出
 
 - `require`と`require_relative`文は`--include-imports`フラグで抽出可能
+- `--include-private`を使用して非公開/unexportedシンボルを含める
 - 形式: `require "json"` / `require_relative "helpers"`（完全な文が保持されます）
 
 ### ドキュメントコメント

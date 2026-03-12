@@ -81,6 +81,8 @@ type StringList = List[String]
 - val/var: 値が保持されます（`lazy val`、`implicit val`を含む）
 - 型エイリアス: 完全に保持
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### ジェネリクス
 
 - ジェネリック型パラメータ`[A, B]`はシグネチャに完全に保持されます

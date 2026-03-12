@@ -116,6 +116,8 @@ Wenn das Flag `--include-body` nicht verwendet wird:
 - Impl-Blöcke: Körper nach der öffnenden geschweiften Klammer `{` entfernt
 - Const/Static: Wertausruck wird beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Dokumentationskommentare
 
 - Nur `///` und `//!` Dokumentationskommentare werden extrahiert

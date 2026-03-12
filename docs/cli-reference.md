@@ -20,6 +20,7 @@ brfit [path] [options]
 | `--output` | `-o` | Output file path | stdout |
 | `--include-body` | | Include function bodies | `false` |
 | `--include-imports` | | Include import statements | `false` |
+| `--include-private` | | Include non-exported/private symbols | `false` |
 | `--no-std-imports` | | Exclude stdlib imports | `false` |
 | `--ignore` | `-i` | Ignore file path (can be specified multiple times) | `.gitignore` |
 | `--include-hidden` | | Include hidden files | `false` |

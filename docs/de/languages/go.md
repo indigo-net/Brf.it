@@ -78,6 +78,8 @@ Wenn `--include-body` Flag nicht verwendet wird:
 - Funktionen/Methoden: Body nach öffnender Klammer `{` entfernt
 - Typen: nur `struct` oder `interface` Schlüsselwort wird beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Nicht unterstützte Elemente
 
 - Eingebettete Funktionen (Funktionen innerhalb von Funktionen)

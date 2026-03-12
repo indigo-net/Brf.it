@@ -77,6 +77,8 @@ Wenn das `--include-body`-Flag nicht verwendet wird:
 - Views: Die `AS SELECT...`-Abfrage wird entfernt, nur die Deklaration bleibt erhalten
 - Materialisierte Views: wie bei Views, die Abfrage wird entfernt
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Kommentare
 
 - Einzeilige Kommentare (`-- Kommentar`) werden als Dokumentation extrahiert

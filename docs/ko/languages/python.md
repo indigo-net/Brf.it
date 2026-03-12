@@ -102,6 +102,8 @@ async def fetch_user(user_id: int) -> User:
 - 함수/메서드: 시그니처 끝 콜론(`:`) 이후 본문 제거
 - 클래스: 클래스명과 상속 정보까지만 유지
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 타입 힌트 내 콜론 처리
 
 복잡한 타입 힌트(예: `Dict[str, int]`)의 콜론은 함수 끝 콜론과 구분됨:

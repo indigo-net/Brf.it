@@ -86,6 +86,8 @@ static void init_user(User* u);
 - 함수: 여는 중괄호 `{` 이후 본문 제거
 - Struct/Enum/Typedef/Macro: 전체 텍스트 유지
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 포인터 반환 타입
 
 직접 반환 타입과 포인터 반환 타입 모두 지원:

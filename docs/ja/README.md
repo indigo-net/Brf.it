@@ -176,6 +176,7 @@ brfit [パス] [オプション]
 | `--output` | `-o` | 出力ファイルパス | stdout |
 | `--include-body` | | 関数本体を含める | `false` |
 | `--include-imports` | | import文を含める | `false` |
+| `--include-private` | | 非公開/unexportedシンボルを含める | `false` |
 | `--ignore` | `-i` | ignoreファイルパス（複数回指定可能） | `.gitignore` |
 | `--include-hidden` | | 隠しファイルを含める | `false` |
 | `--no-tree` | | ディレクトリツリーをスキップ | `false` |

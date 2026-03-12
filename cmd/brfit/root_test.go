@@ -90,7 +90,7 @@ func TestNewRootCommand(t *testing.T) {
 	}
 
 	// Check flags exist
-	flags := []string{"mode", "format", "output", "ignore", "include-hidden", "no-tree", "no-tokens", "max-size"}
+	flags := []string{"mode", "format", "output", "ignore", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size"}
 	for _, flag := range flags {
 		f := cmd.Flags().Lookup(flag)
 		if f == nil {

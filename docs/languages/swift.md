@@ -105,6 +105,8 @@ When `--include-body` flag is not used:
 - Extensions: body removed after opening brace `{`
 - Properties (let/var): value expression is preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Doc Comments
 
 - Only `///` doc comments are extracted

@@ -86,6 +86,8 @@ static void init_user(User* u);
 - 関数：開き中括弧`{`以降の本文を削除
 - Struct/Enum/Typedef/Macro：全文を保持
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### ポインタ戻り型
 
 直接戻り型とポインタ戻り型の両方をサポート：

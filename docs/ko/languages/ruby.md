@@ -90,6 +90,7 @@ end
 ### Import 추출
 
 - `require`와 `require_relative` 구문은 `--include-imports` 플래그로 추출 가능
+- `--include-private`를 사용하여 비공개/unexported 심볼 포함
 - 형식: `require "json"` / `require_relative "helpers"` (전체 구문 보존)
 
 ### 문서 주석

@@ -142,7 +142,8 @@ namespace outer {
 
 ### Include स्टेटमेंट
 
-`--include-imports` का उपयोग करके `#include` डायरेक्टिव एक्सट्रैक्ट करें:
+`--include-imports` का उपयोग करके `#include` डायरेक्टिव एक्सट्रैक्ट करें।
+`--include-private` का उपयोग करके गैर-निर्यातित/निजी सिंबल शामिल करें।
 
 ```cpp
 #include <iostream>        // सिस्टम include

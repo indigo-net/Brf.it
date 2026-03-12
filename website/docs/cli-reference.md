@@ -35,6 +35,7 @@ brfit [path] [options]
 |--------|-------------|---------|
 | `--include-body` | Include function implementations | false |
 | `--include-imports` | Include import/export statements | false |
+| `--include-private` | Include non-exported/private symbols | false |
 | `--no-tree` | Skip directory tree in output | false |
 | `--no-tokens` | Disable token counting | false |
 

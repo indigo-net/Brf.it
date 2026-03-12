@@ -115,6 +115,8 @@ const formatName = (user: User): string => {
 - アロー関数：`=>`以降の本体を削除
 - クラス/インターフェース：中括弧`{`以降の内容を削除
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### JSDocサポート
 
 - `/** ... */`形式のJSDocコメントを自動リンク

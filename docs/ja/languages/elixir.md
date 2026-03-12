@@ -89,6 +89,8 @@ end
 
 `--include-imports`を使用すると、以下がキャプチャされます：
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 - `import Module`
 - `alias Module`
 - `use Module`

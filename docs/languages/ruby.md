@@ -97,6 +97,7 @@ When `--include-body` flag is not used:
 ### Import Extraction
 
 - `require` and `require_relative` statements are extracted with `--include-imports` flag
+- Use `--include-private` to include non-exported/private symbols
 - Format: `require "json"` / `require_relative "helpers"` (full statement preserved)
 
 ### Doc Comments

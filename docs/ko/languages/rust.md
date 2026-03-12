@@ -116,6 +116,8 @@ pub const MAX_POINTS: usize = 1000;
 - Impl 블록: 여는 중괄호 `{` 이후 본문 제거
 - Const/Static: 값 표현식은 보존
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 문서 주석
 
 - `///` 및 `//!` 문서 주석만 추출됩니다

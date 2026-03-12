@@ -88,6 +88,8 @@ When `--include-body` flag is not used:
 - val/var: values are preserved (including `lazy val` and `implicit val`)
 - Type aliases: fully preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Generics
 
 - Generic type parameters `[A, B]` are fully preserved in signatures

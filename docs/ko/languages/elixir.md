@@ -89,6 +89,8 @@ end
 
 `--include-imports` 사용 시 다음이 캡처됩니다:
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 - `import Module`
 - `alias Module`
 - `use Module`

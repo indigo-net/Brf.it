@@ -78,6 +78,8 @@ func (s *Server) Start() error {
 - 함수/메서드: 중괄호 `{` 이후 본문 제거
 - 타입: `struct` 또는 `interface` 키워드까지만 유지
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 지원하지 않는 요소
 
 - 임베디드 함수 (함수 내부 함수)

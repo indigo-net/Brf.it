@@ -81,6 +81,8 @@ Wenn das `--include-body` Flag nicht verwendet wird:
 - val/var: Werte werden beibehalten (einschließlich `lazy val` und `implicit val`)
 - Typ-Aliase: vollständig beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Generics
 
 - Generische Typparameter `[A, B]` werden vollständig in Signaturen beibehalten

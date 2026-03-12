@@ -127,6 +127,8 @@ Wenn das Flag `--include-body` nicht verwendet wird:
 - Eigenschaften (val/var): Wertausdruck wird beibehalten
 - Typ-Aliase: vollständig beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Dokumentationskommentare
 
 - Sowohl `/** ... */` (KDoc) als auch `//` Zeilenkommentare werden extrahiert

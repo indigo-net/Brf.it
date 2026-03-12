@@ -115,6 +115,8 @@ const formatName = (user: User): string => {
 - 화살표 함수: `=>` 이후 본문 제거
 - 클래스/인터페이스: 중괄호 `{` 이후 내용 제거
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### JSDoc 지원
 
 - `/** ... */` 형태의 JSDoc 주석 자동 연결

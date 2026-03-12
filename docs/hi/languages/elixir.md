@@ -89,6 +89,8 @@ end
 
 `--include-imports` के साथ, निम्नलिखित कैप्चर किए जाते हैं:
 
+`--include-private` का उपयोग करके गैर-निर्यातित/निजी सिंबल शामिल करें।
+
 - `import Module`
 - `alias Module`
 - `use Module`

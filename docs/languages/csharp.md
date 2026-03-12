@@ -158,6 +158,8 @@ When `--include-body` flag is not used:
 - Classes/Structs/Interfaces/Enums/Records: body removed after opening brace `{`
 - Properties: auto-properties preserved, expression-bodied properties stripped
 - Delegates: no body, returned as-is
+
+Use `--include-private` to include non-exported/private symbols.
 - Abstract/interface methods ending with `;`: returned as-is
 
 ### Doc Comments

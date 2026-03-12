@@ -122,6 +122,8 @@ When `--include-body` flag is not used:
 - Arrow functions: body removed after `=>`
 - Classes/Interfaces: content removed after opening brace `{`
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### JSDoc Support
 
 - `/** ... */` style JSDoc comments are automatically linked

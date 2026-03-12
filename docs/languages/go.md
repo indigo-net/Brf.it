@@ -85,6 +85,8 @@ When `--include-body` flag is not used:
 - Functions/Methods: body removed after opening brace `{`
 - Types: only `struct` or `interface` keyword is preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Unsupported Elements
 
 - Embedded functions (functions inside functions)
