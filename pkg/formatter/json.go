@@ -43,9 +43,11 @@ type jsonFile struct {
 
 // jsonSig represents a signature in the JSON output.
 type jsonSig struct {
-	Kind string `json:"kind"`
-	Text string `json:"text"`
-	Doc  string `json:"doc,omitempty"`
+	Kind     string `json:"kind"`
+	Text     string `json:"text"`
+	Doc      string `json:"doc,omitempty"`
+	Line     int    `json:"line,omitempty"`
+	Exported bool   `json:"exported,omitempty"`
 }
 
 // Format implements Formatter interface.
@@ -82,8 +84,10 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 				jf.Signatures = make([]jsonSig, 0, len(file.Signatures))
 				for _, sig := range file.Signatures {
 					js := jsonSig{
-						Kind: normalizeKind(sig.Kind),
-						Text: sig.Text,
+						Kind:     normalizeKind(sig.Kind),
+						Text:     sig.Text,
+						Line:     sig.Line,
+						Exported: sig.Exported,
 					}
 					if sig.Doc != "" {
 						js.Doc = truncateDoc(sig.Doc, data.MaxDocLength)
