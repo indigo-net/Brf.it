@@ -128,7 +128,7 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 	}
 
 	// 1. Scan files
-	scanResult, err := p.scanner.Scan()
+	scanResult, err := p.scanner.Scan(ctx)
 	if err != nil {
 		return nil, err
 	}
