@@ -53,6 +53,8 @@ func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath
 func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)
 diffArgs []string
 func splitNonEmpty(s string) []string
+func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error)
+func resolveRemoteURL(remote string) string
 func writeToFile(path string, content []byte) error
 ```
 
@@ -63,6 +65,7 @@ func writeToFile(path string, content []byte) error
 ```go
 import (
 	"bytes"
+	gocontext "context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -86,6 +89,12 @@ func TestRootCommandPathNotFound(t *testing.T)
 func TestResolveChangedFilesPathAnchoring(t *testing.T)
 func TestResolveChangedFilesIncludesUntracked(t *testing.T)
 func TestResolveChangedFilesEmptyOutput(t *testing.T)
+func TestResolveRemoteURL(t *testing.T)
+func TestRemoteFlagConflictsWithPath(t *testing.T)
+func TestRemoteFlagConflictsWithChanged(t *testing.T)
+func TestRemoteFlagConflictsWithSince(t *testing.T)
+func TestRemoteFlagInvalidURL(t *testing.T)
+func TestCloneRemoteIntegration(t *testing.T)
 func TestWriteToFile(t *testing.T)
 ```
 
@@ -502,6 +511,9 @@ type Config struct {
 
 	// CallGraph enables function call graph extraction in output.
 	CallGraph bool
+
+	// Remote is a git URL or owner/repo shorthand for remote repository analysis.
+	Remote string
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64

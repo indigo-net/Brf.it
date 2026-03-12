@@ -60,11 +60,14 @@
       <function>func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)</function>
       <variable>diffArgs []string</variable>
       <function>func splitNonEmpty(s string) []string</function>
+      <function>func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error)</function>
+      <function>func resolveRemoteURL(remote string) string</function>
       <function>func writeToFile(path string, content []byte) error</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
+	gocontext &quot;context&quot;
 	&quot;os&quot;
 	&quot;os/exec&quot;
 	&quot;path/filepath&quot;
@@ -88,6 +91,12 @@
       <function>func TestResolveChangedFilesPathAnchoring(t *testing.T)</function>
       <function>func TestResolveChangedFilesIncludesUntracked(t *testing.T)</function>
       <function>func TestResolveChangedFilesEmptyOutput(t *testing.T)</function>
+      <function>func TestResolveRemoteURL(t *testing.T)</function>
+      <function>func TestRemoteFlagConflictsWithPath(t *testing.T)</function>
+      <function>func TestRemoteFlagConflictsWithChanged(t *testing.T)</function>
+      <function>func TestRemoteFlagConflictsWithSince(t *testing.T)</function>
+      <function>func TestRemoteFlagInvalidURL(t *testing.T)</function>
+      <function>func TestCloneRemoteIntegration(t *testing.T)</function>
       <function>func TestWriteToFile(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main.go" language="go">
@@ -459,6 +468,9 @@ main &quot;$@&quot;</imports>
 
 	// CallGraph enables function call graph extraction in output.
 	CallGraph bool
+
+	// Remote is a git URL or owner/repo shorthand for remote repository analysis.
+	Remote string
 
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
