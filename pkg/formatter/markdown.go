@@ -115,6 +115,26 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 					}
 				}
 			}
+
+			// Call graph section
+			if data.IncludeCallGraph && len(file.Calls) > 0 {
+				buf.WriteString("\n#### Calls\n\n")
+				for _, call := range file.Calls {
+					buf.WriteString("- ")
+					if call.Caller != "" {
+						buf.WriteString("`")
+						buf.WriteString(escapeMarkdown(call.Caller))
+						buf.WriteString("`")
+					} else {
+						buf.WriteString("(top-level)")
+					}
+					buf.WriteString(" → `")
+					buf.WriteString(escapeMarkdown(call.Callee))
+					buf.WriteString("` (line ")
+					buf.WriteString(strconv.Itoa(call.Line))
+					buf.WriteString(")\n")
+				}
+			}
 		}
 
 		buf.WriteByte('\n')

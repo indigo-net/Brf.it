@@ -52,6 +52,19 @@ func (q *JavaQuery) ImportQuery() []byte {
 	return []byte(javaImportQueryPattern)
 }
 
+// CallQuery returns the Java call query pattern.
+func (q *JavaQuery) CallQuery() []byte {
+	return []byte(javaCallQueryPattern)
+}
+
+// javaCallQueryPattern is the Tree-sitter query for extracting Java method invocations.
+const javaCallQueryPattern = `
+; Method invocations (e.g., obj.method(), method())
+(method_invocation
+  name: (identifier) @callee
+) @call_node
+`
+
 // javaImportQueryPattern is the Tree-sitter query for extracting Java imports.
 const javaImportQueryPattern = `
 ; import statements (capture full declaration)

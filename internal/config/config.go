@@ -77,6 +77,9 @@ type Config struct {
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
+	// CallGraph enables function call graph extraction in output.
+	CallGraph bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -184,7 +187,8 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludePrivate: c.IncludePrivate,
 		MaxFileSize:    c.MaxFileSize,
 		MaxDocLength:   c.MaxDocLength,
-		NoSchema:       c.NoSchema,
-		SecurityCheck:  c.SecurityCheck,
+		NoSchema:         c.NoSchema,
+		SecurityCheck:    c.SecurityCheck,
+		IncludeCallGraph: c.CallGraph,
 	}
 }

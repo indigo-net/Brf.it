@@ -47,6 +47,26 @@ func (q *PythonQuery) ImportQuery() []byte {
 	return []byte(pythonImportQueryPattern)
 }
 
+// CallQuery returns the Python call query pattern.
+func (q *PythonQuery) CallQuery() []byte {
+	return []byte(pythonCallQueryPattern)
+}
+
+// pythonCallQueryPattern is the Tree-sitter query for extracting Python function calls.
+const pythonCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call
+  function: (identifier) @callee
+) @call_node
+
+; Method/attribute calls (e.g., obj.method())
+(call
+  function: (attribute
+    attribute: (identifier) @callee
+  )
+) @call_node
+`
+
 // pythonImportQueryPattern is the Tree-sitter query for extracting Python imports.
 const pythonImportQueryPattern = `
 ; import module (capture full statement)

@@ -29,6 +29,9 @@ type ExtractedFile struct {
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Size is the file size in bytes.
 	Size int64
 
@@ -61,6 +64,9 @@ type ExtractOptions struct {
 
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references.
+	IncludeCalls bool
 
 	// Concurrency is the number of concurrent workers.
 	// 0 = auto (runtime.NumCPU()), 1 = sequential.
@@ -268,6 +274,7 @@ func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry
 		IncludePrivate: opts.IncludePrivate,
 		IncludeBody:    opts.IncludeBody,
 		IncludeImports: opts.IncludeImports,
+		IncludeCalls:   opts.IncludeCalls,
 	})
 	if err != nil {
 		extracted.Error = fmt.Errorf("failed to parse %q: %w", entry.Path, err)
@@ -276,5 +283,6 @@ func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry
 
 	extracted.Signatures = parseResult.Signatures
 	extracted.RawImports = parseResult.RawImports
+	extracted.Calls = parseResult.Calls
 	return extracted
 }

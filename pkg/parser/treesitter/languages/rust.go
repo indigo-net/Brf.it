@@ -58,6 +58,26 @@ func (q *RustQuery) ImportQuery() []byte {
 	return []byte(rustImportQueryPattern)
 }
 
+// CallQuery returns the Rust call query pattern.
+func (q *RustQuery) CallQuery() []byte {
+	return []byte(rustCallQueryPattern)
+}
+
+// rustCallQueryPattern is the Tree-sitter query for extracting Rust function calls.
+const rustCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/field calls (e.g., obj.method())
+(call_expression
+  function: (field_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`
+
 // rustImportQueryPattern is the Tree-sitter query for extracting Rust use statements.
 const rustImportQueryPattern = `
 ; Use declarations (capture full statement)

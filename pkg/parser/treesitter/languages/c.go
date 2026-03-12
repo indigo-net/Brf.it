@@ -52,6 +52,19 @@ func (q *CQuery) ImportQuery() []byte {
 	return []byte(cImportQueryPattern)
 }
 
+// CallQuery returns the C call query pattern.
+func (q *CQuery) CallQuery() []byte {
+	return []byte(cCallQueryPattern)
+}
+
+// cCallQueryPattern is the Tree-sitter query for extracting C function calls.
+const cCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+`
+
 // cImportQueryPattern is the Tree-sitter query for extracting C #include directives.
 const cImportQueryPattern = `
 ; #include directives (capture full statement)
