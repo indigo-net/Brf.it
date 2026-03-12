@@ -56,7 +56,6 @@ type queryCacheKey struct {
 type TreeSitterParser struct {
 	queries         map[string]LanguageQuery
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
-	queryCacheMutex sync.RWMutex
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }
@@ -105,24 +104,12 @@ func NewTreeSitterParser() *TreeSitterParser {
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error) {
 	key := queryCacheKey{lang: lang, typ: typ}
 
-	// Fast path: check cache with read lock
-	p.queryCacheMutex.RLock()
-	if cached, ok := p.compiledQueries.Load(key); ok {
-		p.queryCacheMutex.RUnlock()
-		return cached.(*sitter.Query), nil
-	}
-	p.queryCacheMutex.RUnlock()
-
-	// Slow path: create query with write lock
-	p.queryCacheMutex.Lock()
-	defer p.queryCacheMutex.Unlock()
-
-	// Double-check after acquiring write lock
+	// Fast path: check cache (sync.Map is inherently thread-safe)
 	if cached, ok := p.compiledQueries.Load(key); ok {
 		return cached.(*sitter.Query), nil
 	}
 
-	// Create new query
+	// Slow path: create query and attempt to store it
 	var queryStr string
 	if typ == queryTypeSignature {
 		queryStr = string(langQuery.Query())
@@ -135,7 +122,13 @@ func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery
 		return nil, err
 	}
 
-	p.compiledQueries.Store(key, query)
+	// LoadOrStore ensures only one query per key is retained.
+	// If another goroutine won the race, close our duplicate and use theirs.
+	actual, loaded := p.compiledQueries.LoadOrStore(key, query)
+	if loaded {
+		query.Close()
+		return actual.(*sitter.Query), nil
+	}
 	return query, nil
 }
 
