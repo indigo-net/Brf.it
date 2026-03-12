@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	gocontext "context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -91,7 +92,7 @@ func TestNewRootCommand(t *testing.T) {
 	}
 
 	// Check flags exist
-	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size", "changed", "since", "token-tree", "security-check", "call-graph"}
+	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size", "changed", "since", "token-tree", "security-check", "call-graph", "remote"}
 	for _, flag := range flags {
 		f := cmd.Flags().Lookup(flag)
 		if f == nil {
@@ -488,6 +489,92 @@ func TestResolveChangedFilesEmptyOutput(t *testing.T) {
 	}
 	if len(files) != 0 {
 		t.Errorf("expected empty map, got: %v", files)
+	}
+}
+
+func TestResolveRemoteURL(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"owner/repo", "https://github.com/owner/repo.git"},
+		{"indigo-net/Brf.it", "https://github.com/indigo-net/Brf.it.git"},
+		{"https://github.com/foo/bar.git", "https://github.com/foo/bar.git"},
+		{"https://gitlab.com/foo/bar", "https://gitlab.com/foo/bar"},
+		{"git@github.com:foo/bar.git", "git@github.com:foo/bar.git"},
+		{"git://example.com/repo", "git://example.com/repo"},
+		{"http://example.com/repo.git", "http://example.com/repo.git"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := resolveRemoteURL(tt.input)
+			if got != tt.expected {
+				t.Errorf("resolveRemoteURL(%q) = %q, want %q", tt.input, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestRemoteFlagConflictsWithPath(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	testCfg.Remote = "owner/repo"
+	cmd := newRootCommandWithConfig(testCfg)
+	cmd.SetArgs([]string{"--remote", "owner/repo", "/some/path"})
+
+	err := cmd.Execute()
+	if err == nil {
+		t.Error("expected error when both --remote and path are specified")
+	}
+	if err != nil && !strings.Contains(err.Error(), "cannot specify both --remote and a path") {
+		t.Errorf("expected conflict error, got: %v", err)
+	}
+}
+
+func TestRemoteFlagInvalidURL(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	cmd := newRootCommandWithConfig(testCfg)
+	cmd.SetArgs([]string{"--remote", "https://github.com/nonexistent-user-12345/nonexistent-repo-67890.git"})
+
+	err := cmd.Execute()
+	if err == nil {
+		t.Error("expected error for invalid remote repository")
+	}
+	if err != nil && !strings.Contains(err.Error(), "remote clone failed") {
+		t.Errorf("expected 'remote clone failed' error, got: %v", err)
+	}
+}
+
+func TestCloneRemoteIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test in short mode")
+	}
+
+	// Use a small, well-known public repo
+	tmpDir, cleanup, err := cloneRemote(gocontext.Background(), "indigo-net/Brf.it")
+	if err != nil {
+		t.Fatalf("cloneRemote failed: %v", err)
+	}
+	defer cleanup()
+
+	// Verify the directory exists and contains files
+	entries, err := os.ReadDir(tmpDir)
+	if err != nil {
+		t.Fatalf("failed to read cloned directory: %v", err)
+	}
+	if len(entries) == 0 {
+		t.Error("expected cloned repo to contain files")
+	}
+
+	// Verify .git directory exists (it's a git clone)
+	if _, err := os.Stat(filepath.Join(tmpDir, ".git")); os.IsNotExist(err) {
+		t.Error("expected .git directory in cloned repo")
+	}
+
+	// Verify cleanup removes the directory
+	cleanup()
+	if _, err := os.Stat(tmpDir); !os.IsNotExist(err) {
+		t.Error("expected temp directory to be removed after cleanup")
 	}
 }
 

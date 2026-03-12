@@ -151,6 +151,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.SecurityCheck, "security-check", c.SecurityCheck,
 		"enable secret detection and redaction (use --no-security-check to disable)")
 
+	// Remote repository flag
+	cmd.Flags().StringVar(&c.Remote, "remote", c.Remote,
+		"analyze a remote git repository (URL or owner/repo shorthand)")
+
 	// Git change detection flags
 	cmd.Flags().BoolVar(&c.Changed, "changed", c.Changed,
 		"only scan files changed in git working tree (git diff --name-only HEAD)")
@@ -171,10 +175,23 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		return nil
 	}
 
-	// Parse path argument
-	c.Path = "."
-	if len(args) > 0 {
-		c.Path = args[0]
+	// Handle --remote flag: clone to temp dir
+	if c.Remote != "" {
+		if len(args) > 0 {
+			return fmt.Errorf("cannot specify both --remote and a path argument")
+		}
+		tmpDir, cleanup, err := cloneRemote(cmd.Context(), c.Remote)
+		if err != nil {
+			return fmt.Errorf("remote clone failed: %w", err)
+		}
+		defer cleanup()
+		c.Path = tmpDir
+	} else {
+		// Parse path argument
+		c.Path = "."
+		if len(args) > 0 {
+			c.Path = args[0]
+		}
 	}
 
 	// Validate path exists
@@ -444,6 +461,53 @@ func splitNonEmpty(s string) []string {
 		}
 	}
 	return result
+}
+
+// cloneRemote clones a remote git repository into a temporary directory using
+// a shallow clone (--depth 1). It returns the temporary directory path and a
+// cleanup function that removes the directory.
+func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error) {
+	url := resolveRemoteURL(remote)
+
+	tmpDir, err := os.MkdirTemp("", "brfit-remote-*")
+	if err != nil {
+		return "", nil, fmt.Errorf("failed to create temp directory: %w", err)
+	}
+	cleanup := func() { os.RemoveAll(tmpDir) }
+
+	fmt.Fprintf(os.Stderr, "Cloning %s...\n", url)
+
+	cmd := exec.CommandContext(ctx, "git", "clone", "--depth", "1", url, tmpDir)
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		cleanup()
+		return "", nil, fmt.Errorf("git clone failed for %s: %w", url, err)
+	}
+
+	return tmpDir, cleanup, nil
+}
+
+// resolveRemoteURL converts a remote reference to a full git URL.
+// It supports:
+//   - Full URLs (https://, git://, git@): returned as-is
+//   - GitHub shorthand (owner/repo): expanded to https://github.com/owner/repo.git
+func resolveRemoteURL(remote string) string {
+	// Already a full URL
+	if strings.HasPrefix(remote, "https://") ||
+		strings.HasPrefix(remote, "http://") ||
+		strings.HasPrefix(remote, "git://") ||
+		strings.HasPrefix(remote, "git@") {
+		return remote
+	}
+
+	// owner/repo shorthand → GitHub URL
+	parts := strings.SplitN(remote, "/", 3)
+	if len(parts) == 2 && parts[0] != "" && parts[1] != "" {
+		return "https://github.com/" + remote + ".git"
+	}
+
+	// Fallback: treat as URL
+	return remote
 }
 
 // writeToFile writes content to a file, creating parent directories if needed.

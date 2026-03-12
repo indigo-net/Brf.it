@@ -80,6 +80,9 @@ type Config struct {
 	// CallGraph enables function call graph extraction in output.
 	CallGraph bool
 
+	// Remote is a git URL or owner/repo shorthand for remote repository analysis.
+	Remote string
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
