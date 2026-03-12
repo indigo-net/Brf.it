@@ -30,7 +30,9 @@
       <imports>import (
 	&quot;fmt&quot;
 	&quot;os&quot;
+	&quot;os/exec&quot;
 	&quot;path/filepath&quot;
+	&quot;strings&quot;
 	&quot;github.com/indigo-net/Brf.it/internal/config&quot;
 	&quot;github.com/indigo-net/Brf.it/internal/context&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
@@ -50,13 +52,18 @@
       <function>func newRootCommandWithConfig(c *config.Config) *cobra.Command</function>
       <function>func addFlags(cmd *cobra.Command, c *config.Config)</function>
       <function>func runRoot(cmd *cobra.Command, args []string, c *config.Config) error</function>
+      <variable>changedFiles map[string]bool</variable>
       <function>func writeOutput(result *context.Result, c *config.Config) error</function>
+      <function>func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)</function>
+      <variable>diffArgs []string</variable>
+      <function>func splitNonEmpty(s string) []string</function>
       <function>func writeToFile(path string, content []byte) error</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
 	&quot;os&quot;
+	&quot;os/exec&quot;
 	&quot;path/filepath&quot;
 	&quot;strings&quot;
 	&quot;testing&quot;
@@ -75,6 +82,9 @@
       <function>func TestRootCommandIntegrationMarkdown(t *testing.T)</function>
       <variable>buf bytes.Buffer</variable>
       <function>func TestRootCommandPathNotFound(t *testing.T)</function>
+      <function>func TestResolveChangedFilesPathAnchoring(t *testing.T)</function>
+      <function>func TestResolveChangedFilesIncludesUntracked(t *testing.T)</function>
+      <function>func TestResolveChangedFilesEmptyOutput(t *testing.T)</function>
       <function>func TestWriteToFile(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/examples/go/main.go" language="go">
@@ -363,6 +373,12 @@ main &quot;$@&quot;</imports>
 
 	// IncludePrivate determines whether to include non-exported/private symbols.
 	IncludePrivate bool
+
+	// Changed restricts scanning to files changed in the git working tree.
+	Changed bool
+
+	// Since restricts scanning to files changed since the specified commit/tag.
+	Since string
 
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
@@ -7139,6 +7155,11 @@ import &quot;unsafe&quot;</imports>
 	// Supports doublestar (**) patterns.
 	ExcludePatterns []string
 
+	// ChangedFiles is an optional whitelist of file paths (relative to RootPath).
+	// When non-nil, only files in this list are included in scan results.
+	// Used by --changed and --since flags to restrict scanning to git-changed files.
+	ChangedFiles map[string]bool
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -7225,6 +7246,7 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanIncludePatterns(t *testing.T)</function>
       <function>func TestScanExcludeDirectory(t *testing.T)</function>
       <function>func TestScanSingleFileWithIncludePattern(t *testing.T)</function>
+      <function>func TestScanChangedFilesWhitelist(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">
       <imports>import (

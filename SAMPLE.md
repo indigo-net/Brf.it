@@ -23,7 +23,9 @@ func main()
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"github.com/indigo-net/Brf.it/internal/config"
 	"github.com/indigo-net/Brf.it/internal/context"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
@@ -43,7 +45,11 @@ func NewRootCommand() *cobra.Command
 func newRootCommandWithConfig(c *config.Config) *cobra.Command
 func addFlags(cmd *cobra.Command, c *config.Config)
 func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
+changedFiles map[string]bool
 func writeOutput(result *context.Result, c *config.Config) error
+func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)
+diffArgs []string
+func splitNonEmpty(s string) []string
 func writeToFile(path string, content []byte) error
 ```
 
@@ -55,6 +61,7 @@ func writeToFile(path string, content []byte) error
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -73,6 +80,9 @@ buf bytes.Buffer
 func TestRootCommandIntegrationMarkdown(t *testing.T)
 buf bytes.Buffer
 func TestRootCommandPathNotFound(t *testing.T)
+func TestResolveChangedFilesPathAnchoring(t *testing.T)
+func TestResolveChangedFilesIncludesUntracked(t *testing.T)
+func TestResolveChangedFilesEmptyOutput(t *testing.T)
 func TestWriteToFile(t *testing.T)
 ```
 
@@ -396,6 +406,12 @@ type Config struct {
 
 	// IncludePrivate determines whether to include non-exported/private symbols.
 	IncludePrivate bool
+
+	// Changed restricts scanning to files changed in the git working tree.
+	Changed bool
+
+	// Since restricts scanning to files changed since the specified commit/tag.
+	Since string
 
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
@@ -7767,6 +7783,11 @@ type ScanOptions struct {
 	// Supports doublestar (**) patterns.
 	ExcludePatterns []string
 
+	// ChangedFiles is an optional whitelist of file paths (relative to RootPath).
+	// When non-nil, only files in this list are included in scan results.
+	// Used by --changed and --since flags to restrict scanning to git-changed files.
+	ChangedFiles map[string]bool
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -7863,6 +7884,7 @@ func TestFilepathBaseEdgeCases(t *testing.T)
 func TestScanIncludePatterns(t *testing.T)
 func TestScanExcludeDirectory(t *testing.T)
 func TestScanSingleFileWithIncludePattern(t *testing.T)
+func TestScanChangedFilesWhitelist(t *testing.T)
 ```
 
 ---
