@@ -1063,6 +1063,9 @@ main &quot;$@&quot;</imports>
 	&quot;.ex&quot;:    &quot;elixir&quot;,
 	&quot;.exs&quot;:   &quot;elixir&quot;,
 	&quot;.sql&quot;:   &quot;sql&quot;,
+	&quot;.yaml&quot;:  &quot;yaml&quot;,
+	&quot;.yml&quot;:   &quot;yaml&quot;,
+	&quot;.toml&quot;:  &quot;toml&quot;,
 }</variable>
       <function>func LanguageMapping() map[string]string</function>
       <function>func DetectLanguage(path string) string</function>
@@ -3714,6 +3717,909 @@ import &quot;unsafe&quot;</imports>
     .type = TSParseActionTypeAccept \
   }}</variable>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/binding.go" language="go">
+      <imports>import &quot;C&quot;
+import &quot;unsafe&quot;</imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/parser.c" language="c">
+      <imports>#include &quot;tree_sitter/parser.h&quot;</imports>
+      <variable>#define LANGUAGE_VERSION 14</variable>
+      <variable>#define STATE_COUNT 152</variable>
+      <variable>#define LARGE_STATE_COUNT 2</variable>
+      <variable>#define SYMBOL_COUNT 66</variable>
+      <variable>#define ALIAS_COUNT 0</variable>
+      <variable>#define TOKEN_COUNT 40</variable>
+      <variable>#define EXTERNAL_TOKEN_COUNT 5</variable>
+      <variable>#define FIELD_COUNT 0</variable>
+      <variable>#define MAX_ALIAS_SEQUENCE_LENGTH 8</variable>
+      <variable>#define PRODUCTION_ID_COUNT 2</variable>
+      <type>enum ts_symbol_identifiers {
+  aux_sym_document_token1 = 1,
+  sym_comment = 2,
+  anon_sym_LBRACK = 3,
+  anon_sym_RBRACK = 4,
+  anon_sym_LBRACK_LBRACK = 5,
+  anon_sym_RBRACK_RBRACK = 6,
+  anon_sym_EQ = 7,
+  anon_sym_DOT = 8,
+  sym_bare_key = 9,
+  anon_sym_DQUOTE = 10,
+  aux_sym__basic_string_token1 = 11,
+  anon_sym_DQUOTE2 = 12,
+  anon_sym_DQUOTE_DQUOTE_DQUOTE = 13,
+  aux_sym__multiline_basic_string_token1 = 14,
+  sym_escape_sequence = 15,
+  sym__escape_line_ending = 16,
+  anon_sym_SQUOTE = 17,
+  aux_sym__literal_string_token1 = 18,
+  anon_sym_SQUOTE2 = 19,
+  anon_sym_SQUOTE_SQUOTE_SQUOTE = 20,
+  aux_sym_integer_token1 = 21,
+  aux_sym_integer_token2 = 22,
+  aux_sym_integer_token3 = 23,
+  aux_sym_integer_token4 = 24,
+  aux_sym_float_token1 = 25,
+  aux_sym_float_token2 = 26,
+  sym_boolean = 27,
+  sym_offset_date_time = 28,
+  sym_local_date_time = 29,
+  sym_local_date = 30,
+  sym_local_time = 31,
+  anon_sym_COMMA = 32,
+  anon_sym_LBRACE = 33,
+  anon_sym_RBRACE = 34,
+  sym__line_ending_or_eof = 35,
+  sym__multiline_basic_string_content = 36,
+  sym__multiline_basic_string_end = 37,
+  sym__multiline_literal_string_content = 38,
+  sym__multiline_literal_string_end = 39,
+  sym_document = 40,
+  sym_table = 41,
+  sym_table_array_element = 42,
+  sym_pair = 43,
+  sym__inline_pair = 44,
+  sym__key = 45,
+  sym_dotted_key = 46,
+  sym_quoted_key = 47,
+  sym__inline_value = 48,
+  sym_string = 49,
+  sym__basic_string = 50,
+  sym__multiline_basic_string = 51,
+  sym__literal_string = 52,
+  sym__multiline_literal_string = 53,
+  sym_integer = 54,
+  sym_float = 55,
+  sym_array = 56,
+  sym_inline_table = 57,
+  aux_sym_document_repeat1 = 58,
+  aux_sym_document_repeat2 = 59,
+  aux_sym__basic_string_repeat1 = 60,
+  aux_sym__multiline_basic_string_repeat1 = 61,
+  aux_sym__multiline_literal_string_repeat1 = 62,
+  aux_sym_array_repeat1 = 63,
+  aux_sym_array_repeat2 = 64,
+  aux_sym_inline_table_repeat1 = 65,
+}</type>
+      <function>static bool ts_lex(TSLexer *lexer, TSStateId state)</function>
+      <type>enum ts_external_scanner_symbol_identifiers {
+  ts_external_token__line_ending_or_eof = 0,
+  ts_external_token__multiline_basic_string_content = 1,
+  ts_external_token__multiline_basic_string_end = 2,
+  ts_external_token__multiline_literal_string_content = 3,
+  ts_external_token__multiline_literal_string_end = 4,
+}</type>
+      <function>void *tree_sitter_toml_external_scanner_create(void);</function>
+      <function>void tree_sitter_toml_external_scanner_destroy(void *);</function>
+      <function>bool tree_sitter_toml_external_scanner_scan(void *, TSLexer *, const bool *);</function>
+      <function>unsigned tree_sitter_toml_external_scanner_serialize(void *, char *);</function>
+      <function>void tree_sitter_toml_external_scanner_deserialize(void *, const char *, unsigned);</function>
+      <variable>#define TS_PUBLIC</variable>
+      <variable>#define TS_PUBLIC __declspec(dllexport)</variable>
+      <variable>#define TS_PUBLIC __attribute__((visibility(&quot;default&quot;)))</variable>
+      <function>TS_PUBLIC const TSLanguage *tree_sitter_toml(void)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/scanner.c" language="c">
+      <imports>#include &quot;tree_sitter/parser.h&quot;</imports>
+      <type>typedef enum {
+    LINE_ENDING_OR_EOF,
+    MULTILINE_BASIC_STRING_CONTENT,
+    MULTILINE_BASIC_STRING_END,
+    MULTILINE_LITERAL_STRING_CONTENT,
+    MULTILINE_LITERAL_STRING_END,
+} TokenType;</type>
+      <function>void *tree_sitter_toml_external_scanner_create()</function>
+      <function>void tree_sitter_toml_external_scanner_destroy(void *payload)</function>
+      <function>unsigned tree_sitter_toml_external_scanner_serialize(void *payload, char *buffer)</function>
+      <function>void tree_sitter_toml_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
+      <function>bool tree_sitter_toml_external_scanner_scan_multiline_string_end(TSLexer *lexer, const bool *valid_symbols,
+                                                                 int32_t delimiter, TokenType content_symbol,
+                                                                 TokenType end_symbol)</function>
+      <function>bool tree_sitter_toml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/alloc.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/array.h" language="cpp">
+      <imports>#include &quot;./alloc.h&quot;
+#include &lt;assert.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;</imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)</variable>
+      <variable>#define array_delete(self) _array__delete((Array *)(self))</variable>
+      <variable>#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)-&gt;contents[(self)-&gt;size++] = (element))</variable>
+      <variable>#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count); \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other)                                       \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)-&gt;size, \
+    0, count,  contents                                        \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )</variable>
+      <variable>#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &amp;(element))</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))</variable>
+      <variable>#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__delete(Array *self)</function>
+      <function>static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)</function>
+      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
+      <function>static inline void _array__swap(Array *self, Array *other)</function>
+      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
+      <function>static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/parser.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSFieldMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/binding.go" language="go">
+      <imports>import &quot;C&quot;
+import &quot;unsafe&quot;</imports>
+      <function>func Language() unsafe.Pointer</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/scanner.c" language="c">
+      <imports>#include &quot;tree_sitter/array.h&quot;
+#include &quot;tree_sitter/parser.h&quot;
+#include _file(YAML_SCHEMA)</imports>
+      <variable>#define _str(x) #x</variable>
+      <variable>#define _file(x) _str(schema.x.c)</variable>
+      <variable>#define YAML_SCHEMA core</variable>
+      <type>typedef enum {
+    END_OF_FILE,
+
+    S_DIR_YML_BGN,  R_DIR_YML_VER,
+    S_DIR_TAG_BGN,  R_DIR_TAG_HDL,  R_DIR_TAG_PFX,
+    S_DIR_RSV_BGN,  R_DIR_RSV_PRM,
+    S_DRS_END,
+    S_DOC_END,
+    R_BLK_SEQ_BGN,  BR_BLK_SEQ_BGN, B_BLK_SEQ_BGN,
+    R_BLK_KEY_BGN,  BR_BLK_KEY_BGN, B_BLK_KEY_BGN,
+    R_BLK_VAL_BGN,  BR_BLK_VAL_BGN, B_BLK_VAL_BGN,
+    R_BLK_IMP_BGN,
+    R_BLK_LIT_BGN,  BR_BLK_LIT_BGN,
+    R_BLK_FLD_BGN,  BR_BLK_FLD_BGN,
+    BR_BLK_STR_CTN,
+    R_FLW_SEQ_BGN,  BR_FLW_SEQ_BGN, B_FLW_SEQ_BGN,
+    R_FLW_SEQ_END,  BR_FLW_SEQ_END, B_FLW_SEQ_END,
+    R_FLW_MAP_BGN,  BR_FLW_MAP_BGN, B_FLW_MAP_BGN,
+    R_FLW_MAP_END,  BR_FLW_MAP_END, B_FLW_MAP_END,
+    R_FLW_SEP_BGN,  BR_FLW_SEP_BGN,
+    R_FLW_KEY_BGN,  BR_FLW_KEY_BGN,
+    R_FLW_JSV_BGN,  BR_FLW_JSV_BGN,
+    R_FLW_NJV_BGN,  BR_FLW_NJV_BGN,
+    R_DQT_STR_BGN,  BR_DQT_STR_BGN, B_DQT_STR_BGN,
+    R_DQT_STR_CTN,  BR_DQT_STR_CTN,
+    R_DQT_ESC_NWL,  BR_DQT_ESC_NWL,
+    R_DQT_ESC_SEQ,  BR_DQT_ESC_SEQ,
+    R_DQT_STR_END,  BR_DQT_STR_END,
+    R_SQT_STR_BGN,  BR_SQT_STR_BGN, B_SQT_STR_BGN,
+    R_SQT_STR_CTN,  BR_SQT_STR_CTN,
+    R_SQT_ESC_SQT,  BR_SQT_ESC_SQT,
+    R_SQT_STR_END,  BR_SQT_STR_END,
+
+    R_SGL_PLN_NUL_BLK, BR_SGL_PLN_NUL_BLK, B_SGL_PLN_NUL_BLK, R_SGL_PLN_NUL_FLW, BR_SGL_PLN_NUL_FLW,
+    R_SGL_PLN_BOL_BLK, BR_SGL_PLN_BOL_BLK, B_SGL_PLN_BOL_BLK, R_SGL_PLN_BOL_FLW, BR_SGL_PLN_BOL_FLW,
+    R_SGL_PLN_INT_BLK, BR_SGL_PLN_INT_BLK, B_SGL_PLN_INT_BLK, R_SGL_PLN_INT_FLW, BR_SGL_PLN_INT_FLW,
+    R_SGL_PLN_FLT_BLK, BR_SGL_PLN_FLT_BLK, B_SGL_PLN_FLT_BLK, R_SGL_PLN_FLT_FLW, BR_SGL_PLN_FLT_FLW,
+    R_SGL_PLN_TMS_BLK, BR_SGL_PLN_TMS_BLK, B_SGL_PLN_TMS_BLK, R_SGL_PLN_TMS_FLW, BR_SGL_PLN_TMS_FLW,
+    R_SGL_PLN_STR_BLK, BR_SGL_PLN_STR_BLK, B_SGL_PLN_STR_BLK, R_SGL_PLN_STR_FLW, BR_SGL_PLN_STR_FLW,
+
+    R_MTL_PLN_STR_BLK,  BR_MTL_PLN_STR_BLK,
+    R_MTL_PLN_STR_FLW,  BR_MTL_PLN_STR_FLW,
+
+    R_TAG,     BR_TAG,     B_TAG,
+    R_ACR_BGN, BR_ACR_BGN, B_ACR_BGN, R_ACR_CTN,
+    R_ALS_BGN, BR_ALS_BGN, B_ALS_BGN, R_ALS_CTN,
+
+    BL,
+    COMMENT,
+
+    ERR_REC,
+} TokenType;</type>
+      <variable>#define SCN_SUCC 1</variable>
+      <variable>#define SCN_STOP 0</variable>
+      <variable>#define SCN_FAIL (-1)</variable>
+      <variable>#define IND_ROT &apos;r&apos;</variable>
+      <variable>#define IND_MAP &apos;m&apos;</variable>
+      <variable>#define IND_SEQ &apos;q&apos;</variable>
+      <variable>#define IND_STR &apos;s&apos;</variable>
+      <variable>#define RET_SYM(RESULT_SYMBOL)                                                                                         \
+    {                                                                                                                  \
+        flush(scanner);                                                                                                \
+        lexer-&gt;result_symbol = RESULT_SYMBOL;                                                                          \
+        return true;                                                                                                   \
+    }</variable>
+      <variable>#define POP_IND()                                                                                                      \
+    {                                                                                                                  \
+        /* incorrect status caused by error recovering */</variable>
+      <variable>#define PUSH_IND(TYP, LEN) push_ind(scanner, TYP, LEN)</variable>
+      <variable>#define PUSH_BGN_IND(TYP)                                                                                              \
+    {                                                                                                                  \
+        if (has_tab_ind)                                                                                               \
+            return false;                                                                                              \
+        push_ind(scanner, TYP, bgn_col);                                                                               \
+    }</variable>
+      <variable>#define MAY_PUSH_IMP_IND(TYP)                                                                                          \
+    {                                                                                                                  \
+        if (cur_ind != scanner-&gt;blk_imp_col) {                                                                         \
+            if (scanner-&gt;blk_imp_tab)                                                                                  \
+                return false;                                                                                          \
+            push_ind(scanner, IND_MAP, scanner-&gt;blk_imp_col);                                                          \
+        }                                                                                                              \
+    }</variable>
+      <variable>#define MAY_PUSH_SPC_SEQ_IND()                                                                                         \
+    {                                                                                                                  \
+        if (cur_ind_typ == IND_MAP) {                                                                                  \
+            push_ind(scanner, IND_SEQ, bgn_col);                                                                       \
+        }                                                                                                              \
+    }</variable>
+      <variable>#define MAY_UPD_IMP_COL()                                                                                              \
+    {                                                                                                                  \
+        if (scanner-&gt;blk_imp_row != bgn_row) {                                                                         \
+            scanner-&gt;blk_imp_row = bgn_row;                                                                            \
+            scanner-&gt;blk_imp_col = bgn_col;                                                                            \
+            scanner-&gt;blk_imp_tab = has_tab_ind;                                                                        \
+        }                                                                                                              \
+    }</variable>
+      <variable>#define SGL_PLN_SYM(POS, CTX)                                                                                          \
+    (scanner-&gt;rlt_sch == RS_NULL        ? POS##_SGL_PLN_NUL_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_BOOL      ? POS##_SGL_PLN_BOL_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_INT       ? POS##_SGL_PLN_INT_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_FLOAT     ? POS##_SGL_PLN_FLT_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_TIMESTAMP ? POS##_SGL_PLN_TMS_##CTX                                                      \
+                                        : POS##_SGL_PLN_STR_##CTX)</variable>
+      <variable>#define SGL_PLN_SYM(POS, CTX)                                                                                          \
+    (scanner-&gt;rlt_sch == RS_NULL        ? POS##_SGL_PLN_NUL_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_BOOL      ? POS##_SGL_PLN_BOL_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_INT       ? POS##_SGL_PLN_INT_##CTX                                                      \
+     : scanner-&gt;rlt_sch == RS_FLOAT     ? POS##_SGL_PLN_FLT_##CTX                                                      \
+                                        : POS##_SGL_PLN_STR_##CTX)</variable>
+      <type>typedef struct {
+    int16_t row;
+    int16_t col;
+    int16_t blk_imp_row;
+    int16_t blk_imp_col;
+    int16_t blk_imp_tab;
+    Array(int16_t) ind_typ_stk;
+    Array(int16_t) ind_len_stk;
+
+    // temp
+    int16_t end_row;
+    int16_t end_col;
+    int16_t cur_row;
+    int16_t cur_col;
+    int32_t cur_chr;
+    int8_t sch_stt;
+    ResultSchema rlt_sch;
+} Scanner;</type>
+      <function>static unsigned serialize(Scanner *scanner, char *buffer)</function>
+      <function>static void deserialize(Scanner *scanner, const char *buffer, unsigned length)</function>
+      <function>static inline void adv(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static inline void adv_nwl(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static inline void skp(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static inline void skp_nwl(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static inline void mrk_end(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static inline void init(Scanner *scanner)</function>
+      <function>static inline void flush(Scanner *scanner)</function>
+      <function>static inline void pop_ind(Scanner *scanner)</function>
+      <function>static inline void push_ind(Scanner *scanner, int16_t typ, int16_t len)</function>
+      <function>static inline bool is_wsp(int32_t c)</function>
+      <function>static inline bool is_nwl(int32_t c)</function>
+      <function>static inline bool is_wht(int32_t c)</function>
+      <function>static inline bool is_ns_dec_digit(int32_t c)</function>
+      <function>static inline bool is_ns_hex_digit(int32_t c)</function>
+      <function>static inline bool is_ns_word_char(int32_t c)</function>
+      <function>static inline bool is_nb_json(int32_t c)</function>
+      <function>static inline bool is_nb_double_char(int32_t c)</function>
+      <function>static inline bool is_nb_single_char(int32_t c)</function>
+      <function>static inline bool is_ns_char(int32_t c)</function>
+      <function>static inline bool is_c_indicator(int32_t c)</function>
+      <function>static inline bool is_c_flow_indicator(int32_t c)</function>
+      <function>static inline bool is_plain_safe_in_block(int32_t c)</function>
+      <function>static inline bool is_plain_safe_in_flow(int32_t c)</function>
+      <function>static inline bool is_ns_uri_char(int32_t c)</function>
+      <function>static inline bool is_ns_tag_char(int32_t c)</function>
+      <function>static inline bool is_ns_anchor_char(int32_t c)</function>
+      <function>static char scn_uri_esc(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static char scn_ns_uri_char(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static char scn_ns_tag_char(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static bool scn_dir_bgn(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static bool scn_dir_yml_ver(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_tag_hdl_tal(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static bool scn_dir_tag_hdl(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_dir_tag_pfx(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_dir_rsv_prm(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_tag(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_acr_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_acr_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_als_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_als_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_dqt_esc_seq(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_drs_doc_end(Scanner *scanner, TSLexer *lexer)</function>
+      <function>static bool scn_dqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_sqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_blk_str_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static bool scn_blk_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
+      <function>static char scn_pln_cnt(Scanner *scanner, TSLexer *lexer, bool (*is_plain_safe)(int32_t))</function>
+      <function>static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols)</function>
+      <function>void *tree_sitter_yaml_external_scanner_create()</function>
+      <function>void tree_sitter_yaml_external_scanner_destroy(void *payload)</function>
+      <function>unsigned tree_sitter_yaml_external_scanner_serialize(void *payload, char *buffer)</function>
+      <function>void tree_sitter_yaml_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
+      <function>bool tree_sitter_yaml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.core.c" language="c">
+      <imports>#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define SCH_STT_FRZ -1</variable>
+      <variable>#define HAS_TIMESTAMP 0</variable>
+      <type>typedef enum {
+  RS_STR,
+  RS_INT,
+  RS_NULL,
+  RS_BOOL,
+  RS_FLOAT,
+} ResultSchema;</type>
+      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.json.c" language="c">
+      <imports>#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define SCH_STT_FRZ -1</variable>
+      <variable>#define HAS_TIMESTAMP 0</variable>
+      <type>typedef enum {
+  RS_STR,
+  RS_INT,
+  RS_BOOL,
+  RS_NULL,
+  RS_FLOAT,
+} ResultSchema;</type>
+      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.legacy.c" language="c">
+      <imports>#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define SCH_STT_FRZ -1</variable>
+      <variable>#define HAS_TIMESTAMP 1</variable>
+      <type>typedef enum {
+  RS_STR,
+  RS_FLOAT,
+  RS_INT,
+  RS_BOOL,
+  RS_NULL,
+  RS_TIMESTAMP,
+} ResultSchema;</type>
+      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/alloc.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_ALLOC_H_</variable>
+      <variable>#define ts_malloc  ts_current_malloc</variable>
+      <variable>#define ts_calloc  ts_current_calloc</variable>
+      <variable>#define ts_realloc ts_current_realloc</variable>
+      <variable>#define ts_free    ts_current_free</variable>
+      <variable>#define ts_malloc  malloc</variable>
+      <variable>#define ts_calloc  calloc</variable>
+      <variable>#define ts_realloc realloc</variable>
+      <variable>#define ts_free    free</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/array.h" language="cpp">
+      <imports>#include &quot;./alloc.h&quot;
+#include &lt;assert.h&gt;
+#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;</imports>
+      <variable>#define TREE_SITTER_ARRAY_H_</variable>
+      <variable>#define Array(T)       \
+  struct {             \
+    T *contents;       \
+    uint32_t size;     \
+    uint32_t capacity; \
+  }</variable>
+      <variable>#define array_init(self) \
+  ((self)-&gt;size = 0, (self)-&gt;capacity = 0, (self)-&gt;contents = NULL)</variable>
+      <variable>#define array_new() \
+  { NULL, 0, 0 }</variable>
+      <variable>#define array_get(self, _index) \
+  (assert((uint32_t)(_index) &lt; (self)-&gt;size), &amp;(self)-&gt;contents[_index])</variable>
+      <variable>#define array_front(self) array_get(self, 0)</variable>
+      <variable>#define array_back(self) array_get(self, (self)-&gt;size - 1)</variable>
+      <variable>#define array_clear(self) ((self)-&gt;size = 0)</variable>
+      <variable>#define array_reserve(self, new_capacity) \
+  _array__reserve((Array *)(self), array_elem_size(self), new_capacity)</variable>
+      <variable>#define array_delete(self) _array__delete((Array *)(self))</variable>
+      <variable>#define array_push(self, element)                            \
+  (_array__grow((Array *)(self), 1, array_elem_size(self)), \
+   (self)-&gt;contents[(self)-&gt;size++] = (element))</variable>
+      <variable>#define array_grow_by(self, count) \
+  do { \
+    if ((count) == 0) break; \
+    _array__grow((Array *)(self), count, array_elem_size(self)); \
+    memset((self)-&gt;contents + (self)-&gt;size, 0, (count) * array_elem_size(self)); \
+    (self)-&gt;size += (count); \
+  } while (0)</variable>
+      <variable>#define array_push_all(self, other)                                       \
+  array_extend((self), (other)-&gt;size, (other)-&gt;contents)</variable>
+      <variable>#define array_extend(self, count, contents)                    \
+  _array__splice(                                               \
+    (Array *)(self), array_elem_size(self), (self)-&gt;size, \
+    0, count,  contents                                        \
+  )</variable>
+      <variable>#define array_splice(self, _index, old_count, new_count, new_contents)  \
+  _array__splice(                                                       \
+    (Array *)(self), array_elem_size(self), _index,                \
+    old_count, new_count, new_contents                                 \
+  )</variable>
+      <variable>#define array_insert(self, _index, element) \
+  _array__splice((Array *)(self), array_elem_size(self), _index, 0, 1, &amp;(element))</variable>
+      <variable>#define array_erase(self, _index) \
+  _array__erase((Array *)(self), array_elem_size(self), _index)</variable>
+      <variable>#define array_pop(self) ((self)-&gt;contents[--(self)-&gt;size])</variable>
+      <variable>#define array_assign(self, other) \
+  _array__assign((Array *)(self), (const Array *)(other), array_elem_size(self))</variable>
+      <variable>#define array_swap(self, other) \
+  _array__swap((Array *)(self), (Array *)(other))</variable>
+      <variable>#define array_elem_size(self) (sizeof *(self)-&gt;contents)</variable>
+      <variable>#define array_search_sorted_with(self, compare, needle, _index, _exists) \
+  _array__search_sorted(self, 0, compare, , needle, _index, _exists)</variable>
+      <variable>#define array_search_sorted_by(self, field, needle, _index, _exists) \
+  _array__search_sorted(self, 0, _compare_int, field, needle, _index, _exists)</variable>
+      <variable>#define array_insert_sorted_with(self, compare, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_with(self, compare, &amp;(value), &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <variable>#define array_insert_sorted_by(self, field, value) \
+  do { \
+    unsigned _index, _exists; \
+    array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
+    if (!_exists) array_insert(self, _index, value); \
+  } while (0)</variable>
+      <function>static inline void _array__delete(Array *self)</function>
+      <function>static inline void _array__erase(Array *self, size_t element_size,
+                                uint32_t index)</function>
+      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
+      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
+      <function>static inline void _array__swap(Array *self, Array *other)</function>
+      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
+      <function>static inline void _array__splice(Array *self, size_t element_size,
+                                 uint32_t index, uint32_t old_count,
+                                 uint32_t new_count, const void *elements)</function>
+      <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
+  do { \
+    *(_index) = start; \
+    *(_exists) = false; \
+    uint32_t size = (self)-&gt;size - *(_index); \
+    if (size == 0) break; \
+    int comparison; \
+    while (size &gt; 1) { \
+      uint32_t half_size = size / 2; \
+      uint32_t mid_index = *(_index) + half_size; \
+      comparison = compare(&amp;((self)-&gt;contents[mid_index] suffix), (needle)); \
+      if (comparison &lt;= 0) *(_index) = mid_index; \
+      size -= half_size; \
+    } \
+    comparison = compare(&amp;((self)-&gt;contents[*(_index)] suffix), (needle)); \
+    if (comparison == 0) *(_exists) = true; \
+    else if (comparison &lt; 0) *(_index) += 1; \
+  } while (0)</variable>
+      <variable>#define _compare_int(a, b) ((int)*(a) - (int)(b))</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/parser.h" language="cpp">
+      <imports>#include &lt;stdbool.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;</imports>
+      <variable>#define TREE_SITTER_PARSER_H_</variable>
+      <variable>#define ts_builtin_sym_error ((TSSymbol)-1)</variable>
+      <variable>#define ts_builtin_sym_end 0</variable>
+      <variable>#define TREE_SITTER_SERIALIZATION_BUFFER_SIZE 1024</variable>
+      <type>typedef uint16_t TSStateId;</type>
+      <type>typedef uint16_t TSSymbol;</type>
+      <type>typedef uint16_t TSFieldId;</type>
+      <type>struct TSLanguage</type>
+      <type>struct TSLanguageMetadata</type>
+      <type>typedef struct {
+  TSFieldId field_id;
+  uint8_t child_index;
+  bool inherited;
+} TSFieldMapEntry;</type>
+      <type>typedef struct {
+  uint16_t index;
+  uint16_t length;
+} TSMapSlice;</type>
+      <type>typedef struct {
+  bool visible;
+  bool named;
+  bool supertype;
+} TSSymbolMetadata;</type>
+      <type>struct TSLexer</type>
+      <type>struct TSLexer</type>
+      <type>typedef enum {
+  TSParseActionTypeShift,
+  TSParseActionTypeReduce,
+  TSParseActionTypeAccept,
+  TSParseActionTypeRecover,
+} TSParseActionType;</type>
+      <type>typedef union {
+  struct {
+    uint8_t type;
+    TSStateId state;
+    bool extra;
+    bool repetition;
+  } shift;
+  struct {
+    uint8_t type;
+    uint8_t child_count;
+    TSSymbol symbol;
+    int16_t dynamic_precedence;
+    uint16_t production_id;
+  } reduce;
+  uint8_t type;
+} TSParseAction;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+} TSLexMode;</type>
+      <type>typedef struct {
+  uint16_t lex_state;
+  uint16_t external_lex_state;
+  uint16_t reserved_word_set_id;
+} TSLexerMode;</type>
+      <type>typedef union {
+  TSParseAction action;
+  struct {
+    uint8_t count;
+    bool reusable;
+  } entry;
+} TSParseActionEntry;</type>
+      <type>typedef struct {
+  int32_t start;
+  int32_t end;
+} TSCharacterRange;</type>
+      <type>struct TSLanguage</type>
+      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
+      <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
+      <variable>#define UNUSED __attribute__((unused))</variable>
+      <variable>#define START_LEXER()           \
+  bool result = false;          \
+  bool skip = false;            \
+  UNUSED                        \
+  bool eof = false;             \
+  int32_t lookahead;            \
+  goto start;                   \
+  next_state:                   \
+  lexer-&gt;advance(lexer, skip);  \
+  start:                        \
+  skip = false;                 \
+  lookahead = lexer-&gt;lookahead;</variable>
+      <variable>#define ADVANCE(state_value) \
+  {                          \
+    state = state_value;     \
+    goto next_state;         \
+  }</variable>
+      <variable>#define ADVANCE_MAP(...)                                              \
+  {                                                                   \
+    static const uint16_t map[] = { __VA_ARGS__ };                    \
+    for (uint32_t i = 0; i &lt; sizeof(map) / sizeof(map[0]); i += 2) {  \
+      if (map[i] == lookahead) {                                      \
+        state = map[i + 1];                                           \
+        goto next_state;                                              \
+      }                                                               \
+    }                                                                 \
+  }</variable>
+      <variable>#define SKIP(state_value) \
+  {                       \
+    skip = true;          \
+    state = state_value;  \
+    goto next_state;      \
+  }</variable>
+      <variable>#define ACCEPT_TOKEN(symbol_value)     \
+  result = true;                       \
+  lexer-&gt;result_symbol = symbol_value; \
+  lexer-&gt;mark_end(lexer);</variable>
+      <variable>#define END_STATE() return result;</variable>
+      <variable>#define SMALL_STATE(id) ((id) - LARGE_STATE_COUNT)</variable>
+      <variable>#define STATE(id) id</variable>
+      <variable>#define ACTIONS(id) id</variable>
+      <variable>#define SHIFT(state_value)            \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value)          \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_REPEAT(state_value)     \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .state = (state_value),         \
+      .repetition = true              \
+    }                                 \
+  }}</variable>
+      <variable>#define SHIFT_EXTRA()                 \
+  {{                                  \
+    .shift = {                        \
+      .type = TSParseActionTypeShift, \
+      .extra = true                   \
+    }                                 \
+  }}</variable>
+      <variable>#define REDUCE(symbol_name, children, precedence, prod_id) \
+  {{                                                       \
+    .reduce = {                                            \
+      .type = TSParseActionTypeReduce,                     \
+      .symbol = symbol_name,                               \
+      .child_count = children,                             \
+      .dynamic_precedence = precedence,                    \
+      .production_id = prod_id                             \
+    },                                                     \
+  }}</variable>
+      <variable>#define RECOVER()                    \
+  {{                                 \
+    .type = TSParseActionTypeRecover \
+  }}</variable>
+      <variable>#define ACCEPT_INPUT()              \
+  {{                                \
+    .type = TSParseActionTypeAccept \
+  }}</variable>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go" language="go">
       <type>type BaseQuery struct{}</type>
       <function>func (BaseQuery) Captures() []string</function>
@@ -5602,6 +6508,95 @@ import &quot;unsafe&quot;</imports>
       <function>func TestSwiftQueryKindMapping(t *testing.T)</function>
       <function>func TestSwiftQueryCaptures(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml.go" language="go">
+      <imports>import (
+	tree_sitter_toml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/toml&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <type>type TOMLQuery struct {
+	BaseQuery
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewTOMLQuery() *TOMLQuery</function>
+      <function>func (q *TOMLQuery) Language() *sitter.Language</function>
+      <function>func (q *TOMLQuery) Query() []byte</function>
+      <variable>tomlKindMapping = map[string]string{
+	&quot;table&quot;:               &quot;namespace&quot;,
+	&quot;table_array_element&quot;: &quot;namespace&quot;,
+	&quot;pair&quot;:                &quot;variable&quot;,
+}</variable>
+      <function>func (q *TOMLQuery) KindMapping() map[string]string</function>
+      <function>func (q *TOMLQuery) ImportQuery() []byte</function>
+      <variable>tomlQueryPattern = `
+; Standard table sections [section]
+(table
+  (bare_key) @name) @signature @kind
+
+; Standard table sections with quoted key [&quot;section&quot;]
+(table
+  (quoted_key) @name) @signature @kind
+
+; Standard table sections with dotted key [section.subsection]
+(table
+  (dotted_key) @name) @signature @kind
+
+; Array of tables [[section]]
+(table_array_element
+  (bare_key) @name) @signature @kind
+
+; Array of tables with quoted key [[&quot;section&quot;]]
+(table_array_element
+  (quoted_key) @name) @signature @kind
+
+; Array of tables with dotted key [[section.subsection]]
+(table_array_element
+  (dotted_key) @name) @signature @kind
+
+; Key-value pairs (bare key)
+(pair
+  (bare_key) @name) @signature @kind
+
+; Key-value pairs (quoted key)
+(pair
+  (quoted_key) @name) @signature @kind
+
+; Key-value pairs (dotted key)
+(pair
+  (dotted_key) @name) @signature @kind
+
+; TOML comments
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;unsafe&quot;
+	tree_sitter_toml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/toml&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <type>type tomlCapture struct {
+	Name string
+	Kind string
+}</type>
+      <function>func extractTOMLCaptures(t *testing.T, code string) []tomlCapture</function>
+      <variable>captures []tomlCapture</variable>
+      <variable>tc tomlCapture</variable>
+      <function>func extractTOMLNames(t *testing.T, code string) []string</function>
+      <variable>names []string</variable>
+      <function>func TestTOMLQueryLanguage(t *testing.T)</function>
+      <function>func TestTOMLQueryPattern(t *testing.T)</function>
+      <function>func TestTOMLQueryImportPattern(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractTables(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractTableArrays(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractPairs(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractDottedKey(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractComments(t *testing.T)</function>
+      <function>func TestTOMLQueryKindMapping(t *testing.T)</function>
+      <function>func TestTOMLQueryCaptures(t *testing.T)</function>
+      <function>func TestTOMLQueryExtractInlineTable(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript.go" language="go">
       <imports>import (
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
@@ -5745,6 +6740,51 @@ import &quot;unsafe&quot;</imports>
       <variable>funcCaptures map[string]string</variable>
       <function>func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml.go" language="go">
+      <imports>import (
+	tree_sitter_yaml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/yaml&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <type>type YAMLQuery struct {
+	BaseQuery
+	language *sitter.Language
+	query    []byte
+}</type>
+      <function>func NewYAMLQuery() *YAMLQuery</function>
+      <function>func (q *YAMLQuery) Language() *sitter.Language</function>
+      <function>func (q *YAMLQuery) Query() []byte</function>
+      <variable>yamlKindMapping = map[string]string{
+	&quot;block_mapping_pair&quot;: &quot;variable&quot;,
+}</variable>
+      <function>func (q *YAMLQuery) KindMapping() map[string]string</function>
+      <function>func (q *YAMLQuery) ImportQuery() []byte</function>
+      <variable>yamlQueryPattern = `
+; Top-level key-value pairs
+(block_mapping_pair
+  key: (_) @name) @signature @kind
+
+; YAML comments
+(comment) @doc
+`</variable>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;unsafe&quot;
+	tree_sitter_yaml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/yaml&quot;
+	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
+)</imports>
+      <function>func extractYAMLNames(t *testing.T, code string) []string</function>
+      <variable>names []string</variable>
+      <function>func TestYAMLQueryLanguage(t *testing.T)</function>
+      <function>func TestYAMLQueryPattern(t *testing.T)</function>
+      <function>func TestYAMLQueryImportPattern(t *testing.T)</function>
+      <function>func TestYAMLQueryExtractSimpleKeys(t *testing.T)</function>
+      <function>func TestYAMLQueryExtractNestedKeys(t *testing.T)</function>
+      <function>func TestYAMLQueryExtractComments(t *testing.T)</function>
+      <function>func TestYAMLQueryKindMapping(t *testing.T)</function>
+      <function>func TestYAMLQueryCaptures(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
@@ -5764,7 +6804,7 @@ import &quot;unsafe&quot;</imports>
 	[]byte(&quot;defprotocol &quot;),
 	[]byte(&quot;defimpl &quot;),
 }</variable>
-      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql&quot;</variable>
+      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql, yaml, toml&quot;</variable>
       <type>type queryCacheKey struct {
 	lang string
 	typ  queryType
@@ -5863,6 +6903,8 @@ import &quot;unsafe&quot;</imports>
       <function>func stripSQLBody(text, kind string) string</function>
       <function>func stripSQLFunctionBody(text string) string</function>
       <function>func stripSQLViewBody(text string) string</function>
+      <function>func stripYAMLBody(text, _ string) string</function>
+      <function>func stripTOMLBody(text, kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go" language="go">
       <imports>import (
@@ -5982,6 +7024,10 @@ import &quot;unsafe&quot;</imports>
       <function>func TestExtractNextSQLIdentifier(t *testing.T)</function>
       <function>func TestStripSQLBody(t *testing.T)</function>
       <function>func TestStripSQLFunctionBody(t *testing.T)</function>
+      <function>func TestTreeSitterParserParseYAML(t *testing.T)</function>
+      <variable>names []string</variable>
+      <function>func TestTreeSitterParserParseTOML(t *testing.T)</function>
+      <variable>names []string</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (
