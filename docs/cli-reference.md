@@ -33,6 +33,7 @@ brfit [path] [options]
 | `--since` | | Only scan files changed since commit/tag (e.g., `v1.0.0`, `HEAD~5`) | |
 | `--token-tree` | | Show per-file token count tree with directory totals | `false` |
 | `--security-check` / `--no-security-check` | | Detect and redact secrets in extracted code | `true` |
+| `--call-graph` | | Extract function/method call relationships per file | `false` |
 | `--version` | `-v` | Show version | |
 | `--help` | `-h` | Show help | |
 
@@ -180,6 +181,33 @@ brfit . --include-body --no-security-check
 - Slack tokens (`xoxb-`, `xoxp-`, `xoxo-`, `xapp-`)
 - Google API Key (`AIza...`)
 - Heroku API Key
+
+### Call Graph
+
+```bash
+# Extract function call relationships
+brfit . --call-graph
+
+# Combine with format options
+brfit . --call-graph -f md
+
+# Call graph for specific files only
+brfit . --call-graph --include "pkg/**/*.go"
+```
+
+Output shows caller-callee references per file:
+
+```
+## src/main.go
+
+| Caller | Callee | Line |
+|--------|--------|------|
+| main | parseArgs | 15 |
+| main | runServer | 23 |
+| runServer | handleRequest | 45 |
+```
+
+**Supported languages:** Go, TypeScript/JavaScript, Python, Java, Rust, C
 
 ### Custom Ignore File
 

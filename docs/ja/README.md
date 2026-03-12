@@ -133,6 +133,7 @@ brfit自体でパッケージングしたこのプロジェクトです。コミ
 | gitignore対応 | 不要なファイルを自動除外 |
 | クロスプラットフォーム | Linux、macOS、Windowsをサポート |
 | セキュリティチェック | 抽出コード内のセキュリティ機密情報（AWSキー、GitHubトークン、APIキーなど）を検出し`[REDACTED]`でマスキング |
+| コールグラフ | Tree-sitterベースの関数/メソッド呼び出し関係抽出（Go、TS、Python、Java、Rust、C） |
 
 ---
 
@@ -191,6 +192,7 @@ brfit [パス] [オプション]
 | `--since` | | 特定のコミット/タグ以降の変更ファイルのみスキャン | |
 | `--token-tree` | | ファイルごとのトークン数ツリーを表示 | `false` |
 | `--security-check` / `--no-security-check` | | セキュリティ機密情報の検出とマスキング（APIキー、トークンなど） | `true` |
+| `--call-graph` | | ファイルごとの関数呼び出し関係を抽出 | `false` |
 | `--version` | `-v` | バージョンを表示 | |
 
 ### 例

@@ -133,6 +133,7 @@ Dieses Projekt, von brfit selbst verpackt. Wird bei jedem Commit automatisch gen
 | Gitignore-fähig | Automatischer Ausschluss unnötiger Dateien |
 | Plattformübergreifend | Linux-, macOS- und Windows-Unterstützung |
 | Sicherheitsprüfung | Erkennt und maskiert sicherheitsrelevante Informationen (AWS-Schlüssel, GitHub-Token, API-Schlüssel usw.) im extrahierten Code mit `[REDACTED]` |
+| Aufrufgraph | Tree-sitter-basierte Extraktion von Funktions-/Methodenaufrufbeziehungen (Go, TS, Python, Java, Rust, C) |
 
 ---
 
@@ -191,6 +192,7 @@ brfit [Pfad] [Optionen]
 | `--since` | | Nur seit Commit/Tag geänderte Dateien scannen | |
 | `--token-tree` | | Token-Anzahl pro Datei als Baum anzeigen | `false` |
 | `--security-check` / `--no-security-check` | | Sicherheitsrelevante Informationen erkennen und maskieren (API-Schlüssel, Token usw.) | `true` |
+| `--call-graph` | | Funktionsaufrufbeziehungen pro Datei extrahieren | `false` |
 | `--version` | `-v` | Version anzeigen | |
 
 ### Beispiele
