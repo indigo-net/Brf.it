@@ -29,6 +29,8 @@ brfit [path] [options]
 | `--no-tree` | | Skip directory tree | `false` |
 | `--no-tokens` | | Disable token counting | `false` |
 | `--max-size` | | Max file size (bytes) | `512000` |
+| `--changed` | | Only scan git-modified files (tracked + untracked) | `false` |
+| `--since` | | Only scan files changed since commit/tag (e.g., `v1.0.0`, `HEAD~5`) | |
 | `--version` | `-v` | Show version | |
 | `--help` | `-h` | Show help | |
 
@@ -126,6 +128,22 @@ brfit . --no-tokens
 
 # Increase max file size limit
 brfit . --max-size 1048576  # 1MB
+```
+
+### Git Change Detection
+
+```bash
+# Only scan files changed in git working tree
+brfit . --changed
+
+# Only scan files changed since a tag
+brfit . --since v1.0.0
+
+# Combine with format options
+brfit . --changed -f md -o changes.md
+
+# Only changes since 5 commits ago
+brfit . --since HEAD~5
 ```
 
 ### Custom Ignore File
