@@ -19,7 +19,7 @@ type mockScanner struct {
 	err    error
 }
 
-func (m *mockScanner) Scan() (*scanner.ScanResult, error) {
+func (m *mockScanner) Scan(_ context.Context) (*scanner.ScanResult, error) {
 	return m.result, m.err
 }
 

@@ -2,6 +2,7 @@
 package scanner
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -101,7 +102,8 @@ func getBaseName(path string) string {
 // Scanner defines the interface for file system scanning.
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
-	Scan() (*ScanResult, error)
+	// The context allows cancellation of long-running scans.
+	Scan(ctx context.Context) (*ScanResult, error)
 }
 
 // FileScanner implements Scanner for file system traversal.
@@ -144,7 +146,7 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 
 // Scan implements the Scanner interface.
 // It recursively traverses the directory tree and returns matching files.
-func (s *FileScanner) Scan() (*ScanResult, error) {
+func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 	result := &ScanResult{}
 
 	// Warn once if gitignore loading failed
@@ -172,6 +174,11 @@ func (s *FileScanner) Scan() (*ScanResult, error) {
 
 	// Directory - walk recursively using WalkDir (more efficient than Walk)
 	err = filepath.WalkDir(s.opts.RootPath, func(path string, d fs.DirEntry, err error) error {
+		// Check context cancellation
+		if ctxErr := ctx.Err(); ctxErr != nil {
+			return ctxErr
+		}
+
 		if err != nil {
 			var warning string
 			switch {

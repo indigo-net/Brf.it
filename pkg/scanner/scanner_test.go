@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"bytes"
+	"context"
 	"log"
 	"os"
 	"path/filepath"
@@ -154,7 +155,7 @@ func TestScanEmptyDirectory(t *testing.T) {
 	opts.RootPath = tmpDir
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -182,7 +183,7 @@ func TestScanSingleFile(t *testing.T) {
 	opts.RootPath = tmpDir
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -228,7 +229,7 @@ func TestScanFilterByExtension(t *testing.T) {
 	opts.RootPath = tmpDir
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -274,7 +275,7 @@ func TestScanExcludeHidden(t *testing.T) {
 	opts.IncludeHidden = false
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -312,7 +313,7 @@ func TestScanIncludeHidden(t *testing.T) {
 	opts.IncludeHidden = true
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -350,7 +351,7 @@ func TestScanMaxFileSize(t *testing.T) {
 	opts.MaxFileSize = 512000 // 500KB
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -404,7 +405,7 @@ func TestScanGitignore(t *testing.T) {
 	opts.IgnoreFile = gitignore
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -443,7 +444,7 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 		var buf bytes.Buffer
 		sc.logger = log.New(&buf, "[brfit] ", 0)
 
-		_, err = sc.Scan()
+		_, err = sc.Scan(context.Background())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -466,7 +467,7 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 		var buf bytes.Buffer
 		sc.logger = log.New(&buf, "[brfit] ", 0)
 
-		_, err = sc.Scan()
+		_, err = sc.Scan(context.Background())
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -489,8 +490,8 @@ func TestScanGitignoreLoadFailureWarning(t *testing.T) {
 		var buf bytes.Buffer
 		sc.logger = log.New(&buf, "[brfit] ", 0)
 
-		_, _ = sc.Scan()
-		_, _ = sc.Scan()
+		_, _ = sc.Scan(context.Background())
+		_, _ = sc.Scan(context.Background())
 
 		warnCount := strings.Count(buf.String(), "WARN")
 		if warnCount != 1 {
@@ -539,7 +540,7 @@ func TestScanWalkDirPermissionDenied(t *testing.T) {
 	var buf bytes.Buffer
 	sc.logger = log.New(&buf, "[brfit] ", 0)
 
-	result, err := sc.Scan()
+	result, err := sc.Scan(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -588,7 +589,7 @@ func TestScanSymlinkSkip(t *testing.T) {
 	var buf bytes.Buffer
 	sc.logger = log.New(&buf, "[brfit] ", 0)
 
-	result, err := sc.Scan()
+	result, err := sc.Scan(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -656,7 +657,7 @@ func TestScanNestedDirectories(t *testing.T) {
 	opts.RootPath = tmpDir
 
 	scanner, _ := NewFileScanner(opts)
-	result, err := scanner.Scan()
+	result, err := scanner.Scan(context.Background())
 	if err != nil {
 		t.Fatalf("Scan returned error: %v", err)
 	}
@@ -698,7 +699,7 @@ func TestLogOutputNoDoubleNewline(t *testing.T) {
 	var buf bytes.Buffer
 	sc.logger = log.New(&buf, "", 0)
 
-	_, err = sc.Scan()
+	_, err = sc.Scan(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}

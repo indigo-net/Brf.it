@@ -55,7 +55,7 @@ type Point struct {
 	if err != nil {
 		t.Fatal(err)
 	}
-	scanResult, err := sc.Scan()
+	scanResult, err := sc.Scan(context.Background())
 	if err != nil {
 		t.Fatal(err)
 	}

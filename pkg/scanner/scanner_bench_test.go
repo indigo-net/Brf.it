@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -52,7 +53,7 @@ func Func` + string(rune('A'+i%26)) + `() int {
 			b.ReportAllocs()
 
 			for i := 0; i < b.N; i++ {
-				_, err := s.Scan()
+				_, err := s.Scan(context.Background())
 				if err != nil {
 					b.Fatal(err)
 				}
@@ -101,7 +102,7 @@ func Func`+string(rune('A'+i%26))+string(rune('a'+(i/26)%26))+`() int {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Scan()
+		_, err := s.Scan(context.Background())
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -155,7 +156,7 @@ node_modules/
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := s.Scan()
+		_, err := s.Scan(context.Background())
 		if err != nil {
 			b.Fatal(err)
 		}
