@@ -6153,6 +6153,7 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tiktoken.go" language="go">
       <imports>import (
+	&quot;unsafe&quot;
 	&quot;github.com/pkoukk/tiktoken-go&quot;
 )</imports>
       <type>type TiktokenTokenizer struct {
@@ -6161,14 +6162,14 @@ import &quot;unsafe&quot;</imports>
 }</type>
       <variable>_ Tokenizer = (*TiktokenTokenizer)(nil)</variable>
       <function>func NewTiktokenTokenizer() (*TiktokenTokenizer, error)</function>
-      <function>func (t *TiktokenTokenizer) Count(text string) (int, error)</function>
+      <function>func (t *TiktokenTokenizer) Count(text []byte) (int, error)</function>
       <function>func (t *TiktokenTokenizer) Name() string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tokenizer.go" language="go">
       <type>type Tokenizer interface {
 	// Count returns the number of tokens in the given text.
 	// Returns 0 and error if counting fails.
-	Count(text string) (int, error)
+	Count(text []byte) (int, error)
 
 	// Name returns the tokenizer name (e.g., &quot;tiktoken-cl100k&quot;, &quot;noop&quot;).
 	Name() string
@@ -6176,7 +6177,7 @@ import &quot;unsafe&quot;</imports>
       <type>type NoOpTokenizer struct{}</type>
       <variable>_ Tokenizer = (*NoOpTokenizer)(nil)</variable>
       <function>func NewNoOpTokenizer() *NoOpTokenizer</function>
-      <function>func (t *NoOpTokenizer) Count(_ string) (int, error)</function>
+      <function>func (t *NoOpTokenizer) Count(_ []byte) (int, error)</function>
       <function>func (t *NoOpTokenizer) Name() string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tokenizer_test.go" language="go">

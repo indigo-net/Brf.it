@@ -6711,6 +6711,7 @@ func ExampleNewNoOpTokenizer()
 
 ```go
 import (
+	"unsafe"
 	"github.com/pkoukk/tiktoken-go"
 )
 type TiktokenTokenizer struct {
@@ -6719,7 +6720,7 @@ type TiktokenTokenizer struct {
 }
 _ Tokenizer = (*TiktokenTokenizer)(nil)
 func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
-func (t *TiktokenTokenizer) Count(text string) (int, error)
+func (t *TiktokenTokenizer) Count(text []byte) (int, error)
 func (t *TiktokenTokenizer) Name() string
 ```
 
@@ -6731,7 +6732,7 @@ func (t *TiktokenTokenizer) Name() string
 type Tokenizer interface {
 	// Count returns the number of tokens in the given text.
 	// Returns 0 and error if counting fails.
-	Count(text string) (int, error)
+	Count(text []byte) (int, error)
 
 	// Name returns the tokenizer name (e.g., "tiktoken-cl100k", "noop").
 	Name() string
@@ -6739,7 +6740,7 @@ type Tokenizer interface {
 type NoOpTokenizer struct{}
 _ Tokenizer = (*NoOpTokenizer)(nil)
 func NewNoOpTokenizer() *NoOpTokenizer
-func (t *NoOpTokenizer) Count(_ string) (int, error)
+func (t *NoOpTokenizer) Count(_ []byte) (int, error)
 func (t *NoOpTokenizer) Name() string
 ```
 
