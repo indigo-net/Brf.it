@@ -732,7 +732,7 @@ cancelOnce sync.Once
 func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)
 binarySniffSize = 512
 func isBinaryContent(content []byte) bool
-func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
+func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
 ```
 
 ---

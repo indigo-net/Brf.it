@@ -659,7 +659,7 @@ main &quot;$@&quot;</imports>
       <function>func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)</function>
       <variable>binarySniffSize = 512</variable>
       <function>func isBinaryContent(content []byte) bool</function>
-      <function>func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
+      <function>func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go" language="go">
       <imports>import (
