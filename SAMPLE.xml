@@ -392,6 +392,9 @@ main &quot;$@&quot;</imports>
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
+	// CallGraph enables function call graph extraction in output.
+	CallGraph bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -480,6 +483,9 @@ main &quot;$@&quot;</imports>
 
 	// SecurityCheck enables secret detection and redaction.
 	SecurityCheck bool
+
+	// IncludeCallGraph enables function call graph extraction.
+	IncludeCallGraph bool
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -671,6 +677,9 @@ main &quot;$@&quot;</imports>
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Size is the file size in bytes.
 	Size int64
 
@@ -699,6 +708,9 @@ main &quot;$@&quot;</imports>
 
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references.
+	IncludeCalls bool
 
 	// Concurrency is the number of concurrent workers.
 	// 0 = auto (runtime.NumCPU()), 1 = sequential.
@@ -786,6 +798,9 @@ main &quot;$@&quot;</imports>
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Error is any error that occurred during extraction.
 	Error error
 }</type>
@@ -825,6 +840,9 @@ main &quot;$@&quot;</imports>
 
 	// NoSchema indicates whether to omit the schema section in output.
 	NoSchema bool
+
+	// IncludeCallGraph indicates whether to include function call references.
+	IncludeCallGraph bool
 }</type>
       <type>type ImportCount struct {
 	// Import is the raw import statement text.
@@ -928,11 +946,17 @@ main &quot;$@&quot;</imports>
 	Count  int    `json:&quot;count&quot;`
 }</type>
       <type>type jsonFile struct {
-	Path       string    `json:&quot;path&quot;`
-	Language   string    `json:&quot;language&quot;`
-	Signatures []jsonSig `json:&quot;signatures,omitempty&quot;`
-	Imports    []string  `json:&quot;imports,omitempty&quot;`
-	Error      string    `json:&quot;error,omitempty&quot;`
+	Path       string     `json:&quot;path&quot;`
+	Language   string     `json:&quot;language&quot;`
+	Signatures []jsonSig  `json:&quot;signatures,omitempty&quot;`
+	Imports    []string   `json:&quot;imports,omitempty&quot;`
+	Calls      []jsonCall `json:&quot;calls,omitempty&quot;`
+	Error      string     `json:&quot;error,omitempty&quot;`
+}</type>
+      <type>type jsonCall struct {
+	Caller string `json:&quot;caller,omitempty&quot;`
+	Callee string `json:&quot;callee&quot;`
+	Line   int    `json:&quot;line&quot;`
 }</type>
       <type>type jsonSig struct {
 	Kind     string `json:&quot;kind&quot;`
@@ -959,6 +983,7 @@ main &quot;$@&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go" language="go">
       <imports>import (
 	&quot;bytes&quot;
+	&quot;strconv&quot;
 	&quot;strings&quot;
 )</imports>
       <type>type XMLFormatter struct{}</type>
@@ -1032,6 +1057,16 @@ main &quot;$@&quot;</imports>
 	// Children are child nodes.
 	Children []Node
 }</type>
+      <type>type FunctionCall struct {
+	// Caller is the name of the enclosing function (empty if top-level).
+	Caller string
+
+	// Callee is the called function/method name.
+	Callee string
+
+	// Line is the line number where the call occurs (1-indexed).
+	Line int
+}</type>
       <type>type ParseResult struct {
 	// FilePath is the path to the parsed file.
 	FilePath string
@@ -1044,6 +1079,9 @@ main &quot;$@&quot;</imports>
 
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
+
+	// Calls is the list of function call references.
+	Calls []FunctionCall
 
 	// AST is the root node of the parsed AST (optional).
 	AST *Node
@@ -1068,6 +1106,9 @@ main &quot;$@&quot;</imports>
 
 	// IncludeImports whether to include import/export statements in the result.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references in the result.
+	IncludeCalls bool
 }</type>
       <type>type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
@@ -4678,6 +4719,8 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go" language="go">
       <type>type BaseQuery struct{}</type>
       <function>func (BaseQuery) Captures() []string</function>
+      <function>func (BaseQuery) ImportQuery() []byte</function>
+      <function>func (BaseQuery) CallQuery() []byte</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>import (
@@ -4704,6 +4747,13 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *CQuery) KindMapping() map[string]string</function>
       <function>func (q *CQuery) ImportQuery() []byte</function>
+      <function>func (q *CQuery) CallQuery() []byte</function>
+      <variable>cCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+`</variable>
       <variable>cImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
@@ -4821,6 +4871,19 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCQueryExtractEnum(t *testing.T)</function>
       <function>func TestCQueryExtractTypedef(t *testing.T)</function>
       <function>func TestCQueryExtractGlobalVariables(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/call_query_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+	// Blank import to register tree-sitter parsers
+	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;
+)</imports>
+      <function>func TestGoCallExtraction(t *testing.T)</function>
+      <function>func TestTypeScriptCallExtraction(t *testing.T)</function>
+      <function>func TestPythonCallExtraction(t *testing.T)</function>
+      <function>func TestCallExtractionDisabledByDefault(t *testing.T)</function>
+      <function>func TestCallExtractionTopLevel(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp.go" language="go">
       <imports>import (
@@ -5416,6 +5479,20 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
+      <function>func (q *GoQuery) CallQuery() []byte</function>
+      <variable>goCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/package calls (e.g., obj.Method(), fmt.Println())
+(call_expression
+  function: (selector_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`</variable>
       <variable>goImportQueryPattern = `
 ; Import declarations (capture entire declaration)
 (import_declaration) @import_path
@@ -5491,6 +5568,13 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *JavaQuery) KindMapping() map[string]string</function>
       <function>func (q *JavaQuery) ImportQuery() []byte</function>
+      <function>func (q *JavaQuery) CallQuery() []byte</function>
+      <variable>javaCallQueryPattern = `
+; Method invocations (e.g., obj.method(), method())
+(method_invocation
+  name: (identifier) @callee
+) @call_node
+`</variable>
       <variable>javaImportQueryPattern = `
 ; import statements (capture full declaration)
 (import_declaration) @import_path
@@ -5874,6 +5958,20 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *PythonQuery) KindMapping() map[string]string</function>
       <function>func (q *PythonQuery) ImportQuery() []byte</function>
+      <function>func (q *PythonQuery) CallQuery() []byte</function>
+      <variable>pythonCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call
+  function: (identifier) @callee
+) @call_node
+
+; Method/attribute calls (e.g., obj.method())
+(call
+  function: (attribute
+    attribute: (identifier) @callee
+  )
+) @call_node
+`</variable>
       <variable>pythonImportQueryPattern = `
 ; import module (capture full statement)
 (import_statement) @import_path
@@ -6038,6 +6136,20 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *RustQuery) KindMapping() map[string]string</function>
       <function>func (q *RustQuery) ImportQuery() []byte</function>
+      <function>func (q *RustQuery) CallQuery() []byte</function>
+      <variable>rustCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/field calls (e.g., obj.method())
+(call_expression
+  function: (field_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`</variable>
       <variable>rustImportQueryPattern = `
 ; Use declarations (capture full statement)
 (use_declaration) @import_path
@@ -6679,6 +6791,20 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *TypeScriptQuery) KindMapping() map[string]string</function>
       <function>func (q *TypeScriptQuery) ImportQuery() []byte</function>
+      <function>func (q *TypeScriptQuery) CallQuery() []byte</function>
+      <variable>typeScriptCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/property calls (e.g., obj.method())
+(call_expression
+  function: (member_expression
+    property: (property_identifier) @callee
+  )
+) @call_node
+`</variable>
       <variable>typeScriptImportQueryPattern = `
 ; Import statements (capture full statement)
 (import_statement) @import_path
@@ -6854,6 +6980,7 @@ import &quot;unsafe&quot;</imports>
       <type>type queryType int</type>
       <variable>queryTypeSignature queryType = iota</variable>
       <variable>queryTypeImport</variable>
+      <variable>queryTypeCall</variable>
       <variable>elixirDefPrefixes = [][]byte{
 	[]byte(&quot;defmodule &quot;),
 	[]byte(&quot;defprotocol &quot;),
@@ -6872,9 +6999,10 @@ import &quot;unsafe&quot;</imports>
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
-      <variable>queryStr string</variable>
+      <variable>queryBytes []byte</variable>
       <function>func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)</function>
       <variable>rawImports []string</variable>
+      <variable>calls []parser.FunctionCall</variable>
       <function>func (p *TreeSitterParser) Languages() []string</function>
       <function>func (p *TreeSitterParser) extractSignatures(
 	root *sitter.Node,
@@ -6928,6 +7056,16 @@ import &quot;unsafe&quot;</imports>
 	opts *parser.Options,
 ) ([]string, error)</function>
       <variable>importNode *sitter.Node</variable>
+      <function>func (p *TreeSitterParser) extractCalls(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+	signatures []parser.Signature,
+) ([]parser.FunctionCall, error)</function>
+      <variable>callee string</variable>
+      <variable>callLine int</variable>
+      <function>func findEnclosingFunction(signatures []parser.Signature, line int) string</function>
       <function>func removeBlankLines(text string) string</function>
       <variable>buf strings.Builder</variable>
       <variable>elixirDefKeywords = map[string]string{
@@ -7099,6 +7237,10 @@ import &quot;unsafe&quot;</imports>
 	// Returns nil if the language doesn&apos;t support import extraction.
 	ImportQuery() []byte
 
+	// CallQuery returns the Tree-sitter query pattern for function call extraction.
+	// Returns nil if the language doesn&apos;t support call extraction.
+	CallQuery() []byte
+
 	// Captures returns the list of capture names used in the query.
 	Captures() []string
 
@@ -7111,6 +7253,7 @@ import &quot;unsafe&quot;</imports>
       <variable>CaptureKind      = &quot;kind&quot;</variable>
       <variable>CaptureImportPath = &quot;import_path&quot;</variable>
       <variable>CaptureLuaRequireFn = &quot;_fn&quot;</variable>
+      <variable>CaptureCallee = &quot;callee&quot;</variable>
       <variable>DefaultKindMapping = map[string]string{
 	&quot;function_declaration&quot;: &quot;function&quot;,
 	&quot;method_declaration&quot;:   &quot;method&quot;,

@@ -425,6 +425,9 @@ type Config struct {
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
+	// CallGraph enables function call graph extraction in output.
+	CallGraph bool
+
 	// MaxFileSize is the maximum file size in bytes to process.
 	MaxFileSize int64
 
@@ -523,6 +526,9 @@ type Options struct {
 
 	// SecurityCheck enables secret detection and redaction.
 	SecurityCheck bool
+
+	// IncludeCallGraph enables function call graph extraction.
+	IncludeCallGraph bool
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -749,6 +755,9 @@ type ExtractedFile struct {
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Size is the file size in bytes.
 	Size int64
 
@@ -777,6 +786,9 @@ type ExtractOptions struct {
 
 	// IncludeImports whether to include import/export statements.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references.
+	IncludeCalls bool
 
 	// Concurrency is the number of concurrent workers.
 	// 0 = auto (runtime.NumCPU()), 1 = sequential.
@@ -879,6 +891,9 @@ type FileData struct {
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
 
+	// Calls is the list of function call references.
+	Calls []parser.FunctionCall
+
 	// Error is any error that occurred during extraction.
 	Error error
 }
@@ -918,6 +933,9 @@ type PackageData struct {
 
 	// NoSchema indicates whether to omit the schema section in output.
 	NoSchema bool
+
+	// IncludeCallGraph indicates whether to include function call references.
+	IncludeCallGraph bool
 }
 type ImportCount struct {
 	// Import is the raw import statement text.
@@ -1051,11 +1069,17 @@ type jsonImportCount struct {
 	Count  int    `json:"count"`
 }
 type jsonFile struct {
-	Path       string    `json:"path"`
-	Language   string    `json:"language"`
-	Signatures []jsonSig `json:"signatures,omitempty"`
-	Imports    []string  `json:"imports,omitempty"`
-	Error      string    `json:"error,omitempty"`
+	Path       string     `json:"path"`
+	Language   string     `json:"language"`
+	Signatures []jsonSig  `json:"signatures,omitempty"`
+	Imports    []string   `json:"imports,omitempty"`
+	Calls      []jsonCall `json:"calls,omitempty"`
+	Error      string     `json:"error,omitempty"`
+}
+type jsonCall struct {
+	Caller string `json:"caller,omitempty"`
+	Callee string `json:"callee"`
+	Line   int    `json:"line"`
 }
 type jsonSig struct {
 	Kind     string `json:"kind"`
@@ -1092,6 +1116,7 @@ func escapeMarkdown(s string) string
 ```go
 import (
 	"bytes"
+	"strconv"
 	"strings"
 )
 type XMLFormatter struct{}
@@ -1175,6 +1200,16 @@ type Node struct {
 	// Children are child nodes.
 	Children []Node
 }
+type FunctionCall struct {
+	// Caller is the name of the enclosing function (empty if top-level).
+	Caller string
+
+	// Callee is the called function/method name.
+	Callee string
+
+	// Line is the line number where the call occurs (1-indexed).
+	Line int
+}
 type ParseResult struct {
 	// FilePath is the path to the parsed file.
 	FilePath string
@@ -1187,6 +1222,9 @@ type ParseResult struct {
 
 	// RawImports is the list of raw import/export statement text.
 	RawImports []string
+
+	// Calls is the list of function call references.
+	Calls []FunctionCall
 
 	// AST is the root node of the parsed AST (optional).
 	AST *Node
@@ -1211,6 +1249,9 @@ type Options struct {
 
 	// IncludeImports whether to include import/export statements in the result.
 	IncludeImports bool
+
+	// IncludeCalls whether to include function call references in the result.
+	IncludeCalls bool
 }
 type Parser interface {
 	// Parse parses the given content and returns extracted signatures.
@@ -5081,6 +5122,8 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 ```go
 type BaseQuery struct{}
 func (BaseQuery) Captures() []string
+func (BaseQuery) ImportQuery() []byte
+func (BaseQuery) CallQuery() []byte
 ```
 
 ---
@@ -5112,6 +5155,13 @@ cKindMapping = map[string]string{
 }
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
+func (q *CQuery) CallQuery() []byte
+cCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+`
 cImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
@@ -5234,6 +5284,24 @@ func TestCQueryExtractMacro(t *testing.T)
 func TestCQueryExtractEnum(t *testing.T)
 func TestCQueryExtractTypedef(t *testing.T)
 func TestCQueryExtractGlobalVariables(t *testing.T)
+```
+
+---
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/call_query_test.go
+
+```go
+import (
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+	// Blank import to register tree-sitter parsers
+	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
+)
+func TestGoCallExtraction(t *testing.T)
+func TestTypeScriptCallExtraction(t *testing.T)
+func TestPythonCallExtraction(t *testing.T)
+func TestCallExtractionDisabledByDefault(t *testing.T)
+func TestCallExtractionTopLevel(t *testing.T)
 ```
 
 ---
@@ -5864,6 +5932,20 @@ goKindMapping = map[string]string{
 }
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
+func (q *GoQuery) CallQuery() []byte
+goCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/package calls (e.g., obj.Method(), fmt.Println())
+(call_expression
+  function: (selector_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`
 goImportQueryPattern = `
 ; Import declarations (capture entire declaration)
 (import_declaration) @import_path
@@ -5949,6 +6031,13 @@ javaKindMapping = map[string]string{
 }
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
+func (q *JavaQuery) CallQuery() []byte
+javaCallQueryPattern = `
+; Method invocations (e.g., obj.method(), method())
+(method_invocation
+  name: (identifier) @callee
+) @call_node
+`
 javaImportQueryPattern = `
 ; import statements (capture full declaration)
 (import_declaration) @import_path
@@ -6372,6 +6461,20 @@ pythonKindMapping = map[string]string{
 }
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
+func (q *PythonQuery) CallQuery() []byte
+pythonCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call
+  function: (identifier) @callee
+) @call_node
+
+; Method/attribute calls (e.g., obj.method())
+(call
+  function: (attribute
+    attribute: (identifier) @callee
+  )
+) @call_node
+`
 pythonImportQueryPattern = `
 ; import module (capture full statement)
 (import_statement) @import_path
@@ -6556,6 +6659,20 @@ rustKindMapping = map[string]string{
 }
 func (q *RustQuery) KindMapping() map[string]string
 func (q *RustQuery) ImportQuery() []byte
+func (q *RustQuery) CallQuery() []byte
+rustCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/field calls (e.g., obj.method())
+(call_expression
+  function: (field_expression
+    field: (field_identifier) @callee
+  )
+) @call_node
+`
 rustImportQueryPattern = `
 ; Use declarations (capture full statement)
 (use_declaration) @import_path
@@ -7257,6 +7374,20 @@ tsKindMapping = map[string]string{
 }
 func (q *TypeScriptQuery) KindMapping() map[string]string
 func (q *TypeScriptQuery) ImportQuery() []byte
+func (q *TypeScriptQuery) CallQuery() []byte
+typeScriptCallQueryPattern = `
+; Direct function calls (e.g., foo())
+(call_expression
+  function: (identifier) @callee
+) @call_node
+
+; Method/property calls (e.g., obj.method())
+(call_expression
+  function: (member_expression
+    property: (property_identifier) @callee
+  )
+) @call_node
+`
 typeScriptImportQueryPattern = `
 ; Import statements (capture full statement)
 (import_statement) @import_path
@@ -7452,6 +7583,7 @@ func init()
 type queryType int
 queryTypeSignature queryType = iota
 queryTypeImport
+queryTypeCall
 elixirDefPrefixes = [][]byte{
 	[]byte("defmodule "),
 	[]byte("defprotocol "),
@@ -7470,9 +7602,10 @@ type TreeSitterParser struct {
 }
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
-queryStr string
+queryBytes []byte
 func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)
 rawImports []string
+calls []parser.FunctionCall
 func (p *TreeSitterParser) Languages() []string
 func (p *TreeSitterParser) extractSignatures(
 	root *sitter.Node,
@@ -7526,6 +7659,16 @@ func (p *TreeSitterParser) extractImports(
 	opts *parser.Options,
 ) ([]string, error)
 importNode *sitter.Node
+func (p *TreeSitterParser) extractCalls(
+	root *sitter.Node,
+	content []byte,
+	langQuery LanguageQuery,
+	opts *parser.Options,
+	signatures []parser.Signature,
+) ([]parser.FunctionCall, error)
+callee string
+callLine int
+func findEnclosingFunction(signatures []parser.Signature, line int) string
 func removeBlankLines(text string) string
 buf strings.Builder
 elixirDefKeywords = map[string]string{
@@ -7717,6 +7860,10 @@ type LanguageQuery interface {
 	// Returns nil if the language doesn't support import extraction.
 	ImportQuery() []byte
 
+	// CallQuery returns the Tree-sitter query pattern for function call extraction.
+	// Returns nil if the language doesn't support call extraction.
+	CallQuery() []byte
+
 	// Captures returns the list of capture names used in the query.
 	Captures() []string
 
@@ -7729,6 +7876,7 @@ CaptureDoc       = "doc"
 CaptureKind      = "kind"
 CaptureImportPath = "import_path"
 CaptureLuaRequireFn = "_fn"
+CaptureCallee = "callee"
 DefaultKindMapping = map[string]string{
 	"function_declaration": "function",
 	"method_declaration":   "method",
