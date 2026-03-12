@@ -3719,6 +3719,16 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCQuery() *CQuery</function>
       <function>func (q *CQuery) Language() *sitter.Language</function>
       <function>func (q *CQuery) Query() []byte</function>
+      <variable>cKindMapping = map[string]string{
+	&quot;function_definition&quot;:  &quot;function&quot;,
+	&quot;declaration&quot;:          &quot;function&quot;, // function prototypes
+	&quot;struct_specifier&quot;:     &quot;struct&quot;,
+	&quot;enum_specifier&quot;:       &quot;enum&quot;,
+	&quot;type_definition&quot;:      &quot;typedef&quot;,
+	&quot;preproc_function_def&quot;: &quot;macro&quot;,
+	&quot;preproc_def&quot;:          &quot;macro&quot;,
+	&quot;global_variable&quot;:      &quot;variable&quot;, // mapped from declaration patterns
+}</variable>
       <function>func (q *CQuery) KindMapping() map[string]string</function>
       <function>func (q *CQuery) ImportQuery() []byte</function>
       <variable>cImportQueryPattern = `
@@ -3852,6 +3862,19 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCppQuery() *CppQuery</function>
       <function>func (q *CppQuery) Language() *sitter.Language</function>
       <function>func (q *CppQuery) Query() []byte</function>
+      <variable>cppKindMapping = map[string]string{
+	&quot;function_definition&quot;:  &quot;function&quot;,
+	&quot;declaration&quot;:          &quot;function&quot;,
+	&quot;struct_specifier&quot;:     &quot;struct&quot;,
+	&quot;enum_specifier&quot;:       &quot;enum&quot;,
+	&quot;type_definition&quot;:      &quot;typedef&quot;,
+	&quot;preproc_function_def&quot;: &quot;macro&quot;,
+	&quot;preproc_def&quot;:          &quot;macro&quot;,
+	&quot;class_specifier&quot;:      &quot;class&quot;,
+	&quot;field_declaration&quot;:    &quot;method&quot;,
+	&quot;template_declaration&quot;: &quot;template&quot;,
+	&quot;namespace_definition&quot;: &quot;namespace&quot;,
+}</variable>
       <function>func (q *CppQuery) KindMapping() map[string]string</function>
       <function>func (q *CppQuery) ImportQuery() []byte</function>
       <variable>cppImportQueryPattern = `
@@ -4077,6 +4100,27 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCSharpQuery() *CSharpQuery</function>
       <function>func (q *CSharpQuery) Language() *sitter.Language</function>
       <function>func (q *CSharpQuery) Query() []byte</function>
+      <variable>csharpKindMapping = map[string]string{
+	&quot;class_declaration&quot;:                 &quot;class&quot;,
+	&quot;struct_declaration&quot;:                &quot;struct&quot;,
+	&quot;interface_declaration&quot;:             &quot;interface&quot;,
+	&quot;enum_declaration&quot;:                  &quot;enum&quot;,
+	&quot;record_declaration&quot;:                &quot;record&quot;,
+	&quot;delegate_declaration&quot;:              &quot;type&quot;,
+	&quot;method_declaration&quot;:                &quot;method&quot;,
+	&quot;constructor_declaration&quot;:           &quot;constructor&quot;,
+	&quot;destructor_declaration&quot;:            &quot;destructor&quot;,
+	&quot;property_declaration&quot;:              &quot;variable&quot;,
+	&quot;field_declaration&quot;:                 &quot;field&quot;,
+	&quot;event_declaration&quot;:                 &quot;variable&quot;,
+	&quot;event_field_declaration&quot;:           &quot;variable&quot;,
+	&quot;indexer_declaration&quot;:               &quot;method&quot;,
+	&quot;operator_declaration&quot;:              &quot;function&quot;,
+	&quot;conversion_operator_declaration&quot;:   &quot;function&quot;,
+	&quot;namespace_declaration&quot;:             &quot;namespace&quot;,
+	&quot;file_scoped_namespace_declaration&quot;: &quot;namespace&quot;,
+	&quot;enum_member_declaration&quot;:           &quot;variable&quot;,
+}</variable>
       <function>func (q *CSharpQuery) KindMapping() map[string]string</function>
       <function>func (q *CSharpQuery) ImportQuery() []byte</function>
       <variable>csharpImportQueryPattern = `
@@ -4223,6 +4267,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewElixirQuery() *ElixirQuery</function>
       <function>func (q *ElixirQuery) Language() *sitter.Language</function>
       <function>func (q *ElixirQuery) Query() []byte</function>
+      <variable>elixirKindMapping = map[string]string{
+	&quot;call&quot;:           &quot;function&quot;,
+	&quot;unary_operator&quot;: &quot;type&quot;,
+}</variable>
       <function>func (q *ElixirQuery) KindMapping() map[string]string</function>
       <function>func (q *ElixirQuery) ImportQuery() []byte</function>
       <variable>elixirImportQueryPattern = `
@@ -4384,6 +4432,15 @@ import &quot;unsafe&quot;</imports>
       <function>func NewGoQuery() *GoQuery</function>
       <function>func (q *GoQuery) Language() *sitter.Language</function>
       <function>func (q *GoQuery) Query() []byte</function>
+      <variable>goKindMapping = map[string]string{
+	&quot;function_declaration&quot;: &quot;function&quot;,
+	&quot;method_declaration&quot;:   &quot;method&quot;,
+	&quot;type_declaration&quot;:     &quot;type&quot;,
+	&quot;const_declaration&quot;:    &quot;variable&quot;,
+	&quot;var_declaration&quot;:      &quot;variable&quot;,
+	&quot;const_spec&quot;:           &quot;variable&quot;,
+	&quot;var_spec&quot;:             &quot;variable&quot;,
+}</variable>
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
       <variable>goImportQueryPattern = `
@@ -4449,6 +4506,16 @@ import &quot;unsafe&quot;</imports>
       <function>func NewJavaQuery() *JavaQuery</function>
       <function>func (q *JavaQuery) Language() *sitter.Language</function>
       <function>func (q *JavaQuery) Query() []byte</function>
+      <variable>javaKindMapping = map[string]string{
+	&quot;class_declaration&quot;:           &quot;class&quot;,
+	&quot;interface_declaration&quot;:       &quot;interface&quot;,
+	&quot;method_declaration&quot;:          &quot;method&quot;,
+	&quot;constructor_declaration&quot;:     &quot;constructor&quot;,
+	&quot;enum_declaration&quot;:            &quot;enum&quot;,
+	&quot;annotation_type_declaration&quot;: &quot;annotation&quot;,
+	&quot;record_declaration&quot;:          &quot;record&quot;,
+	&quot;field_declaration&quot;:           &quot;field&quot;,
+}</variable>
       <function>func (q *JavaQuery) KindMapping() map[string]string</function>
       <function>func (q *JavaQuery) ImportQuery() []byte</function>
       <variable>javaImportQueryPattern = `
@@ -4536,6 +4603,16 @@ import &quot;unsafe&quot;</imports>
       <function>func NewKotlinQuery() *KotlinQuery</function>
       <function>func (q *KotlinQuery) Language() *sitter.Language</function>
       <function>func (q *KotlinQuery) Query() []byte</function>
+      <variable>kotlinKindMapping = map[string]string{
+	&quot;function_declaration&quot;:  &quot;function&quot;,
+	&quot;class_declaration&quot;:     &quot;class&quot;,
+	&quot;object_declaration&quot;:    &quot;class&quot;,
+	&quot;companion_object&quot;:      &quot;class&quot;,
+	&quot;property_declaration&quot;:  &quot;variable&quot;,
+	&quot;type_alias&quot;:            &quot;type&quot;,
+	&quot;enum_entry&quot;:            &quot;variable&quot;,
+	&quot;secondary_constructor&quot;: &quot;constructor&quot;,
+}</variable>
       <function>func (q *KotlinQuery) KindMapping() map[string]string</function>
       <function>func (q *KotlinQuery) ImportQuery() []byte</function>
       <variable>kotlinImportQueryPattern = `
@@ -4625,6 +4702,11 @@ import &quot;unsafe&quot;</imports>
       <function>func NewLuaQuery() *LuaQuery</function>
       <function>func (q *LuaQuery) Language() *sitter.Language</function>
       <function>func (q *LuaQuery) Query() []byte</function>
+      <variable>luaKindMapping = map[string]string{
+	&quot;function_declaration&quot;: &quot;function&quot;,
+	&quot;variable_declaration&quot;: &quot;variable&quot;,
+	&quot;assignment_statement&quot;: &quot;variable&quot;,
+}</variable>
       <function>func (q *LuaQuery) KindMapping() map[string]string</function>
       <function>func (q *LuaQuery) ImportQuery() []byte</function>
       <variable>luaImportQueryPattern = `
@@ -4712,6 +4794,17 @@ import &quot;unsafe&quot;</imports>
       <function>func NewPHPQuery() *PHPQuery</function>
       <function>func (q *PHPQuery) Language() *sitter.Language</function>
       <function>func (q *PHPQuery) Query() []byte</function>
+      <variable>phpKindMapping = map[string]string{
+	&quot;function_definition&quot;:       &quot;function&quot;,
+	&quot;method_declaration&quot;:        &quot;method&quot;,
+	&quot;class_declaration&quot;:         &quot;class&quot;,
+	&quot;interface_declaration&quot;:     &quot;interface&quot;,
+	&quot;trait_declaration&quot;:         &quot;type&quot;,
+	&quot;enum_declaration&quot;:          &quot;enum&quot;,
+	&quot;const_declaration&quot;:         &quot;variable&quot;,
+	&quot;property_declaration&quot;:      &quot;variable&quot;,
+	&quot;namespace_use_declaration&quot;: &quot;import&quot;,
+}</variable>
       <function>func (q *PHPQuery) KindMapping() map[string]string</function>
       <function>func (q *PHPQuery) ImportQuery() []byte</function>
       <variable>phpImportQueryPattern = `
@@ -4800,6 +4893,12 @@ import &quot;unsafe&quot;</imports>
       <function>func NewPythonQuery() *PythonQuery</function>
       <function>func (q *PythonQuery) Language() *sitter.Language</function>
       <function>func (q *PythonQuery) Query() []byte</function>
+      <variable>pythonKindMapping = map[string]string{
+	&quot;function_definition&quot;:  &quot;function&quot;,
+	&quot;class_definition&quot;:     &quot;class&quot;,
+	&quot;expression_statement&quot;: &quot;variable&quot;,
+	&quot;assignment&quot;:           &quot;variable&quot;,
+}</variable>
       <function>func (q *PythonQuery) KindMapping() map[string]string</function>
       <function>func (q *PythonQuery) ImportQuery() []byte</function>
       <variable>pythonImportQueryPattern = `
@@ -4861,6 +4960,13 @@ import &quot;unsafe&quot;</imports>
       <function>func NewRubyQuery() *RubyQuery</function>
       <function>func (q *RubyQuery) Language() *sitter.Language</function>
       <function>func (q *RubyQuery) Query() []byte</function>
+      <variable>rubyKindMapping = map[string]string{
+	&quot;method&quot;:           &quot;method&quot;,
+	&quot;singleton_method&quot;: &quot;method&quot;,
+	&quot;class&quot;:            &quot;class&quot;,
+	&quot;module&quot;:           &quot;namespace&quot;,
+	&quot;assignment&quot;:       &quot;variable&quot;,
+}</variable>
       <function>func (q *RubyQuery) KindMapping() map[string]string</function>
       <function>func (q *RubyQuery) ImportQuery() []byte</function>
       <variable>rubyImportQueryPattern = `
@@ -4941,6 +5047,22 @@ import &quot;unsafe&quot;</imports>
       <function>func NewRustQuery() *RustQuery</function>
       <function>func (q *RustQuery) Language() *sitter.Language</function>
       <function>func (q *RustQuery) Query() []byte</function>
+      <variable>rustKindMapping = map[string]string{
+	&quot;function_item&quot;:           &quot;function&quot;,
+	&quot;struct_item&quot;:             &quot;struct&quot;,
+	&quot;enum_item&quot;:               &quot;enum&quot;,
+	&quot;trait_item&quot;:              &quot;trait&quot;,
+	&quot;type_item&quot;:               &quot;type&quot;,
+	&quot;impl_item&quot;:               &quot;impl&quot;,
+	&quot;const_item&quot;:              &quot;variable&quot;,
+	&quot;static_item&quot;:             &quot;variable&quot;,
+	&quot;mod_item&quot;:                &quot;namespace&quot;,
+	&quot;macro_definition&quot;:        &quot;macro&quot;,
+	&quot;foreign_mod_item&quot;:        &quot;namespace&quot;,
+	&quot;union_item&quot;:              &quot;struct&quot;,
+	&quot;associated_type&quot;:         &quot;type&quot;,
+	&quot;function_signature_item&quot;: &quot;function&quot;,
+}</variable>
       <function>func (q *RustQuery) KindMapping() map[string]string</function>
       <function>func (q *RustQuery) ImportQuery() []byte</function>
       <variable>rustImportQueryPattern = `
@@ -5073,6 +5195,20 @@ import &quot;unsafe&quot;</imports>
       <function>func NewScalaQuery() *ScalaQuery</function>
       <function>func (q *ScalaQuery) Language() *sitter.Language</function>
       <function>func (q *ScalaQuery) Query() []byte</function>
+      <variable>scalaKindMapping = map[string]string{
+	&quot;function_definition&quot;:  &quot;method&quot;,
+	&quot;function_declaration&quot;: &quot;method&quot;,
+	&quot;class_definition&quot;:     &quot;class&quot;,
+	&quot;trait_definition&quot;:     &quot;trait&quot;,
+	&quot;object_definition&quot;:    &quot;class&quot;,
+	&quot;val_definition&quot;:       &quot;variable&quot;,
+	&quot;val_declaration&quot;:      &quot;variable&quot;,
+	&quot;var_definition&quot;:       &quot;variable&quot;,
+	&quot;var_declaration&quot;:      &quot;variable&quot;,
+	&quot;type_definition&quot;:      &quot;type&quot;,
+	&quot;enum_definition&quot;:      &quot;enum&quot;,
+	&quot;given_definition&quot;:     &quot;variable&quot;,
+}</variable>
       <function>func (q *ScalaQuery) KindMapping() map[string]string</function>
       <function>func (q *ScalaQuery) ImportQuery() []byte</function>
       <variable>scalaImportQueryPattern = `
@@ -5185,6 +5321,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewShellQuery() *ShellQuery</function>
       <function>func (q *ShellQuery) Language() *sitter.Language</function>
       <function>func (q *ShellQuery) Query() []byte</function>
+      <variable>shellKindMapping = map[string]string{
+	&quot;function_definition&quot;: &quot;function&quot;,
+	&quot;variable_assignment&quot;: &quot;variable&quot;,
+}</variable>
       <function>func (q *ShellQuery) KindMapping() map[string]string</function>
       <function>func (q *ShellQuery) ImportQuery() []byte</function>
       <variable>shellImportQueryPattern = `
@@ -5241,6 +5381,18 @@ import &quot;unsafe&quot;</imports>
       <function>func NewSQLQuery() *SQLQuery</function>
       <function>func (q *SQLQuery) Language() *sitter.Language</function>
       <function>func (q *SQLQuery) Query() []byte</function>
+      <variable>sqlKindMapping = map[string]string{
+	&quot;create_table&quot;:             &quot;struct&quot;,
+	&quot;create_function&quot;:          &quot;function&quot;,
+	&quot;create_view&quot;:              &quot;type&quot;,
+	&quot;create_materialized_view&quot;: &quot;type&quot;,
+	&quot;create_index&quot;:             &quot;variable&quot;,
+	&quot;create_trigger&quot;:           &quot;function&quot;,
+	&quot;create_type&quot;:              &quot;type&quot;,
+	&quot;create_schema&quot;:            &quot;namespace&quot;,
+	&quot;create_sequence&quot;:          &quot;variable&quot;,
+	&quot;alter_table&quot;:              &quot;type&quot;,
+}</variable>
       <function>func (q *SQLQuery) KindMapping() map[string]string</function>
       <function>func (q *SQLQuery) ImportQuery() []byte</function>
       <variable>sqlQueryPattern = `
@@ -5338,6 +5490,18 @@ import &quot;unsafe&quot;</imports>
       <function>func NewSwiftQuery() *SwiftQuery</function>
       <function>func (q *SwiftQuery) Language() *sitter.Language</function>
       <function>func (q *SwiftQuery) Query() []byte</function>
+      <variable>swiftKindMapping = map[string]string{
+	&quot;function_declaration&quot;:          &quot;function&quot;,
+	&quot;class_declaration&quot;:             &quot;class&quot;,
+	&quot;protocol_declaration&quot;:          &quot;interface&quot;,
+	&quot;typealias_declaration&quot;:         &quot;type&quot;,
+	&quot;property_declaration&quot;:          &quot;variable&quot;,
+	&quot;init_declaration&quot;:              &quot;constructor&quot;,
+	&quot;deinit_declaration&quot;:            &quot;destructor&quot;,
+	&quot;subscript_declaration&quot;:         &quot;method&quot;,
+	&quot;operator_declaration&quot;:          &quot;function&quot;,
+	&quot;protocol_function_declaration&quot;: &quot;function&quot;,
+}</variable>
       <function>func (q *SwiftQuery) KindMapping() map[string]string</function>
       <function>func (q *SwiftQuery) ImportQuery() []byte</function>
       <variable>swiftImportQueryPattern = `
@@ -5439,6 +5603,18 @@ import &quot;unsafe&quot;</imports>
       <function>func NewTypeScriptQuery() *TypeScriptQuery</function>
       <function>func (q *TypeScriptQuery) Language() *sitter.Language</function>
       <function>func (q *TypeScriptQuery) Query() []byte</function>
+      <variable>tsKindMapping = map[string]string{
+	&quot;function_declaration&quot;:   &quot;function&quot;,
+	&quot;method_definition&quot;:      &quot;method&quot;,
+	&quot;class_declaration&quot;:      &quot;class&quot;,
+	&quot;interface_declaration&quot;:  &quot;interface&quot;,
+	&quot;type_alias_declaration&quot;: &quot;type&quot;,
+	&quot;arrow_function&quot;:         &quot;function&quot;,
+	&quot;variable_declaration&quot;:   &quot;variable&quot;,
+	&quot;variable_declarator&quot;:    &quot;arrow&quot;,
+	&quot;lexical_declaration&quot;:    &quot;arrow&quot;,
+	&quot;export_statement&quot;:       &quot;export&quot;,
+}</variable>
       <function>func (q *TypeScriptQuery) KindMapping() map[string]string</function>
       <function>func (q *TypeScriptQuery) ImportQuery() []byte</function>
       <variable>typeScriptImportQueryPattern = `

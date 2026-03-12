@@ -4052,6 +4052,16 @@ type CQuery struct {
 func NewCQuery() *CQuery
 func (q *CQuery) Language() *sitter.Language
 func (q *CQuery) Query() []byte
+cKindMapping = map[string]string{
+	"function_definition":  "function",
+	"declaration":          "function", // function prototypes
+	"struct_specifier":     "struct",
+	"enum_specifier":       "enum",
+	"type_definition":      "typedef",
+	"preproc_function_def": "macro",
+	"preproc_def":          "macro",
+	"global_variable":      "variable", // mapped from declaration patterns
+}
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
 cImportQueryPattern = `
@@ -4195,6 +4205,19 @@ type CppQuery struct {
 func NewCppQuery() *CppQuery
 func (q *CppQuery) Language() *sitter.Language
 func (q *CppQuery) Query() []byte
+cppKindMapping = map[string]string{
+	"function_definition":  "function",
+	"declaration":          "function",
+	"struct_specifier":     "struct",
+	"enum_specifier":       "enum",
+	"type_definition":      "typedef",
+	"preproc_function_def": "macro",
+	"preproc_def":          "macro",
+	"class_specifier":      "class",
+	"field_declaration":    "method",
+	"template_declaration": "template",
+	"namespace_definition": "namespace",
+}
 func (q *CppQuery) KindMapping() map[string]string
 func (q *CppQuery) ImportQuery() []byte
 cppImportQueryPattern = `
@@ -4430,6 +4453,27 @@ type CSharpQuery struct {
 func NewCSharpQuery() *CSharpQuery
 func (q *CSharpQuery) Language() *sitter.Language
 func (q *CSharpQuery) Query() []byte
+csharpKindMapping = map[string]string{
+	"class_declaration":                 "class",
+	"struct_declaration":                "struct",
+	"interface_declaration":             "interface",
+	"enum_declaration":                  "enum",
+	"record_declaration":                "record",
+	"delegate_declaration":              "type",
+	"method_declaration":                "method",
+	"constructor_declaration":           "constructor",
+	"destructor_declaration":            "destructor",
+	"property_declaration":              "variable",
+	"field_declaration":                 "field",
+	"event_declaration":                 "variable",
+	"event_field_declaration":           "variable",
+	"indexer_declaration":               "method",
+	"operator_declaration":              "function",
+	"conversion_operator_declaration":   "function",
+	"namespace_declaration":             "namespace",
+	"file_scoped_namespace_declaration": "namespace",
+	"enum_member_declaration":           "variable",
+}
 func (q *CSharpQuery) KindMapping() map[string]string
 func (q *CSharpQuery) ImportQuery() []byte
 csharpImportQueryPattern = `
@@ -4586,6 +4630,10 @@ type ElixirQuery struct {
 func NewElixirQuery() *ElixirQuery
 func (q *ElixirQuery) Language() *sitter.Language
 func (q *ElixirQuery) Query() []byte
+elixirKindMapping = map[string]string{
+	"call":           "function",
+	"unary_operator": "type",
+}
 func (q *ElixirQuery) KindMapping() map[string]string
 func (q *ElixirQuery) ImportQuery() []byte
 elixirImportQueryPattern = `
@@ -4757,6 +4805,15 @@ type GoQuery struct {
 func NewGoQuery() *GoQuery
 func (q *GoQuery) Language() *sitter.Language
 func (q *GoQuery) Query() []byte
+goKindMapping = map[string]string{
+	"function_declaration": "function",
+	"method_declaration":   "method",
+	"type_declaration":     "type",
+	"const_declaration":    "variable",
+	"var_declaration":      "variable",
+	"const_spec":           "variable",
+	"var_spec":             "variable",
+}
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
 goImportQueryPattern = `
@@ -4832,6 +4889,16 @@ type JavaQuery struct {
 func NewJavaQuery() *JavaQuery
 func (q *JavaQuery) Language() *sitter.Language
 func (q *JavaQuery) Query() []byte
+javaKindMapping = map[string]string{
+	"class_declaration":           "class",
+	"interface_declaration":       "interface",
+	"method_declaration":          "method",
+	"constructor_declaration":     "constructor",
+	"enum_declaration":            "enum",
+	"annotation_type_declaration": "annotation",
+	"record_declaration":          "record",
+	"field_declaration":           "field",
+}
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
 javaImportQueryPattern = `
@@ -4929,6 +4996,16 @@ type KotlinQuery struct {
 func NewKotlinQuery() *KotlinQuery
 func (q *KotlinQuery) Language() *sitter.Language
 func (q *KotlinQuery) Query() []byte
+kotlinKindMapping = map[string]string{
+	"function_declaration":  "function",
+	"class_declaration":     "class",
+	"object_declaration":    "class",
+	"companion_object":      "class",
+	"property_declaration":  "variable",
+	"type_alias":            "type",
+	"enum_entry":            "variable",
+	"secondary_constructor": "constructor",
+}
 func (q *KotlinQuery) KindMapping() map[string]string
 func (q *KotlinQuery) ImportQuery() []byte
 kotlinImportQueryPattern = `
@@ -5028,6 +5105,11 @@ type LuaQuery struct {
 func NewLuaQuery() *LuaQuery
 func (q *LuaQuery) Language() *sitter.Language
 func (q *LuaQuery) Query() []byte
+luaKindMapping = map[string]string{
+	"function_declaration": "function",
+	"variable_declaration": "variable",
+	"assignment_statement": "variable",
+}
 func (q *LuaQuery) KindMapping() map[string]string
 func (q *LuaQuery) ImportQuery() []byte
 luaImportQueryPattern = `
@@ -5125,6 +5207,17 @@ type PHPQuery struct {
 func NewPHPQuery() *PHPQuery
 func (q *PHPQuery) Language() *sitter.Language
 func (q *PHPQuery) Query() []byte
+phpKindMapping = map[string]string{
+	"function_definition":       "function",
+	"method_declaration":        "method",
+	"class_declaration":         "class",
+	"interface_declaration":     "interface",
+	"trait_declaration":         "type",
+	"enum_declaration":          "enum",
+	"const_declaration":         "variable",
+	"property_declaration":      "variable",
+	"namespace_use_declaration": "import",
+}
 func (q *PHPQuery) KindMapping() map[string]string
 func (q *PHPQuery) ImportQuery() []byte
 phpImportQueryPattern = `
@@ -5223,6 +5316,12 @@ type PythonQuery struct {
 func NewPythonQuery() *PythonQuery
 func (q *PythonQuery) Language() *sitter.Language
 func (q *PythonQuery) Query() []byte
+pythonKindMapping = map[string]string{
+	"function_definition":  "function",
+	"class_definition":     "class",
+	"expression_statement": "variable",
+	"assignment":           "variable",
+}
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
 pythonImportQueryPattern = `
@@ -5294,6 +5393,13 @@ type RubyQuery struct {
 func NewRubyQuery() *RubyQuery
 func (q *RubyQuery) Language() *sitter.Language
 func (q *RubyQuery) Query() []byte
+rubyKindMapping = map[string]string{
+	"method":           "method",
+	"singleton_method": "method",
+	"class":            "class",
+	"module":           "namespace",
+	"assignment":       "variable",
+}
 func (q *RubyQuery) KindMapping() map[string]string
 func (q *RubyQuery) ImportQuery() []byte
 rubyImportQueryPattern = `
@@ -5384,6 +5490,22 @@ type RustQuery struct {
 func NewRustQuery() *RustQuery
 func (q *RustQuery) Language() *sitter.Language
 func (q *RustQuery) Query() []byte
+rustKindMapping = map[string]string{
+	"function_item":           "function",
+	"struct_item":             "struct",
+	"enum_item":               "enum",
+	"trait_item":              "trait",
+	"type_item":               "type",
+	"impl_item":               "impl",
+	"const_item":              "variable",
+	"static_item":             "variable",
+	"mod_item":                "namespace",
+	"macro_definition":        "macro",
+	"foreign_mod_item":        "namespace",
+	"union_item":              "struct",
+	"associated_type":         "type",
+	"function_signature_item": "function",
+}
 func (q *RustQuery) KindMapping() map[string]string
 func (q *RustQuery) ImportQuery() []byte
 rustImportQueryPattern = `
@@ -5526,6 +5648,20 @@ type ScalaQuery struct {
 func NewScalaQuery() *ScalaQuery
 func (q *ScalaQuery) Language() *sitter.Language
 func (q *ScalaQuery) Query() []byte
+scalaKindMapping = map[string]string{
+	"function_definition":  "method",
+	"function_declaration": "method",
+	"class_definition":     "class",
+	"trait_definition":     "trait",
+	"object_definition":    "class",
+	"val_definition":       "variable",
+	"val_declaration":      "variable",
+	"var_definition":       "variable",
+	"var_declaration":      "variable",
+	"type_definition":      "type",
+	"enum_definition":      "enum",
+	"given_definition":     "variable",
+}
 func (q *ScalaQuery) KindMapping() map[string]string
 func (q *ScalaQuery) ImportQuery() []byte
 scalaImportQueryPattern = `
@@ -5648,6 +5784,10 @@ type ShellQuery struct {
 func NewShellQuery() *ShellQuery
 func (q *ShellQuery) Language() *sitter.Language
 func (q *ShellQuery) Query() []byte
+shellKindMapping = map[string]string{
+	"function_definition": "function",
+	"variable_assignment": "variable",
+}
 func (q *ShellQuery) KindMapping() map[string]string
 func (q *ShellQuery) ImportQuery() []byte
 shellImportQueryPattern = `
@@ -5714,6 +5854,18 @@ type SQLQuery struct {
 func NewSQLQuery() *SQLQuery
 func (q *SQLQuery) Language() *sitter.Language
 func (q *SQLQuery) Query() []byte
+sqlKindMapping = map[string]string{
+	"create_table":             "struct",
+	"create_function":          "function",
+	"create_view":              "type",
+	"create_materialized_view": "type",
+	"create_index":             "variable",
+	"create_trigger":           "function",
+	"create_type":              "type",
+	"create_schema":            "namespace",
+	"create_sequence":          "variable",
+	"alter_table":              "type",
+}
 func (q *SQLQuery) KindMapping() map[string]string
 func (q *SQLQuery) ImportQuery() []byte
 sqlQueryPattern = `
@@ -5821,6 +5973,18 @@ type SwiftQuery struct {
 func NewSwiftQuery() *SwiftQuery
 func (q *SwiftQuery) Language() *sitter.Language
 func (q *SwiftQuery) Query() []byte
+swiftKindMapping = map[string]string{
+	"function_declaration":          "function",
+	"class_declaration":             "class",
+	"protocol_declaration":          "interface",
+	"typealias_declaration":         "type",
+	"property_declaration":          "variable",
+	"init_declaration":              "constructor",
+	"deinit_declaration":            "destructor",
+	"subscript_declaration":         "method",
+	"operator_declaration":          "function",
+	"protocol_function_declaration": "function",
+}
 func (q *SwiftQuery) KindMapping() map[string]string
 func (q *SwiftQuery) ImportQuery() []byte
 swiftImportQueryPattern = `
@@ -5932,6 +6096,18 @@ type TypeScriptQuery struct {
 func NewTypeScriptQuery() *TypeScriptQuery
 func (q *TypeScriptQuery) Language() *sitter.Language
 func (q *TypeScriptQuery) Query() []byte
+tsKindMapping = map[string]string{
+	"function_declaration":   "function",
+	"method_definition":      "method",
+	"class_declaration":      "class",
+	"interface_declaration":  "interface",
+	"type_alias_declaration": "type",
+	"arrow_function":         "function",
+	"variable_declaration":   "variable",
+	"variable_declarator":    "arrow",
+	"lexical_declaration":    "arrow",
+	"export_statement":       "export",
+}
 func (q *TypeScriptQuery) KindMapping() map[string]string
 func (q *TypeScriptQuery) ImportQuery() []byte
 typeScriptImportQueryPattern = `
