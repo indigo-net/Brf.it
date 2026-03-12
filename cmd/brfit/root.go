@@ -143,6 +143,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
 		"skip XML schema section in output")
 
+	// Security check flag (enabled by default; --no-security-check disables)
+	cmd.Flags().BoolVar(&c.SecurityCheck, "security-check", c.SecurityCheck,
+		"enable secret detection and redaction (use --no-security-check to disable)")
+
 	// Git change detection flags
 	cmd.Flags().BoolVar(&c.Changed, "changed", c.Changed,
 		"only scan files changed in git working tree (git diff --name-only HEAD)")
