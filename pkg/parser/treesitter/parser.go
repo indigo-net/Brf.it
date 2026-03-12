@@ -1770,16 +1770,24 @@ func (p *TreeSitterParser) extractCalls(
 	return calls, nil
 }
 
-// findEnclosingFunction returns the name of the function/method whose
-// Line..EndLine range contains the given line. Returns empty string if
-// the call is at top-level (not inside any function).
+// findEnclosingFunction returns the name of the innermost function/method
+// whose Line..EndLine range contains the given line. When multiple signatures
+// overlap (e.g., a class containing a method), the narrowest range wins.
+// Returns empty string if the call is at top-level (not inside any function).
 func findEnclosingFunction(signatures []parser.Signature, line int) string {
+	bestName := ""
+	bestSpan := int(^uint(0) >> 1) // max int
+
 	for _, sig := range signatures {
 		if sig.Line <= line && line <= sig.EndLine {
-			return sig.Name
+			span := sig.EndLine - sig.Line
+			if span < bestSpan {
+				bestSpan = span
+				bestName = sig.Name
+			}
 		}
 	}
-	return ""
+	return bestName
 }
 
 // removeBlankLines removes empty lines from the import text.
