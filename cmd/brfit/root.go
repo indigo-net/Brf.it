@@ -95,10 +95,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 		"custom ignore file(s), can be specified multiple times (default: .gitignore)")
 
 	// Glob pattern filters
-	cmd.Flags().StringArrayVar(&c.IncludePatterns, "include", nil,
+	cmd.Flags().StringArrayVar(&c.IncludePatterns, "include", c.IncludePatterns,
 		"glob pattern(s) to include, can be specified multiple times (e.g., \"pkg/**/*.go\")")
 
-	cmd.Flags().StringArrayVar(&c.ExcludePatterns, "exclude", nil,
+	cmd.Flags().StringArrayVar(&c.ExcludePatterns, "exclude", c.ExcludePatterns,
 		"glob pattern(s) to exclude, can be specified multiple times (e.g., \"**/*_test.go\")")
 
 	// Boolean flags

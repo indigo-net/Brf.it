@@ -933,14 +933,18 @@ func TestScanExcludeDirectory(t *testing.T) {
 		filepath.Join(tmpDir, "vendor", "lib"),
 	}
 	for _, d := range dirs {
-		os.MkdirAll(d, 0755)
+		if err := os.MkdirAll(d, 0755); err != nil {
+			t.Fatalf("MkdirAll: %v", err)
+		}
 	}
 	files := map[string]string{
 		"src/main.go":        "package main",
 		"vendor/lib/util.go": "package lib",
 	}
 	for rel, content := range files {
-		os.WriteFile(filepath.Join(tmpDir, rel), []byte(content), 0644)
+		if err := os.WriteFile(filepath.Join(tmpDir, rel), []byte(content), 0644); err != nil {
+			t.Fatalf("WriteFile: %v", err)
+		}
 	}
 
 	defaultOpts := DefaultScanOptions()
@@ -966,5 +970,66 @@ func TestScanExcludeDirectory(t *testing.T) {
 	}
 	if len(result.Files) > 0 && !strings.HasSuffix(result.Files[0].Path, "main.go") {
 		t.Errorf("expected main.go, got %s", result.Files[0].Path)
+	}
+}
+
+func TestScanSingleFileWithIncludePattern(t *testing.T) {
+	tmpDir := t.TempDir()
+	goFile := filepath.Join(tmpDir, "main.go")
+	if err := os.WriteFile(goFile, []byte("package main"), 0644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+
+	defaultOpts := DefaultScanOptions()
+
+	tests := []struct {
+		name            string
+		includePatterns []string
+		wantFiles       int
+	}{
+		{
+			name:      "no include pattern",
+			wantFiles: 1,
+		},
+		{
+			name:            "matching include pattern",
+			includePatterns: []string{"**/*.go"},
+			wantFiles:       1,
+		},
+		{
+			name:            "matching simple pattern",
+			includePatterns: []string{"*.go"},
+			wantFiles:       1,
+		},
+		{
+			name:            "non-matching include pattern",
+			includePatterns: []string{"**/*.ts"},
+			wantFiles:       0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := &ScanOptions{
+				RootPath:            goFile,
+				SupportedExtensions: defaultOpts.SupportedExtensions,
+				MaxFileSize:         defaultOpts.MaxFileSize,
+				IncludePatterns:     tt.includePatterns,
+			}
+
+			s, err := NewFileScanner(opts)
+			if err != nil {
+				t.Fatalf("NewFileScanner: %v", err)
+			}
+
+			result, err := s.Scan(context.Background())
+			if err != nil {
+				t.Fatalf("Scan: %v", err)
+			}
+
+			if len(result.Files) != tt.wantFiles {
+				t.Errorf("got %d files, want %d", len(result.Files), tt.wantFiles)
+			}
+		})
 	}
 }

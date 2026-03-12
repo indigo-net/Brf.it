@@ -238,8 +238,8 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 				if s.matchesIgnore(path) {
 					return filepath.SkipDir
 				}
-				// Check exclude patterns for directory (trailing slash convention)
-				if s.matchesExclude(path) {
+				// Check exclude patterns for directory
+				if s.matchesExcludeDir(path) {
 					return filepath.SkipDir
 				}
 			}
@@ -270,9 +270,16 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 }
 
 // relPath returns the path relative to the root, using forward slashes.
-// If the path cannot be made relative, returns the original path.
+// When RootPath is a file (not a directory), uses the parent directory as base
+// so that the file's name is preserved for glob matching.
 func (s *FileScanner) relPath(path string) string {
-	rel, err := filepath.Rel(s.opts.RootPath, path)
+	base := s.opts.RootPath
+	// If RootPath is a file, use its parent as the base for relative paths.
+	// This ensures glob matching works (e.g., "**/*.go" matches "main.go").
+	if info, err := os.Stat(base); err == nil && !info.IsDir() {
+		base = filepath.Dir(base)
+	}
+	rel, err := filepath.Rel(base, path)
 	if err != nil {
 		return path
 	}
@@ -303,6 +310,27 @@ func (s *FileScanner) matchesExclude(path string) bool {
 	for _, pattern := range s.opts.ExcludePatterns {
 		if matched, _ := doublestar.Match(pattern, rel); matched {
 			return true
+		}
+	}
+	return false
+}
+
+// matchesExcludeDir returns true if a directory should be pruned.
+// Handles patterns like "vendor/**" by also matching the directory name itself.
+func (s *FileScanner) matchesExcludeDir(path string) bool {
+	if len(s.opts.ExcludePatterns) == 0 {
+		return false
+	}
+	rel := s.relPath(path)
+	for _, pattern := range s.opts.ExcludePatterns {
+		if matched, _ := doublestar.Match(pattern, rel); matched {
+			return true
+		}
+		// "vendor/**" should also prune the "vendor" directory node
+		if stripped := strings.TrimSuffix(pattern, "/**"); stripped != pattern {
+			if matched, _ := doublestar.Match(stripped, rel); matched {
+				return true
+			}
 		}
 	}
 	return false
