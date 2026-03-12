@@ -714,6 +714,74 @@ func TestLogOutputNoDoubleNewline(t *testing.T) {
 	}
 }
 
+func TestScanMultipleIgnoreFiles(t *testing.T) {
+	// Verify that two separate ignore files both take effect
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatalf("failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Create source files and files that should be ignored
+	files := map[string]string{
+		"main.go":    "package main\n",
+		"app.ts":     "const x = 1;\n",
+		"debug.log":  "some log output\n",
+		"cache.tmp":  "temporary data\n",
+		"server.log": "another log\n",
+		"data.tmp":   "more temp data\n",
+	}
+	for name, content := range files {
+		if err := os.WriteFile(filepath.Join(tmpDir, name), []byte(content), 0644); err != nil {
+			t.Fatalf("failed to create file %s: %v", name, err)
+		}
+	}
+
+	// Create two separate ignore files
+	ignoreLog := filepath.Join(tmpDir, ".ignore-logs")
+	if err := os.WriteFile(ignoreLog, []byte("*.log\n"), 0644); err != nil {
+		t.Fatalf("failed to create ignore-logs: %v", err)
+	}
+
+	ignoreTmp := filepath.Join(tmpDir, ".ignore-tmp")
+	if err := os.WriteFile(ignoreTmp, []byte("*.tmp\n"), 0644); err != nil {
+		t.Fatalf("failed to create ignore-tmp: %v", err)
+	}
+
+	opts := DefaultScanOptions()
+	opts.RootPath = tmpDir
+	opts.IgnoreFiles = []string{ignoreLog, ignoreTmp}
+
+	scanner, err := NewFileScanner(opts)
+	if err != nil {
+		t.Fatalf("NewFileScanner returned error: %v", err)
+	}
+
+	result, err := scanner.Scan(context.Background())
+	if err != nil {
+		t.Fatalf("Scan returned error: %v", err)
+	}
+
+	// Should only get main.go and app.ts (*.log and *.tmp excluded)
+	if len(result.Files) != 2 {
+		t.Errorf("expected 2 entries (*.log and *.tmp excluded), got %d", len(result.Files))
+		for _, e := range result.Files {
+			t.Logf("  - %s (%s)", e.Path, e.Language)
+		}
+	}
+
+	// Verify none of the ignored extensions are present
+	for _, f := range result.Files {
+		base := filepath.Base(f.Path)
+		if strings.HasSuffix(base, ".log") {
+			t.Errorf("expected .log files to be excluded, found: %s", f.Path)
+		}
+		if strings.HasSuffix(base, ".tmp") {
+			t.Errorf("expected .tmp files to be excluded, found: %s", f.Path)
+		}
+	}
+}
+
 func TestFilepathBaseEdgeCases(t *testing.T) {
 	// Document expected behavior of filepath.Base for edge cases
 	tests := []struct {
