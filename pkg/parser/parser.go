@@ -3,6 +3,7 @@ package parser
 
 import (
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -167,13 +168,15 @@ func GetParser(lang string) (Parser, bool) {
 	return defaultRegistry.Get(lang)
 }
 
-// LanguageMapping maps file extensions to language names.
-var LanguageMapping = map[string]string{
+// languageMapping maps file extensions to language names.
+// This is the canonical source of truth for extension-to-language mapping.
+// Immutable after package initialization; safe for concurrent reads.
+var languageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
-	".tsx":   "tsx",
+	".tsx":   "typescript",
 	".js":    "javascript",
-	".jsx":   "jsx",
+	".jsx":   "javascript",
 	".py":    "python",
 	".java":  "java",
 	".rs":    "rust",
@@ -181,18 +184,36 @@ var LanguageMapping = map[string]string{
 	".php":   "php",
 	".c":     "c",
 	".cpp":   "cpp",
-	".h":     "c",
+	".h":     "cpp",
 	".hpp":   "cpp",
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
 	".kts":   "kotlin",
+	".lua":   "lua",
+	".sh":    "shell",
+	".bash":  "shell",
+	".zsh":   "shell",
+	".scala": "scala",
+	".sc":    "scala",
+	".ex":    "elixir",
+	".exs":   "elixir",
+	".sql":   "sql",
+}
+
+// LanguageMapping returns a copy of the canonical extension-to-language mapping.
+func LanguageMapping() map[string]string {
+	m := make(map[string]string, len(languageMapping))
+	for k, v := range languageMapping {
+		m[k] = v
+	}
+	return m
 }
 
 // DetectLanguage returns the language for a given file path.
 func DetectLanguage(path string) string {
-	ext := filepath.Ext(path)
-	if lang, ok := LanguageMapping[ext]; ok {
+	ext := strings.ToLower(filepath.Ext(path))
+	if lang, ok := languageMapping[ext]; ok {
 		return lang
 	}
 	return ""

@@ -13,7 +13,7 @@ func ExampleDetectLanguage() {
 	fmt.Println(parser.DetectLanguage("unknown.xyz"))
 	// Output:
 	// go
-	// tsx
+	// typescript
 	// python
 	//
 }
