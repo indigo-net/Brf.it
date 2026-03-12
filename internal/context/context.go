@@ -203,7 +203,7 @@ func (p *Packager) Package(opts *Options) (*Result, error) {
 	}
 
 	// 8. Calculate token count
-	tokenCount, _ := p.tokenizer.Count(string(content))
+	tokenCount, _ := p.tokenizer.Count(content)
 
 	return &Result{
 		Content:         content,
