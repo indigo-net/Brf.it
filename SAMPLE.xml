@@ -870,9 +870,11 @@ main &quot;$@&quot;</imports>
 	Error      string    `json:&quot;error,omitempty&quot;`
 }</type>
       <type>type jsonSig struct {
-	Kind string `json:&quot;kind&quot;`
-	Text string `json:&quot;text&quot;`
-	Doc  string `json:&quot;doc,omitempty&quot;`
+	Kind     string `json:&quot;kind&quot;`
+	Text     string `json:&quot;text&quot;`
+	Doc      string `json:&quot;doc,omitempty&quot;`
+	Line     int    `json:&quot;line,omitempty&quot;`
+	Exported bool   `json:&quot;exported,omitempty&quot;`
 }</type>
       <function>func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)</function>
     </file>

@@ -988,9 +988,11 @@ type jsonFile struct {
 	Error      string    `json:"error,omitempty"`
 }
 type jsonSig struct {
-	Kind string `json:"kind"`
-	Text string `json:"text"`
-	Doc  string `json:"doc,omitempty"`
+	Kind     string `json:"kind"`
+	Text     string `json:"text"`
+	Doc      string `json:"doc,omitempty"`
+	Line     int    `json:"line,omitempty"`
+	Exported bool   `json:"exported,omitempty"`
 }
 func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
 ```
