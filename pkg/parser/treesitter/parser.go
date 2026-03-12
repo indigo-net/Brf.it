@@ -1,6 +1,7 @@
 package treesitter
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
 	"sync"
@@ -246,18 +247,18 @@ func (p *TreeSitterParser) extractSignatures(
 			if end > uint(len(content)) || start > end {
 				continue
 			}
-			text := string(content[start:end])
+			raw := content[start:end]
 
 			switch name {
 			case CaptureName:
-				sig.Name = text
+				sig.Name = string(raw)
 			case CaptureSignature:
-				sig.Text = strings.TrimSpace(text)
+				sig.Text = string(bytes.TrimSpace(raw))
 				sig.Line = int(node.StartPosition().Row) + 1
 				sig.EndLine = int(node.EndPosition().Row) + 1
 			case CaptureDoc:
-				if text != "" {
-					sig.Doc = cleanComment(text)
+				if len(raw) > 0 {
+					sig.Doc = cleanComment(string(raw))
 				}
 			}
 		}
@@ -1607,17 +1608,15 @@ func (p *TreeSitterParser) extractImports(
 			}
 			name := captureNames[capture.Index]
 			node := capture.Node
-			start, end := node.StartByte(), node.EndByte()
-			if end > uint(len(content)) || start > end {
-				continue
-			}
-			text := string(content[start:end])
 
 			switch name {
 			case CaptureImportPath:
 				importNode = &node
 			case CaptureLuaRequireFn:
-				luaRequireFn = text
+				start, end := node.StartByte(), node.EndByte()
+				if end <= uint(len(content)) && start <= end {
+					luaRequireFn = string(content[start:end])
+				}
 			}
 		}
 
@@ -1637,14 +1636,15 @@ func (p *TreeSitterParser) extractImports(
 			}
 			seenPositions[startByte] = true
 
-			rawText := string(content[startByte:(*importNode).EndByte()])
+			rawBytes := content[startByte:(*importNode).EndByte()]
 
 			// Elixir: the broad import query pattern also matches defmodule/defprotocol/defimpl
-			// (since they also take alias arguments). Filter them out.
+			// (since they also take alias arguments). Filter them out on byte slice
+			// to avoid string conversion for skipped entries.
 			if opts.Language == "elixir" {
 				skip := false
-				for _, defKw := range []string{"defmodule ", "defprotocol ", "defimpl "} {
-					if strings.HasPrefix(rawText, defKw) {
+				for _, defKw := range [][]byte{[]byte("defmodule "), []byte("defprotocol "), []byte("defimpl ")} {
+					if bytes.HasPrefix(rawBytes, defKw) {
 						skip = true
 						break
 					}
@@ -1655,7 +1655,7 @@ func (p *TreeSitterParser) extractImports(
 			}
 
 			// Remove blank lines (Go module group separators, etc.)
-			rawText = removeBlankLines(rawText)
+			rawText := removeBlankLines(string(rawBytes))
 			if rawText != "" {
 				imports = append(imports, rawText)
 			}
