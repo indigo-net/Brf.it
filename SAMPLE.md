@@ -6278,7 +6278,6 @@ func (p *TreeSitterParser) extractSignatures(
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]parser.Signature, error)
-signatures []parser.Signature
 kindNode *sitter.Node
 func cleanComment(text string) string
 func isExported(name, _ string) bool
@@ -6324,7 +6323,6 @@ func (p *TreeSitterParser) extractImports(
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]string, error)
-imports []string
 importNode *sitter.Node
 func removeBlankLines(text string) string
 buf strings.Builder
