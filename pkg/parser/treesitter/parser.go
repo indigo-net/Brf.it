@@ -252,6 +252,9 @@ func (p *TreeSitterParser) extractSignatures(
 		var kindNode *sitter.Node
 
 		for _, capture := range match.Captures {
+			if int(capture.Index) >= len(captureNames) {
+				continue
+			}
 			name := captureNames[capture.Index]
 			node := capture.Node
 
@@ -1676,6 +1679,9 @@ func (p *TreeSitterParser) extractImports(
 		var importNode *sitter.Node
 
 		for _, capture := range match.Captures {
+			if int(capture.Index) >= len(captureNames) {
+				continue
+			}
 			name := captureNames[capture.Index]
 			node := capture.Node
 			start, end := node.StartByte(), node.EndByte()
