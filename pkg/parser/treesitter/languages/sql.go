@@ -8,6 +8,7 @@ import (
 
 // SQLQuery implements LanguageQuery for SQL language.
 type SQLQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *SQLQuery) Language() *sitter.Language {
 // Query returns the SQL query pattern.
 func (q *SQLQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for SQL queries.
-func (q *SQLQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from SQL DDL node types to Signature kinds.

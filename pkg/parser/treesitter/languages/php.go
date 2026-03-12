@@ -8,6 +8,7 @@ import (
 
 // PHPQuery implements LanguageQuery for PHP language.
 type PHPQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *PHPQuery) Language() *sitter.Language {
 // Query returns the PHP query pattern.
 func (q *PHPQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for PHP queries.
-func (q *PHPQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

@@ -8,6 +8,7 @@ import (
 
 // ShellQuery implements LanguageQuery for Shell/Bash language.
 type ShellQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -28,16 +29,6 @@ func (q *ShellQuery) Language() *sitter.Language {
 // Query returns the Shell/Bash query pattern.
 func (q *ShellQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Shell/Bash queries.
-func (q *ShellQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.

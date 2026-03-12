@@ -7,6 +7,7 @@ import (
 
 // RubyQuery implements LanguageQuery for Ruby language.
 type RubyQuery struct {
+	BaseQuery
 	language *sitter.Language
 	query    []byte
 }
@@ -27,16 +28,6 @@ func (q *RubyQuery) Language() *sitter.Language {
 // Query returns the Ruby query pattern.
 func (q *RubyQuery) Query() []byte {
 	return q.query
-}
-
-// Captures returns the capture names for Ruby queries.
-func (q *RubyQuery) Captures() []string {
-	return []string{
-		captureName,
-		captureSignature,
-		captureDoc,
-		captureKind,
-	}
 }
 
 // KindMapping returns the mapping from node types to Signature kinds.
