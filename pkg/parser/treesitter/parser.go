@@ -480,68 +480,12 @@ func cleanComment(text string) string {
 }
 
 // isExported checks if a name is exported/public.
-func isExported(name, language string) bool {
-	if len(name) == 0 {
-		return false
-	}
-
-	switch language {
-	case "go":
-		// Go: module-level symbols are always included
-		// (Tree-sitter query already captures only package-level declarations)
-		return true
-	case "typescript", "tsx", "javascript", "jsx":
-		// TypeScript/JavaScript: assume all found signatures are exported
-		// (since we query for export_statement patterns)
-		return true
-	case "python":
-		// Python: all elements are considered public (no private filtering)
-		return true
-	case "c":
-		// C: all functions are considered exported (static functions handled separately)
-		return true
-	case "cpp":
-		// C++: all elements are considered exported (access control in class context is complex)
-		return true
-	case "java":
-		// Java: all elements are considered exported (visibility modifiers not filtered)
-		return true
-	case "rust":
-		// Rust: all elements are considered public (user requested private extraction too)
-		return true
-	case "swift":
-		// Swift: all elements are considered public (visibility modifiers preserved in signature text)
-		return true
-	case "kotlin":
-		// Kotlin: default visibility is public, all elements are considered exported
-		return true
-	case "csharp":
-		// C#: all elements are considered exported (visibility modifiers preserved in signature text)
-		return true
-	case "lua":
-		// Lua: all elements are considered public (no access modifiers)
-		return true
-	case "shell":
-		// Shell/Bash: all functions and variables are public
-		return true
-	case "php":
-		// PHP: all elements are considered exported (visibility modifiers preserved in signature text)
-		return true
-	case "ruby":
-		// Ruby: all elements are considered public (visibility modifiers not filtered)
-		return true
-	case "scala":
-		// Scala: all elements are considered exported (visibility modifiers preserved in signature text)
-		return true
-	case "elixir":
-		// Elixir: all elements are considered exported (defp/defmacrop preserved in signature text)
-		return true
-	case "sql":
-		// SQL: all DDL statements are considered public
-		return true
-	default:
-		return false
-	}
+// Currently all supported languages treat every captured signature as exported,
+// since visibility filtering is either handled by Tree-sitter queries
+// (e.g., Go package-level, TS export_statement) or deferred to the user
+// via --include-private. Returns false only for empty names.
+func isExported(name, _ string) bool {
+	return len(name) > 0
 }
 
 // stripBody removes the function/method body from the signature text.
