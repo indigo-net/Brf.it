@@ -25,6 +25,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/indigo-net/Brf.it/internal/config"
 	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
@@ -95,12 +96,9 @@ type SummarizeProjectOutput struct {
 
 func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error) {
 	return func(ctx context.Context, req *mcp.CallToolRequest, input SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error) {
-		path := defaultRoot
-		if input.Path != "" {
-			p, err := filepath.Abs(input.Path)
-			if err == nil {
-				path = p
-			}
+		path, err := resolvePath(defaultRoot, input.Path)
+		if err != nil {
+			return nil, SummarizeProjectOutput{}, err
 		}
 
 		// Validate path exists
@@ -108,9 +106,9 @@ func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToo
 			return nil, SummarizeProjectOutput{}, fmt.Errorf("path not found: %s", path)
 		}
 
-		format := "xml"
-		if input.Format != "" {
-			format = input.Format
+		format, err := validateFormat(input.Format)
+		if err != nil {
+			return nil, SummarizeProjectOutput{}, err
 		}
 
 		cfg := config.DefaultConfig()
@@ -150,21 +148,18 @@ type SummarizeFileOutput struct {
 
 func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error) {
 	return func(ctx context.Context, req *mcp.CallToolRequest, input SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error) {
-		path := defaultRoot
-		if input.Path != "" {
-			p, err := filepath.Abs(input.Path)
-			if err == nil {
-				path = p
-			}
+		path, err := resolvePath(defaultRoot, input.Path)
+		if err != nil {
+			return nil, SummarizeFileOutput{}, err
 		}
 
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			return nil, SummarizeFileOutput{}, fmt.Errorf("path not found: %s", path)
 		}
 
-		format := "xml"
-		if input.Format != "" {
-			format = input.Format
+		format, err := validateFormat(input.Format)
+		if err != nil {
+			return nil, SummarizeFileOutput{}, err
 		}
 
 		cfg := config.DefaultConfig()
@@ -185,6 +180,43 @@ func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRe
 			TotalSignatures: result.TotalSignatures,
 		}, nil
 	}
+}
+
+// validFormats is the set of accepted output format values.
+var validFormats = map[string]bool{"xml": true, "md": true, "markdown": true, "json": true}
+
+// resolvePath resolves an input path relative to the default root, ensuring
+// the result stays within the root directory to prevent path traversal.
+// If inputPath is empty, defaultRoot is returned unchanged.
+func resolvePath(defaultRoot, inputPath string) (string, error) {
+	if inputPath == "" {
+		return defaultRoot, nil
+	}
+
+	absPath, err := filepath.Abs(inputPath)
+	if err != nil {
+		return "", fmt.Errorf("invalid path: %w", err)
+	}
+
+	// Ensure the resolved path is within the project root.
+	rel, err := filepath.Rel(defaultRoot, absPath)
+	if err != nil || strings.HasPrefix(rel, "..") {
+		return "", fmt.Errorf("path %q is outside the project root %q", inputPath, defaultRoot)
+	}
+
+	return absPath, nil
+}
+
+// validateFormat checks that format is a supported value, returning the
+// validated format or "xml" as default when format is empty.
+func validateFormat(format string) (string, error) {
+	if format == "" {
+		return "xml", nil
+	}
+	if !validFormats[format] {
+		return "", fmt.Errorf("invalid format %q: must be xml, md, markdown, or json", format)
+	}
+	return format, nil
 }
 
 // runPackager creates and runs a Packager with the given config.
