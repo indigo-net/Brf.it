@@ -146,6 +146,7 @@ Options:
   --include-hidden        숨김 파일 포함
   --include-body          함수 본문 포함 (기본값: 시그니처만)
   --include-imports       import/export 문 포함 (기본값: 미포함)
+  --include-private       비공개/unexported 심볼 포함
   --no-tree               디렉토리 트리 생략
   --no-tokens             토큰 수 계산 비활성화
   --max-size <bytes>      최대 파일 크기 (기본값: 512000 = 500KB)

@@ -102,6 +102,8 @@ Wenn `--include-body` Flag nicht verwendet wird:
 - Funktionen/Methoden: Body nach Signatur-beendendem Doppelpunkt (`:`) entfernt
 - Klassen: nur Klassenname und Vererbungsinformationen werden beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Doppelpunkt-Behandlung in Type Hints
 
 Doppelpunkte in komplexen Type Hints (z.B. `Dict[str, int]`) werden von Funktions-beendenden Doppelpunkten unterschieden:

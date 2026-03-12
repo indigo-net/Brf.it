@@ -176,6 +176,7 @@ brfit [경로] [옵션]
 | `--output` | `-o` | 출력 파일 경로 | stdout |
 | `--include-body` | | 함수 본문 포함 | `false` |
 | `--include-imports` | | import 문 포함 | `false` |
+| `--include-private` | | 비공개/unexported 심볼 포함 | `false` |
 | `--ignore` | `-i` | ignore 파일 경로 (여러 번 지정 가능) | `.gitignore` |
 | `--include-hidden` | | 숨김 파일 포함 | `false` |
 | `--no-tree` | | 디렉토리 트리 생략 | `false` |

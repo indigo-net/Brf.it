@@ -127,6 +127,8 @@ val DEFAULT_TIMEOUT: Long = 5000L
 - プロパティ (val/var): 値式は保持
 - 型エイリアス: 完全に保持
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### ドキュメントコメント
 
 - `/** ... */`（KDoc）と `//` 行コメントの両方が抽出されます

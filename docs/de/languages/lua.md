@@ -100,6 +100,7 @@ Wenn das `--include-body` Flag nicht verwendet wird:
 ### Import-Extraktion
 
 - `require()`-Aufrufe werden mit dem `--include-imports` Flag extrahiert
+- Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen
 - Format: `local json = require("json")` (vollständige Anweisung wird beibehalten)
 
 ### Dokumentationskommentare

@@ -145,6 +145,8 @@ Wenn das `--include-body` Flag nicht verwendet wird:
 - Eigenschaften: Auto-Eigenschaften beibehalten, Ausdruckskörper-Eigenschaften entfernt
 - Delegate: kein Körper, unverändert zurückgegeben
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Dokumentationskommentare
 
 - Sowohl `///` XML-Dokumentationskommentare als auch `//` Zeilenkommentare werden extrahiert

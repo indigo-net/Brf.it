@@ -93,6 +93,8 @@ When `--include-body` flag is not used:
 - Functions: body removed after opening brace `{`
 - Struct/Enum/Typedef/Macro: full text preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Pointer Return Types
 
 Both direct and pointer return types are supported:

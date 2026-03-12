@@ -98,6 +98,8 @@ Wenn das Flag `--include-body` nicht verwendet wird:
 - Erweiterungen: Körper nach der öffnenden geschweiften Klammer `{` entfernt
 - Eigenschaften (let/var): Wertausdruck wird beibehalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Dokumentationskommentare
 
 - Nur `///` Dokumentationskommentare werden extrahiert

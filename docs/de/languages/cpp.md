@@ -142,7 +142,8 @@ namespace outer {
 
 ### Include-Anweisungen
 
-Verwenden Sie `--include-imports`, um `#include`-Direktiven zu extrahieren:
+Verwenden Sie `--include-imports`, um `#include`-Direktiven zu extrahieren.
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
 
 ```cpp
 #include <iostream>        // System-Include

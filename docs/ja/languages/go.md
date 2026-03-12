@@ -78,6 +78,8 @@ func (s *Server) Start() error {
 - 関数/メソッド：中括弧`{`以降の本体を削除
 - 型：`struct`または`interface`キーワードまで保持
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### サポートされていない要素
 
 - 埋め込み関数（関数内の関数）

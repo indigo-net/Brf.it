@@ -86,6 +86,8 @@ Wenn `--include-body` Flag nicht verwendet wird:
 - Funktionen: Body nach öffnender Klammer `{` entfernt
 - Struct/Enum/Typedef/Macro: vollständiger Text erhalten
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Pointer-Rückgabetypen
 
 Sowohl direkte als auch Pointer-Rückgabetypen werden unterstützt:

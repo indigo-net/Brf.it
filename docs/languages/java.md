@@ -166,6 +166,8 @@ When `--include-body` flag is not used:
 - Classes/Interfaces/Enums: body removed after opening brace `{`
 - Abstract methods: kept as-is (end with `;`)
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Javadoc (Future Support)
 
 - Current version: `//` and `/* */` comments above declarations captured as doc

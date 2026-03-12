@@ -142,7 +142,8 @@ namespace outer {
 
 ### Include文
 
-`--include-imports`を使用して`#include`ディレクティブを抽出：
+`--include-imports`を使用して`#include`ディレクティブを抽出。
+`--include-private`を使用して非公開/unexportedシンボルを含める。
 
 ```cpp
 #include <iostream>        // システムinclude

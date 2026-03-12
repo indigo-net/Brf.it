@@ -77,6 +77,8 @@ CREATE INDEX idx_users_name ON users (name);
 - 뷰: `AS SELECT...` 쿼리가 제거되고, 선언부만 유지됩니다
 - 구체화된 뷰: 뷰와 동일하게 쿼리가 제거됩니다
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 주석
 
 - 단일 행 주석(`-- 주석`)은 문서로 추출됩니다

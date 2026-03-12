@@ -98,6 +98,8 @@ public let MAX_POINTS = 1000
 - 확장: 여는 중괄호 `{` 이후 본문 제거
 - 프로퍼티 (let/var): 값 표현식은 보존
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 문서 주석
 
 - `///` 문서 주석만 추출됩니다

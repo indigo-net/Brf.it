@@ -109,6 +109,8 @@ When `--include-body` flag is not used:
 - Functions/Methods: body removed after signature-ending colon (`:`)
 - Classes: only class name and inheritance info are preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Colon Handling in Type Hints
 
 Colons in complex type hints (e.g., `Dict[str, int]`) are distinguished from function-ending colons:

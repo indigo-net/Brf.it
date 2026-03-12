@@ -123,6 +123,8 @@ When `--include-body` flag is not used:
 - Impl blocks: body removed after opening brace `{`
 - Const/Static: value expression is preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Doc Comments
 
 - Only `///` and `//!` doc comments are extracted

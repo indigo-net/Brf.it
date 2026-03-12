@@ -92,6 +92,8 @@ When `--include-body` flag is not used:
 
 With `--include-imports`, the following are captured:
 
+Use `--include-private` to include non-exported/private symbols.
+
 - `import Module`
 - `alias Module`
 - `use Module`

@@ -100,6 +100,7 @@ local json = require("json")
 ### Import 추출
 
 - `require()` 호출은 `--include-imports` 플래그로 추출 가능
+- `--include-private`를 사용하여 비공개/unexported 심볼 포함
 - 형식: `local json = require("json")` (전체 구문 보존)
 
 ### 문서 주석

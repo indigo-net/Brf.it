@@ -100,6 +100,7 @@ local json = require("json")
 ### インポート抽出
 
 - `require()`呼び出しは`--include-imports`フラグで抽出可能
+- `--include-private`を使用して非公開/unexportedシンボルを含める
 - 形式: `local json = require("json")`（完全な文が保持されます）
 
 ### ドキュメントコメント

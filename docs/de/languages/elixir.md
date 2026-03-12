@@ -89,6 +89,8 @@ Wenn das `--include-body`-Flag nicht verwendet wird:
 
 Mit `--include-imports` werden folgende erfasst:
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 - `import Module`
 - `alias Module`
 - `use Module`

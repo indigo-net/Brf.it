@@ -53,6 +53,9 @@ type Config struct {
 	// NoTokens disables token count calculation.
 	NoTokens bool
 
+	// IncludePrivate determines whether to include non-exported/private symbols.
+	IncludePrivate bool
+
 	// NoSchema skips the schema section in XML output.
 	NoSchema bool
 
@@ -74,6 +77,7 @@ func DefaultConfig() *Config {
 		IncludeHidden:  false,
 		IncludeBody:    false,
 		IncludeImports: false,
+		IncludePrivate: false,
 		NoTree:         false,
 		NoTokens:       false,
 		MaxFileSize:    512000, // 500KB
@@ -155,7 +159,7 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		IncludeImports: c.IncludeImports,
 		DedupeImports:  c.DedupeImports,
 		IncludeTree:    !c.NoTree,
-		IncludePrivate: false, // Future: add --include-private flag
+		IncludePrivate: c.IncludePrivate,
 		MaxFileSize:    c.MaxFileSize,
 		MaxDocLength:   c.MaxDocLength,
 		NoSchema:       c.NoSchema,

@@ -127,6 +127,8 @@ val DEFAULT_TIMEOUT: Long = 5000L
 - 프로퍼티 (val/var): 값 표현식은 보존
 - 타입 별칭: 전체 보존
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 문서 주석
 
 - `/** ... */` (KDoc) 및 `//` 줄 주석 모두 추출됩니다

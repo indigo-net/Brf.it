@@ -90,6 +90,7 @@ Wenn das `--include-body` Flag nicht verwendet wird:
 ### Import-Extraktion
 
 - `require`- und `require_relative`-Anweisungen werden mit dem `--include-imports` Flag extrahiert
+- Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen
 - Format: `require "json"` / `require_relative "helpers"` (vollständige Anweisung wird beibehalten)
 
 ### Dokumentationskommentare

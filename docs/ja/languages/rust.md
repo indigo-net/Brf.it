@@ -116,6 +116,8 @@ pub const MAX_POINTS: usize = 1000;
 - Impl ブロック: 開き括弧 `{` 以降の本体を削除
 - Const/Static: 値式は保持
 
+`--include-private`を使用して非公開/unexportedシンボルを含める。
+
 ### ドキュメントコメント
 
 - `///` および `//!` ドキュメントコメントのみが抽出されます

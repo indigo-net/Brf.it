@@ -149,7 +149,8 @@ namespace outer {
 
 ### Include Statements
 
-Use `--include-imports` to extract `#include` directives:
+Use `--include-imports` to extract `#include` directives.
+Use `--include-private` to include non-exported/private symbols.
 
 ```cpp
 #include <iostream>        // System include

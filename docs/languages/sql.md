@@ -80,6 +80,8 @@ When `--include-body` flag is not used:
 - Views: the `AS SELECT...` query is stripped, keeping only the declaration
 - Materialized views: same as views, query is stripped
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Comments
 
 - Single-line comments (`-- comment`) are extracted as documentation

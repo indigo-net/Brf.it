@@ -134,6 +134,8 @@ When `--include-body` flag is not used:
 - Properties (val/var): value expression is preserved
 - Type aliases: fully preserved
 
+Use `--include-private` to include non-exported/private symbols.
+
 ### Doc Comments
 
 - Both `/** ... */` (KDoc) and `//` line comments are extracted

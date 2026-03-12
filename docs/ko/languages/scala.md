@@ -81,6 +81,8 @@ type StringList = List[String]
 - val/var: 값이 보존됩니다 (`lazy val`, `implicit val` 포함)
 - 타입 별칭: 전체 보존
 
+`--include-private`를 사용하여 비공개/unexported 심볼 포함.
+
 ### 제네릭
 
 - 제네릭 타입 파라미터 `[A, B]`가 시그니처에 완전히 보존됩니다

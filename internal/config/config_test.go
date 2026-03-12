@@ -30,6 +30,10 @@ func TestDefaultConfig(t *testing.T) {
 		t.Error("expected IncludeHidden to be false by default")
 	}
 
+	if cfg.IncludePrivate {
+		t.Error("expected IncludePrivate to be false by default")
+	}
+
 	if cfg.NoTree {
 		t.Error("expected NoTree to be false by default")
 	}
@@ -227,6 +231,39 @@ func TestValidateMaxFileSizeUpperBound(t *testing.T) {
 			}
 			if !tt.wantWarning && hasWarning {
 				t.Errorf("unexpected warning on stderr: %s", buf.String())
+			}
+		})
+	}
+}
+
+func TestToOptionsIncludePrivate(t *testing.T) {
+	tests := []struct {
+		name           string
+		includePrivate bool
+		want           bool
+	}{
+		{
+			name:           "default false",
+			includePrivate: false,
+			want:           false,
+		},
+		{
+			name:           "set true propagates",
+			includePrivate: true,
+			want:           true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := DefaultConfig()
+			cfg.Path = "/test"
+			cfg.Version = "1.0.0"
+			cfg.IncludePrivate = tt.includePrivate
+
+			opts := cfg.ToOptions()
+			if opts.IncludePrivate != tt.want {
+				t.Errorf("expected IncludePrivate %v, got %v", tt.want, opts.IncludePrivate)
 			}
 		})
 	}

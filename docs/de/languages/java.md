@@ -159,6 +159,8 @@ Wenn das `--include-body`-Flag nicht verwendet wird:
 - Klassen/Interfaces/Enums: Rumpf nach öffnender Klammer `{` entfernt
 - Abstrakte Methoden: unverändert beibehalten (enden mit `;`)
 
+Verwenden Sie `--include-private`, um nicht-exportierte/private Symbole einzubeziehen.
+
 ### Javadoc (Zukünftige Unterstützung)
 
 - Aktuelle Version: `//` und `/* */` Kommentare über Deklarationen werden als doc erfasst
