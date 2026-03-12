@@ -64,6 +64,11 @@ type ScanOptions struct {
 	// Supports doublestar (**) patterns.
 	ExcludePatterns []string
 
+	// ChangedFiles is an optional whitelist of file paths (relative to RootPath).
+	// When non-nil, only files in this list are included in scan results.
+	// Used by --changed and --since flags to restrict scanning to git-changed files.
+	ChangedFiles map[string]bool
+
 	// IncludeHidden determines whether to include hidden files (dotfiles).
 	IncludeHidden bool
 
@@ -370,6 +375,14 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 	// Check include patterns
 	if !s.matchesInclude(path) {
 		return FileEntry{}, false
+	}
+
+	// Check changed files whitelist
+	if s.opts.ChangedFiles != nil {
+		rel := s.relPath(path)
+		if !s.opts.ChangedFiles[rel] {
+			return FileEntry{}, false
+		}
 	}
 
 	// Check extension

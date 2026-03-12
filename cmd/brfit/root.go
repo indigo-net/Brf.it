@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/indigo-net/Brf.it/internal/config"
 	"github.com/indigo-net/Brf.it/internal/context"
@@ -135,6 +137,13 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
 		"skip XML schema section in output")
 
+	// Git change detection flags
+	cmd.Flags().BoolVar(&c.Changed, "changed", c.Changed,
+		"only scan files changed in git working tree (git diff --name-only HEAD)")
+
+	cmd.Flags().StringVar(&c.Since, "since", c.Since,
+		"only scan files changed since the specified commit/tag (e.g., \"v1.0.0\", \"HEAD~5\")")
+
 	// Version flag
 	cmd.Flags().BoolP("version", "v", false, "print version information")
 }
@@ -173,6 +182,16 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		return fmt.Errorf("configuration error: %w", err)
 	}
 
+	// Resolve git changed files if --changed or --since is specified
+	var changedFiles map[string]bool
+	if c.Changed || c.Since != "" {
+		files, err := resolveChangedFiles(c.Path, c.Changed, c.Since)
+		if err != nil {
+			return fmt.Errorf("failed to resolve changed files: %w", err)
+		}
+		changedFiles = files
+	}
+
 	// Create scan options from config
 	scanOpts := &scanner.ScanOptions{
 		RootPath:            c.Path,
@@ -180,6 +199,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		IgnoreFiles:         c.IgnoreFiles,
 		IncludePatterns:     c.IncludePatterns,
 		ExcludePatterns:     c.ExcludePatterns,
+		ChangedFiles:        changedFiles,
 		IncludeHidden:       c.IncludeHidden,
 		MaxFileSize:         c.MaxFileSize,
 	}
@@ -230,6 +250,49 @@ func writeOutput(result *context.Result, c *config.Config) error {
 
 	// Write to file
 	return writeToFile(c.Output, result.Content)
+}
+
+// resolveChangedFiles runs git diff to get changed file paths and returns them
+// as a set of relative paths (forward-slash separated). The resulting map is
+// suitable for ScanOptions.ChangedFiles.
+func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error) {
+	// Determine which git command to run
+	var args []string
+	if since != "" {
+		// --since <ref>: files changed between ref and HEAD + working tree
+		args = []string{"diff", "--name-only", since}
+	} else {
+		// --changed: uncommitted changes (staged + unstaged)
+		args = []string{"diff", "--name-only", "HEAD"}
+	}
+
+	// Determine directory to run git in
+	dir := rootPath
+	if info, err := os.Stat(rootPath); err == nil && !info.IsDir() {
+		dir = filepath.Dir(rootPath)
+	}
+
+	cmd := exec.Command("git", args...)
+	cmd.Dir = dir
+	out, err := cmd.Output()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return nil, fmt.Errorf("git diff failed: %s", string(exitErr.Stderr))
+		}
+		return nil, fmt.Errorf("git not found or not a git repository: %w", err)
+	}
+
+	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
+	files := make(map[string]bool, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			// git diff output uses forward slashes
+			files[filepath.ToSlash(line)] = true
+		}
+	}
+
+	return files, nil
 }
 
 // writeToFile writes content to a file, creating parent directories if needed.
