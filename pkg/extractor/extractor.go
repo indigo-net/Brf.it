@@ -163,7 +163,7 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 		go func(idx int, entry scanner.FileEntry) {
 			defer wg.Done()
 			defer func() { <-sem }() // Release
-			extracted[idx] = e.extractFile(entry, opts)
+			extracted[idx] = e.extractFile(ctx, entry, opts)
 		}(i, fileEntry)
 	}
 	wg.Wait()
@@ -193,7 +193,7 @@ func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.F
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		extracted := e.extractFile(fileEntry, opts)
+		extracted := e.extractFile(ctx, fileEntry, opts)
 		result.Files = append(result.Files, extracted)
 		result.TotalSignatures += len(extracted.Signatures)
 		result.TotalSize += extracted.Size
@@ -218,11 +218,17 @@ func isBinaryContent(content []byte) bool {
 }
 
 // extractFile extracts signatures from a single file.
-func (e *FileExtractor) extractFile(entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile {
+func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile {
 	extracted := ExtractedFile{
 		Path:     entry.Path,
 		Language: entry.Language,
 		Size:     entry.Size,
+	}
+
+	// Check context before expensive I/O
+	if err := ctx.Err(); err != nil {
+		extracted.Error = err
+		return extracted
 	}
 
 	// Get parser for language
