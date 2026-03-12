@@ -74,7 +74,7 @@ func TestPackagerPackage(t *testing.T) {
 
 	p := NewPackager(mockScan, mockExt, formatters)
 
-	result, err := p.Package(&Options{
+	result, err := p.Package(context.Background(), &Options{
 		Path:        ".",
 		Format:      "xml",
 		IncludeTree: false,
@@ -133,7 +133,7 @@ func TestPackagerPackageMarkdown(t *testing.T) {
 	p := NewPackager(mockScan, mockExt, formatters)
 
 	// Test with "md" - should be normalized to "markdown"
-	result, err := p.Package(&Options{
+	result, err := p.Package(context.Background(), &Options{
 		Path:        ".",
 		Format:      "md",
 		IncludeTree: false,
@@ -177,7 +177,7 @@ func TestPackagerPackageMarkdownFull(t *testing.T) {
 	p := NewPackager(mockScan, mockExt, formatters)
 
 	// Test with "markdown" directly
-	result, err := p.Package(&Options{
+	result, err := p.Package(context.Background(), &Options{
 		Path:        ".",
 		Format:      "markdown",
 		IncludeTree: false,
@@ -206,7 +206,7 @@ func TestPackagerUnknownFormat(t *testing.T) {
 
 	p := NewPackager(mockScan, mockExt, formatters)
 
-	result, err := p.Package(&Options{
+	result, err := p.Package(context.Background(), &Options{
 		Format: "unknown",
 	})
 	if err != nil {
@@ -248,7 +248,7 @@ func TestPackagerSetTokenizer(t *testing.T) {
 	p := NewPackager(mockScan, mockExt, formatters)
 
 	// Default: NoOpTokenizer
-	result, err := p.Package(&Options{Format: "xml"})
+	result, err := p.Package(context.Background(), &Options{Format: "xml"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -258,7 +258,7 @@ func TestPackagerSetTokenizer(t *testing.T) {
 
 	// Set nil tokenizer (should use NoOpTokenizer)
 	p.SetTokenizer(nil)
-	result, err = p.Package(&Options{Format: "xml"})
+	result, err = p.Package(context.Background(), &Options{Format: "xml"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -302,7 +302,7 @@ func TestPackagerWithTiktokenTokenizer(t *testing.T) {
 	}
 	p.SetTokenizer(tt)
 
-	result, err := p.Package(&Options{Format: "xml"})
+	result, err := p.Package(context.Background(), &Options{Format: "xml"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -348,8 +348,8 @@ func TestPackagerTokenizerConsistency(t *testing.T) {
 	p.SetTokenizer(tt)
 
 	// Multiple calls should return consistent token counts
-	result1, _ := p.Package(&Options{Format: "xml"})
-	result2, _ := p.Package(&Options{Format: "xml"})
+	result1, _ := p.Package(context.Background(), &Options{Format: "xml"})
+	result2, _ := p.Package(context.Background(), &Options{Format: "xml"})
 
 	if result1.TokenCount != result2.TokenCount {
 		t.Errorf("inconsistent token counts: %d vs %d", result1.TokenCount, result2.TokenCount)
@@ -469,7 +469,7 @@ func TestPackagerNoStdImportsPassthrough(t *testing.T) {
 	p := NewPackager(mockScan, mockExt, formatters)
 
 	// With IncludeImports=true, imports should be included verbatim
-	result, err := p.Package(&Options{
+	result, err := p.Package(context.Background(), &Options{
 		Path:           ".",
 		Format:         "xml",
 		IncludeTree:    false,
