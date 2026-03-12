@@ -188,6 +188,8 @@ brfit [path] [options]
 | `--no-tree` | | Skip directory tree | `false` |
 | `--no-tokens` | | Disable token counting | `false` |
 | `--max-size` | | Max file size (bytes) | `512000` |
+| `--changed` | | Only scan git-modified files | `false` |
+| `--since` | | Only scan files changed since commit/tag | |
 | `--version` | `-v` | Show version | |
 
 ### Examples
@@ -206,6 +208,12 @@ brfit . --include-body
 
 # Skip directory tree output
 brfit . --no-tree
+
+# Only scan git-modified files
+brfit . --changed
+
+# Only scan files changed since a tag
+brfit . --since v1.0.0
 
 # Include imports (verbatim)
 brfit . --include-imports

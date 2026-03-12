@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `--changed` flag to scan only git-modified files (#179)
+- `--since <ref>` flag to scan files changed since a specific commit/tag (#179)
 - YAML 언어 지원 (`.yaml`, `.yml`)
 - TOML 언어 지원 (`.toml`)
 - `--include-private` CLI flag to include non-exported/private symbols (#177)

@@ -186,6 +186,8 @@ brfit [Pfad] [Optionen]
 | `--no-tree` | | Verzeichnisbaum überspringen | `false` |
 | `--no-tokens` | | Token-Zählung deaktivieren | `false` |
 | `--max-size` | | Maximale Dateigröße (Bytes) | `512000` |
+| `--changed` | | Nur git-geänderte Dateien scannen | `false` |
+| `--since` | | Nur seit Commit/Tag geänderte Dateien scannen | |
 | `--version` | `-v` | Version anzeigen | |
 
 ### Beispiele
