@@ -135,9 +135,9 @@ func TestDetectLanguage(t *testing.T) {
 	}{
 		{"main.go", "go"},
 		{"app.ts", "typescript"},
-		{"component.tsx", "tsx"},
+		{"component.tsx", "typescript"},
 		{"index.js", "javascript"},
-		{"App.jsx", "jsx"},
+		{"App.jsx", "javascript"},
 		{"README.md", ""},
 		{"config.json", ""},
 	}

@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	ignore "github.com/sabhiram/go-gitignore"
+	"github.com/indigo-net/Brf.it/pkg/parser"
 )
 
 // FileEntry represents a single file discovered during scanning.
@@ -59,41 +60,23 @@ type ScanOptions struct {
 }
 
 // DefaultScanOptions returns a ScanOptions with sensible defaults.
+// SupportedExtensions is derived from parser.LanguageMapping (single source of truth).
 func DefaultScanOptions() *ScanOptions {
 	return &ScanOptions{
-		SupportedExtensions: map[string]string{
-			".go":    "go",
-			".ts":    "typescript",
-			".tsx":   "typescript",
-			".js":    "javascript",
-			".jsx":   "javascript",
-			".py":    "python",
-			".c":     "c",
-			".cpp":   "cpp",
-			".hpp":   "cpp",
-			".h":     "cpp",
-			".java":  "java",
-			".rs":    "rust",
-			".swift": "swift",
-			".kt":    "kotlin",
-			".kts":   "kotlin",
-			".cs":    "csharp",
-			".lua":   "lua",
-			".sh":    "shell",
-			".bash":  "shell",
-			".zsh":   "shell",
-			".php":   "php",
-			".rb":    "ruby",
-			".scala": "scala",
-			".sc":    "scala",
-			".ex":    "elixir",
-			".exs":   "elixir",
-			".sql":   "sql",
-		},
+		SupportedExtensions: copyLanguageMapping(),
 		IgnoreFile:    ".gitignore",
 		IncludeHidden: false,
 		MaxFileSize:   512000, // 500KB
 	}
+}
+
+// copyLanguageMapping returns a shallow copy of parser.LanguageMapping.
+func copyLanguageMapping() map[string]string {
+	m := make(map[string]string, len(parser.LanguageMapping))
+	for k, v := range parser.LanguageMapping {
+		m[k] = v
+	}
+	return m
 }
 
 // GetLanguage returns the language for a given file path and whether it's supported.

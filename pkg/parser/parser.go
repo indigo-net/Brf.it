@@ -168,12 +168,14 @@ func GetParser(lang string) (Parser, bool) {
 }
 
 // LanguageMapping maps file extensions to language names.
+// This is the canonical source of truth for extension-to-language mapping.
+// Scanner's DefaultScanOptions references this map.
 var LanguageMapping = map[string]string{
 	".go":    "go",
 	".ts":    "typescript",
-	".tsx":   "tsx",
+	".tsx":   "typescript",
 	".js":    "javascript",
-	".jsx":   "jsx",
+	".jsx":   "javascript",
 	".py":    "python",
 	".java":  "java",
 	".rs":    "rust",
@@ -181,12 +183,21 @@ var LanguageMapping = map[string]string{
 	".php":   "php",
 	".c":     "c",
 	".cpp":   "cpp",
-	".h":     "c",
+	".h":     "cpp",
 	".hpp":   "cpp",
 	".cs":    "csharp",
 	".swift": "swift",
 	".kt":    "kotlin",
 	".kts":   "kotlin",
+	".lua":   "lua",
+	".sh":    "shell",
+	".bash":  "shell",
+	".zsh":   "shell",
+	".scala": "scala",
+	".sc":    "scala",
+	".ex":    "elixir",
+	".exs":   "elixir",
+	".sql":   "sql",
 }
 
 // DetectLanguage returns the language for a given file path.
