@@ -1130,3 +1130,57 @@ func TestScanChangedFilesWhitelist(t *testing.T) {
 		})
 	}
 }
+
+func TestNewFileScannerInvalidPatterns(t *testing.T) {
+	tests := []struct {
+		name    string
+		include []string
+		exclude []string
+		wantErr string
+	}{
+		{
+			name:    "invalid include pattern",
+			include: []string{"[invalid"},
+			wantErr: "invalid include pattern",
+		},
+		{
+			name:    "invalid exclude pattern",
+			exclude: []string{"[bad"},
+			wantErr: "invalid exclude pattern",
+		},
+		{
+			name:    "valid patterns accepted",
+			include: []string{"**/*.go"},
+			exclude: []string{"vendor/**"},
+			wantErr: "",
+		},
+		{
+			name:    "mixed valid and invalid include",
+			include: []string{"*.go", "[unclosed"},
+			wantErr: "invalid include pattern",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			opts := DefaultScanOptions()
+			opts.RootPath = t.TempDir()
+			opts.IncludePatterns = tt.include
+			opts.ExcludePatterns = tt.exclude
+
+			_, err := NewFileScanner(opts)
+			if tt.wantErr == "" {
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
+				}
+			} else {
+				if err == nil {
+					t.Fatal("expected error, got nil")
+				}
+				if !strings.Contains(err.Error(), tt.wantErr) {
+					t.Fatalf("error %q should contain %q", err.Error(), tt.wantErr)
+				}
+			}
+		})
+	}
+}
