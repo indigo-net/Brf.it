@@ -45,7 +45,7 @@ func BenchmarkParseGo(b *testing.B) {
 			b.ReportAllocs()
 
 			for i := 0; i < b.N; i++ {
-				_, err := p.Parse(data, nil)
+				_, err := p.Parse(data, &parser.Options{Language: "go"})
 				if err != nil {
 					b.Fatal(err)
 				}
@@ -154,7 +154,7 @@ func BenchmarkParseWithImports(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		_, err := p.Parse(data, &parser.Options{IncludeImports: true})
+		_, err := p.Parse(data, &parser.Options{Language: "go", IncludeImports: true})
 		if err != nil {
 			b.Fatal(err)
 		}
