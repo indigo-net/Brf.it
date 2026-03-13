@@ -7466,6 +7466,7 @@ type TreeSitterParser struct {
 	cursorPool      sync.Pool
 }
 func NewTreeSitterParser() *TreeSitterParser
+func (p *TreeSitterParser) Close()
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
 queryBytes []byte
 func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)

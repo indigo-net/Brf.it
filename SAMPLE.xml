@@ -7103,6 +7103,7 @@ import &quot;unsafe&quot;</imports>
 	cursorPool      sync.Pool
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
+      <function>func (p *TreeSitterParser) Close()</function>
       <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
       <variable>queryBytes []byte</variable>
       <function>func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)</function>
