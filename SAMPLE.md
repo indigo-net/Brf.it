@@ -7924,6 +7924,7 @@ func TestScanIncludePatterns(t *testing.T)
 func TestScanExcludeDirectory(t *testing.T)
 func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
+func TestNewFileScannerInvalidPatterns(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go
