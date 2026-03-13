@@ -129,6 +129,7 @@ type FileScanner struct {
 	ignorerErrs       []error
 	ignorerErrsWarned bool
 	logger            *log.Logger
+	rootIsFile        bool
 }
 
 // NewFileScanner creates a new FileScanner with the given options.
@@ -150,9 +151,17 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 		}
 	}
 
+	// Cache whether RootPath is a file (not a directory) to avoid
+	// repeated os.Stat calls in relPath().
+	var rootIsFile bool
+	if info, err := os.Stat(opts.RootPath); err == nil && !info.IsDir() {
+		rootIsFile = true
+	}
+
 	s := &FileScanner{
-		opts:   opts,
-		logger: log.New(os.Stderr, "[brfit] ", 0),
+		opts:       opts,
+		logger:     log.New(os.Stderr, "[brfit] ", 0),
+		rootIsFile: rootIsFile,
 	}
 
 	// Try to load each ignore file
@@ -293,7 +302,7 @@ func (s *FileScanner) relPath(path string) string {
 	base := s.opts.RootPath
 	// If RootPath is a file, use its parent as the base for relative paths.
 	// This ensures glob matching works (e.g., "**/*.go" matches "main.go").
-	if info, err := os.Stat(base); err == nil && !info.IsDir() {
+	if s.rootIsFile {
 		base = filepath.Dir(base)
 	}
 	rel, err := filepath.Rel(base, path)
