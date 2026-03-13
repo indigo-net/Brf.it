@@ -233,6 +233,7 @@ func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, e
 		ExcludePatterns:     cfg.ExcludePatterns,
 		IncludeHidden:       cfg.IncludeHidden,
 		MaxFileSize:         cfg.MaxFileSize,
+		PreloadContent:      true,
 	}
 
 	packager, err := pkgcontext.NewDefaultPackager(scanOpts)
