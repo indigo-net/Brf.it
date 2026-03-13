@@ -14,6 +14,8 @@
 >
 > `50 토큰 → 8 토큰` — 같은 정보, 더 적은 토큰.
 
+[Tree-sitter](https://tree-sitter.github.io/tree-sitter/) 기반으로 함수 시그니처, 타입 정의, 문서를 추출하여 Claude, GPT, Gemini 등 LLM을 위한 압축된 XML/Markdown 컨텍스트를 생성하는 CLI 도구 및 MCP 서버입니다. Go, TypeScript, Python, Rust, Java, C/C++ 등 19개 언어를 지원합니다.
+
 [설치](#설치) · [빠른 시작](#빠른-시작) · [지원 언어](#지원-언어)
 
 ---
