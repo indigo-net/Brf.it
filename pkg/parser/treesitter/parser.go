@@ -97,6 +97,19 @@ func NewTreeSitterParser() *TreeSitterParser {
 	return p
 }
 
+// Close releases all cached Tree-sitter Query objects.
+// This should be called when the parser is no longer needed,
+// especially in long-running processes like brfit-mcp.
+func (p *TreeSitterParser) Close() {
+	p.compiledQueries.Range(func(key, value any) bool {
+		if q, ok := value.(*sitter.Query); ok {
+			q.Close()
+		}
+		p.compiledQueries.Delete(key)
+		return true
+	})
+}
+
 // getOrCreateQuery returns a cached query or creates and caches a new one.
 // The returned query should NOT be closed by the caller - it's managed by the cache.
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error) {
