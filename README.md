@@ -15,6 +15,8 @@
 >
 > `50 tokens → 8 tokens` — Same information, fewer tokens.
 
+A CLI tool and MCP server that extracts function signatures, type definitions, and documentation from your codebase using [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) — producing compact XML/Markdown context for LLMs like Claude, GPT, and Gemini. Supports 19 languages including Go, TypeScript, Python, Rust, Java, C/C++, and more.
+
 [Installation](#installation) · [Quick Start](#quick-start) · [Supported Languages](#supported-languages)
 
 ---

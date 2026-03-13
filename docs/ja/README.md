@@ -14,6 +14,8 @@
 >
 > `50トークン → 8トークン` — 同じ情報、より少ないトークン。
 
+[Tree-sitter](https://tree-sitter.github.io/tree-sitter/)を使用して関数シグネチャ、型定義、ドキュメントを抽出し、Claude、GPT、GeminiなどのLLM向けにコンパクトなXML/Markdownコンテキストを生成するCLIツールおよびMCPサーバーです。Go、TypeScript、Python、Rust、Java、C/C++など19言語をサポートしています。
+
 [インストール](#インストール) · [クイックスタート](#クイックスタート) · [サポート言語](#サポート言語)
 
 ---
