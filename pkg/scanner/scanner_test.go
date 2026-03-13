@@ -1184,3 +1184,63 @@ func TestNewFileScannerInvalidPatterns(t *testing.T) {
 		})
 	}
 }
+
+func TestPreloadContent(t *testing.T) {
+	tmpDir := t.TempDir()
+	goFile := filepath.Join(tmpDir, "main.go")
+	content := []byte("package main\n\nfunc main() {}\n")
+	if err := os.WriteFile(goFile, content, 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	defaultOpts := DefaultScanOptions()
+
+	t.Run("preload enabled", func(t *testing.T) {
+		opts := &ScanOptions{
+			RootPath:            tmpDir,
+			SupportedExtensions: defaultOpts.SupportedExtensions,
+			MaxFileSize:         defaultOpts.MaxFileSize,
+			PreloadContent:      true,
+		}
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		result, err := sc.Scan(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(result.Files) != 1 {
+			t.Fatalf("expected 1 file, got %d", len(result.Files))
+		}
+		if result.Files[0].Content == nil {
+			t.Fatal("expected Content to be populated")
+		}
+		if !bytes.Equal(result.Files[0].Content, content) {
+			t.Errorf("content mismatch: got %q, want %q", result.Files[0].Content, content)
+		}
+	})
+
+	t.Run("preload disabled", func(t *testing.T) {
+		opts := &ScanOptions{
+			RootPath:            tmpDir,
+			SupportedExtensions: defaultOpts.SupportedExtensions,
+			MaxFileSize:         defaultOpts.MaxFileSize,
+			PreloadContent:      false,
+		}
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		result, err := sc.Scan(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(result.Files) != 1 {
+			t.Fatalf("expected 1 file, got %d", len(result.Files))
+		}
+		if result.Files[0].Content != nil {
+			t.Fatal("expected Content to be nil when preload is disabled")
+		}
+	})
+}
