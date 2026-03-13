@@ -1,5 +1,7 @@
 package formatter
 
+import "unicode/utf8"
+
 // normalizeKind normalizes a signature kind string to one of the canonical
 // categories: "function", "type", or "variable". If the kind does not match
 // any known category, it is returned unchanged.
@@ -38,10 +40,10 @@ func truncateDoc(doc string, maxLen int) string {
 		return doc
 	}
 
-	runes := []rune(doc)
-	if len(runes) <= maxLen {
+	if utf8.RuneCountInString(doc) <= maxLen {
 		return doc
 	}
 
+	runes := []rune(doc)
 	return string(runes[:maxLen]) + "..."
 }
