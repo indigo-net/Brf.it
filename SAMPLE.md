@@ -7855,8 +7855,10 @@ type FileScanner struct {
 	ignorerErrs       []error
 	ignorerErrsWarned bool
 	logger            *log.Logger
+	rootIsFile        bool
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
+rootIsFile bool
 func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)
 warning string
 func (s *FileScanner) relPath(path string) string

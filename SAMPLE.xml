@@ -7471,8 +7471,10 @@ import &quot;unsafe&quot;</imports>
 	ignorerErrs       []error
 	ignorerErrsWarned bool
 	logger            *log.Logger
+	rootIsFile        bool
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
+      <variable>rootIsFile bool</variable>
       <function>func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)</function>
       <variable>warning string</variable>
       <function>func (s *FileScanner) relPath(path string) string</function>
