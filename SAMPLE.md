@@ -1,8 +1,6 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.19.0*
-
----
+*brf.it 0.20.0*
 
 ## Files
 
@@ -14,8 +12,6 @@ commit  = "none"
 date    = "unknown"
 func main()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root.go
 
@@ -58,8 +54,6 @@ func resolveRemoteURL(remote string) string
 func writeToFile(path string, content []byte) error
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go
 
 ```go
@@ -97,8 +91,6 @@ func TestRemoteFlagInvalidURL(t *testing.T)
 func TestCloneRemoteIntegration(t *testing.T)
 func TestWriteToFile(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main.go
 
@@ -151,8 +143,6 @@ func validateFormat(format string) (string, error)
 func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, error)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go
 
 ```go
@@ -172,8 +162,6 @@ func TestPathTraversal(t *testing.T)
 func TestInvalidFormat(t *testing.T)
 func TestValidSubdirectoryPath(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/examples/go/main.go
 
@@ -200,8 +188,6 @@ func (c Circle) Perimeter() float64
 func NewCircle(center Point, radius float64) (*Circle, error)
 func main()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/examples/java/ShapeService.java
 
@@ -235,8 +221,6 @@ public double totalArea()
 public Optional<Shape> largestShape()
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/examples/python/api.py
 
 ```python
@@ -254,8 +238,6 @@ def complete(self, task_id: int) -> bool
 def list_by_status(self, status: TaskStatus) -> list[Task]
 def format_task(task: Task) -> str
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/examples/rust/lib.rs
 
@@ -277,7 +259,35 @@ pub fn len(&self) -> usize
 pub fn is_empty(&self) -> bool
 ```
 
----
+### /home/runner/work/Brf.it/Brf.it/examples/sql/schema.sql
+
+```sql
+CREATE TABLE products (
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    category VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+)
+CREATE TABLE orders (
+    id BIGINT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    total DECIMAL(10, 2),
+    status VARCHAR(50) DEFAULT 'pending',
+    ordered_at TIMESTAMP DEFAULT NOW()
+)
+CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1
+)
+CREATE FUNCTION revenue_by_category(cat VARCHAR)
+RETURNS DECIMAL LANGUAGE sql
+CREATE VIEW top_products
+CREATE INDEX idx_products_category ON products (category)
+CREATE TYPE order_status AS ENUM ('pending', 'confirmed', 'shipped', 'delivered')
+```
 
 ### /home/runner/work/Brf.it/Brf.it/examples/typescript/app.ts
 
@@ -302,8 +312,6 @@ async findAll(): Promise<T[]>
 export const formatUser = (user: User): string
 export function isUser(value: unknown): value is User
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/install.sh
 
@@ -434,8 +442,6 @@ EXPECTED_CHECKSUM=$(grep "$ARCHIVE_NAME" "$TMP_DIR/checksums.txt" | awk '{print 
 SUDO=$(need_sudo)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/config/config.go
 
 ```go
@@ -528,8 +534,6 @@ func (c *Config) SupportedExtensions() map[string]string
 func (c *Config) ToOptions() *pkgcontext.Options
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/config/config_test.go
 
 ```go
@@ -549,8 +553,6 @@ func TestToOptionsIncludePrivate(t *testing.T)
 func containsString(s, substr string) bool
 func containsSubstring(s, substr string) bool
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context.go
 
@@ -656,8 +658,6 @@ func normalizeFormat(format string) string
 func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context_test.go
 
 ```go
@@ -698,8 +698,6 @@ func TestBuildGlobalImports(t *testing.T)
 func TestBuildGlobalImportsSorting(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/context/tree.go
 
 ```go
@@ -732,8 +730,6 @@ func formatNumber(n int) string
 buf strings.Builder
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/context/tree_test.go
 
 ```go
@@ -744,8 +740,6 @@ import (
 func TestBuildTokenTree(t *testing.T)
 func TestFormatNumber(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/internal/profiling/profiling.go
 
@@ -783,8 +777,6 @@ func WriteHeapProfile(filename string) error
 func StartCPUProfile(filename string) (func(), error)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/internal/profiling/profiling_test.go
 
 ```go
@@ -800,8 +792,6 @@ func TestStartCPUProfile(t *testing.T)
 func TestStartCPUProfileInvalidPath(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/example_test.go
 
 ```go
@@ -811,8 +801,6 @@ import (
 )
 func ExampleDefaultExtractOptions()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor.go
 
@@ -906,8 +894,6 @@ func isBinaryContent(content []byte) bool
 func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go
 
 ```go
@@ -942,8 +928,6 @@ func TestExtractCanceledContext(t *testing.T)
 func TestExtractDeadlineExceededContext(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go
 
 ```go
@@ -956,8 +940,6 @@ func ExampleNewMarkdownFormatter()
 func ExampleNewJSONFormatter()
 func ExampleXMLFormatter_Format()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter.go
 
@@ -1039,8 +1021,6 @@ type Formatter interface {
 }
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_bench_test.go
 
 ```go
@@ -1056,8 +1036,6 @@ func BenchmarkXMLFormatterWithImports(b *testing.B)
 func BenchmarkFormatterComparison(b *testing.B)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_fuzz_test.go
 
 ```go
@@ -1071,8 +1049,6 @@ func FuzzJSONFormatter(f *testing.F)
 func FuzzFormatterWithLargeData(f *testing.F)
 func FuzzFormatterWithImports(f *testing.F)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/formatter_test.go
 
@@ -1112,8 +1088,6 @@ func TestJSONFormatterName(t *testing.T)
 func TestXMLFormatterWithNoSchema(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go
 
 ```go
@@ -1121,8 +1095,6 @@ func normalizeKind(kind string) string
 func getEmptyComment(lang string) string
 func truncateDoc(doc string, maxLen int) string
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go
 
@@ -1132,8 +1104,6 @@ import (
 )
 func TestGetEmptyComment(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/json.go
 
@@ -1178,8 +1148,6 @@ type jsonSig struct {
 func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go
 
 ```go
@@ -1195,8 +1163,6 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)
 buf bytes.Buffer
 func escapeMarkdown(s string) string
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go
 
@@ -1217,8 +1183,6 @@ buf strings.Builder
 func kindToTag(kind string) string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/example_test.go
 
 ```go
@@ -1229,8 +1193,6 @@ import (
 func ExampleDetectLanguage()
 func ExampleNewRegistry()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/parser.go
 
@@ -1397,8 +1359,6 @@ func LanguageMapping() map[string]string
 func DetectLanguage(path string) string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/parser_test.go
 
 ```go
@@ -1422,8 +1382,6 @@ func TestDefaultRegistry(t *testing.T)
 func TestDetectLanguage(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/binding.go
 
 ```go
@@ -1431,8 +1389,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/scanner.c
 
@@ -1482,8 +1438,6 @@ void tree_sitter_c_sharp_external_scanner_deserialize(void *payload, const char 
 bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/alloc.h
 
 ```cpp
@@ -1500,8 +1454,6 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/array.h
 
@@ -1639,8 +1591,6 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/tree_sitter/parser.h
 
@@ -1802,8 +1752,6 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/binding.go
 
 ```go
@@ -1811,8 +1759,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/scanner.c
 
@@ -1885,8 +1831,6 @@ void tree_sitter_elixir_external_scanner_deserialize(void *payload,
 void tree_sitter_elixir_external_scanner_destroy(void *payload)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/alloc.h
 
 ```cpp
@@ -1903,8 +1847,6 @@ void tree_sitter_elixir_external_scanner_destroy(void *payload)
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/array.h
 
@@ -2012,8 +1954,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/elixir/tree_sitter/parser.h
 
@@ -2169,8 +2109,6 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/binding.go
 
 ```go
@@ -2178,8 +2116,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/scanner.c
 
@@ -2226,8 +2162,6 @@ unsigned tree_sitter_kotlin_external_scanner_serialize(void *payload, char *buff
 void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/alloc.h
 
 ```cpp
@@ -2244,8 +2178,6 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/array.h
 
@@ -2353,8 +2285,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/kotlin/tree_sitter/parser.h
 
@@ -2510,8 +2440,6 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/binding.go
 
 ```go
@@ -2519,8 +2447,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/parser.c
 
@@ -2728,8 +2654,6 @@ void tree_sitter_lua_external_scanner_deserialize(void *, const char *, unsigned
 TS_PUBLIC const TSLanguage *tree_sitter_lua(void)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/scanner.c
 
 ```c
@@ -2768,8 +2692,6 @@ static bool scan_comment_content(Scanner *scanner, TSLexer *lexer)
 bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/alloc.h
 
 ```cpp
@@ -2786,8 +2708,6 @@ bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const 
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/array.h
 
@@ -2928,8 +2848,6 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/parser.h
 
@@ -3091,8 +3009,6 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/binding.go
 
 ```go
@@ -3100,8 +3016,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/scanner.c
 
@@ -3160,8 +3074,6 @@ bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
                                              const bool *valid_symbols)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/alloc.h
 
 ```cpp
@@ -3178,8 +3090,6 @@ bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/array.h
 
@@ -3287,8 +3197,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/scala/tree_sitter/parser.h
 
@@ -3444,8 +3352,6 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/binding.go
 
 ```go
@@ -3453,8 +3359,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/scanner.c
 
@@ -3481,8 +3385,6 @@ unsigned tree_sitter_sql_external_scanner_serialize(void *payload, char *buffer)
 void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/alloc.h
 
 ```cpp
@@ -3499,8 +3401,6 @@ void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buf
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/array.h
 
@@ -3641,8 +3541,6 @@ static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/sql/tree_sitter/parser.h
 
@@ -3804,8 +3702,6 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/binding.go
 
 ```go
@@ -3813,8 +3709,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/scanner.c
 
@@ -3945,8 +3839,6 @@ enum TokenType
 enum TokenType
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/alloc.h
 
 ```cpp
@@ -3963,8 +3855,6 @@ enum TokenType
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/array.h
 
@@ -4072,8 +3962,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/swift/tree_sitter/parser.h
 
@@ -4229,8 +4117,6 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/binding.go
 
 ```go
@@ -4238,8 +4124,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/parser.c
 
@@ -4341,8 +4225,6 @@ void tree_sitter_toml_external_scanner_deserialize(void *, const char *, unsigne
 TS_PUBLIC const TSLanguage *tree_sitter_toml(void)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/scanner.c
 
 ```c
@@ -4364,8 +4246,6 @@ bool tree_sitter_toml_external_scanner_scan_multiline_string_end(TSLexer *lexer,
 bool tree_sitter_toml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/alloc.h
 
 ```cpp
@@ -4382,8 +4262,6 @@ bool tree_sitter_toml_external_scanner_scan(void *payload, TSLexer *lexer, const
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/array.h
 
@@ -4491,8 +4369,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/toml/tree_sitter/parser.h
 
@@ -4648,8 +4524,6 @@ static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t 
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/binding.go
 
 ```go
@@ -4657,8 +4531,6 @@ import "C"
 import "unsafe"
 func Language() unsafe.Pointer
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/scanner.c
 
@@ -4854,8 +4726,6 @@ void tree_sitter_yaml_external_scanner_deserialize(void *payload, const char *bu
 bool tree_sitter_yaml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.core.c
 
 ```c
@@ -4873,8 +4743,6 @@ typedef enum {
 static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.json.c
 
 ```c
@@ -4891,8 +4759,6 @@ typedef enum {
 } ResultSchema;
 static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.legacy.c
 
@@ -4912,8 +4778,6 @@ typedef enum {
 static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/alloc.h
 
 ```cpp
@@ -4930,8 +4794,6 @@ static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch
 #define ts_realloc realloc
 #define ts_free    free
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/array.h
 
@@ -5039,8 +4901,6 @@ static inline void _array__splice(Array *self, size_t element_size,
   } while (0)
 #define _compare_int(a, b) ((int)*(a) - (int)(b))
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/parser.h
 
@@ -5202,8 +5062,6 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
   }}
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go
 
 ```go
@@ -5212,8 +5070,6 @@ func (BaseQuery) Captures() []string
 func (BaseQuery) ImportQuery() []byte
 func (BaseQuery) CallQuery() []byte
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go
 
@@ -5352,8 +5208,6 @@ cQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c_test.go
 
 ```go
@@ -5373,8 +5227,6 @@ func TestCQueryExtractTypedef(t *testing.T)
 func TestCQueryExtractGlobalVariables(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/call_query_test.go
 
 ```go
@@ -5390,8 +5242,6 @@ func TestPythonCallExtraction(t *testing.T)
 func TestCallExtractionDisabledByDefault(t *testing.T)
 func TestCallExtractionTopLevel(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp.go
 
@@ -5604,8 +5454,6 @@ cppQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp_test.go
 
 ```go
@@ -5638,8 +5486,6 @@ docCount int
 func TestCppQueryKindMapping(t *testing.T)
 func TestCppQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp.go
 
@@ -5786,8 +5632,6 @@ csharpQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go
 
 ```go
@@ -5815,8 +5659,6 @@ func TestCSharpQueryCaptures(t *testing.T)
 func TestCSharpQueryExtractNamespace(t *testing.T)
 func TestCSharpQueryExtractRecords(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir.go
 
@@ -5954,8 +5796,6 @@ elixirQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir_test.go
 
 ```go
@@ -5986,8 +5826,6 @@ func TestElixirQueryExtractZeroArityWithGuard(t *testing.T)
 func TestElixirQueryKindMapping(t *testing.T)
 func TestElixirQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go.go
 
@@ -6070,8 +5908,6 @@ goQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go_test.go
 
 ```go
@@ -6088,8 +5924,6 @@ funcKindNode *sitter.Node
 kindNode *sitter.Node
 func TestGoQueryExtractConstAndVar(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java.go
 
@@ -6178,8 +6012,6 @@ javaQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java_test.go
 
 ```go
@@ -6202,8 +6034,6 @@ func TestJavaQueryExtractRecord(t *testing.T)
 func TestJavaQueryExtractGenerics(t *testing.T)
 func TestJavaQueryExtractFieldDeclarations(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin.go
 
@@ -6285,8 +6115,6 @@ kotlinQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go
 
 ```go
@@ -6311,8 +6139,6 @@ func TestKotlinQueryExtractGenerics(t *testing.T)
 func TestKotlinQueryKindMapping(t *testing.T)
 func TestKotlinQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua.go
 
@@ -6386,8 +6212,6 @@ luaQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go
 
 ```go
@@ -6413,8 +6237,6 @@ func TestLuaQueryKindMapping(t *testing.T)
 func TestLuaQueryCaptures(t *testing.T)
 func TestLuaQueryExtractMixed(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php.go
 
@@ -6498,8 +6320,6 @@ phpQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php_test.go
 
 ```go
@@ -6522,8 +6342,6 @@ func TestPHPQueryExtractImport(t *testing.T)
 func TestPHPQueryKindMapping(t *testing.T)
 func TestPHPQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python.go
 
@@ -6594,8 +6412,6 @@ pythonQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python_test.go
 
 ```go
@@ -6613,8 +6429,6 @@ func TestPythonQueryExtractAsyncFunction(t *testing.T)
 funcCaptures map[string]string
 func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby.go
 
@@ -6683,8 +6497,6 @@ rubyQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go
 
 ```go
@@ -6710,8 +6522,6 @@ func TestRubyQueryExtractNestedClasses(t *testing.T)
 func TestRubyQueryKindMapping(t *testing.T)
 func TestRubyQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust.go
 
@@ -6857,8 +6667,6 @@ rustQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust_test.go
 
 ```go
@@ -6882,8 +6690,6 @@ func TestRustQueryEmptyFile(t *testing.T)
 func TestRustQueryKindMapping(t *testing.T)
 func TestRustQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala.go
 
@@ -6986,8 +6792,6 @@ scalaQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala_test.go
 
 ```go
@@ -7018,8 +6822,6 @@ func TestScalaQueryExtractGenerics(t *testing.T)
 func TestScalaQueryKindMapping(t *testing.T)
 func TestScalaQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell.go
 
@@ -7065,8 +6867,6 @@ shellQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go
 
 ```go
@@ -7088,8 +6888,6 @@ func TestShellQueryKindMapping(t *testing.T)
 func TestShellQueryCaptures(t *testing.T)
 func TestShellQueryExtractMixed(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql.go
 
@@ -7168,8 +6966,6 @@ sqlQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql_test.go
 
 ```go
@@ -7207,8 +7003,6 @@ func TestSQLQueryKindMapping(t *testing.T)
 func TestSQLQueryCaptures(t *testing.T)
 func TestSQLQuerySchemaQualifiedName(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift.go
 
@@ -7305,8 +7099,6 @@ swiftQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go
 
 ```go
@@ -7330,8 +7122,6 @@ func TestSwiftQueryExtractGenerics(t *testing.T)
 func TestSwiftQueryKindMapping(t *testing.T)
 func TestSwiftQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml.go
 
@@ -7397,8 +7187,6 @@ tomlQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml_test.go
 
 ```go
@@ -7429,8 +7217,6 @@ func TestTOMLQueryKindMapping(t *testing.T)
 func TestTOMLQueryCaptures(t *testing.T)
 func TestTOMLQueryExtractInlineTable(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript.go
 
@@ -7580,8 +7366,6 @@ typeScriptQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript_test.go
 
 ```go
@@ -7596,8 +7380,6 @@ func TestTypeScriptQueryExtractFunction(t *testing.T)
 funcCaptures map[string]string
 func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml.go
 
@@ -7629,8 +7411,6 @@ yamlQueryPattern = `
 `
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml_test.go
 
 ```go
@@ -7651,8 +7431,6 @@ func TestYAMLQueryExtractComments(t *testing.T)
 func TestYAMLQueryKindMapping(t *testing.T)
 func TestYAMLQueryCaptures(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser.go
 
@@ -7790,8 +7568,6 @@ func stripYAMLBody(text, _ string) string
 func stripTOMLBody(text, kind string) string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go
 
 ```go
@@ -7810,8 +7586,6 @@ func BenchmarkParseWithImports(b *testing.B)
 code strings.Builder
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go
 
 ```go
@@ -7827,8 +7601,6 @@ func FuzzParseRust(f *testing.F)
 func FuzzParseC(f *testing.F)
 func FuzzParseJSON(f *testing.F)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go
 
@@ -7928,8 +7700,6 @@ func TestTreeSitterParserParseTOML(t *testing.T)
 names []string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go
 
 ```go
@@ -7977,8 +7747,6 @@ DefaultKindMapping = map[string]string{
 }
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query_test.go
 
 ```go
@@ -7987,8 +7755,6 @@ import (
 )
 func TestCaptureDefinitions(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/example_test.go
 
@@ -8000,8 +7766,6 @@ import (
 func ExampleDefaultScanOptions()
 func ExampleIsHidden()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner.go
 
@@ -8101,8 +7865,6 @@ func (s *FileScanner) matchesIgnore(path string) bool
 func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go
 
 ```go
@@ -8116,8 +7878,6 @@ func BenchmarkScanDirectory(b *testing.B)
 func BenchmarkScanLargeFile(b *testing.B)
 func BenchmarkScanWithIgnore(b *testing.B)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_test.go
 
@@ -8166,8 +7926,6 @@ func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go
 
 ```go
@@ -8211,8 +7969,6 @@ func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extract
 func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner_test.go
 
 ```go
@@ -8247,8 +8003,6 @@ func TestScan_MultipleSecretsInOneFile(t *testing.T)
 buf bytes.Buffer
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go
 
 ```go
@@ -8258,8 +8012,6 @@ import (
 )
 func ExampleNewNoOpTokenizer()
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tiktoken.go
 
@@ -8277,8 +8029,6 @@ func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
 func (t *TiktokenTokenizer) Count(text []byte) (int, error)
 func (t *TiktokenTokenizer) Name() string
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tokenizer.go
 
@@ -8298,8 +8048,6 @@ func (t *NoOpTokenizer) Count(_ []byte) (int, error)
 func (t *NoOpTokenizer) Name() string
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/tokenizer_test.go
 
 ```go
@@ -8318,8 +8066,6 @@ func TestTiktokenTokenizerName(t *testing.T)
 func TestTiktokenTokenizerConsistency(t *testing.T)
 func TestTiktokenTokenizerSpecialCharacters(t *testing.T)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/website/docusaurus.config.ts
 
@@ -8454,8 +8200,6 @@ const config: Config = {
 };
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/sidebars.ts
 
 ```typescript
@@ -8494,8 +8238,6 @@ const sidebars: SidebarsConfig = {
 };
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/FeaturesSection.tsx
 
 ```typescript
@@ -8508,8 +8250,6 @@ interface Feature {
 }
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/Hero.tsx
 
 ```typescript
@@ -8519,8 +8259,6 @@ import Translate, {translate} from '@docusaurus/Translate';
 export default function Hero(): JSX.Element
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/InstallSection.tsx
 
 ```typescript
@@ -8529,8 +8267,6 @@ import Translate from '@docusaurus/Translate';
 type Platform = keyof typeof installCommands;
 const copyToClipboard = (text: string)
 ```
-
----
 
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/LanguageGrid.tsx
 
@@ -8572,8 +8308,6 @@ export default function LanguageGrid(): JSX.Element {
           {languages.map(lang
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/src/components/TokenComparison.tsx
 
 ```typescript
@@ -8591,8 +8325,6 @@ interface CodeExample {
 }
 ```
 
----
-
 ### /home/runner/work/Brf.it/Brf.it/website/src/pages/index.tsx
 
 ```typescript
@@ -8606,6 +8338,4 @@ import LanguageGrid from '@site/src/components/LanguageGrid';
 import InstallSection from '@site/src/components/InstallSection';
 export default function Home(): ReactNode
 ```
-
----
 

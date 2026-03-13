@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <brfit>
   <metadata>
-    <version>0.19.0</version>
+    <version>0.20.0</version>
     <path>/home/runner/work/Brf.it/Brf.it</path>
     <schema>
       <tag name="metadata" description="Project metadata container" />
@@ -15,6 +15,7 @@
       <tag name="variable" description="Variable, constant, or field declaration" />
       <tag name="signature" description="Fallback for unknown declaration kinds" />
       <tag name="imports" description="Raw import/export statements (verbatim text)" />
+      <tag name="call" description="Function/method call reference within the file" />
       <tag name="doc" description="Documentation comment" />
       <tag name="error" description="Parse error message" />
     </schema>
@@ -247,6 +248,33 @@ use std::fmt;</imports>
       <function>pub fn remove(&amp;mut self, key: &amp;str) -&gt; Result&lt;V, CacheError&gt;</function>
       <function>pub fn len(&amp;self) -&gt; usize</function>
       <function>pub fn is_empty(&amp;self) -&gt; bool</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/examples/sql/schema.sql" language="sql">
+      <type>CREATE TABLE products (
+    id BIGINT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    category VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW()
+)</type>
+      <type>CREATE TABLE orders (
+    id BIGINT PRIMARY KEY,
+    customer_id BIGINT NOT NULL,
+    total DECIMAL(10, 2),
+    status VARCHAR(50) DEFAULT &apos;pending&apos;,
+    ordered_at TIMESTAMP DEFAULT NOW()
+)</type>
+      <type>CREATE TABLE order_items (
+    id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL DEFAULT 1
+)</type>
+      <function>CREATE FUNCTION revenue_by_category(cat VARCHAR)
+RETURNS DECIMAL LANGUAGE sql</function>
+      <type>CREATE VIEW top_products</type>
+      <variable>CREATE INDEX idx_products_category ON products (category)</variable>
+      <type>CREATE TYPE order_status AS ENUM (&apos;pending&apos;, &apos;confirmed&apos;, &apos;shipped&apos;, &apos;delivered&apos;)</type>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/examples/typescript/app.ts" language="typescript">
       <type>interface AppConfig {
