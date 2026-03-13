@@ -26,6 +26,10 @@ type FileEntry struct {
 
 	// Size is the file size in bytes.
 	Size int64
+
+	// Content holds the file bytes when PreloadContent is enabled.
+	// nil when content was not preloaded.
+	Content []byte
 }
 
 // ScanResult contains the results of a scan operation.
@@ -74,6 +78,10 @@ type ScanOptions struct {
 
 	// MaxFileSize is the maximum file size in bytes to include.
 	MaxFileSize int64
+
+	// PreloadContent reads file content during scan so downstream consumers
+	// (e.g., the extractor) can skip a redundant os.ReadFile call.
+	PreloadContent bool
 }
 
 // DefaultScanOptions returns a ScanOptions with sensible defaults.
@@ -422,9 +430,20 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 		return FileEntry{}, false
 	}
 
-	return FileEntry{
+	entry := FileEntry{
 		Path:     path,
 		Language: language,
 		Size:     info.Size(),
-	}, true
+	}
+
+	if s.opts.PreloadContent {
+		content, err := os.ReadFile(path)
+		if err != nil {
+			s.logger.Printf("WARN: failed to preload %s: %v", path, err)
+			return FileEntry{}, false
+		}
+		entry.Content = content
+	}
+
+	return entry, true
 }

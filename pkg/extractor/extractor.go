@@ -248,11 +248,15 @@ func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry
 		return extracted
 	}
 
-	// Read file content
-	content, err := os.ReadFile(entry.Path)
-	if err != nil {
-		extracted.Error = fmt.Errorf("failed to read file %q: %w", entry.Path, err)
-		return extracted
+	// Use preloaded content if available, otherwise read from disk
+	content := entry.Content
+	if content == nil {
+		var err error
+		content, err = os.ReadFile(entry.Path)
+		if err != nil {
+			extracted.Error = fmt.Errorf("failed to read file %q: %w", entry.Path, err)
+			return extracted
+		}
 	}
 
 	// Skip binary files

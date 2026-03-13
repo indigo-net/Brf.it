@@ -239,6 +239,7 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 		ChangedFiles:        changedFiles,
 		IncludeHidden:       c.IncludeHidden,
 		MaxFileSize:         c.MaxFileSize,
+		PreloadContent:      true,
 	}
 
 	// Handle --token-tree mode: scan files, count tokens per file, output tree
