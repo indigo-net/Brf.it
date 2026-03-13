@@ -405,7 +405,9 @@ func resolveChangedFiles(rootPath string, changed bool, since string) (map[strin
 		lsCmd := exec.Command("git", "ls-files", "--others", "--exclude-standard")
 		lsCmd.Dir = dir
 		lsOut, err := lsCmd.Output()
-		if err == nil {
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[brfit] WARN: git ls-files failed (untracked files may be missing): %v\n", err)
+		} else {
 			gitRelPaths = append(gitRelPaths, splitNonEmpty(string(lsOut))...)
 		}
 	}
@@ -438,6 +440,7 @@ func resolveChangedFiles(rootPath string, changed bool, since string) (map[strin
 		// Compute path relative to rootPath
 		rel, err := filepath.Rel(absRoot, absPath)
 		if err != nil {
+			fmt.Fprintf(os.Stderr, "[brfit] WARN: failed to compute relative path for %s: %v\n", absPath, err)
 			continue
 		}
 
