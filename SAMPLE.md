@@ -892,6 +892,7 @@ func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.F
 binarySniffSize = 512
 func isBinaryContent(content []byte) bool
 func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
+err error
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go
@@ -7794,6 +7795,10 @@ type FileEntry struct {
 
 	// Size is the file size in bytes.
 	Size int64
+
+	// Content holds the file bytes when PreloadContent is enabled.
+	// nil when content was not preloaded.
+	Content []byte
 }
 type ScanResult struct {
 	// Files is the list of matched files.
@@ -7838,6 +7843,10 @@ type ScanOptions struct {
 
 	// MaxFileSize is the maximum file size in bytes to include.
 	MaxFileSize int64
+
+	// PreloadContent reads file content during scan so downstream consumers
+	// (e.g., the extractor) can skip a redundant os.ReadFile call.
+	PreloadContent bool
 }
 func DefaultScanOptions() *ScanOptions
 func copyLanguageMapping() map[string]string
@@ -7929,6 +7938,7 @@ func TestScanExcludeDirectory(t *testing.T)
 func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
 func TestNewFileScannerInvalidPatterns(t *testing.T)
+func TestPreloadContent(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go
