@@ -138,6 +138,18 @@ func NewFileScanner(opts *ScanOptions) (*FileScanner, error) {
 		opts = DefaultScanOptions()
 	}
 
+	// Validate glob patterns at construction time (fail-fast)
+	for _, p := range opts.IncludePatterns {
+		if !doublestar.ValidatePattern(p) {
+			return nil, fmt.Errorf("invalid include pattern %q", p)
+		}
+	}
+	for _, p := range opts.ExcludePatterns {
+		if !doublestar.ValidatePattern(p) {
+			return nil, fmt.Errorf("invalid exclude pattern %q", p)
+		}
+	}
+
 	s := &FileScanner{
 		opts:   opts,
 		logger: log.New(os.Stderr, "[brfit] ", 0),
@@ -299,12 +311,8 @@ func (s *FileScanner) matchesInclude(path string) bool {
 	}
 	rel := s.relPath(path)
 	for _, pattern := range s.opts.IncludePatterns {
-		matched, err := doublestar.Match(pattern, rel)
-		if err != nil {
-			s.logger.Printf("WARN: invalid include pattern %q: %v", pattern, err)
-			continue
-		}
-		if matched {
+		// Patterns are validated in NewFileScanner; error is unreachable
+		if matched, _ := doublestar.Match(pattern, rel); matched {
 			return true
 		}
 	}
@@ -318,12 +326,8 @@ func (s *FileScanner) matchesExclude(path string) bool {
 	}
 	rel := s.relPath(path)
 	for _, pattern := range s.opts.ExcludePatterns {
-		matched, err := doublestar.Match(pattern, rel)
-		if err != nil {
-			s.logger.Printf("WARN: invalid exclude pattern %q: %v", pattern, err)
-			continue
-		}
-		if matched {
+		// Patterns are validated in NewFileScanner; error is unreachable
+		if matched, _ := doublestar.Match(pattern, rel); matched {
 			return true
 		}
 	}
@@ -338,22 +342,13 @@ func (s *FileScanner) matchesExcludeDir(path string) bool {
 	}
 	rel := s.relPath(path)
 	for _, pattern := range s.opts.ExcludePatterns {
-		matched, err := doublestar.Match(pattern, rel)
-		if err != nil {
-			s.logger.Printf("WARN: invalid exclude pattern %q: %v", pattern, err)
-			continue
-		}
-		if matched {
+		// Patterns are validated in NewFileScanner; error is unreachable
+		if matched, _ := doublestar.Match(pattern, rel); matched {
 			return true
 		}
 		// "vendor/**" should also prune the "vendor" directory node
 		if stripped := strings.TrimSuffix(pattern, "/**"); stripped != pattern {
-			matched, err := doublestar.Match(stripped, rel)
-			if err != nil {
-				s.logger.Printf("WARN: invalid exclude pattern %q: %v", stripped, err)
-				continue
-			}
-			if matched {
+			if matched, _ := doublestar.Match(stripped, rel); matched {
 				return true
 			}
 		}
