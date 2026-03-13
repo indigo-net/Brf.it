@@ -7,17 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-03-13
+
 ### Added
 - `brfit-mcp` MCP (Model Context Protocol) 서버 바이너리 — AI 에이전트용 stdio JSON-RPC 서버, `summarize_project`/`summarize_file` 도구 제공 (#192)
+- 원격 Git 저장소 직접 분석 지원 (`--remote` 플래그) (#180)
 - 함수 호출 참조 그래프 출력 (`--call-graph`) — Tree-sitter 기반 함수 호출 관계 추출 (Go, TypeScript, Python, Java, Rust, C) (#191)
 - 보안 민감 정보 감지 및 마스킹 (`--security-check`) — 기본 활성화, AWS/GitHub/API 키 등 12종 패턴 감지 후 `[REDACTED]` 마스킹 (#190)
-- `--token-tree` flag to display per-file token counts in tree format (#187)
-- `--changed` flag to scan only git-modified files (#179)
-- `--since <ref>` flag to scan files changed since a specific commit/tag (#179)
-- YAML 언어 지원 (`.yaml`, `.yml`)
-- TOML 언어 지원 (`.toml`)
-- `--include-private` CLI flag to include non-exported/private symbols (#177)
-- `--include` / `--exclude` glob pattern filtering with doublestar support (#176)
+- `--token-tree` 플래그로 파일별 토큰 수 트리 출력 (#187)
+- `--changed` / `--since <ref>` 플래그로 Git 변경 파일만 선택 추출 (#179)
+- `--include` / `--exclude` glob 패턴 필터링 (doublestar 지원) (#176)
+- `--include-private` CLI 플래그로 비공개/unexported 심볼 포함 (#177)
+- `--dedupe-imports` 파일 간 import 중복 제거 (#153)
+- `--no-schema` XML schema 섹션 선택적 포함 (#152)
+- `--max-doc-length` Doc 코멘트 길이 제한 (#151)
+- 다중 `--ignore` 플래그 지원 (복수 ignore 파일) (#185)
+- JSON 출력에 `line`/`exported` 필드 추가 (#184)
+- SQL 언어 지원 (#160)
+- Elixir 언어 지원 (#159)
+- YAML 언어 지원 (`.yaml`, `.yml`) (#186)
+- TOML 언어 지원 (`.toml`) (#186)
+- `context.Context` 지원: `Scanner.Scan()` (#188), `Packager.Package()` (#178), `Extract()` (#174)
+- 메모리 프로파일링 패키지 및 문서 (#157)
+- 성능 벤치마크 테스트 (#156)
+- Codecov 통합 및 테스트 커버리지 CI (#155)
+- Fuzzing 테스트 (#154)
+- CODE_OF_CONDUCT.md (#38)
+
+### Fixed
+- 하드코딩 언어 목록을 Registry 동적 조회로 교체 (#183)
+- LanguageMapping 동기화 및 단일 소스 통합 (#206)
+- `captureNames` 인덱스 접근 시 방어적 범위 검증 추가 (#196)
+- `extractFile`에 context 전달하여 취소 반응 개선 (#194)
+- `body-strip` 함수의 인덱스 0 엣지 케이스 처리 (#164)
+- 지원 언어 목록 일관성 확보 (#158)
+- `parser.LanguageMapping` 미사용 dead code 정리 (#189)
+
+### Changed
+- `LanguageQuery.Captures()` 공통 구현 임베딩으로 중복 제거 (#198)
+- `isExported()` 함수 단순화 (#197)
+- `sync.Map` + `RWMutex` 이중 잠금 구조 단순화 (#182)
+- `init()`에서 TreeSitterParser 중복 인스턴스 생성 제거 (#181)
+- `scheduled-release` cron 워크플로우 제거 (#150)
+
+### Performance
+- `Tokenizer.Count()` 인터페이스를 `[]byte` 지원으로 확장 (#203)
+- `signatures`/`imports` 슬라이스 초기 용량 힌트 추가 (#202)
+- `buildGlobalImports` seen 맵 재사용으로 할당 감소 (#201)
+- 파서 내 `[]byte`→`string` 변환 최소화 (#200)
+- `KindMapping()` 결과를 구조체 필드로 캐싱 (#199)
+- Markdown 포매터 불필요한 구분선/줄바꿈 축소로 토큰 절약 (#195)
+- `treeNode` 리프 노드 map 할당 최적화 (#168)
+- Markdown/XML 포매터 `fmt.Sprintf`를 직접 문자열 연결로 교체 (#166, #167)
 
 ## [0.19.0] - 2026-03-09
 
@@ -316,6 +357,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Downgraded to GoReleaser v1 syntax for compatibility
 
+[0.20.0]: https://github.com/indigo-net/Brf.it/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/indigo-net/Brf.it/compare/v0.18.0...v0.19.0
 [0.9.0]: https://github.com/indigo-net/Brf.it/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/indigo-net/Brf.it/compare/v0.7.0...v0.8.0
