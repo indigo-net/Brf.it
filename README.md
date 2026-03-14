@@ -7,8 +7,10 @@
 🌐 [English](README.md) | [한국어](docs/ko/README.md) | [日本語](docs/ja/README.md) | [हिन्दी](docs/hi/README.md) | [Deutsch](docs/de/README.md)
 
 [![Release](https://img.shields.io/github/v/release/indigo-net/Brf.it)](https://github.com/indigo-net/Brf.it/releases)
+[![Downloads](https://img.shields.io/github/downloads/indigo-net/Brf.it/total)](https://github.com/indigo-net/Brf.it/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/indigo-net/Brf.it)](https://goreportcard.com/report/github.com/indigo-net/Brf.it)
 [![Coverage](https://codecov.io/gh/indigo-net/Brf.it/branch/main/graph/badge.svg)](https://codecov.io/gh/indigo-net/Brf.it)
+[![Languages](https://img.shields.io/badge/languages-19-blue)](https://indigo-net.github.io/Brf.it/docs/languages/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Package your codebase for AI comprehension.**
