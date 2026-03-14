@@ -4827,13 +4827,17 @@ import &quot;unsafe&quot;</imports>
   }}</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go" language="go">
+      <imports>import &quot;strings&quot;</imports>
+      <function>func hasVisibilityPrefix(sigText, modifier string) bool</function>
       <type>type BaseQuery struct{}</type>
       <function>func (BaseQuery) Captures() []string</function>
       <function>func (BaseQuery) ImportQuery() []byte</function>
       <function>func (BaseQuery) CallQuery() []byte</function>
+      <function>func (BaseQuery) IsExported(name, _ string) bool</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go" language="go">
       <imports>import (
+	&quot;strings&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_c &quot;github.com/tree-sitter/tree-sitter-c/bindings/go&quot;
 )</imports>
@@ -4858,6 +4862,7 @@ import &quot;unsafe&quot;</imports>
       <function>func (q *CQuery) KindMapping() map[string]string</function>
       <function>func (q *CQuery) ImportQuery() []byte</function>
       <function>func (q *CQuery) CallQuery() []byte</function>
+      <function>func (q *CQuery) IsExported(name, sigText string) bool</function>
       <variable>cCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -4997,6 +5002,7 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp.go" language="go">
       <imports>import (
+	&quot;strings&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_cpp &quot;github.com/tree-sitter/tree-sitter-cpp/bindings/go&quot;
 )</imports>
@@ -5023,6 +5029,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *CppQuery) KindMapping() map[string]string</function>
       <function>func (q *CppQuery) ImportQuery() []byte</function>
+      <function>func (q *CppQuery) IsExported(name, sigText string) bool</function>
       <variable>cppImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
@@ -5269,6 +5276,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *CSharpQuery) KindMapping() map[string]string</function>
       <function>func (q *CSharpQuery) ImportQuery() []byte</function>
+      <function>func (q *CSharpQuery) IsExported(name, sigText string) bool</function>
       <variable>csharpImportQueryPattern = `
 ; using directives (capture full declaration)
 (using_directive) @import_path
@@ -5402,6 +5410,7 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir.go" language="go">
       <imports>import (
+	&quot;strings&quot;
 	tree_sitter_elixir &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
@@ -5419,6 +5428,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *ElixirQuery) KindMapping() map[string]string</function>
       <function>func (q *ElixirQuery) ImportQuery() []byte</function>
+      <function>func (q *ElixirQuery) IsExported(name, sigText string) bool</function>
       <variable>elixirImportQueryPattern = `
 ; import statements: import Module
 (call
@@ -5590,6 +5600,7 @@ import &quot;unsafe&quot;</imports>
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
       <function>func (q *GoQuery) CallQuery() []byte</function>
+      <function>func (q *GoQuery) IsExported(name, _ string) bool</function>
       <variable>goCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -5679,6 +5690,7 @@ import &quot;unsafe&quot;</imports>
       <function>func (q *JavaQuery) KindMapping() map[string]string</function>
       <function>func (q *JavaQuery) ImportQuery() []byte</function>
       <function>func (q *JavaQuery) CallQuery() []byte</function>
+      <function>func (q *JavaQuery) IsExported(name, sigText string) bool</function>
       <variable>javaCallQueryPattern = `
 ; Method invocations (e.g., obj.method(), method())
 (method_invocation
@@ -5782,6 +5794,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *KotlinQuery) KindMapping() map[string]string</function>
       <function>func (q *KotlinQuery) ImportQuery() []byte</function>
+      <function>func (q *KotlinQuery) IsExported(name, sigText string) bool</function>
       <variable>kotlinImportQueryPattern = `
 ; Import statements
 (import_header) @import_path
@@ -5974,6 +5987,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *PHPQuery) KindMapping() map[string]string</function>
       <function>func (q *PHPQuery) ImportQuery() []byte</function>
+      <function>func (q *PHPQuery) IsExported(name, sigText string) bool</function>
       <variable>phpImportQueryPattern = `
 ; use Namespace\\Class;
 (namespace_use_declaration) @import_path
@@ -6069,6 +6083,7 @@ import &quot;unsafe&quot;</imports>
       <function>func (q *PythonQuery) KindMapping() map[string]string</function>
       <function>func (q *PythonQuery) ImportQuery() []byte</function>
       <function>func (q *PythonQuery) CallQuery() []byte</function>
+      <function>func (q *PythonQuery) IsExported(name, _ string) bool</function>
       <variable>pythonCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call
@@ -6247,6 +6262,7 @@ import &quot;unsafe&quot;</imports>
       <function>func (q *RustQuery) KindMapping() map[string]string</function>
       <function>func (q *RustQuery) ImportQuery() []byte</function>
       <function>func (q *RustQuery) CallQuery() []byte</function>
+      <function>func (q *RustQuery) IsExported(name, _ string) bool</function>
       <variable>rustCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -6406,6 +6422,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *ScalaQuery) KindMapping() map[string]string</function>
       <function>func (q *ScalaQuery) ImportQuery() []byte</function>
+      <function>func (q *ScalaQuery) IsExported(name, sigText string) bool</function>
       <variable>scalaImportQueryPattern = `
 ; Import statements
 (import_declaration) @import_path
@@ -6699,6 +6716,7 @@ import &quot;unsafe&quot;</imports>
 }</variable>
       <function>func (q *SwiftQuery) KindMapping() map[string]string</function>
       <function>func (q *SwiftQuery) ImportQuery() []byte</function>
+      <function>func (q *SwiftQuery) IsExported(name, sigText string) bool</function>
       <variable>swiftImportQueryPattern = `
 ; Import declarations (capture full statement)
 (import_declaration) @import_path
@@ -7127,7 +7145,6 @@ import &quot;unsafe&quot;</imports>
 	}</type>
       <variable>kindNode *sitter.Node</variable>
       <function>func cleanComment(text string) string</function>
-      <function>func isExported(name, _ string) bool</function>
       <function>func stripBody(text, kind, language string) string</function>
       <function>func stripGoBody(text, kind string) string</function>
       <function>func stripTypeScriptBody(text, kind string) string</function>
@@ -7264,7 +7281,7 @@ import &quot;unsafe&quot;</imports>
       <function>func TestTypeScriptArrowFunctionSignature(t *testing.T)</function>
       <function>func contains(s, substr string) bool</function>
       <function>func TestTreeSitterParserParseJava(t *testing.T)</function>
-      <variable>foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool</variable>
+      <variable>foundClass, foundConstructor, foundPublicMethod bool</variable>
       <function>func TestJavaSignatureOnlyExtraction(t *testing.T)</function>
       <function>func TestJavaGenericsExtraction(t *testing.T)</function>
       <variable>foundClass, foundMethod bool</variable>
@@ -7362,6 +7379,11 @@ import &quot;unsafe&quot;</imports>
 
 	// KindMapping maps Tree-sitter node types to Signature kinds.
 	KindMapping() map[string]string
+
+	// IsExported reports whether the symbol identified by name and sigText
+	// is public/exported in the given language. sigText is the full
+	// signature text which may contain visibility modifiers.
+	IsExported(name, sigText string) bool
 }</type>
       <variable>CaptureName      = &quot;name&quot;</variable>
       <variable>CaptureSignature = &quot;signature&quot;</variable>

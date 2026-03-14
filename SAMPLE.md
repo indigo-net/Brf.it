@@ -5070,16 +5070,20 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go
 
 ```go
+import "strings"
+func hasVisibilityPrefix(sigText, modifier string) bool
 type BaseQuery struct{}
 func (BaseQuery) Captures() []string
 func (BaseQuery) ImportQuery() []byte
 func (BaseQuery) CallQuery() []byte
+func (BaseQuery) IsExported(name, _ string) bool
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c.go
 
 ```go
 import (
+	"strings"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"
 )
@@ -5104,6 +5108,7 @@ cKindMapping = map[string]string{
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
 func (q *CQuery) CallQuery() []byte
+func (q *CQuery) IsExported(name, sigText string) bool
 cCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -5252,6 +5257,7 @@ func TestCallExtractionTopLevel(t *testing.T)
 
 ```go
 import (
+	"strings"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"
 )
@@ -5278,6 +5284,7 @@ cppKindMapping = map[string]string{
 }
 func (q *CppQuery) KindMapping() map[string]string
 func (q *CppQuery) ImportQuery() []byte
+func (q *CppQuery) IsExported(name, sigText string) bool
 cppImportQueryPattern = `
 ; #include directives (capture full statement)
 (preproc_include) @import_path
@@ -5530,6 +5537,7 @@ csharpKindMapping = map[string]string{
 }
 func (q *CSharpQuery) KindMapping() map[string]string
 func (q *CSharpQuery) ImportQuery() []byte
+func (q *CSharpQuery) IsExported(name, sigText string) bool
 csharpImportQueryPattern = `
 ; using directives (capture full declaration)
 (using_directive) @import_path
@@ -5669,6 +5677,7 @@ func TestCSharpQueryExtractRecords(t *testing.T)
 
 ```go
 import (
+	"strings"
 	tree_sitter_elixir "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
@@ -5686,6 +5695,7 @@ elixirKindMapping = map[string]string{
 }
 func (q *ElixirQuery) KindMapping() map[string]string
 func (q *ElixirQuery) ImportQuery() []byte
+func (q *ElixirQuery) IsExported(name, sigText string) bool
 elixirImportQueryPattern = `
 ; import statements: import Module
 (call
@@ -5863,6 +5873,7 @@ goKindMapping = map[string]string{
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
 func (q *GoQuery) CallQuery() []byte
+func (q *GoQuery) IsExported(name, _ string) bool
 goCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -5958,6 +5969,7 @@ javaKindMapping = map[string]string{
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
 func (q *JavaQuery) CallQuery() []byte
+func (q *JavaQuery) IsExported(name, sigText string) bool
 javaCallQueryPattern = `
 ; Method invocations (e.g., obj.method(), method())
 (method_invocation
@@ -6067,6 +6079,7 @@ kotlinKindMapping = map[string]string{
 }
 func (q *KotlinQuery) KindMapping() map[string]string
 func (q *KotlinQuery) ImportQuery() []byte
+func (q *KotlinQuery) IsExported(name, sigText string) bool
 kotlinImportQueryPattern = `
 ; Import statements
 (import_header) @import_path
@@ -6271,6 +6284,7 @@ phpKindMapping = map[string]string{
 }
 func (q *PHPQuery) KindMapping() map[string]string
 func (q *PHPQuery) ImportQuery() []byte
+func (q *PHPQuery) IsExported(name, sigText string) bool
 phpImportQueryPattern = `
 ; use Namespace\\Class;
 (namespace_use_declaration) @import_path
@@ -6372,6 +6386,7 @@ pythonKindMapping = map[string]string{
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
 func (q *PythonQuery) CallQuery() []byte
+func (q *PythonQuery) IsExported(name, _ string) bool
 pythonCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call
@@ -6562,6 +6577,7 @@ rustKindMapping = map[string]string{
 func (q *RustQuery) KindMapping() map[string]string
 func (q *RustQuery) ImportQuery() []byte
 func (q *RustQuery) CallQuery() []byte
+func (q *RustQuery) IsExported(name, _ string) bool
 rustCallQueryPattern = `
 ; Direct function calls (e.g., foo())
 (call_expression
@@ -6727,6 +6743,7 @@ scalaKindMapping = map[string]string{
 }
 func (q *ScalaQuery) KindMapping() map[string]string
 func (q *ScalaQuery) ImportQuery() []byte
+func (q *ScalaQuery) IsExported(name, sigText string) bool
 scalaImportQueryPattern = `
 ; Import statements
 (import_declaration) @import_path
@@ -7038,6 +7055,7 @@ swiftKindMapping = map[string]string{
 }
 func (q *SwiftQuery) KindMapping() map[string]string
 func (q *SwiftQuery) ImportQuery() []byte
+func (q *SwiftQuery) IsExported(name, sigText string) bool
 swiftImportQueryPattern = `
 ; Import declarations (capture full statement)
 (import_declaration) @import_path
@@ -7490,7 +7508,6 @@ type dedupKey struct {
 	}
 kindNode *sitter.Node
 func cleanComment(text string) string
-func isExported(name, _ string) bool
 func stripBody(text, kind, language string) string
 func stripGoBody(text, kind string) string
 func stripTypeScriptBody(text, kind string) string
@@ -7636,7 +7653,7 @@ func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
 func TestTypeScriptArrowFunctionSignature(t *testing.T)
 func contains(s, substr string) bool
 func TestTreeSitterParserParseJava(t *testing.T)
-foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
+foundClass, foundConstructor, foundPublicMethod bool
 func TestJavaSignatureOnlyExtraction(t *testing.T)
 func TestJavaGenericsExtraction(t *testing.T)
 foundClass, foundMethod bool
@@ -7737,6 +7754,11 @@ type LanguageQuery interface {
 
 	// KindMapping maps Tree-sitter node types to Signature kinds.
 	KindMapping() map[string]string
+
+	// IsExported reports whether the symbol identified by name and sigText
+	// is public/exported in the given language. sigText is the full
+	// signature text which may contain visibility modifiers.
+	IsExported(name, sigText string) bool
 }
 CaptureName      = "name"
 CaptureSignature = "signature"
