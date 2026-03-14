@@ -83,12 +83,13 @@ func TestPathTraversal(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	tests := []struct {
-		name string
-		path string
+		name    string
+		path    string
+		errPart string
 	}{
-		{"relative traversal", "../../etc"},
-		{"absolute escape", "/etc"},
-		{"dot-dot in middle", "subdir/../../etc"},
+		{"relative traversal", "../../etc", "resolves outside the project root"},
+		{"absolute escape", "/etc", "absolute path"},
+		{"dot-dot in middle", "subdir/../../etc", "resolves outside the project root"},
 	}
 
 	for _, tt := range tests {
@@ -100,8 +101,8 @@ func TestPathTraversal(t *testing.T) {
 			if err == nil {
 				t.Error("expected error for path traversal attempt")
 			}
-			if err != nil && !strings.Contains(err.Error(), "outside the project root") {
-				t.Errorf("expected 'outside the project root' error, got: %v", err)
+			if err != nil && !strings.Contains(err.Error(), tt.errPart) {
+				t.Errorf("expected %q error, got: %v", tt.errPart, err)
 			}
 		})
 
@@ -113,8 +114,8 @@ func TestPathTraversal(t *testing.T) {
 			if err == nil {
 				t.Error("expected error for path traversal attempt")
 			}
-			if err != nil && !strings.Contains(err.Error(), "outside the project root") {
-				t.Errorf("expected 'outside the project root' error, got: %v", err)
+			if err != nil && !strings.Contains(err.Error(), tt.errPart) {
+				t.Errorf("expected %q error, got: %v", tt.errPart, err)
 			}
 		})
 	}
@@ -151,13 +152,57 @@ func TestValidSubdirectoryPath(t *testing.T) {
 	}
 
 	handler := makeSummarizeProject(tmpDir)
+	// Use relative path (absolute paths are now rejected)
 	_, output, err := handler(context.Background(), &mcp.CallToolRequest{}, SummarizeProjectInput{
-		Path: subDir,
+		Path: "sub",
 	})
 	if err != nil {
 		t.Fatalf("unexpected error for valid subdirectory: %v", err)
 	}
 	if output.TotalFiles == 0 {
 		t.Error("expected at least 1 file")
+	}
+}
+
+func TestResolvePathAbsoluteRejected(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Absolute paths should be rejected even if they point within the root
+	absInRoot := filepath.Join(tmpDir, "sub")
+	_, err := resolvePath(tmpDir, absInRoot)
+	if err == nil {
+		t.Error("expected error for absolute path input")
+	}
+	if err != nil && !strings.Contains(err.Error(), "absolute path") {
+		t.Errorf("expected 'absolute path' error, got: %v", err)
+	}
+}
+
+func TestResolvePathValidRelative(t *testing.T) {
+	tmpDir := t.TempDir()
+	subDir := filepath.Join(tmpDir, "sub")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	resolved, err := resolvePath(tmpDir, "sub")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	expected := filepath.Clean(filepath.Join(tmpDir, "sub"))
+	if resolved != expected {
+		t.Errorf("expected %q, got %q", expected, resolved)
+	}
+}
+
+func TestResolvePathEmpty(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	resolved, err := resolvePath(tmpDir, "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resolved != tmpDir {
+		t.Errorf("expected %q, got %q", tmpDir, resolved)
 	}
 }

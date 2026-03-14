@@ -188,20 +188,27 @@ var validFormats = map[string]bool{"xml": true, "md": true, "markdown": true, "j
 // resolvePath resolves an input path relative to the default root, ensuring
 // the result stays within the root directory to prevent path traversal.
 // If inputPath is empty, defaultRoot is returned unchanged.
+// Absolute paths are rejected outright; relative paths are joined with
+// defaultRoot and then verified to remain within the root boundary.
 func resolvePath(defaultRoot, inputPath string) (string, error) {
 	if inputPath == "" {
 		return defaultRoot, nil
 	}
 
-	absPath, err := filepath.Abs(inputPath)
-	if err != nil {
-		return "", fmt.Errorf("invalid path: %w", err)
+	// Reject absolute paths to prevent escaping the project root.
+	if filepath.IsAbs(inputPath) {
+		return "", fmt.Errorf("absolute path %q is not allowed; use a relative path within the project root %q", inputPath, defaultRoot)
 	}
 
-	// Ensure the resolved path is within the project root.
-	rel, err := filepath.Rel(defaultRoot, absPath)
-	if err != nil || strings.HasPrefix(rel, "..") {
-		return "", fmt.Errorf("path %q is outside the project root %q", inputPath, defaultRoot)
+	// Join with defaultRoot (not CWD) and clean the result.
+	joined := filepath.Join(defaultRoot, inputPath)
+	absPath := filepath.Clean(joined)
+
+	// Verify the cleaned path is still within the project root.
+	// Use Clean on defaultRoot too for consistent comparison.
+	cleanRoot := filepath.Clean(defaultRoot)
+	if absPath != cleanRoot && !strings.HasPrefix(absPath, cleanRoot+string(filepath.Separator)) {
+		return "", fmt.Errorf("path %q resolves outside the project root %q", inputPath, defaultRoot)
 	}
 
 	return absPath, nil
