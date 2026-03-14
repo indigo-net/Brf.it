@@ -30,6 +30,11 @@ const sidebars: SidebarsConfig = {
         'languages/c-cpp',
       ],
     },
+    {
+      type: 'doc',
+      id: 'changelog',
+      label: 'Changelog',
+    },
   ],
 };
 
