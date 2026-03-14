@@ -7484,6 +7484,10 @@ func (p *TreeSitterParser) extractSignatures(
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]parser.Signature, error)
+type dedupKey struct {
+		line int
+		name string
+	}
 kindNode *sitter.Node
 func cleanComment(text string) string
 func isExported(name, _ string) bool
@@ -7704,6 +7708,7 @@ func TestTreeSitterParserParseYAML(t *testing.T)
 names []string
 func TestTreeSitterParserParseTOML(t *testing.T)
 names []string
+func TestSameLineDifferentNames(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go

@@ -7121,6 +7121,10 @@ import &quot;unsafe&quot;</imports>
 	langQuery LanguageQuery,
 	opts *parser.Options,
 ) ([]parser.Signature, error)</function>
+      <type>type dedupKey struct {
+		line int
+		name string
+	}</type>
       <variable>kindNode *sitter.Node</variable>
       <function>func cleanComment(text string) string</function>
       <function>func isExported(name, _ string) bool</function>
@@ -7332,6 +7336,7 @@ import &quot;unsafe&quot;</imports>
       <variable>names []string</variable>
       <function>func TestTreeSitterParserParseTOML(t *testing.T)</function>
       <variable>names []string</variable>
+      <function>func TestSameLineDifferentNames(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (
