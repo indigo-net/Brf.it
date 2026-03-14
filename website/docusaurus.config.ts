@@ -20,6 +20,23 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  headTags: [
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'keywords',
+        content: 'brfit, code extraction, AI, LLM, token optimization, function signatures, Tree-sitter, CLI, code context, MCP',
+      },
+    },
+    {
+      tagName: 'meta',
+      attributes: {
+        name: 'author',
+        content: 'indigo-net',
+      },
+    },
+  ],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'ko', 'ja', 'de', 'hi'],
@@ -50,6 +67,10 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
+    metadata: [
+      {name: 'og:type', content: 'website'},
+      {name: 'twitter:card', content: 'summary_large_image'},
+    ],
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -96,6 +117,10 @@ const config: Config = {
             {
               label: 'Supported Languages',
               to: '/docs/languages/',
+            },
+            {
+              label: 'Changelog',
+              to: '/docs/changelog',
             },
           ],
         },
