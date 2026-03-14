@@ -64,6 +64,14 @@ func (q *GoQuery) CallQuery() []byte {
 	return []byte(goCallQueryPattern)
 }
 
+// IsExported returns true if the Go identifier starts with an uppercase letter.
+func (q *GoQuery) IsExported(name, _ string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return name[0] >= 'A' && name[0] <= 'Z'
+}
+
 // goCallQueryPattern is the Tree-sitter query for extracting Go function calls.
 const goCallQueryPattern = `
 ; Direct function calls (e.g., foo())

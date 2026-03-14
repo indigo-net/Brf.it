@@ -53,6 +53,14 @@ func (q *PHPQuery) ImportQuery() []byte {
 	return []byte(phpImportQueryPattern)
 }
 
+// IsExported returns true if the PHP signature does not start with a private modifier.
+func (q *PHPQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private")
+}
+
 // phpImportQueryPattern is the Tree-sitter query for extracting PHP use/include statements.
 const phpImportQueryPattern = `
 ; use Namespace\\Class;

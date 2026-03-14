@@ -54,6 +54,14 @@ func (q *SwiftQuery) ImportQuery() []byte {
 	return []byte(swiftImportQueryPattern)
 }
 
+// IsExported returns true if the Swift signature does not start with a private modifier.
+func (q *SwiftQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private") && !hasVisibilityPrefix(sigText, "fileprivate")
+}
+
 // swiftImportQueryPattern is the Tree-sitter query for extracting Swift import statements.
 const swiftImportQueryPattern = `
 ; Import declarations (capture full statement)

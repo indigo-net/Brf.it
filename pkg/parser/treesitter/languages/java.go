@@ -57,6 +57,14 @@ func (q *JavaQuery) CallQuery() []byte {
 	return []byte(javaCallQueryPattern)
 }
 
+// IsExported returns true if the Java signature does not start with a private modifier.
+func (q *JavaQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private")
+}
+
 // javaCallQueryPattern is the Tree-sitter query for extracting Java method invocations.
 const javaCallQueryPattern = `
 ; Method invocations (e.g., obj.method(), method())

@@ -56,6 +56,14 @@ func (q *ScalaQuery) ImportQuery() []byte {
 	return []byte(scalaImportQueryPattern)
 }
 
+// IsExported returns true if the Scala signature does not start with a private modifier.
+func (q *ScalaQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private")
+}
+
 // scalaImportQueryPattern is the Tree-sitter query for extracting Scala import statements.
 const scalaImportQueryPattern = `
 ; Import statements

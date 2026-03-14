@@ -2,6 +2,8 @@
 package languages
 
 import (
+	"strings"
+
 	tree_sitter_elixir "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
@@ -46,6 +48,14 @@ func (q *ElixirQuery) KindMapping() map[string]string {
 // ImportQuery returns the Elixir import query pattern.
 func (q *ElixirQuery) ImportQuery() []byte {
 	return []byte(elixirImportQueryPattern)
+}
+
+// IsExported returns true if the Elixir definition uses def (not defp).
+func (q *ElixirQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !strings.HasPrefix(sigText, "defp ")
 }
 
 // elixirImportQueryPattern is the Tree-sitter query for extracting Elixir
