@@ -26,6 +26,11 @@ type LanguageQuery interface {
 
 	// KindMapping maps Tree-sitter node types to Signature kinds.
 	KindMapping() map[string]string
+
+	// IsExported reports whether the symbol identified by name and sigText
+	// is public/exported in the given language. sigText is the full
+	// signature text which may contain visibility modifiers.
+	IsExported(name, sigText string) bool
 }
 
 // Capture names used across all language queries.

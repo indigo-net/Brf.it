@@ -63,6 +63,14 @@ func (q *CSharpQuery) ImportQuery() []byte {
 	return []byte(csharpImportQueryPattern)
 }
 
+// IsExported returns true if the C# signature does not start with a private modifier.
+func (q *CSharpQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private") && !hasVisibilityPrefix(sigText, "internal")
+}
+
 // csharpImportQueryPattern is the Tree-sitter query for extracting C# using directives.
 const csharpImportQueryPattern = `
 ; using directives (capture full declaration)

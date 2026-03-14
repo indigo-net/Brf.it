@@ -204,13 +204,24 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 		}
 	}
 
-	// Extract calls if requested
+	// Extract calls if requested (uses full signatures for caller attribution)
 	var calls []parser.FunctionCall
 	if opts.IncludeCalls && query.CallQuery() != nil {
 		calls, err = p.extractCalls(tree.RootNode(), content, query, opts, signatures)
 		if err != nil {
 			return nil, fmt.Errorf("call extraction failed: %w", err)
 		}
+	}
+
+	// Filter private symbols after call extraction (calls need all signatures for caller attribution)
+	if !opts.IncludePrivate {
+		filtered := signatures[:0]
+		for _, sig := range signatures {
+			if sig.Exported {
+				filtered = append(filtered, sig)
+			}
+		}
+		signatures = filtered
 	}
 
 	return &parser.ParseResult{
@@ -448,10 +459,7 @@ func (p *TreeSitterParser) extractSignatures(
 			}
 			seen[dk] = true
 
-			// Filter private if needed
-			if !opts.IncludePrivate && !isExported(sig.Name, opts.Language) {
-				continue
-			}
+			sig.Exported = langQuery.IsExported(sig.Name, sig.Text)
 
 			// Strip body if IncludeBody is false (default)
 			if !opts.IncludeBody {
@@ -459,7 +467,6 @@ func (p *TreeSitterParser) extractSignatures(
 			}
 
 			sig.Language = opts.Language
-			sig.Exported = isExported(sig.Name, opts.Language)
 			signatures = append(signatures, sig)
 		}
 	}
@@ -502,15 +509,6 @@ func cleanComment(text string) string {
 	}
 
 	return strings.TrimSpace(text)
-}
-
-// isExported checks if a name is exported/public.
-// Currently all supported languages treat every captured signature as exported,
-// since visibility filtering is either handled by Tree-sitter queries
-// (e.g., Go package-level, TS export_statement) or deferred to the user
-// via --include-private. Returns false only for empty names.
-func isExported(name, _ string) bool {
-	return len(name) > 0
 }
 
 // stripBody removes the function/method body from the signature text.

@@ -63,6 +63,14 @@ func (q *RustQuery) CallQuery() []byte {
 	return []byte(rustCallQueryPattern)
 }
 
+// IsExported returns true for Rust items. In Rust, items without `pub` are
+// still crate-visible, which is exported enough for project-level analysis.
+// Only items explicitly marked with restricted visibility (e.g., inside impl
+// blocks) would be truly private, but that requires AST context beyond sigText.
+func (q *RustQuery) IsExported(name, _ string) bool {
+	return len(name) > 0
+}
+
 // rustCallQueryPattern is the Tree-sitter query for extracting Rust function calls.
 const rustCallQueryPattern = `
 ; Direct function calls (e.g., foo())

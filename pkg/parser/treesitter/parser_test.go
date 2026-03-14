@@ -340,13 +340,14 @@ public class User {
 		t.Fatalf("Parse returned error: %v", err)
 	}
 
-	// Should have: User class, User constructor, getName method, internalMethod
-	// Private methods are now included (no private filtering)
-	if len(result.Signatures) < 4 {
-		t.Errorf("expected at least 4 signatures, got %d", len(result.Signatures))
+	// Should have: User class, User constructor, getName method
+	// Private methods are filtered out by default (internalMethod excluded)
+	if len(result.Signatures) < 3 {
+		t.Errorf("expected at least 3 signatures, got %d", len(result.Signatures))
 	}
 
-	var foundClass, foundConstructor, foundPublicMethod, foundPrivateMethod bool
+	var foundClass, foundConstructor, foundPublicMethod bool
+	foundPrivateMethod := false
 	for _, sig := range result.Signatures {
 		switch sig.Name {
 		case "User":
@@ -362,9 +363,6 @@ public class User {
 			}
 		case "internalMethod":
 			foundPrivateMethod = true
-			if sig.Kind != "method" {
-				t.Errorf("expected kind 'method', got '%s'", sig.Kind)
-			}
 		}
 	}
 
@@ -377,8 +375,8 @@ public class User {
 	if !foundPublicMethod {
 		t.Error("expected to find 'getName' method")
 	}
-	if !foundPrivateMethod {
-		t.Error("expected to find 'internalMethod' (private methods now included)")
+	if foundPrivateMethod {
+		t.Error("'internalMethod' should be filtered out (private)")
 	}
 }
 
@@ -888,14 +886,18 @@ void test() {
 		foundNames[sig.Name] = sig.Kind
 	}
 
-	// Global variables should be found as "variable"
-	globalVars := []string{"global_count", "buffer", "shared_value", "MAX_SIZE"}
+	// Global variables should be found as "variable" (non-static)
+	globalVars := []string{"global_count", "shared_value", "MAX_SIZE"}
 	for _, name := range globalVars {
 		if kind, ok := foundNames[name]; !ok {
 			t.Errorf("expected to find global variable '%s'", name)
 		} else if kind != "variable" {
 			t.Errorf("expected kind 'variable' for '%s', got '%s'", name, kind)
 		}
+	}
+	// static variables should be filtered out (file-local)
+	if _, ok := foundNames["buffer"]; ok {
+		t.Error("'buffer' is static and should be filtered out")
 	}
 
 	// Function prototype and definition should still be found as "function"
@@ -2541,21 +2543,31 @@ lazy val expensive: String = "computed"
 	expectedNames := map[string]bool{
 		"Greeter": false, "greet": false, "Shape": false,
 		"Vehicle": false, "description": false,
-		"Person": false, "helper": false,
+		"Person": false,
 		"Point": false, "distance": false,
 		"MathUtils": false, "PI": false, "counter": false, "add": false,
 		"StringList": false, "Color": false, "expensive": false,
 	}
+	// "helper" is private and should be filtered out
+	unexpectedNames := map[string]bool{"helper": false}
 
 	for _, sig := range result.Signatures {
 		if _, ok := expectedNames[sig.Name]; ok {
 			expectedNames[sig.Name] = true
+		}
+		if _, ok := unexpectedNames[sig.Name]; ok {
+			unexpectedNames[sig.Name] = true
 		}
 	}
 
 	for name, found := range expectedNames {
 		if !found {
 			t.Errorf("expected to find signature '%s'", name)
+		}
+	}
+	for name, found := range unexpectedNames {
+		if found {
+			t.Errorf("'%s' is private and should be filtered out", name)
 		}
 	}
 

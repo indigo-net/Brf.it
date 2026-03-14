@@ -52,6 +52,14 @@ func (q *KotlinQuery) ImportQuery() []byte {
 	return []byte(kotlinImportQueryPattern)
 }
 
+// IsExported returns true if the Kotlin signature does not start with a private modifier.
+func (q *KotlinQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !hasVisibilityPrefix(sigText, "private") && !hasVisibilityPrefix(sigText, "internal")
+}
+
 // kotlinImportQueryPattern is the Tree-sitter query for extracting Kotlin import statements.
 const kotlinImportQueryPattern = `
 ; Import statements

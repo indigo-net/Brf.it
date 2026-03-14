@@ -2,6 +2,8 @@
 package languages
 
 import (
+	"strings"
+
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_cpp "github.com/tree-sitter/tree-sitter-cpp/bindings/go"
 )
@@ -53,6 +55,14 @@ func (q *CppQuery) KindMapping() map[string]string {
 // ImportQuery returns the C++ import query pattern.
 func (q *CppQuery) ImportQuery() []byte {
 	return []byte(cppImportQueryPattern)
+}
+
+// IsExported returns true if the C++ signature is not file-local (static).
+func (q *CppQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !strings.HasPrefix(sigText, "static ")
 }
 
 // cppImportQueryPattern is the Tree-sitter query for extracting C++ #include directives.

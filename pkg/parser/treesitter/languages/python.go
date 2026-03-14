@@ -52,6 +52,15 @@ func (q *PythonQuery) CallQuery() []byte {
 	return []byte(pythonCallQueryPattern)
 }
 
+// IsExported returns true if the Python name does not start with underscore.
+// Single underscore prefix (_name) is a convention for internal/private symbols.
+func (q *PythonQuery) IsExported(name, _ string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return name[0] != '_'
+}
+
 // pythonCallQueryPattern is the Tree-sitter query for extracting Python function calls.
 const pythonCallQueryPattern = `
 ; Direct function calls (e.g., foo())

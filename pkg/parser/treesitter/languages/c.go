@@ -2,6 +2,8 @@
 package languages
 
 import (
+	"strings"
+
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_c "github.com/tree-sitter/tree-sitter-c/bindings/go"
 )
@@ -55,6 +57,14 @@ func (q *CQuery) ImportQuery() []byte {
 // CallQuery returns the C call query pattern.
 func (q *CQuery) CallQuery() []byte {
 	return []byte(cCallQueryPattern)
+}
+
+// IsExported returns true if the C signature is not file-local (static).
+func (q *CQuery) IsExported(name, sigText string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	return !strings.HasPrefix(sigText, "static ")
 }
 
 // cCallQueryPattern is the Tree-sitter query for extracting C function calls.
