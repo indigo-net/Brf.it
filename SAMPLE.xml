@@ -164,6 +164,9 @@
       <function>func TestPathTraversal(t *testing.T)</function>
       <function>func TestInvalidFormat(t *testing.T)</function>
       <function>func TestValidSubdirectoryPath(t *testing.T)</function>
+      <function>func TestResolvePathAbsoluteRejected(t *testing.T)</function>
+      <function>func TestResolvePathValidRelative(t *testing.T)</function>
+      <function>func TestResolvePathEmpty(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/examples/go/main.go" language="go">
       <imports>import (

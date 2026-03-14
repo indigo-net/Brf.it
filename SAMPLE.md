@@ -161,6 +161,9 @@ func TestSummarizeProjectInvalidPath(t *testing.T)
 func TestPathTraversal(t *testing.T)
 func TestInvalidFormat(t *testing.T)
 func TestValidSubdirectoryPath(t *testing.T)
+func TestResolvePathAbsoluteRejected(t *testing.T)
+func TestResolvePathValidRelative(t *testing.T)
+func TestResolvePathEmpty(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/examples/go/main.go
