@@ -7695,6 +7695,23 @@ import type * as Preset from &apos;@docusaurus/preset-classic&apos;;</imports>
 
   onBrokenLinks: &apos;throw&apos;,
 
+  headTags: [
+    {
+      tagName: &apos;meta&apos;,
+      attributes: {
+        name: &apos;keywords&apos;,
+        content: &apos;brfit, code extraction, AI, LLM, token optimization, function signatures, Tree-sitter, CLI, code context, MCP&apos;,
+      },
+    },
+    {
+      tagName: &apos;meta&apos;,
+      attributes: {
+        name: &apos;author&apos;,
+        content: &apos;indigo-net&apos;,
+      },
+    },
+  ],
+
   i18n: {
     defaultLocale: &apos;en&apos;,
     locales: [&apos;en&apos;, &apos;ko&apos;, &apos;ja&apos;, &apos;de&apos;, &apos;hi&apos;],
@@ -7725,6 +7742,10 @@ import type * as Preset from &apos;@docusaurus/preset-classic&apos;;</imports>
 
   themeConfig: {
     image: &apos;img/docusaurus-social-card.jpg&apos;,
+    metadata: [
+      {name: &apos;og:type&apos;, content: &apos;website&apos;},
+      {name: &apos;twitter:card&apos;, content: &apos;summary_large_image&apos;},
+    ],
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -7771,6 +7792,10 @@ import type * as Preset from &apos;@docusaurus/preset-classic&apos;;</imports>
             {
               label: &apos;Supported Languages&apos;,
               to: &apos;/docs/languages/&apos;,
+            },
+            {
+              label: &apos;Changelog&apos;,
+              to: &apos;/docs/changelog&apos;,
             },
           ],
         },
@@ -7834,6 +7859,11 @@ import type * as Preset from &apos;@docusaurus/preset-classic&apos;;</imports>
         &apos;languages/scala&apos;,
         &apos;languages/c-cpp&apos;,
       ],
+    },
+    {
+      type: &apos;doc&apos;,
+      id: &apos;changelog&apos;,
+      label: &apos;Changelog&apos;,
     },
   ],
 };</function>
