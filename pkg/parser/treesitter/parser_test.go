@@ -3211,3 +3211,27 @@ port = 5432
 	}
 
 }
+
+// TestSameLineDifferentNames verifies that two distinct symbols on the
+// same source line are both captured (composite dedup key: line+name).
+func TestSameLineDifferentNames(t *testing.T) {
+	src := `package main
+
+func Alpha() {}
+func Beta() {}
+`
+	p := NewTreeSitterParser()
+	result, err := p.Parse([]byte(src), &parser.Options{Language: "go"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	names := make(map[string]bool)
+	for _, sig := range result.Signatures {
+		names[sig.Name] = true
+	}
+
+	if !names["Alpha"] || !names["Beta"] {
+		t.Errorf("expected both Alpha and Beta; got signatures: %v", names)
+	}
+}

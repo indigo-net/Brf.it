@@ -256,9 +256,15 @@ func (p *TreeSitterParser) extractSignatures(
 	kindMapping := langQuery.KindMapping()
 	captureNames := query.CaptureNames()
 
-	// Track seen signatures by line number to avoid duplicates
-	// (e.g., TypeScript arrow functions can be captured by multiple patterns)
-	seenLines := make(map[int]bool)
+	// Track seen signatures by (line, name) to avoid duplicates from
+	// overlapping query patterns (e.g., TypeScript arrow functions).
+	// Using a composite key prevents false deduplication when two
+	// distinct symbols start on the same line.
+	type dedupKey struct {
+		line int
+		name string
+	}
+	seen := make(map[dedupKey]bool)
 
 	for {
 		match := matches.Next()
@@ -435,11 +441,12 @@ func (p *TreeSitterParser) extractSignatures(
 
 		// Only add if we have a name and signature
 		if sig.Name != "" && sig.Text != "" {
-			// Skip duplicates (same line already captured by another pattern)
-			if seenLines[sig.Line] {
+			// Skip duplicates (same line+name already captured by another pattern)
+			dk := dedupKey{sig.Line, sig.Name}
+			if seen[dk] {
 				continue
 			}
-			seenLines[sig.Line] = true
+			seen[dk] = true
 
 			// Filter private if needed
 			if !opts.IncludePrivate && !isExported(sig.Name, opts.Language) {
