@@ -277,13 +277,14 @@ func (p *TreeSitterParser) extractSignatures(
 	kindMapping := langQuery.KindMapping()
 	captureNames := query.CaptureNames()
 
-	// Track seen signatures by (line, name) to avoid duplicates from
+	// Track seen signatures by (line, column, name) to avoid duplicates from
 	// overlapping query patterns (e.g., TypeScript arrow functions).
 	// Using a composite key prevents false deduplication when two
-	// distinct symbols start on the same line.
+	// distinct symbols start on the same line or even at the same position.
 	type dedupKey struct {
-		line int
-		name string
+		line   int
+		column int
+		name   string
 	}
 	seen := make(map[dedupKey]bool)
 
@@ -294,6 +295,7 @@ func (p *TreeSitterParser) extractSignatures(
 		}
 
 		sig := parser.Signature{}
+		sigColumn := 0
 		var kindNode *sitter.Node
 
 		for _, capture := range match.Captures {
@@ -320,6 +322,7 @@ func (p *TreeSitterParser) extractSignatures(
 			case CaptureSignature:
 				sig.Text = string(bytes.TrimSpace(raw))
 				sig.Line = int(node.StartPosition().Row) + 1
+				sigColumn = int(node.StartPosition().Column)
 				sig.EndLine = int(node.EndPosition().Row) + 1
 			case CaptureDoc:
 				if len(raw) > 0 {
@@ -462,8 +465,8 @@ func (p *TreeSitterParser) extractSignatures(
 
 		// Only add if we have a name and signature
 		if sig.Name != "" && sig.Text != "" {
-			// Skip duplicates (same line+name already captured by another pattern)
-			dk := dedupKey{sig.Line, sig.Name}
+			// Skip duplicates (same line+column+name already captured by another pattern)
+			dk := dedupKey{sig.Line, sigColumn, sig.Name}
 			if seen[dk] {
 				continue
 			}
