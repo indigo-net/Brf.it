@@ -1797,6 +1797,11 @@ func findEnclosingFunction(signatures []parser.Signature, line int) string {
 	bestSpan := int(^uint(0) >> 1) // max int
 
 	for _, sig := range signatures {
+		// Skip signatures with invalid EndLine (e.g., parse errors where
+		// EndLine is 0); they cannot reliably enclose any line.
+		if sig.EndLine == 0 {
+			continue
+		}
 		if sig.Line <= line && line <= sig.EndLine {
 			span := sig.EndLine - sig.Line
 			if span < bestSpan {

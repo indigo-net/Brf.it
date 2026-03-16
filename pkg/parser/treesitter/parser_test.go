@@ -3247,3 +3247,27 @@ func Beta() {}
 		t.Errorf("expected both Alpha and Beta; got signatures: %v", names)
 	}
 }
+
+func TestFindEnclosingFunctionEndLineZero(t *testing.T) {
+	sigs := []parser.Signature{
+		{Name: "Good", Line: 1, EndLine: 10},
+		{Name: "Bad", Line: 5, EndLine: 0}, // invalid EndLine
+		{Name: "Another", Line: 12, EndLine: 20},
+	}
+
+	tests := []struct {
+		line int
+		want string
+	}{
+		{3, "Good"},
+		{7, "Good"},    // would match "Bad" if EndLine=0 was not skipped
+		{15, "Another"},
+		{25, ""},
+	}
+	for _, tt := range tests {
+		got := findEnclosingFunction(sigs, tt.line)
+		if got != tt.want {
+			t.Errorf("findEnclosingFunction(sigs, %d) = %q, want %q", tt.line, got, tt.want)
+		}
+	}
+}
