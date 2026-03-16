@@ -7986,6 +7986,7 @@ func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
 func TestNewFileScannerInvalidPatterns(t *testing.T)
 func TestPreloadContent(t *testing.T)
+found bool
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go

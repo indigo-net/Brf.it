@@ -7596,6 +7596,7 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanChangedFilesWhitelist(t *testing.T)</function>
       <function>func TestNewFileScannerInvalidPatterns(t *testing.T)</function>
       <function>func TestPreloadContent(t *testing.T)</function>
+      <variable>found bool</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go" language="go">
       <imports>import (
