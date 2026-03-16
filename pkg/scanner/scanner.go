@@ -453,11 +453,13 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 		} else {
 			content, err := os.ReadFile(path)
 			if err != nil {
-				s.logger.Printf("WARN: failed to preload %s: %v", path, err)
-				return FileEntry{}, false
+				s.logger.Printf("WARN: failed to preload %s: %v (file will be read on-demand)", path, err)
+				// Include the file without content; the extractor will
+				// fall back to on-demand os.ReadFile.
+			} else {
+				entry.Content = content
+				s.preloadedSize += int64(len(content))
 			}
-			entry.Content = content
-			s.preloadedSize += int64(len(content))
 		}
 	}
 
