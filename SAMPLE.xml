@@ -7127,6 +7127,10 @@ import &quot;unsafe&quot;</imports>
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }</type>
+      <type>type pooledParser struct {
+	parser   *sitter.Parser
+	lastLang *sitter.Language
+}</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) Close()</function>
       <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>

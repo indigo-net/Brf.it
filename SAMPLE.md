@@ -7490,6 +7490,10 @@ type TreeSitterParser struct {
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }
+type pooledParser struct {
+	parser   *sitter.Parser
+	lastLang *sitter.Language
+}
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) Close()
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
