@@ -1221,6 +1221,45 @@ func TestPreloadContent(t *testing.T) {
 		}
 	})
 
+	t.Run("preload budget exceeded", func(t *testing.T) {
+		// Create two files; set budget so only one can be preloaded
+		goFile2 := filepath.Join(tmpDir, "other.go")
+		content2 := []byte("package main\n\nfunc Other() {}\n")
+		if err := os.WriteFile(goFile2, content2, 0644); err != nil {
+			t.Fatal(err)
+		}
+		defer os.Remove(goFile2)
+
+		opts := &ScanOptions{
+			RootPath:            tmpDir,
+			SupportedExtensions: defaultOpts.SupportedExtensions,
+			MaxFileSize:         defaultOpts.MaxFileSize,
+			PreloadContent:      true,
+			MaxTotalPreloadSize: int64(len(content) + 1), // just enough for 1 file
+		}
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		result, err := sc.Scan(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(result.Files) != 2 {
+			t.Fatalf("expected 2 files, got %d", len(result.Files))
+		}
+		// One file should have content, the other should not
+		preloaded := 0
+		for _, f := range result.Files {
+			if f.Content != nil {
+				preloaded++
+			}
+		}
+		if preloaded != 1 {
+			t.Errorf("expected exactly 1 preloaded file, got %d", preloaded)
+		}
+	})
+
 	t.Run("preload disabled", func(t *testing.T) {
 		opts := &ScanOptions{
 			RootPath:            tmpDir,

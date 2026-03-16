@@ -82,6 +82,13 @@ type ScanOptions struct {
 	// PreloadContent reads file content during scan so downstream consumers
 	// (e.g., the extractor) can skip a redundant os.ReadFile call.
 	PreloadContent bool
+
+	// MaxTotalPreloadSize limits the total bytes preloaded into memory when
+	// PreloadContent is true. Once this budget is exceeded, remaining files
+	// are included in the scan results but with Content set to nil (the
+	// extractor will fall back to on-demand os.ReadFile). A value of 0 means
+	// no limit. Default: 0.
+	MaxTotalPreloadSize int64
 }
 
 // DefaultScanOptions returns a ScanOptions with sensible defaults.
@@ -138,6 +145,7 @@ type FileScanner struct {
 	ignorerErrsWarned bool
 	logger            *log.Logger
 	rootIsFile        bool
+	preloadedSize     int64 // tracks total bytes preloaded so far
 }
 
 // NewFileScanner creates a new FileScanner with the given options.
@@ -437,12 +445,20 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 	}
 
 	if s.opts.PreloadContent {
-		content, err := os.ReadFile(path)
-		if err != nil {
-			s.logger.Printf("WARN: failed to preload %s: %v", path, err)
-			return FileEntry{}, false
+		// Skip preloading if total preloaded size would exceed budget.
+		budget := s.opts.MaxTotalPreloadSize
+		if budget > 0 && s.preloadedSize+info.Size() > budget {
+			// Still include the file but without preloaded content;
+			// the extractor will fall back to on-demand os.ReadFile.
+		} else {
+			content, err := os.ReadFile(path)
+			if err != nil {
+				s.logger.Printf("WARN: failed to preload %s: %v", path, err)
+				return FileEntry{}, false
+			}
+			entry.Content = content
+			s.preloadedSize += int64(len(content))
 		}
-		entry.Content = content
 	}
 
 	return entry, true
