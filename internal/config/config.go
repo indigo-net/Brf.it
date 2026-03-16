@@ -89,6 +89,9 @@ type Config struct {
 	// MaxDocLength is the maximum length of documentation comments in characters.
 	// 0 means no limit (default).
 	MaxDocLength int
+
+	// Strict enables strict mode where any file parsing error causes a non-zero exit code.
+	Strict bool
 }
 
 // DefaultConfig returns a Config with all default values set.
