@@ -7879,6 +7879,13 @@ type ScanOptions struct {
 	// PreloadContent reads file content during scan so downstream consumers
 	// (e.g., the extractor) can skip a redundant os.ReadFile call.
 	PreloadContent bool
+
+	// MaxTotalPreloadSize limits the total bytes preloaded into memory when
+	// PreloadContent is true. Once this budget is exceeded, remaining files
+	// are included in the scan results but with Content set to nil (the
+	// extractor will fall back to on-demand os.ReadFile). A value of 0 means
+	// no limit. Default: 0.
+	MaxTotalPreloadSize int64
 }
 func DefaultScanOptions() *ScanOptions
 func copyLanguageMapping() map[string]string
@@ -7897,6 +7904,7 @@ type FileScanner struct {
 	ignorerErrsWarned bool
 	logger            *log.Logger
 	rootIsFile        bool
+	preloadedSize     int64 // tracks total bytes preloaded so far
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
 rootIsFile bool
