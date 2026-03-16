@@ -162,6 +162,10 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().StringVar(&c.Since, "since", c.Since,
 		"only scan files changed since the specified commit/tag (e.g., \"v1.0.0\", \"HEAD~5\")")
 
+	// Strict mode flag
+	cmd.Flags().BoolVar(&c.Strict, "strict", c.Strict,
+		"exit with error code 1 if any file has parsing errors")
+
 	// Version flag
 	cmd.Flags().BoolP("version", "v", false, "print version information")
 }
@@ -278,7 +282,18 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 	if result.TokenCount > 0 {
 		fmt.Fprintf(os.Stderr, ", Tokens: %d", result.TokenCount)
 	}
+	if result.ErrorCount > 0 {
+		fmt.Fprintf(os.Stderr, ", Errors: %d", result.ErrorCount)
+	}
 	fmt.Fprintln(os.Stderr)
+
+	// Report parsing errors and optionally fail in strict mode
+	if result.ErrorCount > 0 {
+		fmt.Fprintf(os.Stderr, "[brfit] WARN: %d file(s) had parsing errors\n", result.ErrorCount)
+		if c.Strict {
+			return fmt.Errorf("%d file(s) had parsing errors (--strict mode)", result.ErrorCount)
+		}
+	}
 
 	return nil
 }
