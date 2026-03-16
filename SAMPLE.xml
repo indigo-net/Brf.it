@@ -7356,6 +7356,7 @@ import &quot;unsafe&quot;</imports>
       <function>func TestTreeSitterParserParseTOML(t *testing.T)</function>
       <variable>names []string</variable>
       <function>func TestSameLineDifferentNames(t *testing.T)</function>
+      <function>func TestFindEnclosingFunctionEndLineZero(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (

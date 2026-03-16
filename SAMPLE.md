@@ -7728,6 +7728,7 @@ names []string
 func TestTreeSitterParserParseTOML(t *testing.T)
 names []string
 func TestSameLineDifferentNames(t *testing.T)
+func TestFindEnclosingFunctionEndLineZero(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go
