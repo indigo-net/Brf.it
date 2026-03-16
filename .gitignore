@@ -30,3 +30,4 @@ Thumbs.db
 
 # Plan documents (Claude Code temporary files)
 docs/plans/
+.claude/brfit-manager-state.json
