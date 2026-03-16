@@ -7606,7 +7606,19 @@ import &quot;unsafe&quot;</imports>
 	// Regex is the compiled regular expression.
 	Regex *regexp.Regexp
 }</type>
-      <function>func defaultPatterns() []Pattern</function>
+      <variable>defaultPatterns = []Pattern{
+	{Name: &quot;AWS Access Key ID&quot;, Regex: regexp.MustCompile(`AKIA[0-9A-Z]{16}`)},
+	{Name: &quot;AWS Secret Access Key&quot;, Regex: regexp.MustCompile(`(?i)aws_secret_access_key\s*[=:]\s*[A-Za-z0-9/+=]{40}`)},
+	{Name: &quot;GitHub Token&quot;, Regex: regexp.MustCompile(`gh[pousr]_[A-Za-z0-9_]{36,255}`)},
+	{Name: &quot;Generic API Key&quot;, Regex: regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[=:]\s*[&quot;&apos;]?[A-Za-z0-9_\-]{20,}[&quot;&apos;]?`)},
+	{Name: &quot;Generic Secret&quot;, Regex: regexp.MustCompile(`(?i)\b(?:secret|password|passwd|pwd)\s*[=:]\s*[&quot;&apos;]?[^\s&quot;&apos;]{8,}[&quot;&apos;]?`)},
+	{Name: &quot;Bearer Token&quot;, Regex: regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9\-._~+/]{20,}=*`)},
+	{Name: &quot;Private Key&quot;, Regex: regexp.MustCompile(`-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----`)},
+	{Name: &quot;Slack Token&quot;, Regex: regexp.MustCompile(`xox[bporas]-[0-9]{10,}-[A-Za-z0-9-]+`)},
+	{Name: &quot;Google API Key&quot;, Regex: regexp.MustCompile(`AIza[0-9A-Za-z_-]{35}`)},
+	{Name: &quot;Heroku API Key&quot;, Regex: regexp.MustCompile(`(?i)heroku.{0,100}[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)},
+	{Name: &quot;Generic Token Assignment&quot;, Regex: regexp.MustCompile(`(?i)(?:token|auth)\s*[=:]\s*[&quot;&apos;]?[A-Za-z0-9_\-]{20,}[&quot;&apos;]?`)},
+}</variable>
       <type>type Finding struct {
 	// FilePath is the file where the secret was found.
 	FilePath string
