@@ -719,7 +719,9 @@ type treeNode struct {
 }
 func BuildTree(root string, paths []string) string
 buf strings.Builder
+maxTreeDepth = 100
 func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
+func renderNodeDepth(buf *strings.Builder, n *treeNode, prefix string, isRoot bool, depth int)
 newPrefix string
 type FileTokenCount struct {
 	Path   string

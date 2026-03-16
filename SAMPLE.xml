@@ -686,7 +686,9 @@ main &quot;$@&quot;</imports>
 }</type>
       <function>func BuildTree(root string, paths []string) string</function>
       <variable>buf strings.Builder</variable>
+      <variable>maxTreeDepth = 100</variable>
       <function>func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
+      <function>func renderNodeDepth(buf *strings.Builder, n *treeNode, prefix string, isRoot bool, depth int)</function>
       <variable>newPrefix string</variable>
       <type>type FileTokenCount struct {
 	Path   string
