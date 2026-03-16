@@ -195,6 +195,54 @@ func TestResolvePathValidRelative(t *testing.T) {
 	}
 }
 
+func TestResolvePathSymlinkEscape(t *testing.T) {
+	tmpDir := t.TempDir()
+	outsideDir := t.TempDir()
+
+	// Create a file outside the root
+	outsideFile := filepath.Join(outsideDir, "secret.txt")
+	if err := os.WriteFile(outsideFile, []byte("secret"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a symlink inside root that points outside
+	symlinkPath := filepath.Join(tmpDir, "escape")
+	if err := os.Symlink(outsideDir, symlinkPath); err != nil {
+		t.Skipf("cannot create symlinks: %v", err)
+	}
+
+	_, err := resolvePath(tmpDir, "escape")
+	if err == nil {
+		t.Error("expected error for symlink escaping project root")
+	}
+	if err != nil && !strings.Contains(err.Error(), "resolves outside the project root via symlink") {
+		t.Errorf("expected symlink escape error, got: %v", err)
+	}
+}
+
+func TestResolvePathSymlinkWithinRoot(t *testing.T) {
+	tmpDir := t.TempDir()
+	subDir := filepath.Join(tmpDir, "real")
+	if err := os.MkdirAll(subDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a symlink within root pointing to another location within root
+	symlinkPath := filepath.Join(tmpDir, "link")
+	if err := os.Symlink(subDir, symlinkPath); err != nil {
+		t.Skipf("cannot create symlinks: %v", err)
+	}
+
+	resolved, err := resolvePath(tmpDir, "link")
+	if err != nil {
+		t.Fatalf("unexpected error for symlink within root: %v", err)
+	}
+	expected := filepath.Clean(filepath.Join(tmpDir, "link"))
+	if resolved != expected {
+		t.Errorf("expected %q, got %q", expected, resolved)
+	}
+}
+
 func TestResolvePathEmpty(t *testing.T) {
 	tmpDir := t.TempDir()
 
