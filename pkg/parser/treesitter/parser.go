@@ -56,6 +56,13 @@ type TreeSitterParser struct {
 	cursorPool      sync.Pool
 }
 
+// pooledParser wraps a sitter.Parser with the last language set,
+// allowing SetLanguage to be skipped when the same language is reused.
+type pooledParser struct {
+	parser   *sitter.Parser
+	lastLang *sitter.Language
+}
+
 // NewTreeSitterParser creates a new Tree-sitter based parser.
 func NewTreeSitterParser() *TreeSitterParser {
 	p := &TreeSitterParser{
@@ -86,7 +93,7 @@ func NewTreeSitterParser() *TreeSitterParser {
 	}
 	p.parserPool = sync.Pool{
 		New: func() any {
-			return sitter.NewParser()
+			return &pooledParser{parser: sitter.NewParser()}
 		},
 	}
 	p.cursorPool = sync.Pool{
@@ -173,17 +180,20 @@ func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *
 	}
 
 	// Get parser from pool
-	sitterParser := p.parserPool.Get().(*sitter.Parser)
-	defer p.parserPool.Put(sitterParser)
+	pp := p.parserPool.Get().(*pooledParser)
+	defer p.parserPool.Put(pp)
 
-	// Set language
+	// Set language (skip if already set to the same language)
 	tsLang := query.Language()
-	if err := sitterParser.SetLanguage(tsLang); err != nil {
-		return nil, fmt.Errorf("failed to initialize %q parser: %w (grammar may be corrupted or incompatible)", lang, err)
+	if pp.lastLang != tsLang {
+		if err := pp.parser.SetLanguage(tsLang); err != nil {
+			return nil, fmt.Errorf("failed to initialize %q parser: %w (grammar may be corrupted or incompatible)", lang, err)
+		}
+		pp.lastLang = tsLang
 	}
 
 	// Parse content (no conversion needed - already []byte)
-	tree := sitterParser.Parse(content, nil)
+	tree := pp.parser.Parse(content, nil)
 	if tree == nil {
 		return nil, fmt.Errorf("failed to parse content for language %q (content may be malformed or parser error occurred)", lang)
 	}
