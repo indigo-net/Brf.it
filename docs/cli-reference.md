@@ -34,6 +34,7 @@ brfit [path] [options]
 | `--token-tree` | | Show per-file token count tree with directory totals | `false` |
 | `--security-check` / `--no-security-check` | | Detect and redact secrets in extracted code | `true` |
 | `--call-graph` | | Extract function/method call relationships per file | `false` |
+| `--strict` | | Exit with code 1 if any file has parsing errors (CI quality gate) | `false` |
 | `--version` | `-v` | Show version | |
 | `--help` | `-h` | Show help | |
 
