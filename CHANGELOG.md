@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-03-16
+
+### Added
+- `PreloadContent` 실패 시 파일을 제외하지 않고 on-demand 읽기로 fallback (#279)
+
+### Fixed
+- MCP `resolvePath` 심볼릭 링크 경유 경로 탈출 방어 — `filepath.EvalSymlinks` 추가 (#275)
+- MCP `PreloadContent` 대용량 프로젝트 OOM 방어 — `MaxTotalPreloadSize` 옵션 추가 (#276)
+- MCP `resolvePath` 절대 경로 입력 차단 및 경로 탈출 방어 강화 (#255)
+- `findEnclosingFunction` EndLine=0 방어 처리 — 호출 그래프 정확도 개선 (#281)
+- `isExported()` 언어별 가시성 규칙 구현으로 `--include-private` 동작 개선 (#263)
+- `seenLines` 중복 제거 시 동일 행 다른 심볼 오탐 수정 (#257)
+- `doublestar.Match()` 에러 반환값 처리 추가 (#244)
+- `git ls-files` 및 `filepath.Rel` 실패 시 경고 출력 (#240, #243)
+- `TreeSitterParser.Close()` 메서드 추가로 쿼리 캐시 정리 (#241)
+
+### Changed
+- `renderNode` 재귀 깊이 제한(100) 추가 (#282)
+- `security.Scanner` 정규식 패턴을 패키지 수준으로 캐싱 및 `redactString` 단일 패스 매칭으로 통합 (#258, #278)
+- `SetLanguage` CGO 호출을 동일 언어 설정 시 skip하도록 최적화 (#277)
+- 스캔-추출 간 파일 I/O 중복 제거 (#249)
+- `relPath()` 내 `os.Stat` 결과를 `NewFileScanner` 초기화 시 캐싱 (#237)
+- `truncateDoc`에서 불필요한 rune 슬라이스 할당 방지 (#242)
+
 ## [0.20.0] - 2026-03-13
 
 ### Added
@@ -360,6 +384,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.20.0]: https://github.com/indigo-net/Brf.it/compare/v0.19.0...v0.20.0
 [0.19.0]: https://github.com/indigo-net/Brf.it/compare/v0.18.0...v0.19.0
 [0.9.0]: https://github.com/indigo-net/Brf.it/compare/v0.8.0...v0.9.0
+[0.21.0]: https://github.com/indigo-net/Brf.it/compare/v0.20.0...v0.21.0
 [0.8.0]: https://github.com/indigo-net/Brf.it/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/indigo-net/Brf.it/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/indigo-net/Brf.it/compare/v0.5.0...v0.6.0
