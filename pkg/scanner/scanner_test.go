@@ -1260,6 +1260,50 @@ func TestPreloadContent(t *testing.T) {
 		}
 	})
 
+	t.Run("preload read error falls back to nil content", func(t *testing.T) {
+		// Create a file then make it unreadable to trigger ReadFile failure.
+		unreadable := filepath.Join(tmpDir, "unreadable.go")
+		if err := os.WriteFile(unreadable, []byte("package main\n"), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chmod(unreadable, 0000); err != nil {
+			t.Fatal(err)
+		}
+		defer func() {
+			os.Chmod(unreadable, 0644)
+			os.Remove(unreadable)
+		}()
+
+		opts := &ScanOptions{
+			RootPath:            tmpDir,
+			SupportedExtensions: defaultOpts.SupportedExtensions,
+			MaxFileSize:         defaultOpts.MaxFileSize,
+			PreloadContent:      true,
+		}
+		sc, err := NewFileScanner(opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		result, err := sc.Scan(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// The unreadable file should still be included in results.
+		var found bool
+		for _, f := range result.Files {
+			if filepath.Base(f.Path) == "unreadable.go" {
+				found = true
+				if f.Content != nil {
+					t.Error("expected Content to be nil for unreadable file")
+				}
+			}
+		}
+		if !found {
+			t.Error("unreadable file should be included in results with Content=nil")
+		}
+	})
+
 	t.Run("preload disabled", func(t *testing.T) {
 		opts := &ScanOptions{
 			RootPath:            tmpDir,
