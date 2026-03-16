@@ -457,6 +457,10 @@ func (p *TreeSitterParser) extractSignatures(
 			// (CREATE INDEX and CREATE SCHEMA have bare identifiers)
 			if opts.Language == "sql" && sig.Name == "" && sig.Text != "" {
 				sig.Name = extractSQLDDLName(sig.Text)
+				// Fallback: use DDL keyword + line number if name extraction fails
+				if sig.Name == "" {
+					sig.Name = sqlDDLFallbackName(sig.Text, sig.Line)
+				}
 			}
 		}
 
@@ -1943,6 +1947,20 @@ func stripElixirBody(text, kind string) string {
 	}
 
 	return text
+}
+
+// sqlDDLFallbackName generates a fallback name for SQL DDL statements when
+// the name cannot be extracted. It uses the DDL keyword (e.g., "INDEX",
+// "SCHEMA") plus the line number.
+func sqlDDLFallbackName(text string, line int) string {
+	upper := strings.ToUpper(text)
+	keywords := []string{"INDEX", "SCHEMA", "TABLE", "VIEW", "PROCEDURE", "FUNCTION", "TRIGGER", "SEQUENCE", "TYPE"}
+	for _, kw := range keywords {
+		if strings.Contains(upper, kw) {
+			return fmt.Sprintf("<%s:L%d>", strings.ToLower(kw), line)
+		}
+	}
+	return fmt.Sprintf("<ddl:L%d>", line)
 }
 
 // extractSQLDDLName extracts the object name from a SQL DDL statement text.
