@@ -229,21 +229,13 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 	// 8. Calculate token count
 	tokenCount, _ := p.tokenizer.Count(content)
 
-	// 9. Count files with parsing errors
-	errorCount := 0
-	for _, ef := range extractResult.Files {
-		if ef.Error != nil {
-			errorCount++
-		}
-	}
-
 	return &Result{
 		Content:         content,
 		TotalSignatures: extractResult.TotalSignatures,
 		TotalFiles:      len(extractResult.Files),
 		TotalSize:       extractResult.TotalSize,
 		TokenCount:      tokenCount,
-		ErrorCount:      errorCount,
+		ErrorCount:      extractResult.ErrorCount,
 	}, nil
 }
 
