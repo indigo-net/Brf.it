@@ -501,6 +501,9 @@ type Config struct {
 	// MaxDocLength is the maximum length of documentation comments in characters.
 	// 0 means no limit (default).
 	MaxDocLength int
+
+	// Strict enables strict mode where any file parsing error causes a non-zero exit code.
+	Strict bool
 }
 func DefaultConfig() *Config
 func (c *Config) Validate() error
@@ -606,6 +609,9 @@ type Result struct {
 	// TokenCount is the number of tokens in the output.
 	// Returns 0 if token counting is disabled or tokenizer is not set.
 	TokenCount int
+
+	// ErrorCount is the number of files that had parsing errors.
+	ErrorCount int
 }
 type Packager struct {
 	scanner    scanner.Scanner
