@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <brfit>
   <metadata>
-    <version>0.20.0</version>
+    <version>0.21.0</version>
     <path>/home/runner/work/Brf.it/Brf.it</path>
     <schema>
       <tag name="metadata" description="Project metadata container" />
@@ -22,10 +22,7 @@
   </metadata>
   <files>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/main.go" language="go">
-      <variable>version = &quot;dev&quot;</variable>
-      <variable>commit  = &quot;none&quot;</variable>
-      <variable>date    = &quot;unknown&quot;</variable>
-      <function>func main()</function>
+      <!-- empty -->
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/root.go" language="go">
       <imports>import (
@@ -47,23 +44,8 @@
       <variable>Commit  = &quot;none&quot;</variable>
       <variable>Date    = &quot;unknown&quot;</variable>
       <function>func SetBuildInfo(v, c, d string)</function>
-      <variable>cfg *config.Config</variable>
-      <variable>rootCmd *cobra.Command</variable>
-      <function>func init()</function>
       <function>func Execute()</function>
       <function>func NewRootCommand() *cobra.Command</function>
-      <function>func newRootCommandWithConfig(c *config.Config) *cobra.Command</function>
-      <function>func addFlags(cmd *cobra.Command, c *config.Config)</function>
-      <function>func runRoot(cmd *cobra.Command, args []string, c *config.Config) error</function>
-      <variable>changedFiles map[string]bool</variable>
-      <function>func writeOutput(result *context.Result, c *config.Config) error</function>
-      <function>func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath string) error</function>
-      <function>func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)</function>
-      <variable>diffArgs []string</variable>
-      <function>func splitNonEmpty(s string) []string</function>
-      <function>func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error)</function>
-      <function>func resolveRemoteURL(remote string) string</function>
-      <function>func writeToFile(path string, content []byte) error</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go" language="go">
       <imports>import (
@@ -81,13 +63,10 @@
 )</imports>
       <function>func TestExecuteHelp(t *testing.T)</function>
       <function>func TestExecuteVersion(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestNewRootCommand(t *testing.T)</function>
       <function>func TestParseFlags(t *testing.T)</function>
       <function>func TestRootCommandIntegration(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestRootCommandIntegrationMarkdown(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestRootCommandPathNotFound(t *testing.T)</function>
       <function>func TestResolveChangedFilesPathAnchoring(t *testing.T)</function>
       <function>func TestResolveChangedFilesIncludesUntracked(t *testing.T)</function>
@@ -116,8 +95,6 @@
 	// Register Tree-sitter parsers.
 	_ &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter&quot;
 )</imports>
-      <variable>version = &quot;dev&quot;</variable>
-      <function>func main()</function>
       <type>type SummarizeProjectInput struct {
 	Path          string `json:&quot;path,omitempty&quot; jsonschema:&quot;project directory path (defaults to server root)&quot;`
 	Format        string `json:&quot;format,omitempty&quot; jsonschema:&quot;output format: xml, md, or json (default: xml)&quot;`
@@ -131,7 +108,6 @@
 	TotalSignatures int    `json:&quot;total_signatures&quot; jsonschema:&quot;number of signatures extracted&quot;`
 	TokenCount      int    `json:&quot;token_count,omitempty&quot; jsonschema:&quot;estimated token count of output&quot;`
 }</type>
-      <function>func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error)</function>
       <type>type SummarizeFileInput struct {
 	Path    string `json:&quot;path&quot; jsonschema:&quot;project directory path&quot;`
 	Include string `json:&quot;include&quot; jsonschema:&quot;glob pattern to include (e.g. &apos;pkg/**/*.go&apos;)&quot;`
@@ -142,11 +118,6 @@
 	TotalFiles      int    `json:&quot;total_files&quot; jsonschema:&quot;number of files processed&quot;`
 	TotalSignatures int    `json:&quot;total_signatures&quot; jsonschema:&quot;number of signatures extracted&quot;`
 }</type>
-      <function>func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error)</function>
-      <variable>validFormats = map[string]bool{&quot;xml&quot;: true, &quot;md&quot;: true, &quot;markdown&quot;: true, &quot;json&quot;: true}</variable>
-      <function>func resolvePath(defaultRoot, inputPath string) (string, error)</function>
-      <function>func validateFormat(format string) (string, error)</function>
-      <function>func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, error)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go" language="go">
       <imports>import (
@@ -191,7 +162,6 @@
       <function>func (c Circle) Area() float64</function>
       <function>func (c Circle) Perimeter() float64</function>
       <function>func NewCircle(center Point, radius float64) (*Circle, error)</function>
-      <function>func main()</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/examples/java/ShapeService.java" language="java">
       <imports>import java.util.List;
@@ -230,7 +200,6 @@ from enum import Enum</imports>
       <type>class TaskStatus(Enum)</type>
       <type>class Task</type>
       <type>class TaskRepository</type>
-      <function>def __init__(self)</function>
       <function>def create(self, title: str) -&gt; Task</function>
       <function>def get(self, task_id: int) -&gt; Optional[Task]</function>
       <function>def complete(self, task_id: int) -&gt; bool</function>
@@ -525,14 +494,10 @@ main &quot;$@&quot;</imports>
 	&quot;testing&quot;
 )</imports>
       <function>func TestDefaultConfig(t *testing.T)</function>
-      <variable>expectedMaxSize = 512000</variable>
       <function>func TestConfigValidate(t *testing.T)</function>
       <function>func TestConfigSupportedLanguages(t *testing.T)</function>
       <function>func TestValidateMaxFileSizeUpperBound(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestToOptionsIncludePrivate(t *testing.T)</function>
-      <function>func containsString(s, substr string) bool</function>
-      <function>func containsSubstring(s, substr string) bool</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context.go" language="go">
       <imports>import (
@@ -629,11 +594,7 @@ main &quot;$@&quot;</imports>
 ) *Packager</function>
       <function>func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)</function>
       <function>func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error)</function>
-      <variable>treeStr string</variable>
-      <variable>globalImports []formatter.ImportCount</variable>
       <function>func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)</function>
-      <function>func normalizeFormat(format string) string</function>
-      <function>func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/context_test.go" language="go">
       <imports>import (
@@ -647,15 +608,7 @@ main &quot;$@&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/tokenizer&quot;
 )</imports>
-      <type>type mockScanner struct {
-	result *scanner.ScanResult
-	err    error
-}</type>
       <function>func (m *mockScanner) Scan(_ context.Context) (*scanner.ScanResult, error)</function>
-      <type>type mockExtractor struct {
-	result *extractor.ExtractResult
-	err    error
-}</type>
       <function>func (m *mockExtractor) Extract(_ context.Context, _ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)</function>
       <function>func TestPackagerPackage(t *testing.T)</function>
       <function>func TestPackagerPackageMarkdown(t *testing.T)</function>
@@ -679,29 +632,12 @@ main &quot;$@&quot;</imports>
 	&quot;sort&quot;
 	&quot;strings&quot;
 )</imports>
-      <type>type treeNode struct {
-	children map[string]*treeNode
-	tokens   int  // token count for leaf nodes (files)
-	isFile   bool // true if this node is a file (leaf)
-}</type>
       <function>func BuildTree(root string, paths []string) string</function>
-      <variable>buf strings.Builder</variable>
-      <variable>maxTreeDepth = 100</variable>
-      <function>func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
-      <function>func renderNodeDepth(buf *strings.Builder, n *treeNode, prefix string, isRoot bool, depth int)</function>
-      <variable>newPrefix string</variable>
       <type>type FileTokenCount struct {
 	Path   string
 	Tokens int
 }</type>
       <function>func BuildTokenTree(root string, files []FileTokenCount) string</function>
-      <variable>buf strings.Builder</variable>
-      <function>func calcDirTokens(n *treeNode) int</function>
-      <variable>sum int</variable>
-      <function>func renderTokenNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)</function>
-      <variable>newPrefix string</variable>
-      <function>func formatNumber(n int) string</function>
-      <variable>buf strings.Builder</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/internal/context/tree_test.go" language="go">
       <imports>import (
@@ -738,9 +674,7 @@ main &quot;$@&quot;</imports>
 	HeapObjects uint64
 }</type>
       <function>func GetMemoryStats() MemoryStats</function>
-      <variable>m runtime.MemStats</variable>
       <function>func FormatBytes(b uint64) string</function>
-      <variable>unit = 1024</variable>
       <function>func WriteHeapProfile(filename string) error</function>
       <function>func StartCPUProfile(filename string) (func(), error)</function>
     </file>
@@ -844,14 +778,6 @@ main &quot;$@&quot;</imports>
       <function>func NewDefaultFileExtractor() *FileExtractor</function>
       <function>func DefaultExtractOptions() *ExtractOptions</function>
       <function>func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)</function>
-      <variable>wg sync.WaitGroup</variable>
-      <variable>cancelErr error</variable>
-      <variable>cancelOnce sync.Once</variable>
-      <function>func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)</function>
-      <variable>binarySniffSize = 512</variable>
-      <function>func isBinaryContent(content []byte) bool</function>
-      <function>func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile</function>
-      <variable>err error</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go" language="go">
       <imports>import (
@@ -867,14 +793,11 @@ main &quot;$@&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
 )</imports>
       <function>func TestFileExtractorImplementsExtractor(t *testing.T)</function>
-      <variable>_ Extractor = (*FileExtractor)(nil)</variable>
       <function>func TestFileExtractorExtract(t *testing.T)</function>
-      <variable>foundAdd bool</variable>
       <function>func TestFileExtractorTOCTOUGuard(t *testing.T)</function>
       <function>func TestFileExtractorTOCTOUGuardDisabled(t *testing.T)</function>
       <function>func TestExtractConcurrencySequential(t *testing.T)</function>
       <function>func TestExtractConcurrencyDeterministicOrder(t *testing.T)</function>
-      <variable>entries []scanner.FileEntry</variable>
       <function>func TestExtractConcurrencyEmptyFiles(t *testing.T)</function>
       <function>func TestExtractNilScanResult(t *testing.T)</function>
       <function>func TestExtractNegativeConcurrency(t *testing.T)</function>
@@ -976,7 +899,6 @@ main &quot;$@&quot;</imports>
 	&quot;testing&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
-      <function>func createBenchmarkData(numFiles, numSigsPerFile int) *PackageData</function>
       <function>func BenchmarkXMLFormatter(b *testing.B)</function>
       <function>func BenchmarkMarkdownFormatter(b *testing.B)</function>
       <function>func BenchmarkJSONFormatter(b *testing.B)</function>
@@ -1002,11 +924,8 @@ main &quot;$@&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
       <function>func TestXMLFormatterImplementsFormatter(t *testing.T)</function>
-      <variable>_ Formatter = (*XMLFormatter)(nil)</variable>
       <function>func TestMarkdownFormatterImplementsFormatter(t *testing.T)</function>
-      <variable>_ Formatter = (*MarkdownFormatter)(nil)</variable>
       <function>func TestJSONFormatterImplementsFormatter(t *testing.T)</function>
-      <variable>_ Formatter = (*JSONFormatter)(nil)</variable>
       <function>func TestXMLFormatterFormat(t *testing.T)</function>
       <function>func TestXMLFormatterFormatWithError(t *testing.T)</function>
       <function>func TestMarkdownFormatterFormat(t *testing.T)</function>
@@ -1031,9 +950,6 @@ main &quot;$@&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
       <imports>import &quot;unicode/utf8&quot;</imports>
-      <function>func normalizeKind(kind string) string</function>
-      <function>func getEmptyComment(lang string) string</function>
-      <function>func truncateDoc(doc string, maxLen int) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go" language="go">
       <imports>import (
@@ -1048,37 +964,6 @@ main &quot;$@&quot;</imports>
       <type>type JSONFormatter struct{}</type>
       <function>func NewJSONFormatter() *JSONFormatter</function>
       <function>func (f *JSONFormatter) Name() string</function>
-      <type>type jsonOutput struct {
-	Version       string            `json:&quot;version,omitempty&quot;`
-	Path          string            `json:&quot;path,omitempty&quot;`
-	Tree          string            `json:&quot;tree,omitempty&quot;`
-	GlobalImports []jsonImportCount `json:&quot;globalImports,omitempty&quot;`
-	Files         []jsonFile        `json:&quot;files&quot;`
-}</type>
-      <type>type jsonImportCount struct {
-	Import string `json:&quot;import&quot;`
-	Count  int    `json:&quot;count&quot;`
-}</type>
-      <type>type jsonFile struct {
-	Path       string     `json:&quot;path&quot;`
-	Language   string     `json:&quot;language&quot;`
-	Signatures []jsonSig  `json:&quot;signatures,omitempty&quot;`
-	Imports    []string   `json:&quot;imports,omitempty&quot;`
-	Calls      []jsonCall `json:&quot;calls,omitempty&quot;`
-	Error      string     `json:&quot;error,omitempty&quot;`
-}</type>
-      <type>type jsonCall struct {
-	Caller string `json:&quot;caller,omitempty&quot;`
-	Callee string `json:&quot;callee&quot;`
-	Line   int    `json:&quot;line&quot;`
-}</type>
-      <type>type jsonSig struct {
-	Kind     string `json:&quot;kind&quot;`
-	Text     string `json:&quot;text&quot;`
-	Doc      string `json:&quot;doc,omitempty&quot;`
-	Line     int    `json:&quot;line,omitempty&quot;`
-	Exported bool   `json:&quot;exported,omitempty&quot;`
-}</type>
       <function>func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/markdown.go" language="go">
@@ -1091,8 +976,6 @@ main &quot;$@&quot;</imports>
       <function>func NewMarkdownFormatter() *MarkdownFormatter</function>
       <function>func (f *MarkdownFormatter) Name() string</function>
       <function>func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)</function>
-      <variable>buf bytes.Buffer</variable>
-      <function>func escapeMarkdown(s string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go" language="go">
       <imports>import (
@@ -1104,11 +987,6 @@ main &quot;$@&quot;</imports>
       <function>func NewXMLFormatter() *XMLFormatter</function>
       <function>func (f *XMLFormatter) Name() string</function>
       <function>func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)</function>
-      <variable>buf bytes.Buffer</variable>
-      <function>func escapeXML(s string) string</function>
-      <variable>needsEscape bool</variable>
-      <variable>buf strings.Builder</variable>
-      <function>func kindToTag(kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/example_test.go" language="go">
       <imports>import (
@@ -1238,45 +1116,12 @@ main &quot;$@&quot;</imports>
 	parsers map[string]Parser
 }</type>
       <function>func NewRegistry() *Registry</function>
-      <variable>defaultRegistry = NewRegistry()</variable>
       <function>func DefaultRegistry() *Registry</function>
       <function>func (r *Registry) Register(lang string, parser Parser)</function>
       <function>func (r *Registry) Get(lang string) (Parser, bool)</function>
       <function>func (r *Registry) Languages() []string</function>
       <function>func RegisterParser(lang string, parser Parser)</function>
       <function>func GetParser(lang string) (Parser, bool)</function>
-      <variable>languageMapping = map[string]string{
-	&quot;.go&quot;:    &quot;go&quot;,
-	&quot;.ts&quot;:    &quot;typescript&quot;,
-	&quot;.tsx&quot;:   &quot;typescript&quot;,
-	&quot;.js&quot;:    &quot;javascript&quot;,
-	&quot;.jsx&quot;:   &quot;javascript&quot;,
-	&quot;.py&quot;:    &quot;python&quot;,
-	&quot;.java&quot;:  &quot;java&quot;,
-	&quot;.rs&quot;:    &quot;rust&quot;,
-	&quot;.rb&quot;:    &quot;ruby&quot;,
-	&quot;.php&quot;:   &quot;php&quot;,
-	&quot;.c&quot;:     &quot;c&quot;,
-	&quot;.cpp&quot;:   &quot;cpp&quot;,
-	&quot;.h&quot;:     &quot;cpp&quot;,
-	&quot;.hpp&quot;:   &quot;cpp&quot;,
-	&quot;.cs&quot;:    &quot;csharp&quot;,
-	&quot;.swift&quot;: &quot;swift&quot;,
-	&quot;.kt&quot;:    &quot;kotlin&quot;,
-	&quot;.kts&quot;:   &quot;kotlin&quot;,
-	&quot;.lua&quot;:   &quot;lua&quot;,
-	&quot;.sh&quot;:    &quot;shell&quot;,
-	&quot;.bash&quot;:  &quot;shell&quot;,
-	&quot;.zsh&quot;:   &quot;shell&quot;,
-	&quot;.scala&quot;: &quot;scala&quot;,
-	&quot;.sc&quot;:    &quot;scala&quot;,
-	&quot;.ex&quot;:    &quot;elixir&quot;,
-	&quot;.exs&quot;:   &quot;elixir&quot;,
-	&quot;.sql&quot;:   &quot;sql&quot;,
-	&quot;.yaml&quot;:  &quot;yaml&quot;,
-	&quot;.yml&quot;:   &quot;yaml&quot;,
-	&quot;.toml&quot;:  &quot;toml&quot;,
-}</variable>
       <function>func LanguageMapping() map[string]string</function>
       <function>func DetectLanguage(path string) string</function>
     </file>
@@ -1288,7 +1133,6 @@ main &quot;$@&quot;</imports>
       <function>func TestParseResultDefaults(t *testing.T)</function>
       <function>func TestNodeKind(t *testing.T)</function>
       <function>func TestParserInterface(t *testing.T)</function>
-      <variable>_ Parser = (*MockParser)(nil)</variable>
       <type>type MockParser struct {
 	signatures []Signature
 	err        error
@@ -1335,15 +1179,10 @@ import &quot;unsafe&quot;</imports>
     uint8_t quote_count;
     StringType string_type;
 } Interpolation;</type>
-      <function>static inline bool is_regular(Interpolation *interpolation)</function>
-      <function>static inline bool is_verbatim(Interpolation *interpolation)</function>
-      <function>static inline bool is_raw(Interpolation *interpolation)</function>
       <type>typedef struct {
     uint8_t quote_count;
     Array(Interpolation) interpolation_stack;
 } Scanner;</type>
-      <function>static inline void advance(TSLexer *lexer)</function>
-      <function>static inline void skip(TSLexer *lexer)</function>
       <function>void *tree_sitter_c_sharp_external_scanner_create()</function>
       <function>void tree_sitter_c_sharp_external_scanner_destroy(void *payload)</function>
       <function>unsigned tree_sitter_c_sharp_external_scanner_serialize(void *payload, char *buffer)</function>
@@ -1462,22 +1301,9 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(void *self, void *contents, size_t self_size)</function>
-      <function>static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)</function>
-      <function>static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)</function>
       <type>struct Swap</type>
       <type>struct Swap</type>
       <type>struct Swap</type>
-      <function>static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)</function>
-      <function>static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1570,7 +1396,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -1694,17 +1519,8 @@ import &quot;unsafe&quot;</imports>
 
   QUOTED_ATOM_START
 }</type>
-      <function>static inline void advance(TSLexer *lexer)</function>
-      <function>static inline void skip(TSLexer *lexer)</function>
-      <function>static inline bool is_whitespace(int32_t c)</function>
-      <function>static inline bool is_inline_whitespace(int32_t c)</function>
-      <function>static inline bool is_newline(int32_t c)</function>
-      <function>static inline bool is_digit(int32_t c)</function>
-      <function>static inline bool check_keyword_end(TSLexer *lexer)</function>
-      <function>static bool check_operator_end(TSLexer *lexer)</function>
       <function>const uint8_t token_terminators_length =
     sizeof(token_terminators) / sizeof(char);</function>
-      <function>static inline bool is_token_end(int32_t c)</function>
       <type>enum TokenType</type>
       <type>typedef struct {
   const enum TokenType token_type;
@@ -1714,10 +1530,6 @@ import &quot;unsafe&quot;</imports>
 } QuotedContentInfo;</type>
       <function>const uint8_t quoted_content_infos_length =
     sizeof(quoted_content_infos) / sizeof(QuotedContentInfo);</function>
-      <function>static inline int8_t find_quoted_token_info(const bool *valid_symbols)</function>
-      <function>static bool scan_quoted_content(TSLexer *lexer, const QuotedContentInfo *info)</function>
-      <function>static bool scan_newline(TSLexer *lexer, const bool *valid_symbols)</function>
-      <function>static bool scan(TSLexer *lexer, const bool *valid_symbols)</function>
       <function>void *tree_sitter_elixir_external_scanner_create()</function>
       <function>bool tree_sitter_elixir_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols)</function>
@@ -1816,16 +1628,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1912,7 +1714,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -2021,23 +1822,6 @@ import &quot;unsafe&quot;</imports>
       <variable>#define DELIMITER_LENGTH 3</variable>
       <type>typedef char Delimiter;</type>
       <type>typedef Array(Delimiter) Stack;</type>
-      <function>static inline void stack_push(Stack *stack, char chr, bool triple)</function>
-      <function>static inline Delimiter stack_pop(Stack *stack)</function>
-      <function>static inline void skip(TSLexer *lexer)</function>
-      <function>static inline void advance(TSLexer *lexer)</function>
-      <function>static bool scan_string_start(TSLexer *lexer, Stack *stack)</function>
-      <function>static bool scan_string_content(TSLexer *lexer, Stack *stack)</function>
-      <function>static bool scan_multiline_comment(TSLexer *lexer)</function>
-      <function>static bool scan_whitespace_and_comments(TSLexer *lexer)</function>
-      <function>static bool is_word_char(int32_t c)</function>
-      <function>static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len)</function>
-      <function>static bool check_word(TSLexer *lexer, const char *word, unsigned len)</function>
-      <function>static bool check_modifier_then_constructor(TSLexer *lexer)</function>
-      <function>static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols)</function>
-      <function>static bool scan_safe_nav(TSLexer *lexer)</function>
-      <function>static bool scan_line_sep(TSLexer *lexer)</function>
-      <function>static bool scan_import_list_delimiter(TSLexer *lexer)</function>
-      <function>static bool scan_import_dot(TSLexer *lexer)</function>
       <function>bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
       <function>void *tree_sitter_kotlin_external_scanner_create()</function>
       <function>void tree_sitter_kotlin_external_scanner_destroy(void *payload)</function>
@@ -2132,16 +1916,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -2228,7 +2002,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -2501,8 +2274,6 @@ import &quot;unsafe&quot;</imports>
   field_table = 22,
   field_value = 23,
 }</type>
-      <function>static bool ts_lex(TSLexer *lexer, TSStateId state)</function>
-      <function>static bool ts_lex_keywords(TSLexer *lexer, TSStateId state)</function>
       <type>enum ts_external_scanner_symbol_identifiers {
   ts_external_token__block_comment_start = 0,
   ts_external_token__block_comment_content = 1,
@@ -2535,25 +2306,14 @@ import &quot;unsafe&quot;</imports>
   BLOCK_STRING_CONTENT,
   BLOCK_STRING_END,
 }</type>
-      <function>static inline void consume(TSLexer *lexer)</function>
-      <function>static inline void skip(TSLexer *lexer)</function>
-      <function>static inline bool consume_char(char c, TSLexer *lexer)</function>
-      <function>static inline uint8_t consume_and_count_char(char c, TSLexer *lexer)</function>
-      <function>static inline void skip_whitespaces(TSLexer *lexer)</function>
       <type>typedef struct {
   char ending_char;
   uint8_t level_count;
 } Scanner;</type>
-      <function>static inline void reset_state(Scanner *scanner)</function>
       <function>void *tree_sitter_lua_external_scanner_create()</function>
       <function>void tree_sitter_lua_external_scanner_destroy(void *payload)</function>
       <function>unsigned tree_sitter_lua_external_scanner_serialize(void *payload, char *buffer)</function>
       <function>void tree_sitter_lua_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
-      <function>static bool scan_block_start(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scan_block_end(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scan_block_content(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scan_comment_start(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scan_comment_content(Scanner *scanner, TSLexer *lexer)</function>
       <function>bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/lua/tree_sitter/alloc.h" language="cpp">
@@ -2673,20 +2433,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)</function>
-      <function>static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)</function>
-      <function>static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
-                               uint32_t *other_size, uint32_t *other_capacity)</function>
-      <function>static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)</function>
-      <function>static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -2779,7 +2525,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -2909,17 +2654,11 @@ import &quot;unsafe&quot;</imports>
       <function>unsigned tree_sitter_scala_external_scanner_serialize(void *payload, char *buffer)</function>
       <function>void tree_sitter_scala_external_scanner_deserialize(void *payload, const char *buffer,
                                                     unsigned length)</function>
-      <function>static inline void advance(TSLexer *lexer)</function>
-      <function>static inline void skip(TSLexer *lexer)</function>
       <type>typedef enum {
   STRING_MODE_SIMPLE,
   STRING_MODE_INTERPOLATED,
   STRING_MODE_RAW
 } StringMode;</type>
-      <function>static bool scan_string_content(TSLexer *lexer, bool is_multiline, StringMode string_mode)</function>
-      <function>static bool detect_comment_start(TSLexer *lexer)</function>
-      <function>static bool scan_word(TSLexer *lexer, const char* const word)</function>
-      <function>static inline void debug_indents(Scanner *scanner)</function>
       <function>bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
                                              const bool *valid_symbols)</function>
     </file>
@@ -3011,16 +2750,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -3107,7 +2836,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -3213,8 +2941,6 @@ import &quot;unsafe&quot;</imports>
 }</type>
       <function>void *tree_sitter_sql_external_scanner_create()</function>
       <function>void tree_sitter_sql_external_scanner_destroy(void *payload)</function>
-      <function>static char* add_char(char* text, size_t* text_size, char c, int index)</function>
-      <function>static char* scan_dollar_string_tag(TSLexer *lexer)</function>
       <function>bool tree_sitter_sql_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)</function>
       <function>unsigned tree_sitter_sql_external_scanner_serialize(void *payload, char *buffer)</function>
       <function>void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)</function>
@@ -3336,20 +3062,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)</function>
-      <function>static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)</function>
-      <function>static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
-                               uint32_t *other_size, uint32_t *other_capacity)</function>
-      <function>static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)</function>
-      <function>static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -3442,7 +3154,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -3582,7 +3293,7 @@ import &quot;unsafe&quot;</imports>
       <type>enum IllegalTerminatorGroup</type>
       <type>enum TokenType</type>
       <variable>#define RESERVED_OP_COUNT 31</variable>
-      <function>static bool is_cross_semi_token(enum TokenType op)</function>
+      <type>enum TokenType</type>
       <variable>#define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3</variable>
       <type>enum ParseDirective {
     CONTINUE_PARSING_NOTHING_FOUND,
@@ -3608,22 +3319,6 @@ import &quot;unsafe&quot;</imports>
     unsigned length
 )</function>
       <type>struct ScannerState</type>
-      <function>static void advance(TSLexer *lexer)</function>
-      <function>static bool should_treat_as_wspace(int32_t character)</function>
-      <function>static int32_t encountered_op_count(bool *encountered_operator)</function>
-      <function>static bool any_reserved_ops(uint8_t *encountered_reserved_ops)</function>
-      <function>static bool is_legal_custom_operator(
-    int32_t char_idx,
-    int32_t first_char,
-    int32_t cur_char
-)</function>
-      <function>static bool eat_operators(
-    TSLexer *lexer,
-    const bool *valid_symbols,
-    bool mark_end,
-    const int32_t prior_char,
-    enum TokenType *symbol_result
-)</function>
       <type>enum TokenType</type>
       <type>enum IllegalTerminatorGroup</type>
       <type>enum ParseDirective</type>
@@ -3637,12 +3332,6 @@ import &quot;unsafe&quot;</imports>
       <variable>#define DIRECTIVE_COUNT 4</variable>
       <type>enum TokenType</type>
       <type>enum TokenType</type>
-      <function>static bool eat_raw_str_part(
-    struct ScannerState *state,
-    TSLexer *lexer,
-    const bool *valid_symbols,
-    enum TokenType *symbol_result
-)</function>
       <type>struct ScannerState</type>
       <type>enum TokenType</type>
       <function>bool tree_sitter_swift_external_scanner_scan(
@@ -3746,16 +3435,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -3842,7 +3521,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -4011,7 +3689,6 @@ import &quot;unsafe&quot;</imports>
   aux_sym_array_repeat2 = 64,
   aux_sym_inline_table_repeat1 = 65,
 }</type>
-      <function>static bool ts_lex(TSLexer *lexer, TSStateId state)</function>
       <type>enum ts_external_scanner_symbol_identifiers {
   ts_external_token__line_ending_or_eof = 0,
   ts_external_token__multiline_basic_string_content = 1,
@@ -4135,16 +3812,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -4231,7 +3898,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -4456,56 +4122,6 @@ import &quot;unsafe&quot;</imports>
     int8_t sch_stt;
     ResultSchema rlt_sch;
 } Scanner;</type>
-      <function>static unsigned serialize(Scanner *scanner, char *buffer)</function>
-      <function>static void deserialize(Scanner *scanner, const char *buffer, unsigned length)</function>
-      <function>static inline void adv(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static inline void adv_nwl(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static inline void skp(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static inline void skp_nwl(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static inline void mrk_end(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static inline void init(Scanner *scanner)</function>
-      <function>static inline void flush(Scanner *scanner)</function>
-      <function>static inline void pop_ind(Scanner *scanner)</function>
-      <function>static inline void push_ind(Scanner *scanner, int16_t typ, int16_t len)</function>
-      <function>static inline bool is_wsp(int32_t c)</function>
-      <function>static inline bool is_nwl(int32_t c)</function>
-      <function>static inline bool is_wht(int32_t c)</function>
-      <function>static inline bool is_ns_dec_digit(int32_t c)</function>
-      <function>static inline bool is_ns_hex_digit(int32_t c)</function>
-      <function>static inline bool is_ns_word_char(int32_t c)</function>
-      <function>static inline bool is_nb_json(int32_t c)</function>
-      <function>static inline bool is_nb_double_char(int32_t c)</function>
-      <function>static inline bool is_nb_single_char(int32_t c)</function>
-      <function>static inline bool is_ns_char(int32_t c)</function>
-      <function>static inline bool is_c_indicator(int32_t c)</function>
-      <function>static inline bool is_c_flow_indicator(int32_t c)</function>
-      <function>static inline bool is_plain_safe_in_block(int32_t c)</function>
-      <function>static inline bool is_plain_safe_in_flow(int32_t c)</function>
-      <function>static inline bool is_ns_uri_char(int32_t c)</function>
-      <function>static inline bool is_ns_tag_char(int32_t c)</function>
-      <function>static inline bool is_ns_anchor_char(int32_t c)</function>
-      <function>static char scn_uri_esc(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static char scn_ns_uri_char(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static char scn_ns_tag_char(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scn_dir_bgn(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scn_dir_yml_ver(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_tag_hdl_tal(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scn_dir_tag_hdl(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_dir_tag_pfx(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_dir_rsv_prm(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_tag(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_acr_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_acr_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_als_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_als_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_dqt_esc_seq(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_drs_doc_end(Scanner *scanner, TSLexer *lexer)</function>
-      <function>static bool scn_dqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_sqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_blk_str_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static bool scn_blk_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)</function>
-      <function>static char scn_pln_cnt(Scanner *scanner, TSLexer *lexer, bool (*is_plain_safe)(int32_t))</function>
-      <function>static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols)</function>
       <function>void *tree_sitter_yaml_external_scanner_create()</function>
       <function>void tree_sitter_yaml_external_scanner_destroy(void *payload)</function>
       <function>unsigned tree_sitter_yaml_external_scanner_serialize(void *payload, char *buffer)</function>
@@ -4524,7 +4140,6 @@ import &quot;unsafe&quot;</imports>
   RS_BOOL,
   RS_FLOAT,
 } ResultSchema;</type>
-      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.json.c" language="c">
       <imports>#include &lt;stdint.h&gt;
@@ -4538,7 +4153,6 @@ import &quot;unsafe&quot;</imports>
   RS_NULL,
   RS_FLOAT,
 } ResultSchema;</type>
-      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.legacy.c" language="c">
       <imports>#include &lt;stdint.h&gt;
@@ -4553,7 +4167,6 @@ import &quot;unsafe&quot;</imports>
   RS_NULL,
   RS_TIMESTAMP,
 } ResultSchema;</type>
-      <function>static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/alloc.h" language="cpp">
       <imports>#include &lt;stdbool.h&gt;
@@ -4643,16 +4256,6 @@ import &quot;unsafe&quot;</imports>
     array_search_sorted_by(self, field, (value) field, &amp;_index, &amp;_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)</variable>
-      <function>static inline void _array__delete(Array *self)</function>
-      <function>static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)</function>
-      <function>static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)</function>
-      <function>static inline void _array__assign(Array *self, const Array *other, size_t element_size)</function>
-      <function>static inline void _array__swap(Array *self, Array *other)</function>
-      <function>static inline void _array__grow(Array *self, uint32_t count, size_t element_size)</function>
-      <function>static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)</function>
       <variable>#define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -4745,7 +4348,6 @@ import &quot;unsafe&quot;</imports>
   int32_t end;
 } TSCharacterRange;</type>
       <type>struct TSLanguage</type>
-      <function>static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)</function>
       <variable>#define UNUSED __pragma(warning(suppress : 4101))</variable>
       <variable>#define UNUSED __attribute__((unused))</variable>
       <variable>#define START_LEXER()           \
@@ -4832,7 +4434,6 @@ import &quot;unsafe&quot;</imports>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/base.go" language="go">
       <imports>import &quot;strings&quot;</imports>
-      <function>func hasVisibilityPrefix(sigText, modifier string) bool</function>
       <type>type BaseQuery struct{}</type>
       <function>func (BaseQuery) Captures() []string</function>
       <function>func (BaseQuery) ImportQuery() []byte</function>
@@ -4853,127 +4454,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCQuery() *CQuery</function>
       <function>func (q *CQuery) Language() *sitter.Language</function>
       <function>func (q *CQuery) Query() []byte</function>
-      <variable>cKindMapping = map[string]string{
-	&quot;function_definition&quot;:  &quot;function&quot;,
-	&quot;declaration&quot;:          &quot;function&quot;, // function prototypes
-	&quot;struct_specifier&quot;:     &quot;struct&quot;,
-	&quot;enum_specifier&quot;:       &quot;enum&quot;,
-	&quot;type_definition&quot;:      &quot;typedef&quot;,
-	&quot;preproc_function_def&quot;: &quot;macro&quot;,
-	&quot;preproc_def&quot;:          &quot;macro&quot;,
-	&quot;global_variable&quot;:      &quot;variable&quot;, // mapped from declaration patterns
-}</variable>
       <function>func (q *CQuery) KindMapping() map[string]string</function>
       <function>func (q *CQuery) ImportQuery() []byte</function>
       <function>func (q *CQuery) CallQuery() []byte</function>
       <function>func (q *CQuery) IsExported(name, sigText string) bool</function>
-      <variable>cCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-`</variable>
-      <variable>cImportQueryPattern = `
-; #include directives (capture full statement)
-(preproc_include) @import_path
-`</variable>
-      <variable>cQueryPattern = `
-; Function definitions - direct declarator
-(function_definition
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function definitions - pointer return type
-(function_definition
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - direct declarator
-(declaration
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - pointer return type
-(declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Struct specifiers
-(struct_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum specifiers
-(enum_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Typedef
-(type_definition
-  declarator: (type_identifier) @name
-) @signature @kind
-
-; Function-like macros
-(preproc_function_def
-  name: (identifier) @name
-) @signature @kind
-
-; Object-like macros
-(preproc_def
-  name: (identifier) @name
-) @signature @kind
-
-; Global variable declarations (with initializer)
-(translation_unit
-  (declaration
-    declarator: (init_declarator
-      declarator: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Global variable declarations (simple identifier, e.g., extern)
-(translation_unit
-  (declaration
-    declarator: (identifier) @name
-  ) @signature @kind
-)
-
-; Global pointer variable declarations
-(translation_unit
-  (declaration
-    declarator: (pointer_declarator
-      declarator: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Global pointer variable declarations (with initializer)
-(translation_unit
-  (declaration
-    declarator: (init_declarator
-      declarator: (pointer_declarator
-        declarator: (identifier) @name
-      )
-    )
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c_test.go" language="go">
       <imports>import (
@@ -4984,7 +4468,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCQueryLanguage(t *testing.T)</function>
       <function>func TestCQueryPattern(t *testing.T)</function>
       <function>func TestCQueryExtractFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
       <function>func TestCQueryExtractStruct(t *testing.T)</function>
       <function>func TestCQueryExtractMacro(t *testing.T)</function>
       <function>func TestCQueryExtractEnum(t *testing.T)</function>
@@ -5018,201 +4501,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCppQuery() *CppQuery</function>
       <function>func (q *CppQuery) Language() *sitter.Language</function>
       <function>func (q *CppQuery) Query() []byte</function>
-      <variable>cppKindMapping = map[string]string{
-	&quot;function_definition&quot;:  &quot;function&quot;,
-	&quot;declaration&quot;:          &quot;function&quot;,
-	&quot;struct_specifier&quot;:     &quot;struct&quot;,
-	&quot;enum_specifier&quot;:       &quot;enum&quot;,
-	&quot;type_definition&quot;:      &quot;typedef&quot;,
-	&quot;preproc_function_def&quot;: &quot;macro&quot;,
-	&quot;preproc_def&quot;:          &quot;macro&quot;,
-	&quot;class_specifier&quot;:      &quot;class&quot;,
-	&quot;field_declaration&quot;:    &quot;method&quot;,
-	&quot;template_declaration&quot;: &quot;template&quot;,
-	&quot;namespace_definition&quot;: &quot;namespace&quot;,
-}</variable>
       <function>func (q *CppQuery) KindMapping() map[string]string</function>
       <function>func (q *CppQuery) ImportQuery() []byte</function>
       <function>func (q *CppQuery) IsExported(name, sigText string) bool</function>
-      <variable>cppImportQueryPattern = `
-; #include directives (capture full statement)
-(preproc_include) @import_path
-`</variable>
-      <variable>cppQueryPattern = `
-; Function definitions - direct declarator
-(function_definition
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function definitions - pointer return type
-(function_definition
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function definitions - reference return type
-(function_definition
-  declarator: (reference_declarator
-    (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - direct declarator
-(declaration
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - pointer return type
-(declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Class definitions
-(class_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Struct specifiers
-(struct_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum specifiers
-(enum_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Typedef
-(type_definition
-  declarator: (type_identifier) @name
-) @signature @kind
-
-; Function-like macros
-(preproc_function_def
-  name: (identifier) @name
-) @signature @kind
-
-; Object-like macros
-(preproc_def
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations in class (regular methods)
-(field_declaration
-  declarator: (function_declarator
-    declarator: (field_identifier) @name
-  )
-) @signature @kind
-
-; Method declarations with pointer return type
-(field_declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (field_identifier) @name
-    )
-  )
-) @signature @kind
-
-; Method declarations with reference return type
-(field_declaration
-  declarator: (reference_declarator
-    (function_declarator
-      declarator: (field_identifier) @name
-    )
-  )
-) @signature @kind
-
-; Constructor declarations (in class body)
-(function_definition
-  declarator: (function_declarator
-    declarator: (qualified_identifier
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Destructor definitions (outside class)
-(function_definition
-  declarator: (function_declarator
-    declarator: (destructor_name
-      (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Destructor declarations in class (captured via declaration node)
-(declaration
-  declarator: (function_declarator
-    declarator: (destructor_name
-      (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Namespace definitions
-(namespace_definition
-  name: (namespace_identifier) @name
-) @signature @kind
-
-; Template function definitions
-(template_declaration
-  (function_definition
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Template function definitions - pointer return type
-(template_declaration
-  (function_definition
-    declarator: (pointer_declarator
-      declarator: (function_declarator
-        declarator: (identifier) @name
-      )
-    )
-  )
-) @signature @kind
-
-; Template class definitions
-(template_declaration
-  (class_specifier
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Template struct definitions
-(template_declaration
-  (struct_specifier
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Template declarations (standalone)
-(template_declaration
-  (declaration
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp_test.go" language="go">
       <imports>import (
@@ -5223,7 +4514,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCppQueryLanguage(t *testing.T)</function>
       <function>func TestCppQueryPattern(t *testing.T)</function>
       <function>func TestCppQueryExtractFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
       <function>func TestCppQueryExtractClass(t *testing.T)</function>
       <function>func TestCppQueryExtractMethod(t *testing.T)</function>
       <function>func TestCppQueryExtractConstructorDestructor(t *testing.T)</function>
@@ -5234,13 +4524,10 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCppQueryExtractMacro(t *testing.T)</function>
       <function>func TestCppQueryExtractTypedef(t *testing.T)</function>
       <function>func TestCppQueryExtractIncludes(t *testing.T)</function>
-      <variable>imports []string</variable>
       <function>func TestCppQueryNestedNamespaces(t *testing.T)</function>
       <function>func TestCppQueryMultipleInheritance(t *testing.T)</function>
       <function>func TestCppQueryEmptyFile(t *testing.T)</function>
       <function>func TestCppQueryOnlyComments(t *testing.T)</function>
-      <variable>nameCount int</variable>
-      <variable>docCount int</variable>
       <function>func TestCppQueryKindMapping(t *testing.T)</function>
       <function>func TestCppQueryCaptures(t *testing.T)</function>
     </file>
@@ -5257,135 +4544,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewCSharpQuery() *CSharpQuery</function>
       <function>func (q *CSharpQuery) Language() *sitter.Language</function>
       <function>func (q *CSharpQuery) Query() []byte</function>
-      <variable>csharpKindMapping = map[string]string{
-	&quot;class_declaration&quot;:                 &quot;class&quot;,
-	&quot;struct_declaration&quot;:                &quot;struct&quot;,
-	&quot;interface_declaration&quot;:             &quot;interface&quot;,
-	&quot;enum_declaration&quot;:                  &quot;enum&quot;,
-	&quot;record_declaration&quot;:                &quot;record&quot;,
-	&quot;delegate_declaration&quot;:              &quot;type&quot;,
-	&quot;method_declaration&quot;:                &quot;method&quot;,
-	&quot;constructor_declaration&quot;:           &quot;constructor&quot;,
-	&quot;destructor_declaration&quot;:            &quot;destructor&quot;,
-	&quot;property_declaration&quot;:              &quot;variable&quot;,
-	&quot;field_declaration&quot;:                 &quot;field&quot;,
-	&quot;event_declaration&quot;:                 &quot;variable&quot;,
-	&quot;event_field_declaration&quot;:           &quot;variable&quot;,
-	&quot;indexer_declaration&quot;:               &quot;method&quot;,
-	&quot;operator_declaration&quot;:              &quot;function&quot;,
-	&quot;conversion_operator_declaration&quot;:   &quot;function&quot;,
-	&quot;namespace_declaration&quot;:             &quot;namespace&quot;,
-	&quot;file_scoped_namespace_declaration&quot;: &quot;namespace&quot;,
-	&quot;enum_member_declaration&quot;:           &quot;variable&quot;,
-}</variable>
       <function>func (q *CSharpQuery) KindMapping() map[string]string</function>
       <function>func (q *CSharpQuery) ImportQuery() []byte</function>
       <function>func (q *CSharpQuery) IsExported(name, sigText string) bool</function>
-      <variable>csharpImportQueryPattern = `
-; using directives (capture full declaration)
-(using_directive) @import_path
-`</variable>
-      <variable>csharpQueryPattern = `
-; Class declarations
-(class_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Struct declarations
-(struct_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Record declarations (record, record class, record struct)
-(record_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Delegate declarations
-(delegate_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Constructor declarations
-(constructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Destructor declarations
-(destructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Property declarations
-(property_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Field declarations (static/const filtered in parser.go)
-(field_declaration
-  (variable_declaration
-    (variable_declarator
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Event field declarations (e.g., public event EventHandler Changed;)
-(event_field_declaration
-  (variable_declaration
-    (variable_declarator
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Event declarations with accessor body
-(event_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Indexer declarations (no name capture — synthesized in parser.go)
-(indexer_declaration) @signature @kind
-
-; Operator declarations (no name capture — synthesized in parser.go)
-(operator_declaration) @signature @kind
-
-; Conversion operator declarations (no name capture — synthesized in parser.go)
-(conversion_operator_declaration) @signature @kind
-
-; Namespace declarations
-(namespace_declaration
-  name: (_) @name
-) @signature @kind
-
-; File-scoped namespace declarations (C# 10+)
-(file_scoped_namespace_declaration
-  name: (_) @name
-) @signature @kind
-
-; Enum member declarations
-(enum_member_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Comments (XML doc comments and regular)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go" language="go">
       <imports>import (
@@ -5393,7 +4554,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_c_sharp &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractCSharpNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestCSharpQueryLanguage(t *testing.T)</function>
       <function>func TestCSharpQueryPattern(t *testing.T)</function>
       <function>func TestCSharpQueryImportPattern(t *testing.T)</function>
@@ -5404,7 +4564,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestCSharpQueryExtractFields(t *testing.T)</function>
       <function>func TestCSharpQueryExtractEvents(t *testing.T)</function>
       <function>func TestCSharpQueryExtractOperators(t *testing.T)</function>
-      <variable>foundOperator, foundConversion, foundIndexer bool</variable>
       <function>func TestCSharpQueryExtractImport(t *testing.T)</function>
       <function>func TestCSharpQueryExtractGenerics(t *testing.T)</function>
       <function>func TestCSharpQueryKindMapping(t *testing.T)</function>
@@ -5426,126 +4585,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewElixirQuery() *ElixirQuery</function>
       <function>func (q *ElixirQuery) Language() *sitter.Language</function>
       <function>func (q *ElixirQuery) Query() []byte</function>
-      <variable>elixirKindMapping = map[string]string{
-	&quot;call&quot;:           &quot;function&quot;,
-	&quot;unary_operator&quot;: &quot;type&quot;,
-}</variable>
       <function>func (q *ElixirQuery) KindMapping() map[string]string</function>
       <function>func (q *ElixirQuery) ImportQuery() []byte</function>
       <function>func (q *ElixirQuery) IsExported(name, sigText string) bool</function>
-      <variable>elixirImportQueryPattern = `
-; import statements: import Module
-(call
-  target: (identifier)
-  (arguments
-    (alias))) @import_path
-
-; import with options: import Module, only: [...]
-(call
-  target: (identifier)
-  (arguments
-    (alias)
-    (keywords))) @import_path
-`</variable>
-      <variable>elixirQueryPattern = `
-; Module/protocol/impl definitions: defmodule MyModule do...end
-(call
-  target: (identifier)
-  (arguments
-    (alias) @name)
-  (do_block)
-) @signature @kind
-
-; defimpl with keyword options: defimpl Protocol, for: Module do...end
-(call
-  target: (identifier)
-  (arguments
-    (alias) @name
-    (keywords))
-  (do_block)
-) @signature @kind
-
-; Function/macro definitions with arguments: def foo(args) do...end
-(call
-  target: (identifier)
-  (arguments
-    (call
-      target: (identifier) @name))
-  (do_block)
-) @signature @kind
-
-; Function/macro definitions with guard clause: def foo(args) when guard do...end
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (call
-        target: (identifier) @name)
-      operator: &quot;when&quot;))
-  (do_block)
-) @signature @kind
-
-; Zero-arity function definitions: def foo do...end
-(call
-  target: (identifier)
-  (arguments
-    (identifier) @name)
-  (do_block)
-) @signature @kind
-
-; Zero-arity function with guard: def foo when guard do...end
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (identifier) @name
-      operator: &quot;when&quot;))
-  (do_block)
-) @signature @kind
-
-; Guard definitions without do_block: defguard is_positive(x) when ...
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (call
-        target: (identifier) @name)
-      operator: &quot;when&quot;))
-) @signature @kind
-
-; defdelegate: defdelegate foo(args), to: Bar
-(call
-  target: (identifier)
-  (arguments
-    (call
-      target: (identifier) @name)
-    (keywords))
-) @signature @kind
-
-; defstruct with list: defstruct [:field1, :field2]
-(call
-  target: (identifier) @name
-  (arguments
-    (list))
-) @signature @kind
-
-; defstruct with keywords: defstruct field: default_value
-(call
-  target: (identifier) @name
-  (arguments
-    (keywords))
-) @signature @kind
-
-; Module attributes: @spec, @type, @typep, @opaque, @callback
-(unary_operator
-  operator: &quot;@&quot;
-  operand: (call
-    target: (identifier) @name)
-) @signature @kind
-
-; Line comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir_test.go" language="go">
       <imports>import (
@@ -5554,11 +4596,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_elixir &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractElixirNames(t *testing.T, code []byte) map[string]bool</function>
-      <function>func extractElixirSignatures(t *testing.T, code []byte) []string</function>
-      <variable>sigs []string</variable>
-      <function>func extractElixirImportNames(t *testing.T, code []byte) []string</function>
-      <variable>imports []string</variable>
       <function>func TestElixirQueryLanguage(t *testing.T)</function>
       <function>func TestElixirQueryPattern(t *testing.T)</function>
       <function>func TestElixirQueryImportPattern(t *testing.T)</function>
@@ -5580,10 +4617,6 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_go &quot;github.com/tree-sitter/tree-sitter-go/bindings/go&quot;
 )</imports>
-      <variable>captureName      = &quot;name&quot;</variable>
-      <variable>captureSignature = &quot;signature&quot;</variable>
-      <variable>captureDoc       = &quot;doc&quot;</variable>
-      <variable>captureKind      = &quot;kind&quot;</variable>
       <type>type GoQuery struct {
 	BaseQuery
 	language *sitter.Language
@@ -5592,67 +4625,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewGoQuery() *GoQuery</function>
       <function>func (q *GoQuery) Language() *sitter.Language</function>
       <function>func (q *GoQuery) Query() []byte</function>
-      <variable>goKindMapping = map[string]string{
-	&quot;function_declaration&quot;: &quot;function&quot;,
-	&quot;method_declaration&quot;:   &quot;method&quot;,
-	&quot;type_declaration&quot;:     &quot;type&quot;,
-	&quot;const_declaration&quot;:    &quot;variable&quot;,
-	&quot;var_declaration&quot;:      &quot;variable&quot;,
-	&quot;const_spec&quot;:           &quot;variable&quot;,
-	&quot;var_spec&quot;:             &quot;variable&quot;,
-}</variable>
       <function>func (q *GoQuery) KindMapping() map[string]string</function>
       <function>func (q *GoQuery) ImportQuery() []byte</function>
       <function>func (q *GoQuery) CallQuery() []byte</function>
       <function>func (q *GoQuery) IsExported(name, _ string) bool</function>
-      <variable>goCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/package calls (e.g., obj.Method(), fmt.Println())
-(call_expression
-  function: (selector_expression
-    field: (field_identifier) @callee
-  )
-) @call_node
-`</variable>
-      <variable>goImportQueryPattern = `
-; Import declarations (capture entire declaration)
-(import_declaration) @import_path
-`</variable>
-      <variable>goQueryPattern = `
-; Function declarations
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (field_identifier) @name
-) @signature @kind
-
-; Type declarations (struct, interface, etc.)
-(type_declaration
-  (type_spec
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Package-level const specs (captures each const individually)
-(const_spec
-  name: (identifier) @name
-) @signature @kind
-
-; Package-level var specs (captures each var individually)
-(var_spec
-  name: (identifier) @name
-) @signature @kind
-
-; Comments (documentation)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go_test.go" language="go">
       <imports>import (
@@ -5663,9 +4639,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestGoQueryLanguage(t *testing.T)</function>
       <function>func TestGoQueryPattern(t *testing.T)</function>
       <function>func TestGoQueryExtractFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
-      <variable>funcKindNode *sitter.Node</variable>
-      <variable>kindNode *sitter.Node</variable>
       <function>func TestGoQueryExtractConstAndVar(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java.go" language="go">
@@ -5681,77 +4654,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewJavaQuery() *JavaQuery</function>
       <function>func (q *JavaQuery) Language() *sitter.Language</function>
       <function>func (q *JavaQuery) Query() []byte</function>
-      <variable>javaKindMapping = map[string]string{
-	&quot;class_declaration&quot;:           &quot;class&quot;,
-	&quot;interface_declaration&quot;:       &quot;interface&quot;,
-	&quot;method_declaration&quot;:          &quot;method&quot;,
-	&quot;constructor_declaration&quot;:     &quot;constructor&quot;,
-	&quot;enum_declaration&quot;:            &quot;enum&quot;,
-	&quot;annotation_type_declaration&quot;: &quot;annotation&quot;,
-	&quot;record_declaration&quot;:          &quot;record&quot;,
-	&quot;field_declaration&quot;:           &quot;field&quot;,
-}</variable>
       <function>func (q *JavaQuery) KindMapping() map[string]string</function>
       <function>func (q *JavaQuery) ImportQuery() []byte</function>
       <function>func (q *JavaQuery) CallQuery() []byte</function>
       <function>func (q *JavaQuery) IsExported(name, sigText string) bool</function>
-      <variable>javaCallQueryPattern = `
-; Method invocations (e.g., obj.method(), method())
-(method_invocation
-  name: (identifier) @callee
-) @call_node
-`</variable>
-      <variable>javaImportQueryPattern = `
-; import statements (capture full declaration)
-(import_declaration) @import_path
-`</variable>
-      <variable>javaQueryPattern = `
-; Class declarations (includes inner classes)
-(class_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Constructor declarations
-(constructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Annotation type declarations (@interface)
-(annotation_type_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Record declarations (Java 14+)
-(record_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Field declarations (static fields filtered in parser.go)
-(field_declaration
-  (variable_declarator
-    name: (identifier) @name
-  )
-) @signature @kind
-
-; Comments (Javadoc and regular)
-(line_comment) @doc
-(block_comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java_test.go" language="go">
       <imports>import (
@@ -5763,12 +4669,9 @@ import &quot;unsafe&quot;</imports>
       <function>func TestJavaQueryPattern(t *testing.T)</function>
       <function>func TestJavaQueryKindMapping(t *testing.T)</function>
       <function>func TestJavaQueryExtractClass(t *testing.T)</function>
-      <variable>foundClass, foundMethod bool</variable>
       <function>func TestJavaQueryExtractInterface(t *testing.T)</function>
       <function>func TestJavaQueryExtractEnum(t *testing.T)</function>
-      <variable>foundEnum bool</variable>
       <function>func TestJavaQueryExtractAnnotationType(t *testing.T)</function>
-      <variable>foundAnnotation bool</variable>
       <function>func TestJavaQueryExtractRecord(t *testing.T)</function>
       <function>func TestJavaQueryExtractGenerics(t *testing.T)</function>
       <function>func TestJavaQueryExtractFieldDeclarations(t *testing.T)</function>
@@ -5786,70 +4689,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewKotlinQuery() *KotlinQuery</function>
       <function>func (q *KotlinQuery) Language() *sitter.Language</function>
       <function>func (q *KotlinQuery) Query() []byte</function>
-      <variable>kotlinKindMapping = map[string]string{
-	&quot;function_declaration&quot;:  &quot;function&quot;,
-	&quot;class_declaration&quot;:     &quot;class&quot;,
-	&quot;object_declaration&quot;:    &quot;class&quot;,
-	&quot;companion_object&quot;:      &quot;class&quot;,
-	&quot;property_declaration&quot;:  &quot;variable&quot;,
-	&quot;type_alias&quot;:            &quot;type&quot;,
-	&quot;enum_entry&quot;:            &quot;variable&quot;,
-	&quot;secondary_constructor&quot;: &quot;constructor&quot;,
-}</variable>
       <function>func (q *KotlinQuery) KindMapping() map[string]string</function>
       <function>func (q *KotlinQuery) ImportQuery() []byte</function>
       <function>func (q *KotlinQuery) IsExported(name, sigText string) bool</function>
-      <variable>kotlinImportQueryPattern = `
-; Import statements
-(import_header) @import_path
-`</variable>
-      <variable>kotlinQueryPattern = `
-; Function declarations (regular, suspend, inline, extension, operator, infix, tailrec)
-(function_declaration
-  (simple_identifier) @name
-) @signature @kind
-
-; Class declarations (class, data class, sealed class, enum class, interface, annotation class, value class)
-(class_declaration
-  (type_identifier) @name
-) @signature @kind
-
-; Object declarations (singleton)
-(object_declaration
-  (type_identifier) @name
-) @signature @kind
-
-; Companion object with explicit name (e.g., companion object Factory)
-(companion_object
-  (type_identifier) @name
-) @signature @kind
-
-; Property declarations (val/var, const val, lateinit, delegated)
-(property_declaration
-  (variable_declaration
-    (simple_identifier) @name
-  )
-) @signature @kind
-
-; Type alias
-(type_alias
-  (type_identifier) @name
-) @signature @kind
-
-; Enum entries
-(enum_entry
-  (simple_identifier) @name
-) @signature @kind
-
-; Secondary constructors
-(secondary_constructor) @signature @kind
-
-; Line comments
-(line_comment) @doc
-
-; Block/multiline comments
-(multiline_comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go" language="go">
       <imports>import (
@@ -5857,7 +4699,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_kotlin &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractKotlinNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestKotlinQueryLanguage(t *testing.T)</function>
       <function>func TestKotlinQueryPattern(t *testing.T)</function>
       <function>func TestKotlinQueryImportPattern(t *testing.T)</function>
@@ -5886,61 +4727,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewLuaQuery() *LuaQuery</function>
       <function>func (q *LuaQuery) Language() *sitter.Language</function>
       <function>func (q *LuaQuery) Query() []byte</function>
-      <variable>luaKindMapping = map[string]string{
-	&quot;function_declaration&quot;: &quot;function&quot;,
-	&quot;variable_declaration&quot;: &quot;variable&quot;,
-	&quot;assignment_statement&quot;: &quot;variable&quot;,
-}</variable>
       <function>func (q *LuaQuery) KindMapping() map[string]string</function>
       <function>func (q *LuaQuery) ImportQuery() []byte</function>
-      <variable>luaImportQueryPattern = `
-; local json = require(&quot;json&quot;)
-(variable_declaration
-  (assignment_statement
-    (expression_list
-      value: (function_call
-        name: (identifier) @_fn
-        arguments: (arguments (string))
-      )
-    )
-  )
-) @import_path
-(#eq? @_fn &quot;require&quot;)
-`</variable>
-      <variable>luaQueryPattern = `
-; Function declarations (global, local, module, method)
-; Covers: function foo(), local function foo(), function M.foo(), function M:foo()
-(function_declaration
-  name: [
-    (identifier) @name
-    (dot_index_expression field: (identifier) @name)
-    (method_index_expression method: (identifier) @name)
-  ]
-) @signature @kind
-
-; Variable declarations with function assignment: local foo = function() end
-(variable_declaration
-  (assignment_statement
-    (variable_list
-      name: (identifier) @name)
-    (expression_list
-      value: (function_definition))
-  )
-) @signature @kind
-
-; Variable declarations with table constructor: local M = {}
-(variable_declaration
-  (assignment_statement
-    (variable_list
-      name: (identifier) @name)
-    (expression_list
-      value: (table_constructor))
-  )
-) @signature @kind
-
-; Comments (LuaDoc --- and regular --)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go" language="go">
       <imports>import (
@@ -5948,7 +4736,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_lua &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractLuaNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestLuaQueryLanguage(t *testing.T)</function>
       <function>func TestLuaQueryPattern(t *testing.T)</function>
       <function>func TestLuaQueryImportPattern(t *testing.T)</function>
@@ -5978,72 +4765,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewPHPQuery() *PHPQuery</function>
       <function>func (q *PHPQuery) Language() *sitter.Language</function>
       <function>func (q *PHPQuery) Query() []byte</function>
-      <variable>phpKindMapping = map[string]string{
-	&quot;function_definition&quot;:       &quot;function&quot;,
-	&quot;method_declaration&quot;:        &quot;method&quot;,
-	&quot;class_declaration&quot;:         &quot;class&quot;,
-	&quot;interface_declaration&quot;:     &quot;interface&quot;,
-	&quot;trait_declaration&quot;:         &quot;type&quot;,
-	&quot;enum_declaration&quot;:          &quot;enum&quot;,
-	&quot;const_declaration&quot;:         &quot;variable&quot;,
-	&quot;property_declaration&quot;:      &quot;variable&quot;,
-	&quot;namespace_use_declaration&quot;: &quot;import&quot;,
-}</variable>
       <function>func (q *PHPQuery) KindMapping() map[string]string</function>
       <function>func (q *PHPQuery) ImportQuery() []byte</function>
       <function>func (q *PHPQuery) IsExported(name, sigText string) bool</function>
-      <variable>phpImportQueryPattern = `
-; use Namespace\\Class;
-(namespace_use_declaration) @import_path
-
-; include &apos;file.php&apos;;
-(include_expression) @import_path
-
-; require &apos;vendor/autoload.php&apos;;
-(require_expression) @import_path
-
-; include_once &apos;config.php&apos;;
-(include_once_expression) @import_path
-
-; require_once &apos;config.php&apos;;
-(require_once_expression) @import_path
-`</variable>
-      <variable>phpQueryPattern = `
-; Function definitions: function name() {}
-(function_definition name: (name) @name) @signature @kind
-
-; Method declarations in classes
-(method_declaration name: (name) @name) @signature @kind
-
-; Class declarations
-(class_declaration name: (name) @name) @signature @kind
-
-; Interface declarations
-(interface_declaration name: (name) @name) @signature @kind
-
-; Trait declarations
-(trait_declaration name: (name) @name) @signature @kind
-
-; Enum declarations
-(enum_declaration name: (name) @name) @signature @kind
-
-; Const declarations: const NAME = value;
-(const_declaration
-  (const_element
-    (name) @name
-  )
-) @signature @kind
-
-; Property declarations: public $name;
-(property_declaration
-  (property_element
-    (variable_name (name) @name)
-  )
-) @signature @kind
-
-; Comments (PHPDoc and regular)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php_test.go" language="go">
       <imports>import (
@@ -6051,7 +4775,6 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_php &quot;github.com/tree-sitter/tree-sitter-php/bindings/go&quot;
 )</imports>
-      <function>func extractPHPNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestPHPQueryLanguage(t *testing.T)</function>
       <function>func TestPHPQueryPattern(t *testing.T)</function>
       <function>func TestPHPQueryImportPattern(t *testing.T)</function>
@@ -6078,59 +4801,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewPythonQuery() *PythonQuery</function>
       <function>func (q *PythonQuery) Language() *sitter.Language</function>
       <function>func (q *PythonQuery) Query() []byte</function>
-      <variable>pythonKindMapping = map[string]string{
-	&quot;function_definition&quot;:  &quot;function&quot;,
-	&quot;class_definition&quot;:     &quot;class&quot;,
-	&quot;expression_statement&quot;: &quot;variable&quot;,
-	&quot;assignment&quot;:           &quot;variable&quot;,
-}</variable>
       <function>func (q *PythonQuery) KindMapping() map[string]string</function>
       <function>func (q *PythonQuery) ImportQuery() []byte</function>
       <function>func (q *PythonQuery) CallQuery() []byte</function>
       <function>func (q *PythonQuery) IsExported(name, _ string) bool</function>
-      <variable>pythonCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call
-  function: (identifier) @callee
-) @call_node
-
-; Method/attribute calls (e.g., obj.method())
-(call
-  function: (attribute
-    attribute: (identifier) @callee
-  )
-) @call_node
-`</variable>
-      <variable>pythonImportQueryPattern = `
-; import module (capture full statement)
-(import_statement) @import_path
-
-; from module import ... (capture full statement)
-(import_from_statement) @import_path
-`</variable>
-      <variable>pythonQueryPattern = `
-; Function definitions (includes async def, methods)
-(function_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions
-(class_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Module-level assignments (simple and with type annotations)
-(module
-  (expression_statement
-    (assignment
-      left: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python_test.go" language="go">
       <imports>import (
@@ -6141,10 +4815,8 @@ import &quot;unsafe&quot;</imports>
       <function>func TestPythonQueryLanguage(t *testing.T)</function>
       <function>func TestPythonQueryPattern(t *testing.T)</function>
       <function>func TestPythonQueryExtractFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
       <function>func TestPythonQueryExtractClass(t *testing.T)</function>
       <function>func TestPythonQueryExtractAsyncFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
       <function>func TestPythonQueryExtractModuleLevelVariables(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby.go" language="go">
@@ -6160,56 +4832,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewRubyQuery() *RubyQuery</function>
       <function>func (q *RubyQuery) Language() *sitter.Language</function>
       <function>func (q *RubyQuery) Query() []byte</function>
-      <variable>rubyKindMapping = map[string]string{
-	&quot;method&quot;:           &quot;method&quot;,
-	&quot;singleton_method&quot;: &quot;method&quot;,
-	&quot;class&quot;:            &quot;class&quot;,
-	&quot;module&quot;:           &quot;namespace&quot;,
-	&quot;assignment&quot;:       &quot;variable&quot;,
-}</variable>
       <function>func (q *RubyQuery) KindMapping() map[string]string</function>
       <function>func (q *RubyQuery) ImportQuery() []byte</function>
-      <variable>rubyImportQueryPattern = `
-; require &quot;library&quot; / require_relative &quot;library&quot;
-(call
-  method: (identifier) @_fn
-  arguments: (argument_list
-    (string)
-  )
-) @import_path
-(#match? @_fn &quot;^require&quot;)
-`</variable>
-      <variable>rubyQueryPattern = `
-; Instance methods and top-level functions: def foo(args) ... end
-(method
-  name: (identifier) @name
-) @signature @kind
-
-; Class methods: def self.foo(args) ... end
-(singleton_method
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions: class Foo ... end
-(class
-  name: (constant) @name
-) @signature @kind
-
-; Module definitions: module Foo ... end
-(module
-  name: (constant) @name
-) @signature @kind
-
-; Top-level constant assignments: FOO = value
-(program
-  (assignment
-    left: (constant) @name
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go" language="go">
       <imports>import (
@@ -6217,9 +4841,6 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_ruby &quot;github.com/tree-sitter/tree-sitter-ruby/bindings/go&quot;
 )</imports>
-      <function>func extractRubyNames(t *testing.T, code []byte) map[string]bool</function>
-      <function>func extractRubyImports(t *testing.T, code []byte) []string</function>
-      <variable>imports []string</variable>
       <function>func TestRubyQueryLanguage(t *testing.T)</function>
       <function>func TestRubyQueryPattern(t *testing.T)</function>
       <function>func TestRubyQueryImportPattern(t *testing.T)</function>
@@ -6247,134 +4868,10 @@ import &quot;unsafe&quot;</imports>
       <function>func NewRustQuery() *RustQuery</function>
       <function>func (q *RustQuery) Language() *sitter.Language</function>
       <function>func (q *RustQuery) Query() []byte</function>
-      <variable>rustKindMapping = map[string]string{
-	&quot;function_item&quot;:           &quot;function&quot;,
-	&quot;struct_item&quot;:             &quot;struct&quot;,
-	&quot;enum_item&quot;:               &quot;enum&quot;,
-	&quot;trait_item&quot;:              &quot;trait&quot;,
-	&quot;type_item&quot;:               &quot;type&quot;,
-	&quot;impl_item&quot;:               &quot;impl&quot;,
-	&quot;const_item&quot;:              &quot;variable&quot;,
-	&quot;static_item&quot;:             &quot;variable&quot;,
-	&quot;mod_item&quot;:                &quot;namespace&quot;,
-	&quot;macro_definition&quot;:        &quot;macro&quot;,
-	&quot;foreign_mod_item&quot;:        &quot;namespace&quot;,
-	&quot;union_item&quot;:              &quot;struct&quot;,
-	&quot;associated_type&quot;:         &quot;type&quot;,
-	&quot;function_signature_item&quot;: &quot;function&quot;,
-}</variable>
       <function>func (q *RustQuery) KindMapping() map[string]string</function>
       <function>func (q *RustQuery) ImportQuery() []byte</function>
       <function>func (q *RustQuery) CallQuery() []byte</function>
       <function>func (q *RustQuery) IsExported(name, _ string) bool</function>
-      <variable>rustCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/field calls (e.g., obj.method())
-(call_expression
-  function: (field_expression
-    field: (field_identifier) @callee
-  )
-) @call_node
-`</variable>
-      <variable>rustImportQueryPattern = `
-; Use declarations (capture full statement)
-(use_declaration) @import_path
-
-; Extern crate declarations
-(extern_crate_declaration) @import_path
-`</variable>
-      <variable>rustQueryPattern = `
-; Functions (including async, unsafe, const, extern)
-(function_item
-  name: (identifier) @name
-) @signature @kind
-
-; Struct declarations
-(struct_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Trait declarations
-(trait_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type aliases
-(type_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Impl blocks (capture the whole impl signature)
-(impl_item
-  type: (type_identifier) @name
-) @signature @kind
-
-; Impl blocks for generic types
-(impl_item
-  type: (generic_type
-    type: (type_identifier) @name
-  )
-) @signature @kind
-
-; Trait impl blocks (impl Trait for Type)
-(impl_item
-  trait: (type_identifier)
-  type: (type_identifier) @name
-) @signature @kind
-
-; Constants
-(const_item
-  name: (identifier) @name
-) @signature @kind
-
-; Statics
-(static_item
-  name: (identifier) @name
-) @signature @kind
-
-; Modules
-(mod_item
-  name: (identifier) @name
-) @signature @kind
-
-; Macro definitions (macro_rules!)
-(macro_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Union declarations
-(union_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Foreign mod (extern &quot;C&quot; blocks)
-(foreign_mod_item) @signature @kind
-
-; Associated types in traits
-(associated_type
-  name: (type_identifier) @name
-) @signature @kind
-
-; Function signatures in traits (without body)
-(function_signature_item
-  name: (identifier) @name
-) @signature @kind
-
-; Doc comments (/// and //!)
-(line_comment) @doc
-
-; Block doc comments (/** and /*!)
-(block_comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust_test.go" language="go">
       <imports>import (
@@ -6410,91 +4907,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewScalaQuery() *ScalaQuery</function>
       <function>func (q *ScalaQuery) Language() *sitter.Language</function>
       <function>func (q *ScalaQuery) Query() []byte</function>
-      <variable>scalaKindMapping = map[string]string{
-	&quot;function_definition&quot;:  &quot;method&quot;,
-	&quot;function_declaration&quot;: &quot;method&quot;,
-	&quot;class_definition&quot;:     &quot;class&quot;,
-	&quot;trait_definition&quot;:     &quot;trait&quot;,
-	&quot;object_definition&quot;:    &quot;class&quot;,
-	&quot;val_definition&quot;:       &quot;variable&quot;,
-	&quot;val_declaration&quot;:      &quot;variable&quot;,
-	&quot;var_definition&quot;:       &quot;variable&quot;,
-	&quot;var_declaration&quot;:      &quot;variable&quot;,
-	&quot;type_definition&quot;:      &quot;type&quot;,
-	&quot;enum_definition&quot;:      &quot;enum&quot;,
-	&quot;given_definition&quot;:     &quot;variable&quot;,
-}</variable>
       <function>func (q *ScalaQuery) KindMapping() map[string]string</function>
       <function>func (q *ScalaQuery) ImportQuery() []byte</function>
       <function>func (q *ScalaQuery) IsExported(name, sigText string) bool</function>
-      <variable>scalaImportQueryPattern = `
-; Import statements
-(import_declaration) @import_path
-`</variable>
-      <variable>scalaQueryPattern = `
-; Function definitions (def with body)
-(function_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Function declarations (abstract methods in traits/classes, no body)
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions (class, abstract class, case class, sealed class, implicit class)
-(class_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Trait definitions (trait, sealed trait)
-(trait_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Object definitions (singleton, companion)
-(object_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Val definitions (val, lazy val, implicit val)
-(val_definition
-  pattern: (identifier) @name
-) @signature @kind
-
-; Val declarations (abstract val in traits)
-(val_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Var definitions
-(var_definition
-  pattern: (identifier) @name
-) @signature @kind
-
-; Var declarations (abstract var in traits)
-(var_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Type aliases
-(type_definition
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum definitions (Scala 3)
-(enum_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Given definitions (Scala 3)
-(given_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Line comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala_test.go" language="go">
       <imports>import (
@@ -6503,9 +4918,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_scala &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractScalaNames(t *testing.T, code []byte) map[string]bool</function>
-      <function>func extractScalaImports(t *testing.T, code []byte) []string</function>
-      <variable>imports []string</variable>
       <function>func TestScalaQueryLanguage(t *testing.T)</function>
       <function>func TestScalaQueryPattern(t *testing.T)</function>
       <function>func TestScalaQueryImportPattern(t *testing.T)</function>
@@ -6537,33 +4949,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewShellQuery() *ShellQuery</function>
       <function>func (q *ShellQuery) Language() *sitter.Language</function>
       <function>func (q *ShellQuery) Query() []byte</function>
-      <variable>shellKindMapping = map[string]string{
-	&quot;function_definition&quot;: &quot;function&quot;,
-	&quot;variable_assignment&quot;: &quot;variable&quot;,
-}</variable>
       <function>func (q *ShellQuery) KindMapping() map[string]string</function>
       <function>func (q *ShellQuery) ImportQuery() []byte</function>
-      <variable>shellImportQueryPattern = `
-; source /path/to/file and . /path/to/file
-; Capture command nodes. Go-side filtering will check if command name is &quot;source&quot; or &quot;.&quot;
-(command
-  name: (command_name) @name
-) @import_path
-`</variable>
-      <variable>shellQueryPattern = `
-; Function definitions: function foo { } or function foo() { } or foo() { }
-(function_definition
-  name: (word) @name
-) @signature @kind
-
-; Variable assignments: FOO=bar, FOO=&quot;bar&quot;, FOO=$(cmd)
-(variable_assignment
-  name: (variable_name) @name
-) @signature @kind
-
-; Comments (# ...)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go" language="go">
       <imports>import (
@@ -6571,7 +4958,6 @@ import &quot;unsafe&quot;</imports>
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 	tree_sitter_bash &quot;github.com/tree-sitter/tree-sitter-bash/bindings/go&quot;
 )</imports>
-      <function>func extractShellNames(t *testing.T, code []byte) map[string]bool</function>
       <function>func TestShellQueryLanguage(t *testing.T)</function>
       <function>func TestShellQueryPattern(t *testing.T)</function>
       <function>func TestShellQueryImportPattern(t *testing.T)</function>
@@ -6597,66 +4983,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewSQLQuery() *SQLQuery</function>
       <function>func (q *SQLQuery) Language() *sitter.Language</function>
       <function>func (q *SQLQuery) Query() []byte</function>
-      <variable>sqlKindMapping = map[string]string{
-	&quot;create_table&quot;:             &quot;struct&quot;,
-	&quot;create_function&quot;:          &quot;function&quot;,
-	&quot;create_view&quot;:              &quot;type&quot;,
-	&quot;create_materialized_view&quot;: &quot;type&quot;,
-	&quot;create_index&quot;:             &quot;variable&quot;,
-	&quot;create_trigger&quot;:           &quot;function&quot;,
-	&quot;create_type&quot;:              &quot;type&quot;,
-	&quot;create_schema&quot;:            &quot;namespace&quot;,
-	&quot;create_sequence&quot;:          &quot;variable&quot;,
-	&quot;alter_table&quot;:              &quot;type&quot;,
-}</variable>
       <function>func (q *SQLQuery) KindMapping() map[string]string</function>
       <function>func (q *SQLQuery) ImportQuery() []byte</function>
-      <variable>sqlQueryPattern = `
-; CREATE TABLE
-(create_table
-  (object_reference) @name) @signature @kind
-
-; CREATE FUNCTION
-(create_function
-  (object_reference) @name) @signature @kind
-
-; CREATE VIEW
-(create_view
-  (object_reference) @name) @signature @kind
-
-; CREATE MATERIALIZED VIEW
-(create_materialized_view
-  (object_reference) @name) @signature @kind
-
-; CREATE INDEX (name extracted Go-side)
-(create_index) @signature @kind
-
-; CREATE TYPE
-(create_type
-  (object_reference) @name) @signature @kind
-
-; CREATE TRIGGER (first object_reference = trigger name)
-(create_trigger
-  (object_reference) @name) @signature @kind
-
-; CREATE SCHEMA (bare identifier)
-(create_schema
-  (identifier) @name) @signature @kind
-
-; CREATE SEQUENCE
-(create_sequence
-  (object_reference) @name) @signature @kind
-
-; ALTER TABLE
-(alter_table
-  (object_reference) @name) @signature @kind
-
-; SQL comments (-- single-line)
-(comment) @doc
-
-; SQL multi-line comments (/* ... */ are &quot;marginalia&quot; in tree-sitter-sql)
-(marginalia) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql_test.go" language="go">
       <imports>import (
@@ -6665,16 +4993,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_sql &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/sql&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractSQLNames(t *testing.T, code string) []string</function>
-      <variable>names []string</variable>
-      <type>type sqlCapture struct {
-	Name      string
-	Signature string
-	Kind      string
-}</type>
-      <function>func extractSQLCaptures(t *testing.T, code string) []sqlCapture</function>
-      <variable>captures []sqlCapture</variable>
-      <variable>sc sqlCapture</variable>
       <function>func TestSQLQueryLanguage(t *testing.T)</function>
       <function>func TestSQLQueryPattern(t *testing.T)</function>
       <function>func TestSQLQueryImportPattern(t *testing.T)</function>
@@ -6706,85 +5024,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewSwiftQuery() *SwiftQuery</function>
       <function>func (q *SwiftQuery) Language() *sitter.Language</function>
       <function>func (q *SwiftQuery) Query() []byte</function>
-      <variable>swiftKindMapping = map[string]string{
-	&quot;function_declaration&quot;:          &quot;function&quot;,
-	&quot;class_declaration&quot;:             &quot;class&quot;,
-	&quot;protocol_declaration&quot;:          &quot;interface&quot;,
-	&quot;typealias_declaration&quot;:         &quot;type&quot;,
-	&quot;property_declaration&quot;:          &quot;variable&quot;,
-	&quot;init_declaration&quot;:              &quot;constructor&quot;,
-	&quot;deinit_declaration&quot;:            &quot;destructor&quot;,
-	&quot;subscript_declaration&quot;:         &quot;method&quot;,
-	&quot;operator_declaration&quot;:          &quot;function&quot;,
-	&quot;protocol_function_declaration&quot;: &quot;function&quot;,
-}</variable>
       <function>func (q *SwiftQuery) KindMapping() map[string]string</function>
       <function>func (q *SwiftQuery) ImportQuery() []byte</function>
       <function>func (q *SwiftQuery) IsExported(name, sigText string) bool</function>
-      <variable>swiftImportQueryPattern = `
-; Import declarations (capture full statement)
-(import_declaration) @import_path
-`</variable>
-      <variable>swiftQueryPattern = `
-; Functions
-(function_declaration
-  name: (simple_identifier) @name
-) @signature @kind
-
-; Classes, Structs, Enums (all use class_declaration node type)
-(class_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Extensions (name is in user_type child)
-(class_declaration
-  name: (user_type
-    (type_identifier) @name
-  )
-) @signature @kind
-
-; Protocol declarations
-(protocol_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type aliases
-(typealias_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Properties (let/var)
-(property_declaration
-  name: (pattern
-    (simple_identifier) @name
-  )
-) @signature @kind
-
-; Initializers
-(init_declaration) @signature @kind
-
-; Deinitializers
-(deinit_declaration) @signature @kind
-
-; Subscript declarations
-(subscript_declaration) @signature @kind
-
-; Operator declarations
-(operator_declaration
-  (custom_operator) @name
-) @signature @kind
-
-; Protocol function declarations (methods in protocol body)
-(protocol_function_declaration
-  name: (simple_identifier) @name
-) @signature @kind
-
-; Doc comments (/// style)
-(comment) @doc
-
-; Multiline comments (/** style)
-(multiline_comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go" language="go">
       <imports>import (
@@ -6820,53 +5062,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewTOMLQuery() *TOMLQuery</function>
       <function>func (q *TOMLQuery) Language() *sitter.Language</function>
       <function>func (q *TOMLQuery) Query() []byte</function>
-      <variable>tomlKindMapping = map[string]string{
-	&quot;table&quot;:               &quot;namespace&quot;,
-	&quot;table_array_element&quot;: &quot;namespace&quot;,
-	&quot;pair&quot;:                &quot;variable&quot;,
-}</variable>
       <function>func (q *TOMLQuery) KindMapping() map[string]string</function>
       <function>func (q *TOMLQuery) ImportQuery() []byte</function>
-      <variable>tomlQueryPattern = `
-; Standard table sections [section]
-(table
-  (bare_key) @name) @signature @kind
-
-; Standard table sections with quoted key [&quot;section&quot;]
-(table
-  (quoted_key) @name) @signature @kind
-
-; Standard table sections with dotted key [section.subsection]
-(table
-  (dotted_key) @name) @signature @kind
-
-; Array of tables [[section]]
-(table_array_element
-  (bare_key) @name) @signature @kind
-
-; Array of tables with quoted key [[&quot;section&quot;]]
-(table_array_element
-  (quoted_key) @name) @signature @kind
-
-; Array of tables with dotted key [[section.subsection]]
-(table_array_element
-  (dotted_key) @name) @signature @kind
-
-; Key-value pairs (bare key)
-(pair
-  (bare_key) @name) @signature @kind
-
-; Key-value pairs (quoted key)
-(pair
-  (quoted_key) @name) @signature @kind
-
-; Key-value pairs (dotted key)
-(pair
-  (dotted_key) @name) @signature @kind
-
-; TOML comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml_test.go" language="go">
       <imports>import (
@@ -6875,15 +5072,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_toml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/toml&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <type>type tomlCapture struct {
-	Name string
-	Kind string
-}</type>
-      <function>func extractTOMLCaptures(t *testing.T, code string) []tomlCapture</function>
-      <variable>captures []tomlCapture</variable>
-      <variable>tc tomlCapture</variable>
-      <function>func extractTOMLNames(t *testing.T, code string) []string</function>
-      <variable>names []string</variable>
       <function>func TestTOMLQueryLanguage(t *testing.T)</function>
       <function>func TestTOMLQueryPattern(t *testing.T)</function>
       <function>func TestTOMLQueryImportPattern(t *testing.T)</function>
@@ -6909,137 +5097,9 @@ import &quot;unsafe&quot;</imports>
       <function>func NewTypeScriptQuery() *TypeScriptQuery</function>
       <function>func (q *TypeScriptQuery) Language() *sitter.Language</function>
       <function>func (q *TypeScriptQuery) Query() []byte</function>
-      <variable>tsKindMapping = map[string]string{
-	&quot;function_declaration&quot;:   &quot;function&quot;,
-	&quot;method_definition&quot;:      &quot;method&quot;,
-	&quot;class_declaration&quot;:      &quot;class&quot;,
-	&quot;interface_declaration&quot;:  &quot;interface&quot;,
-	&quot;type_alias_declaration&quot;: &quot;type&quot;,
-	&quot;arrow_function&quot;:         &quot;function&quot;,
-	&quot;variable_declaration&quot;:   &quot;variable&quot;,
-	&quot;variable_declarator&quot;:    &quot;arrow&quot;,
-	&quot;lexical_declaration&quot;:    &quot;arrow&quot;,
-	&quot;export_statement&quot;:       &quot;export&quot;,
-}</variable>
       <function>func (q *TypeScriptQuery) KindMapping() map[string]string</function>
       <function>func (q *TypeScriptQuery) ImportQuery() []byte</function>
       <function>func (q *TypeScriptQuery) CallQuery() []byte</function>
-      <variable>typeScriptCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/property calls (e.g., obj.method())
-(call_expression
-  function: (member_expression
-    property: (property_identifier) @callee
-  )
-) @call_node
-`</variable>
-      <variable>typeScriptImportQueryPattern = `
-; Import statements (capture full statement)
-(import_statement) @import_path
-
-; Export statements with source (re-exports)
-(export_statement
-  source: (string)
-) @import_path
-
-; Export clause (barrel exports: export { foo, bar })
-(export_statement
-  (export_clause) @import_path
-)
-`</variable>
-      <variable>typeScriptQueryPattern = `
-; Function declarations
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Exported function declarations
-(export_statement
-  (function_declaration
-    name: (identifier) @name
-  )
-) @signature @kind
-
-; Arrow functions in variable declarations (capture full declaration with const/let/var)
-(lexical_declaration
-  (variable_declarator
-    name: (identifier) @name
-    value: (arrow_function)
-  )
-) @signature @kind
-
-; Module-level const/let declarations with values (captures all module-level)
-; Deduplication for arrow functions is handled in parser.go
-(program
-  (lexical_declaration
-    (variable_declarator
-      name: (identifier) @name
-      value: (_)
-    )
-  ) @signature @kind
-)
-
-; Module-level const/let without initial value (TypeScript declares)
-(program
-  (lexical_declaration
-    (variable_declarator
-      name: (identifier) @name
-      !value
-    )
-  ) @signature @kind
-)
-
-; Exported module-level const/let declarations with values
-(program
-  (export_statement
-    declaration: (lexical_declaration
-      (variable_declarator
-        name: (identifier) @name
-        value: (_)
-      )
-    )
-  ) @signature @kind
-)
-
-; Exported module-level const/let without initial value
-(program
-  (export_statement
-    declaration: (lexical_declaration
-      (variable_declarator
-        name: (identifier) @name
-        !value
-      )
-    )
-  ) @signature @kind
-)
-
-; Method definitions
-(method_definition
-  name: (property_identifier) @name
-) @signature @kind
-
-; Class declarations
-(class_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type alias declarations
-(type_alias_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Comments (documentation)
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript_test.go" language="go">
       <imports>import (
@@ -7050,7 +5110,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestTypeScriptQueryLanguage(t *testing.T)</function>
       <function>func TestTypeScriptQueryPattern(t *testing.T)</function>
       <function>func TestTypeScriptQueryExtractFunction(t *testing.T)</function>
-      <variable>funcCaptures map[string]string</variable>
       <function>func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml.go" language="go">
@@ -7066,19 +5125,8 @@ import &quot;unsafe&quot;</imports>
       <function>func NewYAMLQuery() *YAMLQuery</function>
       <function>func (q *YAMLQuery) Language() *sitter.Language</function>
       <function>func (q *YAMLQuery) Query() []byte</function>
-      <variable>yamlKindMapping = map[string]string{
-	&quot;block_mapping_pair&quot;: &quot;variable&quot;,
-}</variable>
       <function>func (q *YAMLQuery) KindMapping() map[string]string</function>
       <function>func (q *YAMLQuery) ImportQuery() []byte</function>
-      <variable>yamlQueryPattern = `
-; Top-level key-value pairs
-(block_mapping_pair
-  key: (_) @name) @signature @kind
-
-; YAML comments
-(comment) @doc
-`</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml_test.go" language="go">
       <imports>import (
@@ -7087,8 +5135,6 @@ import &quot;unsafe&quot;</imports>
 	tree_sitter_yaml &quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/yaml&quot;
 	sitter &quot;github.com/tree-sitter/go-tree-sitter&quot;
 )</imports>
-      <function>func extractYAMLNames(t *testing.T, code string) []string</function>
-      <variable>names []string</variable>
       <function>func TestYAMLQueryLanguage(t *testing.T)</function>
       <function>func TestYAMLQueryPattern(t *testing.T)</function>
       <function>func TestYAMLQueryImportPattern(t *testing.T)</function>
@@ -7108,136 +5154,16 @@ import &quot;unsafe&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages&quot;
 )</imports>
-      <function>func init()</function>
-      <type>type queryType int</type>
-      <variable>queryTypeSignature queryType = iota</variable>
-      <variable>queryTypeImport</variable>
-      <variable>queryTypeCall</variable>
-      <variable>elixirDefPrefixes = [][]byte{
-	[]byte(&quot;defmodule &quot;),
-	[]byte(&quot;defprotocol &quot;),
-	[]byte(&quot;defimpl &quot;),
-}</variable>
-      <variable>supportedLangs = &quot;go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql, yaml, toml&quot;</variable>
-      <type>type queryCacheKey struct {
-	lang string
-	typ  queryType
-}</type>
       <type>type TreeSitterParser struct {
 	queries         map[string]LanguageQuery
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }</type>
-      <type>type pooledParser struct {
-	parser   *sitter.Parser
-	lastLang *sitter.Language
-}</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) Close()</function>
-      <function>func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)</function>
-      <variable>queryBytes []byte</variable>
       <function>func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)</function>
-      <variable>rawImports []string</variable>
-      <variable>calls []parser.FunctionCall</variable>
       <function>func (p *TreeSitterParser) Languages() []string</function>
-      <function>func (p *TreeSitterParser) extractSignatures(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-) ([]parser.Signature, error)</function>
-      <type>type dedupKey struct {
-		line int
-		name string
-	}</type>
-      <variable>kindNode *sitter.Node</variable>
-      <function>func cleanComment(text string) string</function>
-      <function>func stripBody(text, kind, language string) string</function>
-      <function>func stripGoBody(text, kind string) string</function>
-      <function>func stripTypeScriptBody(text, kind string) string</function>
-      <function>func stripTSFunctionBody(text string) string</function>
-      <function>func findFunctionBodyStart(text string) int</function>
-      <function>func findTSClassBodyStart(text string) int</function>
-      <function>func stripPythonBody(text, kind string) string</function>
-      <function>func findPythonBodyStart(text string) int</function>
-      <function>func stripCBody(text, kind string) string</function>
-      <function>func stripCppBody(text, kind string) string</function>
-      <function>func findCppBodyStart(text string) int</function>
-      <function>func isPythonMethod(signature string) bool</function>
-      <function>func stripJavaBody(text, kind string) string</function>
-      <function>func findJavaBodyStart(text string) int</function>
-      <function>func stripRustBody(text, kind string) string</function>
-      <function>func findRustBodyStart(text string) int</function>
-      <function>func refineSwiftClassKind(text string) string</function>
-      <function>func stripSwiftBody(text, kind string) string</function>
-      <function>func findSwiftBodyStart(text string) int</function>
-      <function>func stripKotlinBody(text, kind string) string</function>
-      <function>func findKotlinBodyStart(text string) int</function>
-      <function>func refineKotlinClassKind(text string) string</function>
-      <function>func refineLuaFunctionKind(text string) string</function>
-      <function>func stripLuaBody(text, kind string) string</function>
-      <function>func stripPHPBody(text, kind string) string</function>
-      <function>func stripRubyBody(text, kind string) string</function>
-      <function>func stripScalaBody(text, kind string) string</function>
-      <function>func findScalaBodyStart(text string) int</function>
-      <function>func stripShellBody(text, kind string) string</function>
-      <function>func findPHPBodyStart(text string) int</function>
-      <function>func stripCSharpBody(text, kind string) string</function>
-      <function>func findCSharpBodyStart(text string) int</function>
-      <function>func isExpressionBodied(text string) bool</function>
-      <function>func findCSharpArrowIndex(text string) int</function>
-      <function>func extractCSharpOperatorName(text string) string</function>
-      <function>func extractCSharpConversionOperatorName(text string) string</function>
-      <function>func (p *TreeSitterParser) extractImports(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-) ([]string, error)</function>
-      <variable>importNode *sitter.Node</variable>
-      <function>func (p *TreeSitterParser) extractCalls(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-	signatures []parser.Signature,
-) ([]parser.FunctionCall, error)</function>
-      <variable>callee string</variable>
-      <variable>callLine int</variable>
-      <function>func findEnclosingFunction(signatures []parser.Signature, line int) string</function>
-      <function>func removeBlankLines(text string) string</function>
-      <variable>buf strings.Builder</variable>
-      <variable>elixirDefKeywords = map[string]string{
-	&quot;defmodule&quot;:   &quot;class&quot;,
-	&quot;defprotocol&quot;: &quot;interface&quot;,
-	&quot;defimpl&quot;:     &quot;impl&quot;,
-	&quot;def&quot;:         &quot;function&quot;,
-	&quot;defp&quot;:        &quot;function&quot;,
-	&quot;defmacro&quot;:    &quot;macro&quot;,
-	&quot;defmacrop&quot;:   &quot;macro&quot;,
-	&quot;defguard&quot;:    &quot;function&quot;,
-	&quot;defguardp&quot;:   &quot;function&quot;,
-	&quot;defdelegate&quot;: &quot;function&quot;,
-	&quot;defstruct&quot;:   &quot;struct&quot;,
-}</variable>
-      <function>func refineElixirCallKind(text string) string</function>
-      <variable>elixirAttrKeywords = map[string]bool{
-	&quot;spec&quot;:     true,
-	&quot;type&quot;:     true,
-	&quot;typep&quot;:    true,
-	&quot;opaque&quot;:   true,
-	&quot;callback&quot;: true,
-}</variable>
-      <function>func refineElixirAttrKind(text, capturedName string) (string, string)</function>
-      <function>func stripElixirBody(text, kind string) string</function>
-      <function>func extractSQLDDLName(text string) string</function>
-      <function>func extractNextSQLIdentifier(text string) string</function>
-      <function>func stripSQLBody(text, kind string) string</function>
-      <function>func stripSQLFunctionBody(text string) string</function>
-      <function>func stripSQLViewBody(text string) string</function>
-      <function>func stripYAMLBody(text, _ string) string</function>
-      <function>func stripTOMLBody(text, kind string) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go" language="go">
       <imports>import (
@@ -7246,13 +5172,9 @@ import &quot;unsafe&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
       <function>func BenchmarkParseGo(b *testing.B)</function>
-      <variable>code strings.Builder</variable>
       <function>func BenchmarkParseTypeScript(b *testing.B)</function>
-      <variable>code strings.Builder</variable>
       <function>func BenchmarkParsePython(b *testing.B)</function>
-      <variable>code strings.Builder</variable>
       <function>func BenchmarkParseWithImports(b *testing.B)</function>
-      <variable>code strings.Builder</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go" language="go">
       <imports>import (
@@ -7274,25 +5196,18 @@ import &quot;unsafe&quot;</imports>
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
       <function>func TestTreeSitterParserImplementsParser(t *testing.T)</function>
-      <variable>_ parser.Parser = (*TreeSitterParser)(nil)</variable>
       <function>func TestTreeSitterParserLanguages(t *testing.T)</function>
       <function>func TestTreeSitterParserParseGo(t *testing.T)</function>
-      <variable>foundAdd bool</variable>
       <function>func TestTreeSitterParserParseTypeScript(t *testing.T)</function>
-      <variable>foundAdd bool</variable>
       <function>func TestTreeSitterParserUnsupportedLanguage(t *testing.T)</function>
       <function>func TestTreeSitterParserAutoRegistration(t *testing.T)</function>
       <function>func TestGoSignatureOnlyExtraction(t *testing.T)</function>
       <function>func TestGoIncludeBodyExtraction(t *testing.T)</function>
-      <variable>foundAdd bool</variable>
       <function>func TestTypeScriptSignatureOnlyExtraction(t *testing.T)</function>
       <function>func TestTypeScriptArrowFunctionSignature(t *testing.T)</function>
-      <function>func contains(s, substr string) bool</function>
       <function>func TestTreeSitterParserParseJava(t *testing.T)</function>
-      <variable>foundClass, foundConstructor, foundPublicMethod bool</variable>
       <function>func TestJavaSignatureOnlyExtraction(t *testing.T)</function>
       <function>func TestJavaGenericsExtraction(t *testing.T)</function>
-      <variable>foundClass, foundMethod bool</variable>
       <function>func TestJavaAutoRegistration(t *testing.T)</function>
       <function>func TestTreeSitterParserParseCpp(t *testing.T)</function>
       <function>func TestCppSignatureOnlyExtraction(t *testing.T)</function>
@@ -7339,7 +5254,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestRefineLuaFunctionKind(t *testing.T)</function>
       <function>func TestIsPythonMethod(t *testing.T)</function>
       <function>func TestTreeSitterParserParsePHP(t *testing.T)</function>
-      <variable>foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool</variable>
       <function>func TestTreeSitterParserParsePHPImports(t *testing.T)</function>
       <function>func TestPHPBodyStripping(t *testing.T)</function>
       <function>func TestTreeSitterParserParseRuby(t *testing.T)</function>
@@ -7352,15 +5266,12 @@ import &quot;unsafe&quot;</imports>
       <function>func TestRefineElixirAttrKind(t *testing.T)</function>
       <function>func TestStripElixirBody(t *testing.T)</function>
       <function>func TestTreeSitterParserParseSQL(t *testing.T)</function>
-      <variable>names []string</variable>
       <function>func TestExtractSQLDDLName(t *testing.T)</function>
       <function>func TestExtractNextSQLIdentifier(t *testing.T)</function>
       <function>func TestStripSQLBody(t *testing.T)</function>
       <function>func TestStripSQLFunctionBody(t *testing.T)</function>
       <function>func TestTreeSitterParserParseYAML(t *testing.T)</function>
-      <variable>names []string</variable>
       <function>func TestTreeSitterParserParseTOML(t *testing.T)</function>
-      <variable>names []string</variable>
       <function>func TestSameLineDifferentNames(t *testing.T)</function>
       <function>func TestFindEnclosingFunctionEndLineZero(t *testing.T)</function>
     </file>
@@ -7511,10 +5422,8 @@ import &quot;unsafe&quot;</imports>
 	MaxTotalPreloadSize int64
 }</type>
       <function>func DefaultScanOptions() *ScanOptions</function>
-      <function>func copyLanguageMapping() map[string]string</function>
       <function>func (o *ScanOptions) GetLanguage(path string) (string, bool)</function>
       <function>func IsHidden(name string) bool</function>
-      <function>func getBaseName(path string) string</function>
       <type>type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	// The context allows cancellation of long-running scans.
@@ -7530,15 +5439,7 @@ import &quot;unsafe&quot;</imports>
 	preloadedSize     int64 // tracks total bytes preloaded so far
 }</type>
       <function>func NewFileScanner(opts *ScanOptions) (*FileScanner, error)</function>
-      <variable>rootIsFile bool</variable>
       <function>func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)</function>
-      <variable>warning string</variable>
-      <function>func (s *FileScanner) relPath(path string) string</function>
-      <function>func (s *FileScanner) matchesInclude(path string) bool</function>
-      <function>func (s *FileScanner) matchesExclude(path string) bool</function>
-      <function>func (s *FileScanner) matchesExcludeDir(path string) bool</function>
-      <function>func (s *FileScanner) matchesIgnore(path string) bool</function>
-      <function>func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go" language="go">
       <imports>import (
@@ -7566,10 +5467,8 @@ import &quot;unsafe&quot;</imports>
       <function>func TestNewFileScannerNilOptions(t *testing.T)</function>
       <function>func TestFileEntryDefaults(t *testing.T)</function>
       <function>func TestScanOptionsDefaults(t *testing.T)</function>
-      <variable>expectedMaxSize = 512000</variable>
       <function>func TestScanOptionsWithExtensions(t *testing.T)</function>
       <function>func TestScannerInterface(t *testing.T)</function>
-      <variable>_ Scanner = (*FileScanner)(nil)</variable>
       <function>func TestScanEmptyDirectory(t *testing.T)</function>
       <function>func TestScanSingleFile(t *testing.T)</function>
       <function>func TestScanFilterByExtension(t *testing.T)</function>
@@ -7578,16 +5477,10 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanMaxFileSize(t *testing.T)</function>
       <function>func TestScanGitignore(t *testing.T)</function>
       <function>func TestScanGitignoreLoadFailureWarning(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
-      <variable>buf bytes.Buffer</variable>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScanWalkDirPermissionDenied(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScanSymlinkSkip(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScanNestedDirectories(t *testing.T)</function>
       <function>func TestLogOutputNoDoubleNewline(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScanMultipleIgnoreFiles(t *testing.T)</function>
       <function>func TestFilepathBaseEdgeCases(t *testing.T)</function>
       <function>func TestScanIncludePatterns(t *testing.T)</function>
@@ -7596,7 +5489,6 @@ import &quot;unsafe&quot;</imports>
       <function>func TestScanChangedFilesWhitelist(t *testing.T)</function>
       <function>func TestNewFileScannerInvalidPatterns(t *testing.T)</function>
       <function>func TestPreloadContent(t *testing.T)</function>
-      <variable>found bool</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go" language="go">
       <imports>import (
@@ -7613,19 +5505,6 @@ import &quot;unsafe&quot;</imports>
 	// Regex is the compiled regular expression.
 	Regex *regexp.Regexp
 }</type>
-      <variable>defaultPatterns = []Pattern{
-	{Name: &quot;AWS Access Key ID&quot;, Regex: regexp.MustCompile(`AKIA[0-9A-Z]{16}`)},
-	{Name: &quot;AWS Secret Access Key&quot;, Regex: regexp.MustCompile(`(?i)aws_secret_access_key\s*[=:]\s*[A-Za-z0-9/+=]{40}`)},
-	{Name: &quot;GitHub Token&quot;, Regex: regexp.MustCompile(`gh[pousr]_[A-Za-z0-9_]{36,255}`)},
-	{Name: &quot;Generic API Key&quot;, Regex: regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[=:]\s*[&quot;&apos;]?[A-Za-z0-9_\-]{20,}[&quot;&apos;]?`)},
-	{Name: &quot;Generic Secret&quot;, Regex: regexp.MustCompile(`(?i)\b(?:secret|password|passwd|pwd)\s*[=:]\s*[&quot;&apos;]?[^\s&quot;&apos;]{8,}[&quot;&apos;]?`)},
-	{Name: &quot;Bearer Token&quot;, Regex: regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9\-._~+/]{20,}=*`)},
-	{Name: &quot;Private Key&quot;, Regex: regexp.MustCompile(`-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----`)},
-	{Name: &quot;Slack Token&quot;, Regex: regexp.MustCompile(`xox[bporas]-[0-9]{10,}-[A-Za-z0-9-]+`)},
-	{Name: &quot;Google API Key&quot;, Regex: regexp.MustCompile(`AIza[0-9A-Za-z_-]{35}`)},
-	{Name: &quot;Heroku API Key&quot;, Regex: regexp.MustCompile(`(?i)heroku.{0,100}[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)},
-	{Name: &quot;Generic Token Assignment&quot;, Regex: regexp.MustCompile(`(?i)(?:token|auth)\s*[=:]\s*[&quot;&apos;]?[A-Za-z0-9_\-]{20,}[&quot;&apos;]?`)},
-}</variable>
       <type>type Finding struct {
 	// FilePath is the file where the secret was found.
 	FilePath string
@@ -7647,8 +5526,6 @@ import &quot;unsafe&quot;</imports>
       <function>func NewScanner(warnings io.Writer) *Scanner</function>
       <function>func (s *Scanner) SetWarnings(w io.Writer)</function>
       <function>func (s *Scanner) Scan(result *extractor.ExtractResult) *ScanResult</function>
-      <function>func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extractor.ExtractedFile</function>
-      <function>func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/security/scanner_test.go" language="go">
       <imports>import (
@@ -7661,25 +5538,15 @@ import &quot;unsafe&quot;</imports>
 )</imports>
       <function>func TestScan_NilResult(t *testing.T)</function>
       <function>func TestScan_NoSecrets(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_AWSAccessKeyDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_GitHubTokenDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_GenericAPIKeyDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_PasswordInDocDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_PrivateKeyDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_ImportRedacted(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_ErrorFileSkipped(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_BearerTokenDetected(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
       <function>func TestScan_MultipleSecretsInOneFile(t *testing.T)</function>
-      <variable>buf bytes.Buffer</variable>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go" language="go">
       <imports>import (
@@ -7697,7 +5564,6 @@ import &quot;unsafe&quot;</imports>
 	encoding string
 	tke      *tiktoken.Tiktoken
 }</type>
-      <variable>_ Tokenizer = (*TiktokenTokenizer)(nil)</variable>
       <function>func NewTiktokenTokenizer() (*TiktokenTokenizer, error)</function>
       <function>func (t *TiktokenTokenizer) Count(text []byte) (int, error)</function>
       <function>func (t *TiktokenTokenizer) Name() string</function>
@@ -7712,7 +5578,6 @@ import &quot;unsafe&quot;</imports>
 	Name() string
 }</type>
       <type>type NoOpTokenizer struct{}</type>
-      <variable>_ Tokenizer = (*NoOpTokenizer)(nil)</variable>
       <function>func NewNoOpTokenizer() *NoOpTokenizer</function>
       <function>func (t *NoOpTokenizer) Count(_ []byte) (int, error)</function>
       <function>func (t *NoOpTokenizer) Name() string</function>
@@ -7723,9 +5588,7 @@ import &quot;unsafe&quot;</imports>
 	&quot;testing&quot;
 )</imports>
       <function>func TestNoOpTokenizerImplementsTokenizer(t *testing.T)</function>
-      <variable>_ Tokenizer = (*NoOpTokenizer)(nil)</variable>
       <function>func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)</function>
-      <variable>_ Tokenizer = (*TiktokenTokenizer)(nil)</variable>
       <function>func TestNoOpTokenizerCount(t *testing.T)</function>
       <function>func TestNoOpTokenizerName(t *testing.T)</function>
       <function>func TestTiktokenTokenizerCount(t *testing.T)</function>

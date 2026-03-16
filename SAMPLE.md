@@ -1,16 +1,13 @@
 # Code Summary: /home/runner/work/Brf.it/Brf.it
 
-*brf.it 0.20.0*
+*brf.it 0.21.0*
 
 ## Files
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/main.go
 
 ```go
-version = "dev"
-commit  = "none"
-date    = "unknown"
-func main()
+// (empty)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root.go
@@ -35,23 +32,8 @@ Version = "dev"
 Commit  = "none"
 Date    = "unknown"
 func SetBuildInfo(v, c, d string)
-cfg *config.Config
-rootCmd *cobra.Command
-func init()
 func Execute()
 func NewRootCommand() *cobra.Command
-func newRootCommandWithConfig(c *config.Config) *cobra.Command
-func addFlags(cmd *cobra.Command, c *config.Config)
-func runRoot(cmd *cobra.Command, args []string, c *config.Config) error
-changedFiles map[string]bool
-func writeOutput(result *context.Result, c *config.Config) error
-func runTokenTree(ctx gocontext.Context, scanOpts *scanner.ScanOptions, rootPath string) error
-func resolveChangedFiles(rootPath string, changed bool, since string) (map[string]bool, error)
-diffArgs []string
-func splitNonEmpty(s string) []string
-func cloneRemote(ctx gocontext.Context, remote string) (string, func(), error)
-func resolveRemoteURL(remote string) string
-func writeToFile(path string, content []byte) error
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit/root_test.go
@@ -72,13 +54,10 @@ import (
 )
 func TestExecuteHelp(t *testing.T)
 func TestExecuteVersion(t *testing.T)
-buf bytes.Buffer
 func TestNewRootCommand(t *testing.T)
 func TestParseFlags(t *testing.T)
 func TestRootCommandIntegration(t *testing.T)
-buf bytes.Buffer
 func TestRootCommandIntegrationMarkdown(t *testing.T)
-buf bytes.Buffer
 func TestRootCommandPathNotFound(t *testing.T)
 func TestResolveChangedFilesPathAnchoring(t *testing.T)
 func TestResolveChangedFilesIncludesUntracked(t *testing.T)
@@ -110,8 +89,6 @@ import (
 	// Register Tree-sitter parsers.
 	_ "github.com/indigo-net/Brf.it/pkg/parser/treesitter"
 )
-version = "dev"
-func main()
 type SummarizeProjectInput struct {
 	Path          string `json:"path,omitempty" jsonschema:"project directory path (defaults to server root)"`
 	Format        string `json:"format,omitempty" jsonschema:"output format: xml, md, or json (default: xml)"`
@@ -125,7 +102,6 @@ type SummarizeProjectOutput struct {
 	TotalSignatures int    `json:"total_signatures" jsonschema:"number of signatures extracted"`
 	TokenCount      int    `json:"token_count,omitempty" jsonschema:"estimated token count of output"`
 }
-func makeSummarizeProject(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeProjectInput) (*mcp.CallToolResult, SummarizeProjectOutput, error)
 type SummarizeFileInput struct {
 	Path    string `json:"path" jsonschema:"project directory path"`
 	Include string `json:"include" jsonschema:"glob pattern to include (e.g. 'pkg/**/*.go')"`
@@ -136,11 +112,6 @@ type SummarizeFileOutput struct {
 	TotalFiles      int    `json:"total_files" jsonschema:"number of files processed"`
 	TotalSignatures int    `json:"total_signatures" jsonschema:"number of signatures extracted"`
 }
-func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRequest, SummarizeFileInput) (*mcp.CallToolResult, SummarizeFileOutput, error)
-validFormats = map[string]bool{"xml": true, "md": true, "markdown": true, "json": true}
-func resolvePath(defaultRoot, inputPath string) (string, error)
-func validateFormat(format string) (string, error)
-func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, error)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go
@@ -191,7 +162,6 @@ type Circle struct {
 func (c Circle) Area() float64
 func (c Circle) Perimeter() float64
 func NewCircle(center Point, radius float64) (*Circle, error)
-func main()
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/examples/java/ShapeService.java
@@ -236,7 +206,6 @@ from enum import Enum
 class TaskStatus(Enum)
 class Task
 class TaskRepository
-def __init__(self)
 def create(self, title: str) -> Task
 def get(self, task_id: int) -> Optional[Task]
 def complete(self, task_id: int) -> bool
@@ -549,14 +518,10 @@ import (
 	"testing"
 )
 func TestDefaultConfig(t *testing.T)
-expectedMaxSize = 512000
 func TestConfigValidate(t *testing.T)
 func TestConfigSupportedLanguages(t *testing.T)
 func TestValidateMaxFileSizeUpperBound(t *testing.T)
-buf bytes.Buffer
 func TestToOptionsIncludePrivate(t *testing.T)
-func containsString(s, substr string) bool
-func containsSubstring(s, substr string) bool
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context.go
@@ -656,11 +621,7 @@ func NewPackager(
 ) *Packager
 func (p *Packager) SetTokenizer(t tokenizer.Tokenizer)
 func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error)
-treeStr string
-globalImports []formatter.ImportCount
 func NewDefaultPackager(scanOpts *scanner.ScanOptions) (*Packager, error)
-func normalizeFormat(format string) string
-func buildGlobalImports(files []formatter.FileData) []formatter.ImportCount
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/context_test.go
@@ -677,15 +638,7 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/scanner"
 	"github.com/indigo-net/Brf.it/pkg/tokenizer"
 )
-type mockScanner struct {
-	result *scanner.ScanResult
-	err    error
-}
 func (m *mockScanner) Scan(_ context.Context) (*scanner.ScanResult, error)
-type mockExtractor struct {
-	result *extractor.ExtractResult
-	err    error
-}
 func (m *mockExtractor) Extract(_ context.Context, _ *scanner.ScanResult, _ *extractor.ExtractOptions) (*extractor.ExtractResult, error)
 func TestPackagerPackage(t *testing.T)
 func TestPackagerPackageMarkdown(t *testing.T)
@@ -712,29 +665,12 @@ import (
 	"sort"
 	"strings"
 )
-type treeNode struct {
-	children map[string]*treeNode
-	tokens   int  // token count for leaf nodes (files)
-	isFile   bool // true if this node is a file (leaf)
-}
 func BuildTree(root string, paths []string) string
-buf strings.Builder
-maxTreeDepth = 100
-func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
-func renderNodeDepth(buf *strings.Builder, n *treeNode, prefix string, isRoot bool, depth int)
-newPrefix string
 type FileTokenCount struct {
 	Path   string
 	Tokens int
 }
 func BuildTokenTree(root string, files []FileTokenCount) string
-buf strings.Builder
-func calcDirTokens(n *treeNode) int
-sum int
-func renderTokenNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool)
-newPrefix string
-func formatNumber(n int) string
-buf strings.Builder
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/internal/context/tree_test.go
@@ -777,9 +713,7 @@ type MemoryStats struct {
 	HeapObjects uint64
 }
 func GetMemoryStats() MemoryStats
-m runtime.MemStats
 func FormatBytes(b uint64) string
-unit = 1024
 func WriteHeapProfile(filename string) error
 func StartCPUProfile(filename string) (func(), error)
 ```
@@ -892,14 +826,6 @@ func NewFileExtractor(registry *parser.Registry) *FileExtractor
 func NewDefaultFileExtractor() *FileExtractor
 func DefaultExtractOptions() *ExtractOptions
 func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanResult, opts *ExtractOptions) (*ExtractResult, error)
-wg sync.WaitGroup
-cancelErr error
-cancelOnce sync.Once
-func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.FileEntry, opts *ExtractOptions) (*ExtractResult, error)
-binarySniffSize = 512
-func isBinaryContent(content []byte) bool
-func (e *FileExtractor) extractFile(ctx context.Context, entry scanner.FileEntry, opts *ExtractOptions) ExtractedFile
-err error
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/extractor/extractor_test.go
@@ -918,14 +844,11 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/scanner"
 )
 func TestFileExtractorImplementsExtractor(t *testing.T)
-_ Extractor = (*FileExtractor)(nil)
 func TestFileExtractorExtract(t *testing.T)
-foundAdd bool
 func TestFileExtractorTOCTOUGuard(t *testing.T)
 func TestFileExtractorTOCTOUGuardDisabled(t *testing.T)
 func TestExtractConcurrencySequential(t *testing.T)
 func TestExtractConcurrencyDeterministicOrder(t *testing.T)
-entries []scanner.FileEntry
 func TestExtractConcurrencyEmptyFiles(t *testing.T)
 func TestExtractNilScanResult(t *testing.T)
 func TestExtractNegativeConcurrency(t *testing.T)
@@ -1036,7 +959,6 @@ import (
 	"testing"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
-func createBenchmarkData(numFiles, numSigsPerFile int) *PackageData
 func BenchmarkXMLFormatter(b *testing.B)
 func BenchmarkMarkdownFormatter(b *testing.B)
 func BenchmarkJSONFormatter(b *testing.B)
@@ -1068,11 +990,8 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
 func TestXMLFormatterImplementsFormatter(t *testing.T)
-_ Formatter = (*XMLFormatter)(nil)
 func TestMarkdownFormatterImplementsFormatter(t *testing.T)
-_ Formatter = (*MarkdownFormatter)(nil)
 func TestJSONFormatterImplementsFormatter(t *testing.T)
-_ Formatter = (*JSONFormatter)(nil)
 func TestXMLFormatterFormat(t *testing.T)
 func TestXMLFormatterFormatWithError(t *testing.T)
 func TestMarkdownFormatterFormat(t *testing.T)
@@ -1100,9 +1019,6 @@ func TestXMLFormatterWithNoSchema(t *testing.T)
 
 ```go
 import "unicode/utf8"
-func normalizeKind(kind string) string
-func getEmptyComment(lang string) string
-func truncateDoc(doc string, maxLen int) string
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers_test.go
@@ -1123,37 +1039,6 @@ import (
 type JSONFormatter struct{}
 func NewJSONFormatter() *JSONFormatter
 func (f *JSONFormatter) Name() string
-type jsonOutput struct {
-	Version       string            `json:"version,omitempty"`
-	Path          string            `json:"path,omitempty"`
-	Tree          string            `json:"tree,omitempty"`
-	GlobalImports []jsonImportCount `json:"globalImports,omitempty"`
-	Files         []jsonFile        `json:"files"`
-}
-type jsonImportCount struct {
-	Import string `json:"import"`
-	Count  int    `json:"count"`
-}
-type jsonFile struct {
-	Path       string     `json:"path"`
-	Language   string     `json:"language"`
-	Signatures []jsonSig  `json:"signatures,omitempty"`
-	Imports    []string   `json:"imports,omitempty"`
-	Calls      []jsonCall `json:"calls,omitempty"`
-	Error      string     `json:"error,omitempty"`
-}
-type jsonCall struct {
-	Caller string `json:"caller,omitempty"`
-	Callee string `json:"callee"`
-	Line   int    `json:"line"`
-}
-type jsonSig struct {
-	Kind     string `json:"kind"`
-	Text     string `json:"text"`
-	Doc      string `json:"doc,omitempty"`
-	Line     int    `json:"line,omitempty"`
-	Exported bool   `json:"exported,omitempty"`
-}
 func (f *JSONFormatter) Format(data *PackageData) ([]byte, error)
 ```
 
@@ -1169,8 +1054,6 @@ type MarkdownFormatter struct{}
 func NewMarkdownFormatter() *MarkdownFormatter
 func (f *MarkdownFormatter) Name() string
 func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error)
-buf bytes.Buffer
-func escapeMarkdown(s string) string
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/xml.go
@@ -1185,11 +1068,6 @@ type XMLFormatter struct{}
 func NewXMLFormatter() *XMLFormatter
 func (f *XMLFormatter) Name() string
 func (f *XMLFormatter) Format(data *PackageData) ([]byte, error)
-buf bytes.Buffer
-func escapeXML(s string) string
-needsEscape bool
-buf strings.Builder
-func kindToTag(kind string) string
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/example_test.go
@@ -1325,45 +1203,12 @@ type Registry struct {
 	parsers map[string]Parser
 }
 func NewRegistry() *Registry
-defaultRegistry = NewRegistry()
 func DefaultRegistry() *Registry
 func (r *Registry) Register(lang string, parser Parser)
 func (r *Registry) Get(lang string) (Parser, bool)
 func (r *Registry) Languages() []string
 func RegisterParser(lang string, parser Parser)
 func GetParser(lang string) (Parser, bool)
-languageMapping = map[string]string{
-	".go":    "go",
-	".ts":    "typescript",
-	".tsx":   "typescript",
-	".js":    "javascript",
-	".jsx":   "javascript",
-	".py":    "python",
-	".java":  "java",
-	".rs":    "rust",
-	".rb":    "ruby",
-	".php":   "php",
-	".c":     "c",
-	".cpp":   "cpp",
-	".h":     "cpp",
-	".hpp":   "cpp",
-	".cs":    "csharp",
-	".swift": "swift",
-	".kt":    "kotlin",
-	".kts":   "kotlin",
-	".lua":   "lua",
-	".sh":    "shell",
-	".bash":  "shell",
-	".zsh":   "shell",
-	".scala": "scala",
-	".sc":    "scala",
-	".ex":    "elixir",
-	".exs":   "elixir",
-	".sql":   "sql",
-	".yaml":  "yaml",
-	".yml":   "yaml",
-	".toml":  "toml",
-}
 func LanguageMapping() map[string]string
 func DetectLanguage(path string) string
 ```
@@ -1378,7 +1223,6 @@ func TestSignatureDefaults(t *testing.T)
 func TestParseResultDefaults(t *testing.T)
 func TestNodeKind(t *testing.T)
 func TestParserInterface(t *testing.T)
-_ Parser = (*MockParser)(nil)
 type MockParser struct {
 	signatures []Signature
 	err        error
@@ -1431,15 +1275,10 @@ typedef struct {
     uint8_t quote_count;
     StringType string_type;
 } Interpolation;
-static inline bool is_regular(Interpolation *interpolation)
-static inline bool is_verbatim(Interpolation *interpolation)
-static inline bool is_raw(Interpolation *interpolation)
 typedef struct {
     uint8_t quote_count;
     Array(Interpolation) interpolation_stack;
 } Scanner;
-static inline void advance(TSLexer *lexer)
-static inline void skip(TSLexer *lexer)
 void *tree_sitter_c_sharp_external_scanner_create()
 void tree_sitter_c_sharp_external_scanner_destroy(void *payload)
 unsigned tree_sitter_c_sharp_external_scanner_serialize(void *payload, char *buffer)
@@ -1564,22 +1403,9 @@ bool tree_sitter_c_sharp_external_scanner_scan(void *payload, TSLexer *lexer, co
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(void *self, void *contents, size_t self_size)
-static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)
-static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)
-static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)
 struct Swap
 struct Swap
 struct Swap
-static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)
-static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -1675,7 +1501,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -1805,17 +1630,8 @@ enum TokenType {
 
   QUOTED_ATOM_START
 }
-static inline void advance(TSLexer *lexer)
-static inline void skip(TSLexer *lexer)
-static inline bool is_whitespace(int32_t c)
-static inline bool is_inline_whitespace(int32_t c)
-static inline bool is_newline(int32_t c)
-static inline bool is_digit(int32_t c)
-static inline bool check_keyword_end(TSLexer *lexer)
-static bool check_operator_end(TSLexer *lexer)
 const uint8_t token_terminators_length =
     sizeof(token_terminators) / sizeof(char);
-static inline bool is_token_end(int32_t c)
 enum TokenType
 typedef struct {
   const enum TokenType token_type;
@@ -1825,10 +1641,6 @@ typedef struct {
 } QuotedContentInfo;
 const uint8_t quoted_content_infos_length =
     sizeof(quoted_content_infos) / sizeof(QuotedContentInfo);
-static inline int8_t find_quoted_token_info(const bool *valid_symbols)
-static bool scan_quoted_content(TSLexer *lexer, const QuotedContentInfo *info)
-static bool scan_newline(TSLexer *lexer, const bool *valid_symbols)
-static bool scan(TSLexer *lexer, const bool *valid_symbols)
 void *tree_sitter_elixir_external_scanner_create()
 bool tree_sitter_elixir_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols)
@@ -1933,16 +1745,6 @@ void tree_sitter_elixir_external_scanner_destroy(void *payload)
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -2032,7 +1834,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -2147,23 +1948,6 @@ enum TokenType {
 #define DELIMITER_LENGTH 3
 typedef char Delimiter;
 typedef Array(Delimiter) Stack;
-static inline void stack_push(Stack *stack, char chr, bool triple)
-static inline Delimiter stack_pop(Stack *stack)
-static inline void skip(TSLexer *lexer)
-static inline void advance(TSLexer *lexer)
-static bool scan_string_start(TSLexer *lexer, Stack *stack)
-static bool scan_string_content(TSLexer *lexer, Stack *stack)
-static bool scan_multiline_comment(TSLexer *lexer)
-static bool scan_whitespace_and_comments(TSLexer *lexer)
-static bool is_word_char(int32_t c)
-static bool scan_for_word(TSLexer *lexer, const char* word, unsigned len)
-static bool check_word(TSLexer *lexer, const char *word, unsigned len)
-static bool check_modifier_then_constructor(TSLexer *lexer)
-static bool scan_automatic_semicolon(TSLexer *lexer, const bool *valid_symbols)
-static bool scan_safe_nav(TSLexer *lexer)
-static bool scan_line_sep(TSLexer *lexer)
-static bool scan_import_list_delimiter(TSLexer *lexer)
-static bool scan_import_dot(TSLexer *lexer)
 bool tree_sitter_kotlin_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 void *tree_sitter_kotlin_external_scanner_create()
 void tree_sitter_kotlin_external_scanner_destroy(void *payload)
@@ -2264,16 +2048,6 @@ void tree_sitter_kotlin_external_scanner_deserialize(void *payload, const char *
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -2363,7 +2137,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -2642,8 +2415,6 @@ enum ts_field_identifiers {
   field_table = 22,
   field_value = 23,
 }
-static bool ts_lex(TSLexer *lexer, TSStateId state)
-static bool ts_lex_keywords(TSLexer *lexer, TSStateId state)
 enum ts_external_scanner_symbol_identifiers {
   ts_external_token__block_comment_start = 0,
   ts_external_token__block_comment_content = 1,
@@ -2679,25 +2450,14 @@ enum TokenType {
   BLOCK_STRING_CONTENT,
   BLOCK_STRING_END,
 }
-static inline void consume(TSLexer *lexer)
-static inline void skip(TSLexer *lexer)
-static inline bool consume_char(char c, TSLexer *lexer)
-static inline uint8_t consume_and_count_char(char c, TSLexer *lexer)
-static inline void skip_whitespaces(TSLexer *lexer)
 typedef struct {
   char ending_char;
   uint8_t level_count;
 } Scanner;
-static inline void reset_state(Scanner *scanner)
 void *tree_sitter_lua_external_scanner_create()
 void tree_sitter_lua_external_scanner_destroy(void *payload)
 unsigned tree_sitter_lua_external_scanner_serialize(void *payload, char *buffer)
 void tree_sitter_lua_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
-static bool scan_block_start(Scanner *scanner, TSLexer *lexer)
-static bool scan_block_end(Scanner *scanner, TSLexer *lexer)
-static bool scan_block_content(Scanner *scanner, TSLexer *lexer)
-static bool scan_comment_start(Scanner *scanner, TSLexer *lexer)
-static bool scan_comment_content(Scanner *scanner, TSLexer *lexer)
 bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 ```
 
@@ -2823,20 +2583,6 @@ bool tree_sitter_lua_external_scanner_scan(void *payload, TSLexer *lexer, const 
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)
-static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)
-static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)
-static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
-                               uint32_t *other_size, uint32_t *other_capacity)
-static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)
-static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -2932,7 +2678,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -3068,17 +2813,11 @@ void tree_sitter_scala_external_scanner_destroy(void *payload)
 unsigned tree_sitter_scala_external_scanner_serialize(void *payload, char *buffer)
 void tree_sitter_scala_external_scanner_deserialize(void *payload, const char *buffer,
                                                     unsigned length)
-static inline void advance(TSLexer *lexer)
-static inline void skip(TSLexer *lexer)
 typedef enum {
   STRING_MODE_SIMPLE,
   STRING_MODE_INTERPOLATED,
   STRING_MODE_RAW
 } StringMode;
-static bool scan_string_content(TSLexer *lexer, bool is_multiline, StringMode string_mode)
-static bool detect_comment_start(TSLexer *lexer)
-static bool scan_word(TSLexer *lexer, const char* const word)
-static inline void debug_indents(Scanner *scanner)
 bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
                                              const bool *valid_symbols)
 ```
@@ -3176,16 +2915,6 @@ bool tree_sitter_scala_external_scanner_scan(void *payload, TSLexer *lexer,
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -3275,7 +3004,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -3387,8 +3115,6 @@ struct LexerState {
 }
 void *tree_sitter_sql_external_scanner_create()
 void tree_sitter_sql_external_scanner_destroy(void *payload)
-static char* add_char(char* text, size_t* text_size, char c, int index)
-static char* scan_dollar_string_tag(TSLexer *lexer)
 bool tree_sitter_sql_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 unsigned tree_sitter_sql_external_scanner_serialize(void *payload, char *buffer)
 void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buffer, unsigned length)
@@ -3516,20 +3242,6 @@ void tree_sitter_sql_external_scanner_deserialize(void *payload, const char *buf
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__erase(void* self_contents, uint32_t *size,
-                                size_t element_size, uint32_t index)
-static inline void *_array__reserve(void *contents, uint32_t *capacity,
-                                  size_t element_size, uint32_t new_capacity)
-static inline void *_array__assign(void* self_contents, uint32_t *self_size, uint32_t *self_capacity,
-                                 const void *other_contents, uint32_t other_size, size_t element_size)
-static inline void _array__swap(uint32_t *self_size, uint32_t *self_capacity,
-                               uint32_t *other_size, uint32_t *other_capacity)
-static inline void *_array__grow(void *contents, uint32_t size, uint32_t *capacity,
-                               uint32_t count, size_t element_size)
-static inline void *_array__splice(void *self_contents, uint32_t *size, uint32_t *capacity,
-                                 size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -3625,7 +3337,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -3771,7 +3482,7 @@ enum IllegalTerminatorGroup {
 enum IllegalTerminatorGroup
 enum TokenType
 #define RESERVED_OP_COUNT 31
-static bool is_cross_semi_token(enum TokenType op)
+enum TokenType
 #define NON_CONSUMING_CROSS_SEMI_CHAR_COUNT 3
 enum ParseDirective {
     CONTINUE_PARSING_NOTHING_FOUND,
@@ -3797,22 +3508,6 @@ void tree_sitter_swift_external_scanner_deserialize(
     unsigned length
 )
 struct ScannerState
-static void advance(TSLexer *lexer)
-static bool should_treat_as_wspace(int32_t character)
-static int32_t encountered_op_count(bool *encountered_operator)
-static bool any_reserved_ops(uint8_t *encountered_reserved_ops)
-static bool is_legal_custom_operator(
-    int32_t char_idx,
-    int32_t first_char,
-    int32_t cur_char
-)
-static bool eat_operators(
-    TSLexer *lexer,
-    const bool *valid_symbols,
-    bool mark_end,
-    const int32_t prior_char,
-    enum TokenType *symbol_result
-)
 enum TokenType
 enum IllegalTerminatorGroup
 enum ParseDirective
@@ -3826,12 +3521,6 @@ enum TokenType
 #define DIRECTIVE_COUNT 4
 enum TokenType
 enum TokenType
-static bool eat_raw_str_part(
-    struct ScannerState *state,
-    TSLexer *lexer,
-    const bool *valid_symbols,
-    enum TokenType *symbol_result
-)
 struct ScannerState
 enum TokenType
 bool tree_sitter_swift_external_scanner_scan(
@@ -3941,16 +3630,6 @@ enum TokenType
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -4040,7 +3719,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -4215,7 +3893,6 @@ enum ts_symbol_identifiers {
   aux_sym_array_repeat2 = 64,
   aux_sym_inline_table_repeat1 = 65,
 }
-static bool ts_lex(TSLexer *lexer, TSStateId state)
 enum ts_external_scanner_symbol_identifiers {
   ts_external_token__line_ending_or_eof = 0,
   ts_external_token__multiline_basic_string_content = 1,
@@ -4348,16 +4025,6 @@ bool tree_sitter_toml_external_scanner_scan(void *payload, TSLexer *lexer, const
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -4447,7 +4114,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -4678,56 +4344,6 @@ typedef struct {
     int8_t sch_stt;
     ResultSchema rlt_sch;
 } Scanner;
-static unsigned serialize(Scanner *scanner, char *buffer)
-static void deserialize(Scanner *scanner, const char *buffer, unsigned length)
-static inline void adv(Scanner *scanner, TSLexer *lexer)
-static inline void adv_nwl(Scanner *scanner, TSLexer *lexer)
-static inline void skp(Scanner *scanner, TSLexer *lexer)
-static inline void skp_nwl(Scanner *scanner, TSLexer *lexer)
-static inline void mrk_end(Scanner *scanner, TSLexer *lexer)
-static inline void init(Scanner *scanner)
-static inline void flush(Scanner *scanner)
-static inline void pop_ind(Scanner *scanner)
-static inline void push_ind(Scanner *scanner, int16_t typ, int16_t len)
-static inline bool is_wsp(int32_t c)
-static inline bool is_nwl(int32_t c)
-static inline bool is_wht(int32_t c)
-static inline bool is_ns_dec_digit(int32_t c)
-static inline bool is_ns_hex_digit(int32_t c)
-static inline bool is_ns_word_char(int32_t c)
-static inline bool is_nb_json(int32_t c)
-static inline bool is_nb_double_char(int32_t c)
-static inline bool is_nb_single_char(int32_t c)
-static inline bool is_ns_char(int32_t c)
-static inline bool is_c_indicator(int32_t c)
-static inline bool is_c_flow_indicator(int32_t c)
-static inline bool is_plain_safe_in_block(int32_t c)
-static inline bool is_plain_safe_in_flow(int32_t c)
-static inline bool is_ns_uri_char(int32_t c)
-static inline bool is_ns_tag_char(int32_t c)
-static inline bool is_ns_anchor_char(int32_t c)
-static char scn_uri_esc(Scanner *scanner, TSLexer *lexer)
-static char scn_ns_uri_char(Scanner *scanner, TSLexer *lexer)
-static char scn_ns_tag_char(Scanner *scanner, TSLexer *lexer)
-static bool scn_dir_bgn(Scanner *scanner, TSLexer *lexer)
-static bool scn_dir_yml_ver(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_tag_hdl_tal(Scanner *scanner, TSLexer *lexer)
-static bool scn_dir_tag_hdl(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_dir_tag_pfx(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_dir_rsv_prm(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_tag(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_acr_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_acr_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_als_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_als_ctn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_dqt_esc_seq(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_drs_doc_end(Scanner *scanner, TSLexer *lexer)
-static bool scn_dqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_sqt_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_blk_str_bgn(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static bool scn_blk_str_cnt(Scanner *scanner, TSLexer *lexer, TSSymbol result_symbol)
-static char scn_pln_cnt(Scanner *scanner, TSLexer *lexer, bool (*is_plain_safe)(int32_t))
-static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols)
 void *tree_sitter_yaml_external_scanner_create()
 void tree_sitter_yaml_external_scanner_destroy(void *payload)
 unsigned tree_sitter_yaml_external_scanner_serialize(void *payload, char *buffer)
@@ -4749,7 +4365,6 @@ typedef enum {
   RS_BOOL,
   RS_FLOAT,
 } ResultSchema;
-static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.json.c
@@ -4766,7 +4381,6 @@ typedef enum {
   RS_NULL,
   RS_FLOAT,
 } ResultSchema;
-static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/schema.legacy.c
@@ -4784,7 +4398,6 @@ typedef enum {
   RS_NULL,
   RS_TIMESTAMP,
 } ResultSchema;
-static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/yaml/tree_sitter/alloc.h
@@ -4880,16 +4493,6 @@ static int8_t adv_sch_stt(int8_t sch_stt, int32_t cur_chr, ResultSchema *rlt_sch
     array_search_sorted_by(self, field, (value) field, &_index, &_exists); \
     if (!_exists) array_insert(self, _index, value); \
   } while (0)
-static inline void _array__delete(Array *self)
-static inline void _array__erase(Array *self, size_t element_size,
-                                uint32_t index)
-static inline void _array__reserve(Array *self, size_t element_size, uint32_t new_capacity)
-static inline void _array__assign(Array *self, const Array *other, size_t element_size)
-static inline void _array__swap(Array *self, Array *other)
-static inline void _array__grow(Array *self, uint32_t count, size_t element_size)
-static inline void _array__splice(Array *self, size_t element_size,
-                                 uint32_t index, uint32_t old_count,
-                                 uint32_t new_count, const void *elements)
 #define _array__search_sorted(self, start, compare, suffix, needle, _index, _exists) \
   do { \
     *(_index) = start; \
@@ -4985,7 +4588,6 @@ typedef struct {
   int32_t end;
 } TSCharacterRange;
 struct TSLanguage
-static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, int32_t lookahead)
 #define UNUSED __pragma(warning(suppress : 4101))
 #define UNUSED __attribute__((unused))
 #define START_LEXER()           \
@@ -5075,7 +4677,6 @@ static inline bool set_contains(const TSCharacterRange *ranges, uint32_t len, in
 
 ```go
 import "strings"
-func hasVisibilityPrefix(sigText, modifier string) bool
 type BaseQuery struct{}
 func (BaseQuery) Captures() []string
 func (BaseQuery) ImportQuery() []byte
@@ -5099,127 +4700,10 @@ type CQuery struct {
 func NewCQuery() *CQuery
 func (q *CQuery) Language() *sitter.Language
 func (q *CQuery) Query() []byte
-cKindMapping = map[string]string{
-	"function_definition":  "function",
-	"declaration":          "function", // function prototypes
-	"struct_specifier":     "struct",
-	"enum_specifier":       "enum",
-	"type_definition":      "typedef",
-	"preproc_function_def": "macro",
-	"preproc_def":          "macro",
-	"global_variable":      "variable", // mapped from declaration patterns
-}
 func (q *CQuery) KindMapping() map[string]string
 func (q *CQuery) ImportQuery() []byte
 func (q *CQuery) CallQuery() []byte
 func (q *CQuery) IsExported(name, sigText string) bool
-cCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-`
-cImportQueryPattern = `
-; #include directives (capture full statement)
-(preproc_include) @import_path
-`
-cQueryPattern = `
-; Function definitions - direct declarator
-(function_definition
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function definitions - pointer return type
-(function_definition
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - direct declarator
-(declaration
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - pointer return type
-(declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Struct specifiers
-(struct_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum specifiers
-(enum_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Typedef
-(type_definition
-  declarator: (type_identifier) @name
-) @signature @kind
-
-; Function-like macros
-(preproc_function_def
-  name: (identifier) @name
-) @signature @kind
-
-; Object-like macros
-(preproc_def
-  name: (identifier) @name
-) @signature @kind
-
-; Global variable declarations (with initializer)
-(translation_unit
-  (declaration
-    declarator: (init_declarator
-      declarator: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Global variable declarations (simple identifier, e.g., extern)
-(translation_unit
-  (declaration
-    declarator: (identifier) @name
-  ) @signature @kind
-)
-
-; Global pointer variable declarations
-(translation_unit
-  (declaration
-    declarator: (pointer_declarator
-      declarator: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Global pointer variable declarations (with initializer)
-(translation_unit
-  (declaration
-    declarator: (init_declarator
-      declarator: (pointer_declarator
-        declarator: (identifier) @name
-      )
-    )
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/c_test.go
@@ -5233,7 +4717,6 @@ import (
 func TestCQueryLanguage(t *testing.T)
 func TestCQueryPattern(t *testing.T)
 func TestCQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
 func TestCQueryExtractStruct(t *testing.T)
 func TestCQueryExtractMacro(t *testing.T)
 func TestCQueryExtractEnum(t *testing.T)
@@ -5273,201 +4756,9 @@ type CppQuery struct {
 func NewCppQuery() *CppQuery
 func (q *CppQuery) Language() *sitter.Language
 func (q *CppQuery) Query() []byte
-cppKindMapping = map[string]string{
-	"function_definition":  "function",
-	"declaration":          "function",
-	"struct_specifier":     "struct",
-	"enum_specifier":       "enum",
-	"type_definition":      "typedef",
-	"preproc_function_def": "macro",
-	"preproc_def":          "macro",
-	"class_specifier":      "class",
-	"field_declaration":    "method",
-	"template_declaration": "template",
-	"namespace_definition": "namespace",
-}
 func (q *CppQuery) KindMapping() map[string]string
 func (q *CppQuery) ImportQuery() []byte
 func (q *CppQuery) IsExported(name, sigText string) bool
-cppImportQueryPattern = `
-; #include directives (capture full statement)
-(preproc_include) @import_path
-`
-cppQueryPattern = `
-; Function definitions - direct declarator
-(function_definition
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function definitions - pointer return type
-(function_definition
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function definitions - reference return type
-(function_definition
-  declarator: (reference_declarator
-    (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - direct declarator
-(declaration
-  declarator: (function_declarator
-    declarator: (identifier) @name
-  )
-) @signature @kind
-
-; Function declarations (prototypes) - pointer return type
-(declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Class definitions
-(class_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Struct specifiers
-(struct_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum specifiers
-(enum_specifier
-  name: (type_identifier) @name
-) @signature @kind
-
-; Typedef
-(type_definition
-  declarator: (type_identifier) @name
-) @signature @kind
-
-; Function-like macros
-(preproc_function_def
-  name: (identifier) @name
-) @signature @kind
-
-; Object-like macros
-(preproc_def
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations in class (regular methods)
-(field_declaration
-  declarator: (function_declarator
-    declarator: (field_identifier) @name
-  )
-) @signature @kind
-
-; Method declarations with pointer return type
-(field_declaration
-  declarator: (pointer_declarator
-    declarator: (function_declarator
-      declarator: (field_identifier) @name
-    )
-  )
-) @signature @kind
-
-; Method declarations with reference return type
-(field_declaration
-  declarator: (reference_declarator
-    (function_declarator
-      declarator: (field_identifier) @name
-    )
-  )
-) @signature @kind
-
-; Constructor declarations (in class body)
-(function_definition
-  declarator: (function_declarator
-    declarator: (qualified_identifier
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Destructor definitions (outside class)
-(function_definition
-  declarator: (function_declarator
-    declarator: (destructor_name
-      (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Destructor declarations in class (captured via declaration node)
-(declaration
-  declarator: (function_declarator
-    declarator: (destructor_name
-      (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Namespace definitions
-(namespace_definition
-  name: (namespace_identifier) @name
-) @signature @kind
-
-; Template function definitions
-(template_declaration
-  (function_definition
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Template function definitions - pointer return type
-(template_declaration
-  (function_definition
-    declarator: (pointer_declarator
-      declarator: (function_declarator
-        declarator: (identifier) @name
-      )
-    )
-  )
-) @signature @kind
-
-; Template class definitions
-(template_declaration
-  (class_specifier
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Template struct definitions
-(template_declaration
-  (struct_specifier
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Template declarations (standalone)
-(template_declaration
-  (declaration
-    declarator: (function_declarator
-      declarator: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/cpp_test.go
@@ -5481,7 +4772,6 @@ import (
 func TestCppQueryLanguage(t *testing.T)
 func TestCppQueryPattern(t *testing.T)
 func TestCppQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
 func TestCppQueryExtractClass(t *testing.T)
 func TestCppQueryExtractMethod(t *testing.T)
 func TestCppQueryExtractConstructorDestructor(t *testing.T)
@@ -5492,13 +4782,10 @@ func TestCppQueryExtractEnum(t *testing.T)
 func TestCppQueryExtractMacro(t *testing.T)
 func TestCppQueryExtractTypedef(t *testing.T)
 func TestCppQueryExtractIncludes(t *testing.T)
-imports []string
 func TestCppQueryNestedNamespaces(t *testing.T)
 func TestCppQueryMultipleInheritance(t *testing.T)
 func TestCppQueryEmptyFile(t *testing.T)
 func TestCppQueryOnlyComments(t *testing.T)
-nameCount int
-docCount int
 func TestCppQueryKindMapping(t *testing.T)
 func TestCppQueryCaptures(t *testing.T)
 ```
@@ -5518,135 +4805,9 @@ type CSharpQuery struct {
 func NewCSharpQuery() *CSharpQuery
 func (q *CSharpQuery) Language() *sitter.Language
 func (q *CSharpQuery) Query() []byte
-csharpKindMapping = map[string]string{
-	"class_declaration":                 "class",
-	"struct_declaration":                "struct",
-	"interface_declaration":             "interface",
-	"enum_declaration":                  "enum",
-	"record_declaration":                "record",
-	"delegate_declaration":              "type",
-	"method_declaration":                "method",
-	"constructor_declaration":           "constructor",
-	"destructor_declaration":            "destructor",
-	"property_declaration":              "variable",
-	"field_declaration":                 "field",
-	"event_declaration":                 "variable",
-	"event_field_declaration":           "variable",
-	"indexer_declaration":               "method",
-	"operator_declaration":              "function",
-	"conversion_operator_declaration":   "function",
-	"namespace_declaration":             "namespace",
-	"file_scoped_namespace_declaration": "namespace",
-	"enum_member_declaration":           "variable",
-}
 func (q *CSharpQuery) KindMapping() map[string]string
 func (q *CSharpQuery) ImportQuery() []byte
 func (q *CSharpQuery) IsExported(name, sigText string) bool
-csharpImportQueryPattern = `
-; using directives (capture full declaration)
-(using_directive) @import_path
-`
-csharpQueryPattern = `
-; Class declarations
-(class_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Struct declarations
-(struct_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Record declarations (record, record class, record struct)
-(record_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Delegate declarations
-(delegate_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Constructor declarations
-(constructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Destructor declarations
-(destructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Property declarations
-(property_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Field declarations (static/const filtered in parser.go)
-(field_declaration
-  (variable_declaration
-    (variable_declarator
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Event field declarations (e.g., public event EventHandler Changed;)
-(event_field_declaration
-  (variable_declaration
-    (variable_declarator
-      name: (identifier) @name
-    )
-  )
-) @signature @kind
-
-; Event declarations with accessor body
-(event_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Indexer declarations (no name capture — synthesized in parser.go)
-(indexer_declaration) @signature @kind
-
-; Operator declarations (no name capture — synthesized in parser.go)
-(operator_declaration) @signature @kind
-
-; Conversion operator declarations (no name capture — synthesized in parser.go)
-(conversion_operator_declaration) @signature @kind
-
-; Namespace declarations
-(namespace_declaration
-  name: (_) @name
-) @signature @kind
-
-; File-scoped namespace declarations (C# 10+)
-(file_scoped_namespace_declaration
-  name: (_) @name
-) @signature @kind
-
-; Enum member declarations
-(enum_member_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Comments (XML doc comments and regular)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/csharp_test.go
@@ -5657,7 +4818,6 @@ import (
 	tree_sitter_c_sharp "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/csharp"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractCSharpNames(t *testing.T, code []byte) map[string]bool
 func TestCSharpQueryLanguage(t *testing.T)
 func TestCSharpQueryPattern(t *testing.T)
 func TestCSharpQueryImportPattern(t *testing.T)
@@ -5668,7 +4828,6 @@ func TestCSharpQueryExtractProperties(t *testing.T)
 func TestCSharpQueryExtractFields(t *testing.T)
 func TestCSharpQueryExtractEvents(t *testing.T)
 func TestCSharpQueryExtractOperators(t *testing.T)
-foundOperator, foundConversion, foundIndexer bool
 func TestCSharpQueryExtractImport(t *testing.T)
 func TestCSharpQueryExtractGenerics(t *testing.T)
 func TestCSharpQueryKindMapping(t *testing.T)
@@ -5693,126 +4852,9 @@ type ElixirQuery struct {
 func NewElixirQuery() *ElixirQuery
 func (q *ElixirQuery) Language() *sitter.Language
 func (q *ElixirQuery) Query() []byte
-elixirKindMapping = map[string]string{
-	"call":           "function",
-	"unary_operator": "type",
-}
 func (q *ElixirQuery) KindMapping() map[string]string
 func (q *ElixirQuery) ImportQuery() []byte
 func (q *ElixirQuery) IsExported(name, sigText string) bool
-elixirImportQueryPattern = `
-; import statements: import Module
-(call
-  target: (identifier)
-  (arguments
-    (alias))) @import_path
-
-; import with options: import Module, only: [...]
-(call
-  target: (identifier)
-  (arguments
-    (alias)
-    (keywords))) @import_path
-`
-elixirQueryPattern = `
-; Module/protocol/impl definitions: defmodule MyModule do...end
-(call
-  target: (identifier)
-  (arguments
-    (alias) @name)
-  (do_block)
-) @signature @kind
-
-; defimpl with keyword options: defimpl Protocol, for: Module do...end
-(call
-  target: (identifier)
-  (arguments
-    (alias) @name
-    (keywords))
-  (do_block)
-) @signature @kind
-
-; Function/macro definitions with arguments: def foo(args) do...end
-(call
-  target: (identifier)
-  (arguments
-    (call
-      target: (identifier) @name))
-  (do_block)
-) @signature @kind
-
-; Function/macro definitions with guard clause: def foo(args) when guard do...end
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (call
-        target: (identifier) @name)
-      operator: "when"))
-  (do_block)
-) @signature @kind
-
-; Zero-arity function definitions: def foo do...end
-(call
-  target: (identifier)
-  (arguments
-    (identifier) @name)
-  (do_block)
-) @signature @kind
-
-; Zero-arity function with guard: def foo when guard do...end
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (identifier) @name
-      operator: "when"))
-  (do_block)
-) @signature @kind
-
-; Guard definitions without do_block: defguard is_positive(x) when ...
-(call
-  target: (identifier)
-  (arguments
-    (binary_operator
-      left: (call
-        target: (identifier) @name)
-      operator: "when"))
-) @signature @kind
-
-; defdelegate: defdelegate foo(args), to: Bar
-(call
-  target: (identifier)
-  (arguments
-    (call
-      target: (identifier) @name)
-    (keywords))
-) @signature @kind
-
-; defstruct with list: defstruct [:field1, :field2]
-(call
-  target: (identifier) @name
-  (arguments
-    (list))
-) @signature @kind
-
-; defstruct with keywords: defstruct field: default_value
-(call
-  target: (identifier) @name
-  (arguments
-    (keywords))
-) @signature @kind
-
-; Module attributes: @spec, @type, @typep, @opaque, @callback
-(unary_operator
-  operator: "@"
-  operand: (call
-    target: (identifier) @name)
-) @signature @kind
-
-; Line comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/elixir_test.go
@@ -5824,11 +4866,6 @@ import (
 	tree_sitter_elixir "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/elixir"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractElixirNames(t *testing.T, code []byte) map[string]bool
-func extractElixirSignatures(t *testing.T, code []byte) []string
-sigs []string
-func extractElixirImportNames(t *testing.T, code []byte) []string
-imports []string
 func TestElixirQueryLanguage(t *testing.T)
 func TestElixirQueryPattern(t *testing.T)
 func TestElixirQueryImportPattern(t *testing.T)
@@ -5853,10 +4890,6 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_go "github.com/tree-sitter/tree-sitter-go/bindings/go"
 )
-captureName      = "name"
-captureSignature = "signature"
-captureDoc       = "doc"
-captureKind      = "kind"
 type GoQuery struct {
 	BaseQuery
 	language *sitter.Language
@@ -5865,67 +4898,10 @@ type GoQuery struct {
 func NewGoQuery() *GoQuery
 func (q *GoQuery) Language() *sitter.Language
 func (q *GoQuery) Query() []byte
-goKindMapping = map[string]string{
-	"function_declaration": "function",
-	"method_declaration":   "method",
-	"type_declaration":     "type",
-	"const_declaration":    "variable",
-	"var_declaration":      "variable",
-	"const_spec":           "variable",
-	"var_spec":             "variable",
-}
 func (q *GoQuery) KindMapping() map[string]string
 func (q *GoQuery) ImportQuery() []byte
 func (q *GoQuery) CallQuery() []byte
 func (q *GoQuery) IsExported(name, _ string) bool
-goCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/package calls (e.g., obj.Method(), fmt.Println())
-(call_expression
-  function: (selector_expression
-    field: (field_identifier) @callee
-  )
-) @call_node
-`
-goImportQueryPattern = `
-; Import declarations (capture entire declaration)
-(import_declaration) @import_path
-`
-goQueryPattern = `
-; Function declarations
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (field_identifier) @name
-) @signature @kind
-
-; Type declarations (struct, interface, etc.)
-(type_declaration
-  (type_spec
-    name: (type_identifier) @name
-  )
-) @signature @kind
-
-; Package-level const specs (captures each const individually)
-(const_spec
-  name: (identifier) @name
-) @signature @kind
-
-; Package-level var specs (captures each var individually)
-(var_spec
-  name: (identifier) @name
-) @signature @kind
-
-; Comments (documentation)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/go_test.go
@@ -5939,9 +4915,6 @@ import (
 func TestGoQueryLanguage(t *testing.T)
 func TestGoQueryPattern(t *testing.T)
 func TestGoQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
-funcKindNode *sitter.Node
-kindNode *sitter.Node
 func TestGoQueryExtractConstAndVar(t *testing.T)
 ```
 
@@ -5960,77 +4933,10 @@ type JavaQuery struct {
 func NewJavaQuery() *JavaQuery
 func (q *JavaQuery) Language() *sitter.Language
 func (q *JavaQuery) Query() []byte
-javaKindMapping = map[string]string{
-	"class_declaration":           "class",
-	"interface_declaration":       "interface",
-	"method_declaration":          "method",
-	"constructor_declaration":     "constructor",
-	"enum_declaration":            "enum",
-	"annotation_type_declaration": "annotation",
-	"record_declaration":          "record",
-	"field_declaration":           "field",
-}
 func (q *JavaQuery) KindMapping() map[string]string
 func (q *JavaQuery) ImportQuery() []byte
 func (q *JavaQuery) CallQuery() []byte
 func (q *JavaQuery) IsExported(name, sigText string) bool
-javaCallQueryPattern = `
-; Method invocations (e.g., obj.method(), method())
-(method_invocation
-  name: (identifier) @callee
-) @call_node
-`
-javaImportQueryPattern = `
-; import statements (capture full declaration)
-(import_declaration) @import_path
-`
-javaQueryPattern = `
-; Class declarations (includes inner classes)
-(class_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Method declarations
-(method_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Constructor declarations
-(constructor_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Annotation type declarations (@interface)
-(annotation_type_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Record declarations (Java 14+)
-(record_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Field declarations (static fields filtered in parser.go)
-(field_declaration
-  (variable_declarator
-    name: (identifier) @name
-  )
-) @signature @kind
-
-; Comments (Javadoc and regular)
-(line_comment) @doc
-(block_comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/java_test.go
@@ -6045,12 +4951,9 @@ func TestJavaQueryLanguage(t *testing.T)
 func TestJavaQueryPattern(t *testing.T)
 func TestJavaQueryKindMapping(t *testing.T)
 func TestJavaQueryExtractClass(t *testing.T)
-foundClass, foundMethod bool
 func TestJavaQueryExtractInterface(t *testing.T)
 func TestJavaQueryExtractEnum(t *testing.T)
-foundEnum bool
 func TestJavaQueryExtractAnnotationType(t *testing.T)
-foundAnnotation bool
 func TestJavaQueryExtractRecord(t *testing.T)
 func TestJavaQueryExtractGenerics(t *testing.T)
 func TestJavaQueryExtractFieldDeclarations(t *testing.T)
@@ -6071,70 +4974,9 @@ type KotlinQuery struct {
 func NewKotlinQuery() *KotlinQuery
 func (q *KotlinQuery) Language() *sitter.Language
 func (q *KotlinQuery) Query() []byte
-kotlinKindMapping = map[string]string{
-	"function_declaration":  "function",
-	"class_declaration":     "class",
-	"object_declaration":    "class",
-	"companion_object":      "class",
-	"property_declaration":  "variable",
-	"type_alias":            "type",
-	"enum_entry":            "variable",
-	"secondary_constructor": "constructor",
-}
 func (q *KotlinQuery) KindMapping() map[string]string
 func (q *KotlinQuery) ImportQuery() []byte
 func (q *KotlinQuery) IsExported(name, sigText string) bool
-kotlinImportQueryPattern = `
-; Import statements
-(import_header) @import_path
-`
-kotlinQueryPattern = `
-; Function declarations (regular, suspend, inline, extension, operator, infix, tailrec)
-(function_declaration
-  (simple_identifier) @name
-) @signature @kind
-
-; Class declarations (class, data class, sealed class, enum class, interface, annotation class, value class)
-(class_declaration
-  (type_identifier) @name
-) @signature @kind
-
-; Object declarations (singleton)
-(object_declaration
-  (type_identifier) @name
-) @signature @kind
-
-; Companion object with explicit name (e.g., companion object Factory)
-(companion_object
-  (type_identifier) @name
-) @signature @kind
-
-; Property declarations (val/var, const val, lateinit, delegated)
-(property_declaration
-  (variable_declaration
-    (simple_identifier) @name
-  )
-) @signature @kind
-
-; Type alias
-(type_alias
-  (type_identifier) @name
-) @signature @kind
-
-; Enum entries
-(enum_entry
-  (simple_identifier) @name
-) @signature @kind
-
-; Secondary constructors
-(secondary_constructor) @signature @kind
-
-; Line comments
-(line_comment) @doc
-
-; Block/multiline comments
-(multiline_comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/kotlin_test.go
@@ -6145,7 +4987,6 @@ import (
 	tree_sitter_kotlin "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/kotlin"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractKotlinNames(t *testing.T, code []byte) map[string]bool
 func TestKotlinQueryLanguage(t *testing.T)
 func TestKotlinQueryPattern(t *testing.T)
 func TestKotlinQueryImportPattern(t *testing.T)
@@ -6177,61 +5018,8 @@ type LuaQuery struct {
 func NewLuaQuery() *LuaQuery
 func (q *LuaQuery) Language() *sitter.Language
 func (q *LuaQuery) Query() []byte
-luaKindMapping = map[string]string{
-	"function_declaration": "function",
-	"variable_declaration": "variable",
-	"assignment_statement": "variable",
-}
 func (q *LuaQuery) KindMapping() map[string]string
 func (q *LuaQuery) ImportQuery() []byte
-luaImportQueryPattern = `
-; local json = require("json")
-(variable_declaration
-  (assignment_statement
-    (expression_list
-      value: (function_call
-        name: (identifier) @_fn
-        arguments: (arguments (string))
-      )
-    )
-  )
-) @import_path
-(#eq? @_fn "require")
-`
-luaQueryPattern = `
-; Function declarations (global, local, module, method)
-; Covers: function foo(), local function foo(), function M.foo(), function M:foo()
-(function_declaration
-  name: [
-    (identifier) @name
-    (dot_index_expression field: (identifier) @name)
-    (method_index_expression method: (identifier) @name)
-  ]
-) @signature @kind
-
-; Variable declarations with function assignment: local foo = function() end
-(variable_declaration
-  (assignment_statement
-    (variable_list
-      name: (identifier) @name)
-    (expression_list
-      value: (function_definition))
-  )
-) @signature @kind
-
-; Variable declarations with table constructor: local M = {}
-(variable_declaration
-  (assignment_statement
-    (variable_list
-      name: (identifier) @name)
-    (expression_list
-      value: (table_constructor))
-  )
-) @signature @kind
-
-; Comments (LuaDoc --- and regular --)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/lua_test.go
@@ -6242,7 +5030,6 @@ import (
 	tree_sitter_lua "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/lua"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractLuaNames(t *testing.T, code []byte) map[string]bool
 func TestLuaQueryLanguage(t *testing.T)
 func TestLuaQueryPattern(t *testing.T)
 func TestLuaQueryImportPattern(t *testing.T)
@@ -6275,72 +5062,9 @@ type PHPQuery struct {
 func NewPHPQuery() *PHPQuery
 func (q *PHPQuery) Language() *sitter.Language
 func (q *PHPQuery) Query() []byte
-phpKindMapping = map[string]string{
-	"function_definition":       "function",
-	"method_declaration":        "method",
-	"class_declaration":         "class",
-	"interface_declaration":     "interface",
-	"trait_declaration":         "type",
-	"enum_declaration":          "enum",
-	"const_declaration":         "variable",
-	"property_declaration":      "variable",
-	"namespace_use_declaration": "import",
-}
 func (q *PHPQuery) KindMapping() map[string]string
 func (q *PHPQuery) ImportQuery() []byte
 func (q *PHPQuery) IsExported(name, sigText string) bool
-phpImportQueryPattern = `
-; use Namespace\\Class;
-(namespace_use_declaration) @import_path
-
-; include 'file.php';
-(include_expression) @import_path
-
-; require 'vendor/autoload.php';
-(require_expression) @import_path
-
-; include_once 'config.php';
-(include_once_expression) @import_path
-
-; require_once 'config.php';
-(require_once_expression) @import_path
-`
-phpQueryPattern = `
-; Function definitions: function name() {}
-(function_definition name: (name) @name) @signature @kind
-
-; Method declarations in classes
-(method_declaration name: (name) @name) @signature @kind
-
-; Class declarations
-(class_declaration name: (name) @name) @signature @kind
-
-; Interface declarations
-(interface_declaration name: (name) @name) @signature @kind
-
-; Trait declarations
-(trait_declaration name: (name) @name) @signature @kind
-
-; Enum declarations
-(enum_declaration name: (name) @name) @signature @kind
-
-; Const declarations: const NAME = value;
-(const_declaration
-  (const_element
-    (name) @name
-  )
-) @signature @kind
-
-; Property declarations: public $name;
-(property_declaration
-  (property_element
-    (variable_name (name) @name)
-  )
-) @signature @kind
-
-; Comments (PHPDoc and regular)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/php_test.go
@@ -6351,7 +5075,6 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_php "github.com/tree-sitter/tree-sitter-php/bindings/go"
 )
-func extractPHPNames(t *testing.T, code []byte) map[string]bool
 func TestPHPQueryLanguage(t *testing.T)
 func TestPHPQueryPattern(t *testing.T)
 func TestPHPQueryImportPattern(t *testing.T)
@@ -6381,59 +5104,10 @@ type PythonQuery struct {
 func NewPythonQuery() *PythonQuery
 func (q *PythonQuery) Language() *sitter.Language
 func (q *PythonQuery) Query() []byte
-pythonKindMapping = map[string]string{
-	"function_definition":  "function",
-	"class_definition":     "class",
-	"expression_statement": "variable",
-	"assignment":           "variable",
-}
 func (q *PythonQuery) KindMapping() map[string]string
 func (q *PythonQuery) ImportQuery() []byte
 func (q *PythonQuery) CallQuery() []byte
 func (q *PythonQuery) IsExported(name, _ string) bool
-pythonCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call
-  function: (identifier) @callee
-) @call_node
-
-; Method/attribute calls (e.g., obj.method())
-(call
-  function: (attribute
-    attribute: (identifier) @callee
-  )
-) @call_node
-`
-pythonImportQueryPattern = `
-; import module (capture full statement)
-(import_statement) @import_path
-
-; from module import ... (capture full statement)
-(import_from_statement) @import_path
-`
-pythonQueryPattern = `
-; Function definitions (includes async def, methods)
-(function_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions
-(class_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Module-level assignments (simple and with type annotations)
-(module
-  (expression_statement
-    (assignment
-      left: (identifier) @name
-    )
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/python_test.go
@@ -6447,10 +5121,8 @@ import (
 func TestPythonQueryLanguage(t *testing.T)
 func TestPythonQueryPattern(t *testing.T)
 func TestPythonQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
 func TestPythonQueryExtractClass(t *testing.T)
 func TestPythonQueryExtractAsyncFunction(t *testing.T)
-funcCaptures map[string]string
 func TestPythonQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
@@ -6469,56 +5141,8 @@ type RubyQuery struct {
 func NewRubyQuery() *RubyQuery
 func (q *RubyQuery) Language() *sitter.Language
 func (q *RubyQuery) Query() []byte
-rubyKindMapping = map[string]string{
-	"method":           "method",
-	"singleton_method": "method",
-	"class":            "class",
-	"module":           "namespace",
-	"assignment":       "variable",
-}
 func (q *RubyQuery) KindMapping() map[string]string
 func (q *RubyQuery) ImportQuery() []byte
-rubyImportQueryPattern = `
-; require "library" / require_relative "library"
-(call
-  method: (identifier) @_fn
-  arguments: (argument_list
-    (string)
-  )
-) @import_path
-(#match? @_fn "^require")
-`
-rubyQueryPattern = `
-; Instance methods and top-level functions: def foo(args) ... end
-(method
-  name: (identifier) @name
-) @signature @kind
-
-; Class methods: def self.foo(args) ... end
-(singleton_method
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions: class Foo ... end
-(class
-  name: (constant) @name
-) @signature @kind
-
-; Module definitions: module Foo ... end
-(module
-  name: (constant) @name
-) @signature @kind
-
-; Top-level constant assignments: FOO = value
-(program
-  (assignment
-    left: (constant) @name
-  ) @signature @kind
-)
-
-; Comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/ruby_test.go
@@ -6529,9 +5153,6 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_ruby "github.com/tree-sitter/tree-sitter-ruby/bindings/go"
 )
-func extractRubyNames(t *testing.T, code []byte) map[string]bool
-func extractRubyImports(t *testing.T, code []byte) []string
-imports []string
 func TestRubyQueryLanguage(t *testing.T)
 func TestRubyQueryPattern(t *testing.T)
 func TestRubyQueryImportPattern(t *testing.T)
@@ -6562,134 +5183,10 @@ type RustQuery struct {
 func NewRustQuery() *RustQuery
 func (q *RustQuery) Language() *sitter.Language
 func (q *RustQuery) Query() []byte
-rustKindMapping = map[string]string{
-	"function_item":           "function",
-	"struct_item":             "struct",
-	"enum_item":               "enum",
-	"trait_item":              "trait",
-	"type_item":               "type",
-	"impl_item":               "impl",
-	"const_item":              "variable",
-	"static_item":             "variable",
-	"mod_item":                "namespace",
-	"macro_definition":        "macro",
-	"foreign_mod_item":        "namespace",
-	"union_item":              "struct",
-	"associated_type":         "type",
-	"function_signature_item": "function",
-}
 func (q *RustQuery) KindMapping() map[string]string
 func (q *RustQuery) ImportQuery() []byte
 func (q *RustQuery) CallQuery() []byte
 func (q *RustQuery) IsExported(name, _ string) bool
-rustCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/field calls (e.g., obj.method())
-(call_expression
-  function: (field_expression
-    field: (field_identifier) @callee
-  )
-) @call_node
-`
-rustImportQueryPattern = `
-; Use declarations (capture full statement)
-(use_declaration) @import_path
-
-; Extern crate declarations
-(extern_crate_declaration) @import_path
-`
-rustQueryPattern = `
-; Functions (including async, unsafe, const, extern)
-(function_item
-  name: (identifier) @name
-) @signature @kind
-
-; Struct declarations
-(struct_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum declarations
-(enum_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Trait declarations
-(trait_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type aliases
-(type_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Impl blocks (capture the whole impl signature)
-(impl_item
-  type: (type_identifier) @name
-) @signature @kind
-
-; Impl blocks for generic types
-(impl_item
-  type: (generic_type
-    type: (type_identifier) @name
-  )
-) @signature @kind
-
-; Trait impl blocks (impl Trait for Type)
-(impl_item
-  trait: (type_identifier)
-  type: (type_identifier) @name
-) @signature @kind
-
-; Constants
-(const_item
-  name: (identifier) @name
-) @signature @kind
-
-; Statics
-(static_item
-  name: (identifier) @name
-) @signature @kind
-
-; Modules
-(mod_item
-  name: (identifier) @name
-) @signature @kind
-
-; Macro definitions (macro_rules!)
-(macro_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Union declarations
-(union_item
-  name: (type_identifier) @name
-) @signature @kind
-
-; Foreign mod (extern "C" blocks)
-(foreign_mod_item) @signature @kind
-
-; Associated types in traits
-(associated_type
-  name: (type_identifier) @name
-) @signature @kind
-
-; Function signatures in traits (without body)
-(function_signature_item
-  name: (identifier) @name
-) @signature @kind
-
-; Doc comments (/// and //!)
-(line_comment) @doc
-
-; Block doc comments (/** and /*!)
-(block_comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/rust_test.go
@@ -6731,91 +5228,9 @@ type ScalaQuery struct {
 func NewScalaQuery() *ScalaQuery
 func (q *ScalaQuery) Language() *sitter.Language
 func (q *ScalaQuery) Query() []byte
-scalaKindMapping = map[string]string{
-	"function_definition":  "method",
-	"function_declaration": "method",
-	"class_definition":     "class",
-	"trait_definition":     "trait",
-	"object_definition":    "class",
-	"val_definition":       "variable",
-	"val_declaration":      "variable",
-	"var_definition":       "variable",
-	"var_declaration":      "variable",
-	"type_definition":      "type",
-	"enum_definition":      "enum",
-	"given_definition":     "variable",
-}
 func (q *ScalaQuery) KindMapping() map[string]string
 func (q *ScalaQuery) ImportQuery() []byte
 func (q *ScalaQuery) IsExported(name, sigText string) bool
-scalaImportQueryPattern = `
-; Import statements
-(import_declaration) @import_path
-`
-scalaQueryPattern = `
-; Function definitions (def with body)
-(function_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Function declarations (abstract methods in traits/classes, no body)
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Class definitions (class, abstract class, case class, sealed class, implicit class)
-(class_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Trait definitions (trait, sealed trait)
-(trait_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Object definitions (singleton, companion)
-(object_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Val definitions (val, lazy val, implicit val)
-(val_definition
-  pattern: (identifier) @name
-) @signature @kind
-
-; Val declarations (abstract val in traits)
-(val_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Var definitions
-(var_definition
-  pattern: (identifier) @name
-) @signature @kind
-
-; Var declarations (abstract var in traits)
-(var_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Type aliases
-(type_definition
-  name: (type_identifier) @name
-) @signature @kind
-
-; Enum definitions (Scala 3)
-(enum_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Given definitions (Scala 3)
-(given_definition
-  name: (identifier) @name
-) @signature @kind
-
-; Line comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/scala_test.go
@@ -6827,9 +5242,6 @@ import (
 	tree_sitter_scala "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/scala"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractScalaNames(t *testing.T, code []byte) map[string]bool
-func extractScalaImports(t *testing.T, code []byte) []string
-imports []string
 func TestScalaQueryLanguage(t *testing.T)
 func TestScalaQueryPattern(t *testing.T)
 func TestScalaQueryImportPattern(t *testing.T)
@@ -6864,33 +5276,8 @@ type ShellQuery struct {
 func NewShellQuery() *ShellQuery
 func (q *ShellQuery) Language() *sitter.Language
 func (q *ShellQuery) Query() []byte
-shellKindMapping = map[string]string{
-	"function_definition": "function",
-	"variable_assignment": "variable",
-}
 func (q *ShellQuery) KindMapping() map[string]string
 func (q *ShellQuery) ImportQuery() []byte
-shellImportQueryPattern = `
-; source /path/to/file and . /path/to/file
-; Capture command nodes. Go-side filtering will check if command name is "source" or "."
-(command
-  name: (command_name) @name
-) @import_path
-`
-shellQueryPattern = `
-; Function definitions: function foo { } or function foo() { } or foo() { }
-(function_definition
-  name: (word) @name
-) @signature @kind
-
-; Variable assignments: FOO=bar, FOO="bar", FOO=$(cmd)
-(variable_assignment
-  name: (variable_name) @name
-) @signature @kind
-
-; Comments (# ...)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/shell_test.go
@@ -6901,7 +5288,6 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 	tree_sitter_bash "github.com/tree-sitter/tree-sitter-bash/bindings/go"
 )
-func extractShellNames(t *testing.T, code []byte) map[string]bool
 func TestShellQueryLanguage(t *testing.T)
 func TestShellQueryPattern(t *testing.T)
 func TestShellQueryImportPattern(t *testing.T)
@@ -6930,66 +5316,8 @@ type SQLQuery struct {
 func NewSQLQuery() *SQLQuery
 func (q *SQLQuery) Language() *sitter.Language
 func (q *SQLQuery) Query() []byte
-sqlKindMapping = map[string]string{
-	"create_table":             "struct",
-	"create_function":          "function",
-	"create_view":              "type",
-	"create_materialized_view": "type",
-	"create_index":             "variable",
-	"create_trigger":           "function",
-	"create_type":              "type",
-	"create_schema":            "namespace",
-	"create_sequence":          "variable",
-	"alter_table":              "type",
-}
 func (q *SQLQuery) KindMapping() map[string]string
 func (q *SQLQuery) ImportQuery() []byte
-sqlQueryPattern = `
-; CREATE TABLE
-(create_table
-  (object_reference) @name) @signature @kind
-
-; CREATE FUNCTION
-(create_function
-  (object_reference) @name) @signature @kind
-
-; CREATE VIEW
-(create_view
-  (object_reference) @name) @signature @kind
-
-; CREATE MATERIALIZED VIEW
-(create_materialized_view
-  (object_reference) @name) @signature @kind
-
-; CREATE INDEX (name extracted Go-side)
-(create_index) @signature @kind
-
-; CREATE TYPE
-(create_type
-  (object_reference) @name) @signature @kind
-
-; CREATE TRIGGER (first object_reference = trigger name)
-(create_trigger
-  (object_reference) @name) @signature @kind
-
-; CREATE SCHEMA (bare identifier)
-(create_schema
-  (identifier) @name) @signature @kind
-
-; CREATE SEQUENCE
-(create_sequence
-  (object_reference) @name) @signature @kind
-
-; ALTER TABLE
-(alter_table
-  (object_reference) @name) @signature @kind
-
-; SQL comments (-- single-line)
-(comment) @doc
-
-; SQL multi-line comments (/* ... */ are "marginalia" in tree-sitter-sql)
-(marginalia) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/sql_test.go
@@ -7001,16 +5329,6 @@ import (
 	tree_sitter_sql "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/sql"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractSQLNames(t *testing.T, code string) []string
-names []string
-type sqlCapture struct {
-	Name      string
-	Signature string
-	Kind      string
-}
-func extractSQLCaptures(t *testing.T, code string) []sqlCapture
-captures []sqlCapture
-sc sqlCapture
 func TestSQLQueryLanguage(t *testing.T)
 func TestSQLQueryPattern(t *testing.T)
 func TestSQLQueryImportPattern(t *testing.T)
@@ -7045,85 +5363,9 @@ type SwiftQuery struct {
 func NewSwiftQuery() *SwiftQuery
 func (q *SwiftQuery) Language() *sitter.Language
 func (q *SwiftQuery) Query() []byte
-swiftKindMapping = map[string]string{
-	"function_declaration":          "function",
-	"class_declaration":             "class",
-	"protocol_declaration":          "interface",
-	"typealias_declaration":         "type",
-	"property_declaration":          "variable",
-	"init_declaration":              "constructor",
-	"deinit_declaration":            "destructor",
-	"subscript_declaration":         "method",
-	"operator_declaration":          "function",
-	"protocol_function_declaration": "function",
-}
 func (q *SwiftQuery) KindMapping() map[string]string
 func (q *SwiftQuery) ImportQuery() []byte
 func (q *SwiftQuery) IsExported(name, sigText string) bool
-swiftImportQueryPattern = `
-; Import declarations (capture full statement)
-(import_declaration) @import_path
-`
-swiftQueryPattern = `
-; Functions
-(function_declaration
-  name: (simple_identifier) @name
-) @signature @kind
-
-; Classes, Structs, Enums (all use class_declaration node type)
-(class_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Extensions (name is in user_type child)
-(class_declaration
-  name: (user_type
-    (type_identifier) @name
-  )
-) @signature @kind
-
-; Protocol declarations
-(protocol_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type aliases
-(typealias_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Properties (let/var)
-(property_declaration
-  name: (pattern
-    (simple_identifier) @name
-  )
-) @signature @kind
-
-; Initializers
-(init_declaration) @signature @kind
-
-; Deinitializers
-(deinit_declaration) @signature @kind
-
-; Subscript declarations
-(subscript_declaration) @signature @kind
-
-; Operator declarations
-(operator_declaration
-  (custom_operator) @name
-) @signature @kind
-
-; Protocol function declarations (methods in protocol body)
-(protocol_function_declaration
-  name: (simple_identifier) @name
-) @signature @kind
-
-; Doc comments (/// style)
-(comment) @doc
-
-; Multiline comments (/** style)
-(multiline_comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/swift_test.go
@@ -7165,53 +5407,8 @@ type TOMLQuery struct {
 func NewTOMLQuery() *TOMLQuery
 func (q *TOMLQuery) Language() *sitter.Language
 func (q *TOMLQuery) Query() []byte
-tomlKindMapping = map[string]string{
-	"table":               "namespace",
-	"table_array_element": "namespace",
-	"pair":                "variable",
-}
 func (q *TOMLQuery) KindMapping() map[string]string
 func (q *TOMLQuery) ImportQuery() []byte
-tomlQueryPattern = `
-; Standard table sections [section]
-(table
-  (bare_key) @name) @signature @kind
-
-; Standard table sections with quoted key ["section"]
-(table
-  (quoted_key) @name) @signature @kind
-
-; Standard table sections with dotted key [section.subsection]
-(table
-  (dotted_key) @name) @signature @kind
-
-; Array of tables [[section]]
-(table_array_element
-  (bare_key) @name) @signature @kind
-
-; Array of tables with quoted key [["section"]]
-(table_array_element
-  (quoted_key) @name) @signature @kind
-
-; Array of tables with dotted key [[section.subsection]]
-(table_array_element
-  (dotted_key) @name) @signature @kind
-
-; Key-value pairs (bare key)
-(pair
-  (bare_key) @name) @signature @kind
-
-; Key-value pairs (quoted key)
-(pair
-  (quoted_key) @name) @signature @kind
-
-; Key-value pairs (dotted key)
-(pair
-  (dotted_key) @name) @signature @kind
-
-; TOML comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/toml_test.go
@@ -7223,15 +5420,6 @@ import (
 	tree_sitter_toml "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/toml"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-type tomlCapture struct {
-	Name string
-	Kind string
-}
-func extractTOMLCaptures(t *testing.T, code string) []tomlCapture
-captures []tomlCapture
-tc tomlCapture
-func extractTOMLNames(t *testing.T, code string) []string
-names []string
 func TestTOMLQueryLanguage(t *testing.T)
 func TestTOMLQueryPattern(t *testing.T)
 func TestTOMLQueryImportPattern(t *testing.T)
@@ -7260,137 +5448,9 @@ type TypeScriptQuery struct {
 func NewTypeScriptQuery() *TypeScriptQuery
 func (q *TypeScriptQuery) Language() *sitter.Language
 func (q *TypeScriptQuery) Query() []byte
-tsKindMapping = map[string]string{
-	"function_declaration":   "function",
-	"method_definition":      "method",
-	"class_declaration":      "class",
-	"interface_declaration":  "interface",
-	"type_alias_declaration": "type",
-	"arrow_function":         "function",
-	"variable_declaration":   "variable",
-	"variable_declarator":    "arrow",
-	"lexical_declaration":    "arrow",
-	"export_statement":       "export",
-}
 func (q *TypeScriptQuery) KindMapping() map[string]string
 func (q *TypeScriptQuery) ImportQuery() []byte
 func (q *TypeScriptQuery) CallQuery() []byte
-typeScriptCallQueryPattern = `
-; Direct function calls (e.g., foo())
-(call_expression
-  function: (identifier) @callee
-) @call_node
-
-; Method/property calls (e.g., obj.method())
-(call_expression
-  function: (member_expression
-    property: (property_identifier) @callee
-  )
-) @call_node
-`
-typeScriptImportQueryPattern = `
-; Import statements (capture full statement)
-(import_statement) @import_path
-
-; Export statements with source (re-exports)
-(export_statement
-  source: (string)
-) @import_path
-
-; Export clause (barrel exports: export { foo, bar })
-(export_statement
-  (export_clause) @import_path
-)
-`
-typeScriptQueryPattern = `
-; Function declarations
-(function_declaration
-  name: (identifier) @name
-) @signature @kind
-
-; Exported function declarations
-(export_statement
-  (function_declaration
-    name: (identifier) @name
-  )
-) @signature @kind
-
-; Arrow functions in variable declarations (capture full declaration with const/let/var)
-(lexical_declaration
-  (variable_declarator
-    name: (identifier) @name
-    value: (arrow_function)
-  )
-) @signature @kind
-
-; Module-level const/let declarations with values (captures all module-level)
-; Deduplication for arrow functions is handled in parser.go
-(program
-  (lexical_declaration
-    (variable_declarator
-      name: (identifier) @name
-      value: (_)
-    )
-  ) @signature @kind
-)
-
-; Module-level const/let without initial value (TypeScript declares)
-(program
-  (lexical_declaration
-    (variable_declarator
-      name: (identifier) @name
-      !value
-    )
-  ) @signature @kind
-)
-
-; Exported module-level const/let declarations with values
-(program
-  (export_statement
-    declaration: (lexical_declaration
-      (variable_declarator
-        name: (identifier) @name
-        value: (_)
-      )
-    )
-  ) @signature @kind
-)
-
-; Exported module-level const/let without initial value
-(program
-  (export_statement
-    declaration: (lexical_declaration
-      (variable_declarator
-        name: (identifier) @name
-        !value
-      )
-    )
-  ) @signature @kind
-)
-
-; Method definitions
-(method_definition
-  name: (property_identifier) @name
-) @signature @kind
-
-; Class declarations
-(class_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Interface declarations
-(interface_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Type alias declarations
-(type_alias_declaration
-  name: (type_identifier) @name
-) @signature @kind
-
-; Comments (documentation)
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/typescript_test.go
@@ -7404,7 +5464,6 @@ import (
 func TestTypeScriptQueryLanguage(t *testing.T)
 func TestTypeScriptQueryPattern(t *testing.T)
 func TestTypeScriptQueryExtractFunction(t *testing.T)
-funcCaptures map[string]string
 func TestTypeScriptQueryExtractModuleLevelVariables(t *testing.T)
 ```
 
@@ -7423,19 +5482,8 @@ type YAMLQuery struct {
 func NewYAMLQuery() *YAMLQuery
 func (q *YAMLQuery) Language() *sitter.Language
 func (q *YAMLQuery) Query() []byte
-yamlKindMapping = map[string]string{
-	"block_mapping_pair": "variable",
-}
 func (q *YAMLQuery) KindMapping() map[string]string
 func (q *YAMLQuery) ImportQuery() []byte
-yamlQueryPattern = `
-; Top-level key-value pairs
-(block_mapping_pair
-  key: (_) @name) @signature @kind
-
-; YAML comments
-(comment) @doc
-`
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/languages/yaml_test.go
@@ -7447,8 +5495,6 @@ import (
 	tree_sitter_yaml "github.com/indigo-net/Brf.it/pkg/parser/treesitter/grammars/yaml"
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
-func extractYAMLNames(t *testing.T, code string) []string
-names []string
 func TestYAMLQueryLanguage(t *testing.T)
 func TestYAMLQueryPattern(t *testing.T)
 func TestYAMLQueryImportPattern(t *testing.T)
@@ -7471,136 +5517,16 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/parser/treesitter/languages"
 )
-func init()
-type queryType int
-queryTypeSignature queryType = iota
-queryTypeImport
-queryTypeCall
-elixirDefPrefixes = [][]byte{
-	[]byte("defmodule "),
-	[]byte("defprotocol "),
-	[]byte("defimpl "),
-}
-supportedLangs = "go, typescript, tsx, javascript, jsx, python, c, java, cpp, rust, swift, kotlin, csharp, lua, shell, php, ruby, scala, elixir, sql, yaml, toml"
-type queryCacheKey struct {
-	lang string
-	typ  queryType
-}
 type TreeSitterParser struct {
 	queries         map[string]LanguageQuery
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
 }
-type pooledParser struct {
-	parser   *sitter.Parser
-	lastLang *sitter.Language
-}
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) Close()
-func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error)
-queryBytes []byte
 func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error)
-rawImports []string
-calls []parser.FunctionCall
 func (p *TreeSitterParser) Languages() []string
-func (p *TreeSitterParser) extractSignatures(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-) ([]parser.Signature, error)
-type dedupKey struct {
-		line int
-		name string
-	}
-kindNode *sitter.Node
-func cleanComment(text string) string
-func stripBody(text, kind, language string) string
-func stripGoBody(text, kind string) string
-func stripTypeScriptBody(text, kind string) string
-func stripTSFunctionBody(text string) string
-func findFunctionBodyStart(text string) int
-func findTSClassBodyStart(text string) int
-func stripPythonBody(text, kind string) string
-func findPythonBodyStart(text string) int
-func stripCBody(text, kind string) string
-func stripCppBody(text, kind string) string
-func findCppBodyStart(text string) int
-func isPythonMethod(signature string) bool
-func stripJavaBody(text, kind string) string
-func findJavaBodyStart(text string) int
-func stripRustBody(text, kind string) string
-func findRustBodyStart(text string) int
-func refineSwiftClassKind(text string) string
-func stripSwiftBody(text, kind string) string
-func findSwiftBodyStart(text string) int
-func stripKotlinBody(text, kind string) string
-func findKotlinBodyStart(text string) int
-func refineKotlinClassKind(text string) string
-func refineLuaFunctionKind(text string) string
-func stripLuaBody(text, kind string) string
-func stripPHPBody(text, kind string) string
-func stripRubyBody(text, kind string) string
-func stripScalaBody(text, kind string) string
-func findScalaBodyStart(text string) int
-func stripShellBody(text, kind string) string
-func findPHPBodyStart(text string) int
-func stripCSharpBody(text, kind string) string
-func findCSharpBodyStart(text string) int
-func isExpressionBodied(text string) bool
-func findCSharpArrowIndex(text string) int
-func extractCSharpOperatorName(text string) string
-func extractCSharpConversionOperatorName(text string) string
-func (p *TreeSitterParser) extractImports(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-) ([]string, error)
-importNode *sitter.Node
-func (p *TreeSitterParser) extractCalls(
-	root *sitter.Node,
-	content []byte,
-	langQuery LanguageQuery,
-	opts *parser.Options,
-	signatures []parser.Signature,
-) ([]parser.FunctionCall, error)
-callee string
-callLine int
-func findEnclosingFunction(signatures []parser.Signature, line int) string
-func removeBlankLines(text string) string
-buf strings.Builder
-elixirDefKeywords = map[string]string{
-	"defmodule":   "class",
-	"defprotocol": "interface",
-	"defimpl":     "impl",
-	"def":         "function",
-	"defp":        "function",
-	"defmacro":    "macro",
-	"defmacrop":   "macro",
-	"defguard":    "function",
-	"defguardp":   "function",
-	"defdelegate": "function",
-	"defstruct":   "struct",
-}
-func refineElixirCallKind(text string) string
-elixirAttrKeywords = map[string]bool{
-	"spec":     true,
-	"type":     true,
-	"typep":    true,
-	"opaque":   true,
-	"callback": true,
-}
-func refineElixirAttrKind(text, capturedName string) (string, string)
-func stripElixirBody(text, kind string) string
-func extractSQLDDLName(text string) string
-func extractNextSQLIdentifier(text string) string
-func stripSQLBody(text, kind string) string
-func stripSQLFunctionBody(text string) string
-func stripSQLViewBody(text string) string
-func stripYAMLBody(text, _ string) string
-func stripTOMLBody(text, kind string) string
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_bench_test.go
@@ -7612,13 +5538,9 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
 func BenchmarkParseGo(b *testing.B)
-code strings.Builder
 func BenchmarkParseTypeScript(b *testing.B)
-code strings.Builder
 func BenchmarkParsePython(b *testing.B)
-code strings.Builder
 func BenchmarkParseWithImports(b *testing.B)
-code strings.Builder
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_fuzz_test.go
@@ -7646,25 +5568,18 @@ import (
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
 func TestTreeSitterParserImplementsParser(t *testing.T)
-_ parser.Parser = (*TreeSitterParser)(nil)
 func TestTreeSitterParserLanguages(t *testing.T)
 func TestTreeSitterParserParseGo(t *testing.T)
-foundAdd bool
 func TestTreeSitterParserParseTypeScript(t *testing.T)
-foundAdd bool
 func TestTreeSitterParserUnsupportedLanguage(t *testing.T)
 func TestTreeSitterParserAutoRegistration(t *testing.T)
 func TestGoSignatureOnlyExtraction(t *testing.T)
 func TestGoIncludeBodyExtraction(t *testing.T)
-foundAdd bool
 func TestTypeScriptSignatureOnlyExtraction(t *testing.T)
 func TestTypeScriptArrowFunctionSignature(t *testing.T)
-func contains(s, substr string) bool
 func TestTreeSitterParserParseJava(t *testing.T)
-foundClass, foundConstructor, foundPublicMethod bool
 func TestJavaSignatureOnlyExtraction(t *testing.T)
 func TestJavaGenericsExtraction(t *testing.T)
-foundClass, foundMethod bool
 func TestJavaAutoRegistration(t *testing.T)
 func TestTreeSitterParserParseCpp(t *testing.T)
 func TestCppSignatureOnlyExtraction(t *testing.T)
@@ -7711,7 +5626,6 @@ func TestLuaBodyStripping(t *testing.T)
 func TestRefineLuaFunctionKind(t *testing.T)
 func TestIsPythonMethod(t *testing.T)
 func TestTreeSitterParserParsePHP(t *testing.T)
-foundClass, foundMethod, foundInterface, foundTrait, foundFunction, foundConst bool
 func TestTreeSitterParserParsePHPImports(t *testing.T)
 func TestPHPBodyStripping(t *testing.T)
 func TestTreeSitterParserParseRuby(t *testing.T)
@@ -7724,15 +5638,12 @@ func TestRefineElixirCallKind(t *testing.T)
 func TestRefineElixirAttrKind(t *testing.T)
 func TestStripElixirBody(t *testing.T)
 func TestTreeSitterParserParseSQL(t *testing.T)
-names []string
 func TestExtractSQLDDLName(t *testing.T)
 func TestExtractNextSQLIdentifier(t *testing.T)
 func TestStripSQLBody(t *testing.T)
 func TestStripSQLFunctionBody(t *testing.T)
 func TestTreeSitterParserParseYAML(t *testing.T)
-names []string
 func TestTreeSitterParserParseTOML(t *testing.T)
-names []string
 func TestSameLineDifferentNames(t *testing.T)
 func TestFindEnclosingFunctionEndLineZero(t *testing.T)
 ```
@@ -7895,10 +5806,8 @@ type ScanOptions struct {
 	MaxTotalPreloadSize int64
 }
 func DefaultScanOptions() *ScanOptions
-func copyLanguageMapping() map[string]string
 func (o *ScanOptions) GetLanguage(path string) (string, bool)
 func IsHidden(name string) bool
-func getBaseName(path string) string
 type Scanner interface {
 	// Scan performs the scan and returns scan results.
 	// The context allows cancellation of long-running scans.
@@ -7914,15 +5823,7 @@ type FileScanner struct {
 	preloadedSize     int64 // tracks total bytes preloaded so far
 }
 func NewFileScanner(opts *ScanOptions) (*FileScanner, error)
-rootIsFile bool
 func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error)
-warning string
-func (s *FileScanner) relPath(path string) string
-func (s *FileScanner) matchesInclude(path string) bool
-func (s *FileScanner) matchesExclude(path string) bool
-func (s *FileScanner) matchesExcludeDir(path string) bool
-func (s *FileScanner) matchesIgnore(path string) bool
-func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/scanner/scanner_bench_test.go
@@ -7956,10 +5857,8 @@ func TestNewFileScanner(t *testing.T)
 func TestNewFileScannerNilOptions(t *testing.T)
 func TestFileEntryDefaults(t *testing.T)
 func TestScanOptionsDefaults(t *testing.T)
-expectedMaxSize = 512000
 func TestScanOptionsWithExtensions(t *testing.T)
 func TestScannerInterface(t *testing.T)
-_ Scanner = (*FileScanner)(nil)
 func TestScanEmptyDirectory(t *testing.T)
 func TestScanSingleFile(t *testing.T)
 func TestScanFilterByExtension(t *testing.T)
@@ -7968,16 +5867,10 @@ func TestScanIncludeHidden(t *testing.T)
 func TestScanMaxFileSize(t *testing.T)
 func TestScanGitignore(t *testing.T)
 func TestScanGitignoreLoadFailureWarning(t *testing.T)
-buf bytes.Buffer
-buf bytes.Buffer
-buf bytes.Buffer
 func TestScanWalkDirPermissionDenied(t *testing.T)
-buf bytes.Buffer
 func TestScanSymlinkSkip(t *testing.T)
-buf bytes.Buffer
 func TestScanNestedDirectories(t *testing.T)
 func TestLogOutputNoDoubleNewline(t *testing.T)
-buf bytes.Buffer
 func TestScanMultipleIgnoreFiles(t *testing.T)
 func TestFilepathBaseEdgeCases(t *testing.T)
 func TestScanIncludePatterns(t *testing.T)
@@ -7986,7 +5879,6 @@ func TestScanSingleFileWithIncludePattern(t *testing.T)
 func TestScanChangedFilesWhitelist(t *testing.T)
 func TestNewFileScannerInvalidPatterns(t *testing.T)
 func TestPreloadContent(t *testing.T)
-found bool
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner.go
@@ -8005,19 +5897,6 @@ type Pattern struct {
 
 	// Regex is the compiled regular expression.
 	Regex *regexp.Regexp
-}
-defaultPatterns = []Pattern{
-	{Name: "AWS Access Key ID", Regex: regexp.MustCompile(`AKIA[0-9A-Z]{16}`)},
-	{Name: "AWS Secret Access Key", Regex: regexp.MustCompile(`(?i)aws_secret_access_key\s*[=:]\s*[A-Za-z0-9/+=]{40}`)},
-	{Name: "GitHub Token", Regex: regexp.MustCompile(`gh[pousr]_[A-Za-z0-9_]{36,255}`)},
-	{Name: "Generic API Key", Regex: regexp.MustCompile(`(?i)(?:api[_-]?key|apikey)\s*[=:]\s*["']?[A-Za-z0-9_\-]{20,}["']?`)},
-	{Name: "Generic Secret", Regex: regexp.MustCompile(`(?i)\b(?:secret|password|passwd|pwd)\s*[=:]\s*["']?[^\s"']{8,}["']?`)},
-	{Name: "Bearer Token", Regex: regexp.MustCompile(`(?i)bearer\s+[A-Za-z0-9\-._~+/]{20,}=*`)},
-	{Name: "Private Key", Regex: regexp.MustCompile(`-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----`)},
-	{Name: "Slack Token", Regex: regexp.MustCompile(`xox[bporas]-[0-9]{10,}-[A-Za-z0-9-]+`)},
-	{Name: "Google API Key", Regex: regexp.MustCompile(`AIza[0-9A-Za-z_-]{35}`)},
-	{Name: "Heroku API Key", Regex: regexp.MustCompile(`(?i)heroku.{0,100}[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)},
-	{Name: "Generic Token Assignment", Regex: regexp.MustCompile(`(?i)(?:token|auth)\s*[=:]\s*["']?[A-Za-z0-9_\-]{20,}["']?`)},
 }
 type Finding struct {
 	// FilePath is the file where the secret was found.
@@ -8040,8 +5919,6 @@ type Scanner struct {
 func NewScanner(warnings io.Writer) *Scanner
 func (s *Scanner) SetWarnings(w io.Writer)
 func (s *Scanner) Scan(result *extractor.ExtractResult) *ScanResult
-func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extractor.ExtractedFile
-func (s *Scanner) redactString(filePath, text string, sr *ScanResult) string
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/security/scanner_test.go
@@ -8057,25 +5934,15 @@ import (
 )
 func TestScan_NilResult(t *testing.T)
 func TestScan_NoSecrets(t *testing.T)
-buf bytes.Buffer
 func TestScan_AWSAccessKeyDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_GitHubTokenDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_GenericAPIKeyDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_PasswordInDocDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_PrivateKeyDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_ImportRedacted(t *testing.T)
-buf bytes.Buffer
 func TestScan_ErrorFileSkipped(t *testing.T)
-buf bytes.Buffer
 func TestScan_BearerTokenDetected(t *testing.T)
-buf bytes.Buffer
 func TestScan_MultipleSecretsInOneFile(t *testing.T)
-buf bytes.Buffer
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/tokenizer/example_test.go
@@ -8099,7 +5966,6 @@ type TiktokenTokenizer struct {
 	encoding string
 	tke      *tiktoken.Tiktoken
 }
-_ Tokenizer = (*TiktokenTokenizer)(nil)
 func NewTiktokenTokenizer() (*TiktokenTokenizer, error)
 func (t *TiktokenTokenizer) Count(text []byte) (int, error)
 func (t *TiktokenTokenizer) Name() string
@@ -8117,7 +5983,6 @@ type Tokenizer interface {
 	Name() string
 }
 type NoOpTokenizer struct{}
-_ Tokenizer = (*NoOpTokenizer)(nil)
 func NewNoOpTokenizer() *NoOpTokenizer
 func (t *NoOpTokenizer) Count(_ []byte) (int, error)
 func (t *NoOpTokenizer) Name() string
@@ -8131,9 +5996,7 @@ import (
 	"testing"
 )
 func TestNoOpTokenizerImplementsTokenizer(t *testing.T)
-_ Tokenizer = (*NoOpTokenizer)(nil)
 func TestTiktokenTokenizerImplementsTokenizer(t *testing.T)
-_ Tokenizer = (*TiktokenTokenizer)(nil)
 func TestNoOpTokenizerCount(t *testing.T)
 func TestNoOpTokenizerName(t *testing.T)
 func TestTiktokenTokenizerCount(t *testing.T)
