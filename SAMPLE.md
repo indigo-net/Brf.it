@@ -163,6 +163,8 @@ func TestInvalidFormat(t *testing.T)
 func TestValidSubdirectoryPath(t *testing.T)
 func TestResolvePathAbsoluteRejected(t *testing.T)
 func TestResolvePathValidRelative(t *testing.T)
+func TestResolvePathSymlinkEscape(t *testing.T)
+func TestResolvePathSymlinkWithinRoot(t *testing.T)
 func TestResolvePathEmpty(t *testing.T)
 ```
 
