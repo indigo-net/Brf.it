@@ -263,6 +263,7 @@ func runPackager(ctx context.Context, cfg *config.Config) (*pkgcontext.Result, e
 		IncludeHidden:       cfg.IncludeHidden,
 		MaxFileSize:         cfg.MaxFileSize,
 		PreloadContent:      true,
+		MaxTotalPreloadSize: 1 << 30, // 1GB memory budget for preloaded content
 	}
 
 	packager, err := pkgcontext.NewDefaultPackager(scanOpts)
