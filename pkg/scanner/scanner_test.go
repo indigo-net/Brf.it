@@ -1261,6 +1261,9 @@ func TestPreloadContent(t *testing.T) {
 	})
 
 	t.Run("preload read error falls back to nil content", func(t *testing.T) {
+		if os.Getuid() == 0 {
+			t.Skip("skipping: chmod 0000 has no effect when running as root")
+		}
 		// Create a file then make it unreadable to trigger ReadFile failure.
 		unreadable := filepath.Join(tmpDir, "unreadable.go")
 		if err := os.WriteFile(unreadable, []byte("package main\n"), 0644); err != nil {
