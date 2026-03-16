@@ -190,6 +190,7 @@ var validFormats = map[string]bool{"xml": true, "md": true, "markdown": true, "j
 // If inputPath is empty, defaultRoot is returned unchanged.
 // Absolute paths are rejected outright; relative paths are joined with
 // defaultRoot and then verified to remain within the root boundary.
+// Symlinks are resolved to prevent escaping the root via symlink targets.
 func resolvePath(defaultRoot, inputPath string) (string, error) {
 	if inputPath == "" {
 		return defaultRoot, nil
@@ -209,6 +210,27 @@ func resolvePath(defaultRoot, inputPath string) (string, error) {
 	cleanRoot := filepath.Clean(defaultRoot)
 	if absPath != cleanRoot && !strings.HasPrefix(absPath, cleanRoot+string(filepath.Separator)) {
 		return "", fmt.Errorf("path %q resolves outside the project root %q", inputPath, defaultRoot)
+	}
+
+	// Resolve symlinks to prevent escaping the root via symlink targets.
+	// Only resolve if the path actually exists; non-existent paths are
+	// caught later by the caller's os.Stat check.
+	realPath, err := filepath.EvalSymlinks(absPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return absPath, nil
+		}
+		return "", fmt.Errorf("failed to resolve symlinks for %q: %w", inputPath, err)
+	}
+
+	// Resolve symlinks on root as well for consistent comparison.
+	realRoot, err := filepath.EvalSymlinks(cleanRoot)
+	if err != nil {
+		return "", fmt.Errorf("failed to resolve symlinks for root %q: %w", defaultRoot, err)
+	}
+
+	if realPath != realRoot && !strings.HasPrefix(realPath, realRoot+string(filepath.Separator)) {
+		return "", fmt.Errorf("path %q resolves outside the project root via symlink", inputPath)
 	}
 
 	return absPath, nil
