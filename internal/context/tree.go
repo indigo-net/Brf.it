@@ -50,9 +50,21 @@ func BuildTree(root string, paths []string) string {
 	return strings.TrimSuffix(buf.String(), "\n")
 }
 
+// maxTreeDepth is the maximum recursion depth for rendering tree nodes.
+// Prevents stack overflow on pathologically deep directory structures.
+const maxTreeDepth = 100
+
 // renderNode recursively renders the tree structure.
 // isRoot indicates whether this is the root level (no connectors).
 func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) {
+	renderNodeDepth(buf, n, prefix, isRoot, 0)
+}
+
+func renderNodeDepth(buf *strings.Builder, n *treeNode, prefix string, isRoot bool, depth int) {
+	if depth > maxTreeDepth {
+		buf.WriteString(prefix + "... (truncated: depth > " + fmt.Sprintf("%d", maxTreeDepth) + ")\n")
+		return
+	}
 	// Get sorted keys for consistent output
 	keys := make([]string, 0, len(n.children))
 	for k := range n.children {
@@ -85,7 +97,7 @@ func renderNode(buf *strings.Builder, n *treeNode, prefix string, isRoot bool) {
 		} else {
 			newPrefix = prefix + "│   "
 		}
-		renderNode(buf, child, newPrefix, false)
+		renderNodeDepth(buf, child, newPrefix, false, depth+1)
 	}
 }
 
