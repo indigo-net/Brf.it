@@ -139,9 +139,19 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	cmd.Flags().BoolVar(&c.TokenTree, "token-tree", c.TokenTree,
 		"output directory tree with per-file token counts")
 
-	// No schema flag
+	// Schema flags: --no-schema is kept for backwards compatibility (now default true).
+	// Use --schema to explicitly include the schema section.
 	cmd.Flags().BoolVar(&c.NoSchema, "no-schema", c.NoSchema,
-		"skip XML schema section in output")
+		"skip XML schema section in output (default: true)")
+	var includeSchema bool
+	cmd.Flags().BoolVar(&includeSchema, "schema", false,
+		"include XML schema section in output")
+	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
+		if cmd.Flags().Changed("schema") && includeSchema {
+			c.NoSchema = false
+		}
+		return nil
+	}
 
 	// Call graph flag
 	cmd.Flags().BoolVar(&c.CallGraph, "call-graph", c.CallGraph,
