@@ -69,6 +69,8 @@ func TestRemoteFlagConflictsWithChanged(t *testing.T)
 func TestRemoteFlagConflictsWithSince(t *testing.T)
 func TestRemoteFlagInvalidURL(t *testing.T)
 func TestCloneRemoteIntegration(t *testing.T)
+func TestSkipEmptyFlagDefault(t *testing.T)
+func TestNoSkipEmptyFlag(t *testing.T)
 func TestWriteToFile(t *testing.T)
 ```
 
@@ -505,6 +507,9 @@ type Config struct {
 
 	// Strict enables strict mode where any file parsing error causes a non-zero exit code.
 	Strict bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 func DefaultConfig() *Config
 func (c *Config) Validate() error
@@ -592,6 +597,9 @@ type Options struct {
 
 	// IncludeCallGraph enables function call graph extraction.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 func DefaultOptions() *Options
 type Result struct {
@@ -960,6 +968,9 @@ type PackageData struct {
 
 	// IncludeCallGraph indicates whether to include function call references.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 type ImportCount struct {
 	// Import is the raw import statement text.
@@ -1036,6 +1047,12 @@ func TestJSONFormatterKindNormalization(t *testing.T)
 func TestJSONFormatterWithImports(t *testing.T)
 func TestJSONFormatterWithError(t *testing.T)
 func TestJSONFormatterName(t *testing.T)
+func TestXMLFormatterSkipEmpty(t *testing.T)
+func TestXMLFormatterSkipEmptyKeepsErrors(t *testing.T)
+func TestXMLFormatterNoSkipEmpty(t *testing.T)
+func TestMarkdownFormatterSkipEmpty(t *testing.T)
+func TestJSONFormatterSkipEmpty(t *testing.T)
+func TestXMLFormatterSkipEmptyWithImports(t *testing.T)
 func TestXMLFormatterWithNoSchema(t *testing.T)
 ```
 

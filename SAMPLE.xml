@@ -78,6 +78,8 @@
       <function>func TestRemoteFlagConflictsWithSince(t *testing.T)</function>
       <function>func TestRemoteFlagInvalidURL(t *testing.T)</function>
       <function>func TestCloneRemoteIntegration(t *testing.T)</function>
+      <function>func TestSkipEmptyFlagDefault(t *testing.T)</function>
+      <function>func TestNoSkipEmptyFlag(t *testing.T)</function>
       <function>func TestWriteToFile(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main.go" language="go">
@@ -484,6 +486,9 @@ main &quot;$@&quot;</imports>
 
 	// Strict enables strict mode where any file parsing error causes a non-zero exit code.
 	Strict bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }</type>
       <function>func DefaultConfig() *Config</function>
       <function>func (c *Config) Validate() error</function>
@@ -565,6 +570,9 @@ main &quot;$@&quot;</imports>
 
 	// IncludeCallGraph enables function call graph extraction.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }</type>
       <function>func DefaultOptions() *Options</function>
       <type>type Result struct {
@@ -903,6 +911,9 @@ main &quot;$@&quot;</imports>
 
 	// IncludeCallGraph indicates whether to include function call references.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }</type>
       <type>type ImportCount struct {
 	// Import is the raw import statement text.
@@ -970,6 +981,12 @@ main &quot;$@&quot;</imports>
       <function>func TestJSONFormatterWithImports(t *testing.T)</function>
       <function>func TestJSONFormatterWithError(t *testing.T)</function>
       <function>func TestJSONFormatterName(t *testing.T)</function>
+      <function>func TestXMLFormatterSkipEmpty(t *testing.T)</function>
+      <function>func TestXMLFormatterSkipEmptyKeepsErrors(t *testing.T)</function>
+      <function>func TestXMLFormatterNoSkipEmpty(t *testing.T)</function>
+      <function>func TestMarkdownFormatterSkipEmpty(t *testing.T)</function>
+      <function>func TestJSONFormatterSkipEmpty(t *testing.T)</function>
+      <function>func TestXMLFormatterSkipEmptyWithImports(t *testing.T)</function>
       <function>func TestXMLFormatterWithNoSchema(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/helpers.go" language="go">
