@@ -492,6 +492,30 @@ func TestResolveChangedFilesEmptyOutput(t *testing.T) {
 	}
 }
 
+func TestResolveChangedFilesNoCommits(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	cmd := exec.Command("git", "init")
+	cmd.Dir = tmpDir
+	if out, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("git init failed: %v\n%s", err, out)
+	}
+
+	// Create a file but don't commit
+	if err := os.WriteFile(filepath.Join(tmpDir, "main.go"), []byte("package main\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// --changed on a repo with no commits should return a clear error
+	_, err := resolveChangedFiles(tmpDir, true, "")
+	if err == nil {
+		t.Fatal("expected error for --changed on repo with no commits, got nil")
+	}
+	if !strings.Contains(err.Error(), "no commits") {
+		t.Errorf("expected 'no commits' in error message, got: %v", err)
+	}
+}
+
 func TestResolveRemoteURL(t *testing.T) {
 	tests := []struct {
 		input    string

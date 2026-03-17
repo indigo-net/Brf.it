@@ -400,6 +400,12 @@ func resolveChangedFiles(rootPath string, changed bool, since string) (map[strin
 		diffArgs = []string{"diff", "--name-only", since}
 	} else {
 		// --changed: uncommitted changes (staged + unstaged)
+		// Check if HEAD exists (repo may have no commits yet)
+		headCmd := exec.Command("git", "rev-parse", "HEAD")
+		headCmd.Dir = dir
+		if err := headCmd.Run(); err != nil {
+			return nil, fmt.Errorf("repository has no commits yet; --changed requires at least one commit")
+		}
 		diffArgs = []string{"diff", "--name-only", "HEAD"}
 	}
 
