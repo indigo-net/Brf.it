@@ -108,6 +108,7 @@ func DefaultConfig() *Config {
 		SecurityCheck:  true,
 		NoTree:         false,
 		NoTokens:       false,
+		NoSchema:       true, // skip schema by default to save tokens
 		MaxFileSize:    512000, // 500KB
 		MaxDocLength:   0,      // no limit
 	}
