@@ -442,3 +442,47 @@ func TestExtractDeadlineExceededContext(t *testing.T) {
 		t.Errorf("expected context.DeadlineExceeded, got: %v", err)
 	}
 }
+
+func TestExtractConcurrentCancelReturnsPromptly(t *testing.T) {
+	// Verify that concurrent Extract returns promptly when context is cancelled,
+	// even if goroutines are still in flight.
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Create multiple test files to ensure concurrent path is taken
+	var files []scanner.FileEntry
+	for i := 0; i < 10; i++ {
+		p := filepath.Join(tmpDir, fmt.Sprintf("test%d.go", i))
+		code := fmt.Sprintf("package test\n\nfunc Foo%d() {}\n", i)
+		if err := os.WriteFile(p, []byte(code), 0644); err != nil {
+			t.Fatal(err)
+		}
+		files = append(files, scanner.FileEntry{Path: p, Language: "go", Size: int64(len(code))})
+	}
+
+	scanResult := &scanner.ScanResult{Files: files}
+
+	// Cancel context after a short delay
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+
+	ext := NewDefaultFileExtractor()
+	start := time.Now()
+	_, err = ext.Extract(ctx, scanResult, &ExtractOptions{Concurrency: 4})
+
+	elapsed := time.Since(start)
+
+	// Should return with context error (files may finish before timeout)
+	if err != nil {
+		if err != context.DeadlineExceeded && err != context.Canceled {
+			t.Errorf("expected context error, got: %v", err)
+		}
+	}
+	// Regardless of success/failure, should not block for more than a few seconds
+	if elapsed > 15*time.Second {
+		t.Errorf("Extract took too long after context cancellation: %v", elapsed)
+	}
+}

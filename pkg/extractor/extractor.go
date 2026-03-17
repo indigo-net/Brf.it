@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
@@ -174,7 +175,27 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 			extracted[idx] = e.extractFile(ctx, entry, opts)
 		}(i, fileEntry)
 	}
-	wg.Wait()
+	// Wait for goroutines with context awareness.
+	// If context is cancelled, give in-flight goroutines a grace period
+	// to finish before returning (e.g. CGO parser calls cannot be interrupted).
+	waitDone := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(waitDone)
+	}()
+	select {
+	case <-waitDone:
+		// All goroutines completed normally
+	case <-ctx.Done():
+		cancelOnce.Do(func() { cancelErr = ctx.Err() })
+		select {
+		case <-waitDone:
+			// Goroutines finished within grace period
+		case <-time.After(10 * time.Second):
+			// In-flight goroutines did not finish; return to avoid blocking forever.
+			// Goroutines will eventually complete on their own.
+		}
+	}
 
 	// On context cancellation, discard partial results. The caller
 	// requested cancellation, so incomplete extraction is not useful.
