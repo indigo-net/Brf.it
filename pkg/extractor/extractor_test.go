@@ -483,3 +483,49 @@ func TestExtractConcurrentCancelReturnsPromptly(t *testing.T) {
 		t.Errorf("Extract took too long after context cancellation: %v", elapsed)
 	}
 }
+
+func TestIsBinaryContent(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  []byte
+		expected bool
+	}{
+		{"empty", []byte{}, false},
+		{"text", []byte("hello world"), false},
+		{"binary with NUL", []byte("hel\x00lo"), true},
+		{"UTF-16 LE BOM", []byte{0xFF, 0xFE, 'h', 0x00, 'i', 0x00}, false},
+		{"UTF-16 BE BOM", []byte{0xFE, 0xFF, 0x00, 'h', 0x00, 'i'}, false},
+		{"NUL without BOM", []byte{0x00, 0x01, 0x02}, true},
+		{"UTF-8 BOM", []byte{0xEF, 0xBB, 0xBF, 'h', 'e', 'l', 'l', 'o'}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := isBinaryContent(tt.content)
+			if got != tt.expected {
+				t.Errorf("isBinaryContent(%q) = %v, want %v", tt.content, got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestHasUTF16BOM(t *testing.T) {
+	tests := []struct {
+		name     string
+		content  []byte
+		expected bool
+	}{
+		{"empty", []byte{}, false},
+		{"single byte", []byte{0xFF}, false},
+		{"UTF-16 LE", []byte{0xFF, 0xFE}, true},
+		{"UTF-16 BE", []byte{0xFE, 0xFF}, true},
+		{"not BOM", []byte{0xFE, 0xFE}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := hasUTF16BOM(tt.content)
+			if got != tt.expected {
+				t.Errorf("hasUTF16BOM(%v) = %v, want %v", tt.content, got, tt.expected)
+			}
+		})
+	}
+}

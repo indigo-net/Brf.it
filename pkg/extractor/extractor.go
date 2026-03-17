@@ -239,13 +239,26 @@ func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.F
 const binarySniffSize = 512
 
 // isBinaryContent reports whether content appears to be binary by checking
-// for a NUL byte in the first 512 bytes.
+// for a NUL byte in the first 512 bytes. Files with a UTF-16 BOM are
+// treated as text to avoid false positives.
 func isBinaryContent(content []byte) bool {
+	if hasUTF16BOM(content) {
+		return false
+	}
 	sniff := content
 	if len(sniff) > binarySniffSize {
 		sniff = sniff[:binarySniffSize]
 	}
 	return bytes.ContainsRune(sniff, 0)
+}
+
+// hasUTF16BOM checks for UTF-16 LE (FF FE) or UTF-16 BE (FE FF) byte order marks.
+func hasUTF16BOM(content []byte) bool {
+	if len(content) < 2 {
+		return false
+	}
+	return (content[0] == 0xFF && content[1] == 0xFE) ||
+		(content[0] == 0xFE && content[1] == 0xFF)
 }
 
 // extractFile extracts signatures from a single file.
