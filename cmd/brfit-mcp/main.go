@@ -27,8 +27,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"sort"
+
 	"github.com/indigo-net/Brf.it/internal/config"
 	pkgcontext "github.com/indigo-net/Brf.it/internal/context"
+	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
@@ -70,6 +73,12 @@ func main() {
 		Name:        "summarize_file",
 		Description: "Extract function signatures and documentation from specific files matching a glob pattern.",
 	}, makeSummarizeFile(absRoot))
+
+	// Tool: list_languages
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "list_languages",
+		Description: "List all programming languages supported by brfit for code analysis.",
+	}, handleListLanguages)
 
 	if err := server.Run(context.Background(), &mcp.StdioTransport{}); err != nil {
 		fmt.Fprintf(os.Stderr, "server error: %v\n", err)
@@ -180,6 +189,26 @@ func makeSummarizeFile(defaultRoot string) func(context.Context, *mcp.CallToolRe
 			TotalSignatures: result.TotalSignatures,
 		}, nil
 	}
+}
+
+// ListLanguagesInput defines the input for the list_languages tool.
+// No required parameters.
+type ListLanguagesInput struct{}
+
+// ListLanguagesOutput defines the output for the list_languages tool.
+type ListLanguagesOutput struct {
+	Languages []string `json:"languages" jsonschema:"list of supported language names"`
+	Count     int      `json:"count" jsonschema:"number of supported languages"`
+}
+
+// handleListLanguages returns the list of supported programming languages.
+func handleListLanguages(_ context.Context, _ *mcp.CallToolRequest, _ ListLanguagesInput) (*mcp.CallToolResult, ListLanguagesOutput, error) {
+	langs := parser.DefaultRegistry().Languages()
+	sort.Strings(langs)
+	return nil, ListLanguagesOutput{
+		Languages: langs,
+		Count:     len(langs),
+	}, nil
 }
 
 // validFormats is the set of accepted output format values.
