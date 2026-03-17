@@ -586,6 +586,9 @@ main &quot;$@&quot;</imports>
 
 	// ErrorCount is the number of files that had parsing errors.
 	ErrorCount int
+
+	// ErrorFiles lists files that encountered errors during extraction.
+	ErrorFiles []extractor.ErrorDetail
 }</type>
       <type>type Packager struct {
 	scanner    scanner.Scanner
@@ -740,6 +743,12 @@ main &quot;$@&quot;</imports>
 	// Error is any error that occurred during extraction.
 	Error error
 }</type>
+      <type>type ErrorDetail struct {
+	// Path is the file that failed.
+	Path string
+	// Err is the error that occurred.
+	Err error
+}</type>
       <type>type ExtractResult struct {
 	// Files is the list of extracted files.
 	Files []ExtractedFile
@@ -752,6 +761,10 @@ main &quot;$@&quot;</imports>
 
 	// ErrorCount is the number of files that had errors.
 	ErrorCount int
+
+	// ErrorFiles lists files that encountered errors during extraction.
+	// This provides quick access to error details without iterating Files.
+	ErrorFiles []ErrorDetail
 }</type>
       <type>type ExtractOptions struct {
 	// IncludePrivate whether to include non-exported/private signatures.
