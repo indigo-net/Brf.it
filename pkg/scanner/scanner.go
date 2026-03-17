@@ -281,7 +281,7 @@ func (s *FileScanner) Scan(ctx context.Context) (*ScanResult, error) {
 					return filepath.SkipDir
 				}
 				// Check exclude patterns for directory
-				if s.matchesExcludeDir(path) {
+				if s.matchesExcludeDir(s.relPath(path)) {
 					return filepath.SkipDir
 				}
 			}
@@ -330,11 +330,11 @@ func (s *FileScanner) relPath(path string) string {
 
 // matchesInclude returns true if the path matches at least one include pattern.
 // Returns true if no include patterns are configured (no filtering).
-func (s *FileScanner) matchesInclude(path string) bool {
+// rel is the pre-computed relative path from relPath().
+func (s *FileScanner) matchesInclude(rel string) bool {
 	if len(s.opts.IncludePatterns) == 0 {
 		return true
 	}
-	rel := s.relPath(path)
 	for _, pattern := range s.opts.IncludePatterns {
 		// Patterns are validated in NewFileScanner; error is unreachable
 		if matched, _ := doublestar.Match(pattern, rel); matched {
@@ -345,11 +345,11 @@ func (s *FileScanner) matchesInclude(path string) bool {
 }
 
 // matchesExclude returns true if the path matches any exclude pattern.
-func (s *FileScanner) matchesExclude(path string) bool {
+// rel is the pre-computed relative path from relPath().
+func (s *FileScanner) matchesExclude(rel string) bool {
 	if len(s.opts.ExcludePatterns) == 0 {
 		return false
 	}
-	rel := s.relPath(path)
 	for _, pattern := range s.opts.ExcludePatterns {
 		// Patterns are validated in NewFileScanner; error is unreachable
 		if matched, _ := doublestar.Match(pattern, rel); matched {
@@ -361,11 +361,11 @@ func (s *FileScanner) matchesExclude(path string) bool {
 
 // matchesExcludeDir returns true if a directory should be pruned.
 // Handles patterns like "vendor/**" by also matching the directory name itself.
-func (s *FileScanner) matchesExcludeDir(path string) bool {
+// rel is the pre-computed relative path from relPath().
+func (s *FileScanner) matchesExcludeDir(rel string) bool {
 	if len(s.opts.ExcludePatterns) == 0 {
 		return false
 	}
-	rel := s.relPath(path)
 	for _, pattern := range s.opts.ExcludePatterns {
 		// Patterns are validated in NewFileScanner; error is unreachable
 		if matched, _ := doublestar.Match(pattern, rel); matched {
@@ -407,19 +407,21 @@ func (s *FileScanner) checkFile(path string, info os.FileInfo) (FileEntry, bool)
 		return FileEntry{}, false
 	}
 
+	// Compute relative path once for all pattern matching
+	rel := s.relPath(path)
+
 	// Check exclude patterns
-	if s.matchesExclude(path) {
+	if s.matchesExclude(rel) {
 		return FileEntry{}, false
 	}
 
 	// Check include patterns
-	if !s.matchesInclude(path) {
+	if !s.matchesInclude(rel) {
 		return FileEntry{}, false
 	}
 
 	// Check changed files whitelist
 	if s.opts.ChangedFiles != nil {
-		rel := s.relPath(path)
 		if !s.opts.ChangedFiles[rel] {
 			return FileEntry{}, false
 		}
