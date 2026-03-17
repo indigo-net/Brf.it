@@ -442,3 +442,44 @@ func TestExtractDeadlineExceededContext(t *testing.T) {
 		t.Errorf("expected context.DeadlineExceeded, got: %v", err)
 	}
 }
+
+func TestExtractConcurrentCancelReturnsPromptly(t *testing.T) {
+	// Verify that concurrent Extract returns promptly when context is
+	// already cancelled. Using a pre-cancelled context guarantees the
+	// cancellation code path is exercised.
+	tmpDir, err := os.MkdirTemp("", "brfit-test-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	// Create multiple test files to ensure concurrent path is taken
+	var files []scanner.FileEntry
+	for i := 0; i < 10; i++ {
+		p := filepath.Join(tmpDir, fmt.Sprintf("test%d.go", i))
+		code := fmt.Sprintf("package test\n\nfunc Foo%d() {}\n", i)
+		if err := os.WriteFile(p, []byte(code), 0644); err != nil {
+			t.Fatal(err)
+		}
+		files = append(files, scanner.FileEntry{Path: p, Language: "go", Size: int64(len(code))})
+	}
+
+	scanResult := &scanner.ScanResult{Files: files}
+
+	// Pre-cancel context so cancellation is guaranteed before goroutines start
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	ext := NewDefaultFileExtractor()
+	start := time.Now()
+	_, err = ext.Extract(ctx, scanResult, &ExtractOptions{Concurrency: 4})
+	elapsed := time.Since(start)
+
+	if err != context.Canceled {
+		t.Errorf("expected context.Canceled, got: %v", err)
+	}
+	// Must return nearly instantly with a pre-cancelled context
+	if elapsed > 5*time.Second {
+		t.Errorf("Extract took too long after context cancellation: %v", elapsed)
+	}
+}
