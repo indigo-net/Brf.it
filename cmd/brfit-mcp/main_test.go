@@ -71,6 +71,40 @@ func TestSummarizeFile(t *testing.T) {
 	}
 }
 
+func TestListLanguages(t *testing.T) {
+	_, output, err := handleListLanguages(context.Background(), &mcp.CallToolRequest{}, ListLanguagesInput{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if output.Count == 0 {
+		t.Error("expected at least 1 supported language")
+	}
+	if len(output.Languages) != output.Count {
+		t.Errorf("languages length %d does not match count %d", len(output.Languages), output.Count)
+	}
+
+	// Verify languages are sorted
+	for i := 1; i < len(output.Languages); i++ {
+		if output.Languages[i] < output.Languages[i-1] {
+			t.Errorf("languages not sorted: %q before %q", output.Languages[i-1], output.Languages[i])
+			break
+		}
+	}
+
+	// Verify Go is in the list (since we import treesitter parsers)
+	found := false
+	for _, lang := range output.Languages {
+		if lang == "go" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("expected 'go' in languages list, got: %v", output.Languages)
+	}
+}
+
 func TestSummarizeProjectInvalidPath(t *testing.T) {
 	handler := makeSummarizeProject("/nonexistent/path")
 	_, _, err := handler(context.Background(), &mcp.CallToolRequest{}, SummarizeProjectInput{})
