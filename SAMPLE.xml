@@ -71,6 +71,7 @@
       <function>func TestResolveChangedFilesPathAnchoring(t *testing.T)</function>
       <function>func TestResolveChangedFilesIncludesUntracked(t *testing.T)</function>
       <function>func TestResolveChangedFilesEmptyOutput(t *testing.T)</function>
+      <function>func TestResolveChangedFilesNoCommits(t *testing.T)</function>
       <function>func TestResolveRemoteURL(t *testing.T)</function>
       <function>func TestRemoteFlagConflictsWithPath(t *testing.T)</function>
       <function>func TestRemoteFlagConflictsWithChanged(t *testing.T)</function>
