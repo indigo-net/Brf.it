@@ -5530,6 +5530,8 @@ type TreeSitterParser struct {
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
+	mu              sync.RWMutex // guards query lifetime around Close
+	closed          bool
 }
 func NewTreeSitterParser() *TreeSitterParser
 func (p *TreeSitterParser) Close()
@@ -5572,6 +5574,7 @@ func FuzzParseJSON(f *testing.F)
 ```go
 import (
 	"strings"
+	"sync"
 	"testing"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 )
@@ -5654,6 +5657,9 @@ func TestTreeSitterParserParseYAML(t *testing.T)
 func TestTreeSitterParserParseTOML(t *testing.T)
 func TestSameLineDifferentNames(t *testing.T)
 func TestFindEnclosingFunctionEndLineZero(t *testing.T)
+func TestClosePreventsConcurrentAccess(t *testing.T)
+func TestCloseIdempotent(t *testing.T)
+func TestCloseConcurrentWithParse(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go

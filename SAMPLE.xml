@@ -5167,6 +5167,8 @@ import &quot;unsafe&quot;</imports>
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
+	mu              sync.RWMutex // guards query lifetime around Close
+	closed          bool
 }</type>
       <function>func NewTreeSitterParser() *TreeSitterParser</function>
       <function>func (p *TreeSitterParser) Close()</function>
@@ -5200,6 +5202,7 @@ import &quot;unsafe&quot;</imports>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/parser_test.go" language="go">
       <imports>import (
 	&quot;strings&quot;
+	&quot;sync&quot;
 	&quot;testing&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 )</imports>
@@ -5282,6 +5285,9 @@ import &quot;unsafe&quot;</imports>
       <function>func TestTreeSitterParserParseTOML(t *testing.T)</function>
       <function>func TestSameLineDifferentNames(t *testing.T)</function>
       <function>func TestFindEnclosingFunctionEndLineZero(t *testing.T)</function>
+      <function>func TestClosePreventsConcurrentAccess(t *testing.T)</function>
+      <function>func TestCloseIdempotent(t *testing.T)</function>
+      <function>func TestCloseConcurrentWithParse(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/query.go" language="go">
       <imports>import (
