@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	sitter "github.com/tree-sitter/go-tree-sitter"
 
@@ -54,6 +55,7 @@ type TreeSitterParser struct {
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
+	closed          atomic.Bool
 }
 
 // pooledParser wraps a sitter.Parser with the last language set,
@@ -107,7 +109,9 @@ func NewTreeSitterParser() *TreeSitterParser {
 // Close releases all cached Tree-sitter Query objects.
 // This should be called when the parser is no longer needed,
 // especially in long-running processes like brfit-mcp.
+// After Close, getOrCreateQuery returns an error instead of accessing freed memory.
 func (p *TreeSitterParser) Close() {
+	p.closed.Store(true)
 	p.compiledQueries.Range(func(key, value any) bool {
 		if q, ok := value.(*sitter.Query); ok {
 			q.Close()
@@ -120,6 +124,10 @@ func (p *TreeSitterParser) Close() {
 // getOrCreateQuery returns a cached query or creates and caches a new one.
 // The returned query should NOT be closed by the caller - it's managed by the cache.
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error) {
+	if p.closed.Load() {
+		return nil, fmt.Errorf("parser is closed")
+	}
+
 	key := queryCacheKey{lang: lang, typ: typ}
 
 	// Fast path: check cache (sync.Map is inherently thread-safe)
