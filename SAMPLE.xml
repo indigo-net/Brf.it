@@ -713,6 +713,7 @@ main &quot;$@&quot;</imports>
 	&quot;sort&quot;
 	&quot;strings&quot;
 	&quot;sync&quot;
+	&quot;time&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
 )</imports>
@@ -812,6 +813,7 @@ main &quot;$@&quot;</imports>
       <function>func TestFileExtractorUnsupportedLanguage(t *testing.T)</function>
       <function>func TestExtractCanceledContext(t *testing.T)</function>
       <function>func TestExtractDeadlineExceededContext(t *testing.T)</function>
+      <function>func TestExtractConcurrentCancelReturnsPromptly(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go" language="go">
       <imports>import (

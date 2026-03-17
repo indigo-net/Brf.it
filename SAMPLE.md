@@ -761,6 +761,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 	"github.com/indigo-net/Brf.it/pkg/parser"
 	"github.com/indigo-net/Brf.it/pkg/scanner"
 )
@@ -863,6 +864,7 @@ func TestExtractConcurrencyWithErrors(t *testing.T)
 func TestFileExtractorUnsupportedLanguage(t *testing.T)
 func TestExtractCanceledContext(t *testing.T)
 func TestExtractDeadlineExceededContext(t *testing.T)
+func TestExtractConcurrentCancelReturnsPromptly(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go
