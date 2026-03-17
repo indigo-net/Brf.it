@@ -188,10 +188,12 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 		// All goroutines completed normally
 	case <-ctx.Done():
 		cancelOnce.Do(func() { cancelErr = ctx.Err() })
+		graceTimer := time.NewTimer(10 * time.Second)
+		defer graceTimer.Stop()
 		select {
 		case <-waitDone:
 			// Goroutines finished within grace period
-		case <-time.After(10 * time.Second):
+		case <-graceTimer.C:
 			// In-flight goroutines did not finish; return to avoid blocking forever.
 			// Goroutines will eventually complete on their own.
 		}
