@@ -99,6 +99,9 @@ type Result struct {
 
 	// ErrorCount is the number of files that had parsing errors.
 	ErrorCount int
+
+	// ErrorFiles lists files that encountered errors during extraction.
+	ErrorFiles []extractor.ErrorDetail
 }
 
 // Packager orchestrates scanning, extraction, and formatting.
@@ -236,6 +239,7 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 		TotalSize:       extractResult.TotalSize,
 		TokenCount:      tokenCount,
 		ErrorCount:      extractResult.ErrorCount,
+		ErrorFiles:      extractResult.ErrorFiles,
 	}, nil
 }
 
