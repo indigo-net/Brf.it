@@ -146,9 +146,20 @@ func addFlags(cmd *cobra.Command, c *config.Config) {
 	var includeSchema bool
 	cmd.Flags().BoolVar(&includeSchema, "schema", false,
 		"include XML schema section in output")
+
+	// Skip empty files flags: --skip-empty (default) / --no-skip-empty for backwards compatibility
+	cmd.Flags().BoolVar(&c.SkipEmpty, "skip-empty", c.SkipEmpty,
+		"omit files with no signatures/imports from output (default: true)")
+	var noSkipEmpty bool
+	cmd.Flags().BoolVar(&noSkipEmpty, "no-skip-empty", false,
+		"include files with no signatures/imports in output")
+
 	cmd.PreRunE = func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("schema") && includeSchema {
 			c.NoSchema = false
+		}
+		if cmd.Flags().Changed("no-skip-empty") && noSkipEmpty {
+			c.SkipEmpty = false
 		}
 		return nil
 	}

@@ -79,6 +79,14 @@ func (f *JSONFormatter) Format(data *PackageData) ([]byte, error) {
 	}
 
 	for _, file := range data.Files {
+		// SkipEmpty: 빈 파일 건너뜀
+		if data.SkipEmpty && file.Error == nil {
+			hasImports := data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports
+			if len(file.Signatures) == 0 && !hasImports {
+				continue
+			}
+		}
+
 		jf := jsonFile{
 			Path:     file.Path,
 			Language: file.Language,

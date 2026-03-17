@@ -65,6 +65,9 @@ type Options struct {
 
 	// IncludeCallGraph enables function call graph extraction.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 
 // DefaultOptions returns Options with sensible defaults.
@@ -214,6 +217,7 @@ func (p *Packager) Package(ctx context.Context, opts *Options) (*Result, error) 
 		MaxDocLength:     opts.MaxDocLength,
 		NoSchema:         opts.NoSchema,
 		IncludeCallGraph: opts.IncludeCallGraph,
+		SkipEmpty:        opts.SkipEmpty,
 	}
 
 	// 6. Get formatter (normalize format and fallback to xml)

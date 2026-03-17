@@ -754,6 +754,192 @@ func TestJSONFormatterName(t *testing.T) {
 	}
 }
 
+func TestXMLFormatterSkipEmpty(t *testing.T) {
+	formatter := NewXMLFormatter()
+	data := &PackageData{
+		SkipEmpty: true,
+		Files: []FileData{
+			{
+				Path:       "empty.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+			},
+			{
+				Path:     "notempty.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "Foo", Kind: "function", Text: "func Foo()"},
+				},
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if strings.Contains(outputStr, `path="empty.go"`) {
+		t.Error("expected empty file to be skipped with SkipEmpty=true")
+	}
+	if !strings.Contains(outputStr, `path="notempty.go"`) {
+		t.Error("expected non-empty file to be present")
+	}
+	if strings.Contains(outputStr, "<!-- empty -->") {
+		t.Error("expected no <!-- empty --> comment with SkipEmpty=true")
+	}
+}
+
+func TestXMLFormatterSkipEmptyKeepsErrors(t *testing.T) {
+	formatter := NewXMLFormatter()
+	data := &PackageData{
+		SkipEmpty: true,
+		Files: []FileData{
+			{
+				Path:     "error.go",
+				Language: "go",
+				Error:    fmt.Errorf("parse error"),
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if !strings.Contains(outputStr, "error.go") {
+		t.Error("expected error file to be present even with SkipEmpty=true")
+	}
+	if !strings.Contains(outputStr, "<error>parse error</error>") {
+		t.Error("expected error element")
+	}
+}
+
+func TestXMLFormatterNoSkipEmpty(t *testing.T) {
+	formatter := NewXMLFormatter()
+	data := &PackageData{
+		SkipEmpty: false,
+		Files: []FileData{
+			{
+				Path:       "empty.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if !strings.Contains(outputStr, `path="empty.go"`) {
+		t.Error("expected empty file to be present with SkipEmpty=false")
+	}
+	if !strings.Contains(outputStr, "<!-- empty -->") {
+		t.Error("expected <!-- empty --> comment with SkipEmpty=false")
+	}
+}
+
+func TestMarkdownFormatterSkipEmpty(t *testing.T) {
+	formatter := NewMarkdownFormatter()
+	data := &PackageData{
+		SkipEmpty: true,
+		Files: []FileData{
+			{
+				Path:       "empty.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+			},
+			{
+				Path:     "notempty.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "Foo", Kind: "function", Text: "func Foo()"},
+				},
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if strings.Contains(outputStr, "### empty.go\n") {
+		t.Error("expected empty file to be skipped with SkipEmpty=true")
+	}
+	if !strings.Contains(outputStr, "### notempty.go") {
+		t.Error("expected non-empty file to be present")
+	}
+}
+
+func TestJSONFormatterSkipEmpty(t *testing.T) {
+	formatter := NewJSONFormatter()
+	data := &PackageData{
+		SkipEmpty: true,
+		Files: []FileData{
+			{
+				Path:       "empty.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+			},
+			{
+				Path:     "notempty.go",
+				Language: "go",
+				Signatures: []parser.Signature{
+					{Name: "Foo", Kind: "function", Text: "func Foo()"},
+				},
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	if strings.Contains(outputStr, `"path":"empty.go"`) {
+		t.Error("expected empty file to be skipped with SkipEmpty=true")
+	}
+	if !strings.Contains(outputStr, `"path":"notempty.go"`) {
+		t.Error("expected non-empty file to be present")
+	}
+}
+
+func TestXMLFormatterSkipEmptyWithImports(t *testing.T) {
+	formatter := NewXMLFormatter()
+	data := &PackageData{
+		SkipEmpty:      true,
+		IncludeImports: true,
+		Files: []FileData{
+			{
+				Path:       "with_imports.go",
+				Language:   "go",
+				Signatures: []parser.Signature{},
+				RawImports: []string{`import "fmt"`},
+			},
+		},
+	}
+
+	output, err := formatter.Format(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	outputStr := string(output)
+	// File has imports, so it should NOT be skipped
+	if !strings.Contains(outputStr, "with_imports.go") {
+		t.Error("expected file with imports to be present even with SkipEmpty=true")
+	}
+}
+
 func TestXMLFormatterWithNoSchema(t *testing.T) {
 	formatter := NewXMLFormatter()
 	data := &PackageData{
