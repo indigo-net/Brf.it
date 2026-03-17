@@ -866,6 +866,8 @@ func TestFileExtractorUnsupportedLanguage(t *testing.T)
 func TestExtractCanceledContext(t *testing.T)
 func TestExtractDeadlineExceededContext(t *testing.T)
 func TestExtractConcurrentCancelReturnsPromptly(t *testing.T)
+func TestIsBinaryContent(t *testing.T)
+func TestHasUTF16BOM(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go

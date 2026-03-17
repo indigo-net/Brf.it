@@ -815,6 +815,8 @@ main &quot;$@&quot;</imports>
       <function>func TestExtractCanceledContext(t *testing.T)</function>
       <function>func TestExtractDeadlineExceededContext(t *testing.T)</function>
       <function>func TestExtractConcurrentCancelReturnsPromptly(t *testing.T)</function>
+      <function>func TestIsBinaryContent(t *testing.T)</function>
+      <function>func TestHasUTF16BOM(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go" language="go">
       <imports>import (
