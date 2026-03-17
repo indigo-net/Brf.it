@@ -40,6 +40,14 @@ type ExtractedFile struct {
 	Error error
 }
 
+// ErrorDetail describes a per-file extraction error.
+type ErrorDetail struct {
+	// Path is the file that failed.
+	Path string
+	// Err is the error that occurred.
+	Err error
+}
+
 // ExtractResult contains the results of an extraction operation.
 type ExtractResult struct {
 	// Files is the list of extracted files.
@@ -53,6 +61,10 @@ type ExtractResult struct {
 
 	// ErrorCount is the number of files that had errors.
 	ErrorCount int
+
+	// ErrorFiles lists files that encountered errors during extraction.
+	// This provides quick access to error details without iterating Files.
+	ErrorFiles []ErrorDetail
 }
 
 // ExtractOptions configures the extraction behavior.
@@ -212,6 +224,7 @@ func (e *FileExtractor) Extract(ctx context.Context, scanResult *scanner.ScanRes
 		result.TotalSize += ef.Size
 		if ef.Error != nil {
 			result.ErrorCount++
+			result.ErrorFiles = append(result.ErrorFiles, ErrorDetail{Path: ef.Path, Err: ef.Error})
 		}
 	}
 	return result, nil
@@ -230,6 +243,7 @@ func (e *FileExtractor) extractSequential(ctx context.Context, files []scanner.F
 		result.TotalSize += extracted.Size
 		if extracted.Error != nil {
 			result.ErrorCount++
+			result.ErrorFiles = append(result.ErrorFiles, ErrorDetail{Path: extracted.Path, Err: extracted.Error})
 		}
 	}
 	return result, nil

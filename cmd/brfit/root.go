@@ -290,6 +290,9 @@ func runRoot(cmd *cobra.Command, args []string, c *config.Config) error {
 	// Report parsing errors and optionally fail in strict mode
 	if result.ErrorCount > 0 {
 		fmt.Fprintf(os.Stderr, "[brfit] WARN: %d file(s) had parsing errors\n", result.ErrorCount)
+		for _, ef := range result.ErrorFiles {
+			fmt.Fprintf(os.Stderr, "[brfit]   %s: %v\n", ef.Path, ef.Err)
+		}
 		if c.Strict {
 			return fmt.Errorf("%d file(s) had parsing errors (--strict mode)", result.ErrorCount)
 		}
