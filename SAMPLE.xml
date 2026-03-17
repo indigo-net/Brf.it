@@ -91,8 +91,10 @@
 	&quot;os&quot;
 	&quot;path/filepath&quot;
 	&quot;strings&quot;
+	&quot;sort&quot;
 	&quot;github.com/indigo-net/Brf.it/internal/config&quot;
 	pkgcontext &quot;github.com/indigo-net/Brf.it/internal/context&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
 	&quot;github.com/indigo-net/Brf.it/pkg/scanner&quot;
 	&quot;github.com/modelcontextprotocol/go-sdk/mcp&quot;
 	// Register Tree-sitter parsers.
@@ -121,6 +123,11 @@
 	TotalFiles      int    `json:&quot;total_files&quot; jsonschema:&quot;number of files processed&quot;`
 	TotalSignatures int    `json:&quot;total_signatures&quot; jsonschema:&quot;number of signatures extracted&quot;`
 }</type>
+      <type>type ListLanguagesInput struct{}</type>
+      <type>type ListLanguagesOutput struct {
+	Languages []string `json:&quot;languages&quot; jsonschema:&quot;list of supported language names&quot;`
+	Count     int      `json:&quot;count&quot; jsonschema:&quot;number of supported languages&quot;`
+}</type>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/cmd/brfit-mcp/main_test.go" language="go">
       <imports>import (
@@ -134,6 +141,7 @@
 )</imports>
       <function>func TestSummarizeProject(t *testing.T)</function>
       <function>func TestSummarizeFile(t *testing.T)</function>
+      <function>func TestListLanguages(t *testing.T)</function>
       <function>func TestSummarizeProjectInvalidPath(t *testing.T)</function>
       <function>func TestPathTraversal(t *testing.T)</function>
       <function>func TestInvalidFormat(t *testing.T)</function>
