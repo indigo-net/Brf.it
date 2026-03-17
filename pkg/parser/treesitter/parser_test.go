@@ -2,6 +2,7 @@ package treesitter
 
 import (
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/indigo-net/Brf.it/pkg/parser"
@@ -3270,4 +3271,65 @@ func TestFindEnclosingFunctionEndLineZero(t *testing.T) {
 			t.Errorf("findEnclosingFunction(sigs, %d) = %q, want %q", tt.line, got, tt.want)
 		}
 	}
+}
+
+func TestClosePreventsConcurrentAccess(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	// Parse once to populate cache
+	code := []byte("package main\n\nfunc Foo() {}\n")
+	_, err := p.Parse(code, &parser.Options{Language: "go"})
+	if err != nil {
+		t.Fatalf("initial Parse failed: %v", err)
+	}
+
+	// Close the parser
+	p.Close()
+
+	// Parse after Close should return error
+	_, err = p.Parse(code, &parser.Options{Language: "go"})
+	if err == nil {
+		t.Fatal("expected error after Close, got nil")
+	}
+	if !strings.Contains(err.Error(), "parser is closed") {
+		t.Errorf("expected 'parser is closed' error, got: %v", err)
+	}
+}
+
+func TestCloseIdempotent(t *testing.T) {
+	p := NewTreeSitterParser()
+
+	code := []byte("package main\n\nfunc Foo() {}\n")
+	_, err := p.Parse(code, &parser.Options{Language: "go"})
+	if err != nil {
+		t.Fatalf("Parse failed: %v", err)
+	}
+
+	// Multiple Close calls should not panic
+	p.Close()
+	p.Close()
+}
+
+func TestCloseConcurrentWithParse(t *testing.T) {
+	p := NewTreeSitterParser()
+	code := []byte("package main\n\nfunc Foo() {}\n")
+
+	// Warm the cache
+	if _, err := p.Parse(code, &parser.Options{Language: "go"}); err != nil {
+		t.Fatal(err)
+	}
+
+	// Launch concurrent Parse goroutines
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			// Error is acceptable — some will see "parser is closed"
+			p.Parse(code, &parser.Options{Language: "go"})
+		}()
+	}
+	// Close races with the goroutines above — should not panic or segfault
+	p.Close()
+	wg.Wait()
 }

@@ -54,6 +54,8 @@ type TreeSitterParser struct {
 	compiledQueries sync.Map // map[queryCacheKey]*sitter.Query
 	parserPool      sync.Pool
 	cursorPool      sync.Pool
+	mu              sync.RWMutex // guards query lifetime around Close
+	closed          bool
 }
 
 // pooledParser wraps a sitter.Parser with the last language set,
@@ -107,7 +109,12 @@ func NewTreeSitterParser() *TreeSitterParser {
 // Close releases all cached Tree-sitter Query objects.
 // This should be called when the parser is no longer needed,
 // especially in long-running processes like brfit-mcp.
+// After Close, Parse returns an error instead of accessing freed memory.
+// Close acquires a write lock to ensure no concurrent Parse is using queries.
 func (p *TreeSitterParser) Close() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.closed = true
 	p.compiledQueries.Range(func(key, value any) bool {
 		if q, ok := value.(*sitter.Query); ok {
 			q.Close()
@@ -119,6 +126,7 @@ func (p *TreeSitterParser) Close() {
 
 // getOrCreateQuery returns a cached query or creates and caches a new one.
 // The returned query should NOT be closed by the caller - it's managed by the cache.
+// Callers must hold p.mu.RLock() to ensure queries are not freed by Close().
 func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery, typ queryType) (*sitter.Query, error) {
 	key := queryCacheKey{lang: lang, typ: typ}
 
@@ -155,7 +163,15 @@ func (p *TreeSitterParser) getOrCreateQuery(lang string, langQuery LanguageQuery
 }
 
 // Parse parses the given content and returns extracted signatures.
+// Parse holds a read lock to ensure Close() cannot free queries mid-parse.
 func (p *TreeSitterParser) Parse(content []byte, opts *parser.Options) (result *parser.ParseResult, err error) {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	if p.closed {
+		return nil, fmt.Errorf("parser is closed")
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("tree-sitter panic recovered: %v", r)
