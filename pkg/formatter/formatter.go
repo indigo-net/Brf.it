@@ -66,6 +66,9 @@ type PackageData struct {
 
 	// IncludeCallGraph indicates whether to include function call references.
 	IncludeCallGraph bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 
 // ImportCount represents an import with its usage count across files.

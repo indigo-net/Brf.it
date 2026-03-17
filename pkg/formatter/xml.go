@@ -79,16 +79,28 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 	// Files section
 	buf.WriteString("  <files>\n")
 	for _, file := range data.Files {
+		// Imports section (within file block)
+		hasRenderedImports := false
+		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
+			hasRenderedImports = true
+		}
+
+		// 빈 파일 확인
+		isEmpty := file.Error == nil && len(file.Signatures) == 0 && !hasRenderedImports
+
+		// SkipEmpty가 true이면 빈 파일 전체를 건너뜀
+		if data.SkipEmpty && isEmpty {
+			continue
+		}
+
 		buf.WriteString("    <file path=\"")
 		buf.WriteString(escapeXML(file.Path))
 		buf.WriteString("\" language=\"")
 		buf.WriteString(escapeXML(file.Language))
 		buf.WriteString("\">\n")
 
-		// Imports section (within file block)
-		hasRenderedImports := false
-		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 {
-			hasRenderedImports = true
+		// Render imports
+		if hasRenderedImports {
 			buf.WriteString("      <imports>")
 			buf.WriteString(escapeXML(strings.Join(file.RawImports, "\n")))
 			buf.WriteString("</imports>\n")
@@ -99,9 +111,6 @@ func (f *XMLFormatter) Format(data *PackageData) ([]byte, error) {
 			buf.WriteString(escapeXML(file.Error.Error()))
 			buf.WriteString("</error>\n")
 		} else {
-			// 빈 파일 확인
-			isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
-
 			if isEmpty {
 				buf.WriteString("      <!-- empty -->\n")
 			} else {

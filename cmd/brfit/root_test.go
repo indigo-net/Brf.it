@@ -92,7 +92,7 @@ func TestNewRootCommand(t *testing.T) {
 	}
 
 	// Check flags exist
-	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size", "changed", "since", "token-tree", "security-check", "call-graph", "remote"}
+	flags := []string{"mode", "format", "output", "ignore", "include", "exclude", "include-hidden", "include-private", "no-tree", "no-tokens", "max-size", "changed", "since", "token-tree", "security-check", "call-graph", "remote", "skip-empty"}
 	for _, flag := range flags {
 		f := cmd.Flags().Lookup(flag)
 		if f == nil {
@@ -627,6 +627,44 @@ func TestCloneRemoteIntegration(t *testing.T) {
 	cleanup()
 	if _, err := os.Stat(tmpDir); !os.IsNotExist(err) {
 		t.Error("expected temp directory to be removed after cleanup")
+	}
+}
+
+func TestSkipEmptyFlagDefault(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	if !testCfg.SkipEmpty {
+		t.Error("expected SkipEmpty to be true by default")
+	}
+
+	cmd := newRootCommandWithConfig(testCfg)
+	cmd.SetArgs([]string{})
+	if err := cmd.ParseFlags([]string{}); err != nil {
+		t.Fatal(err)
+	}
+
+	if !testCfg.SkipEmpty {
+		t.Error("expected SkipEmpty to remain true after parsing empty flags")
+	}
+}
+
+func TestNoSkipEmptyFlag(t *testing.T) {
+	testCfg := config.DefaultConfig()
+	cmd := newRootCommandWithConfig(testCfg)
+
+	// Parse flags (including --no-skip-empty)
+	if err := cmd.ParseFlags([]string{"--no-skip-empty"}); err != nil {
+		t.Fatal(err)
+	}
+
+	// Manually trigger PreRunE to apply flag logic
+	if cmd.PreRunE != nil {
+		if err := cmd.PreRunE(cmd, []string{}); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	if testCfg.SkipEmpty {
+		t.Error("expected SkipEmpty to be false after --no-skip-empty")
 	}
 }
 

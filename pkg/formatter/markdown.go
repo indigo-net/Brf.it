@@ -65,24 +65,29 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 	// Files
 	buf.WriteString("## Files\n\n")
 	for _, file := range data.Files {
-		buf.WriteString("### ")
-		buf.WriteString(file.Path)
-		buf.WriteString("\n\n")
-
 		// Imports (within file block) - only if not deduping
 		hasRenderedImports := false
 		if file.Error == nil && data.IncludeImports && len(file.RawImports) > 0 && !data.DedupeImports {
 			hasRenderedImports = true
 		}
 
+		// 빈 파일 확인
+		isEmpty := file.Error == nil && len(file.Signatures) == 0 && !hasRenderedImports
+
+		// SkipEmpty가 true이면 빈 파일 전체를 건너뜀
+		if data.SkipEmpty && isEmpty {
+			continue
+		}
+
+		buf.WriteString("### ")
+		buf.WriteString(file.Path)
+		buf.WriteString("\n\n")
+
 		if file.Error != nil {
 			buf.WriteString("> **Error:** ")
 			buf.WriteString(escapeMarkdown(file.Error.Error()))
 			buf.WriteString("\n\n")
 		} else {
-			// 빈 파일 확인
-			isEmpty := len(file.Signatures) == 0 && !hasRenderedImports
-
 			buf.WriteString("```")
 			buf.WriteString(file.Language)
 			buf.WriteByte('\n')

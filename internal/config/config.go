@@ -92,6 +92,9 @@ type Config struct {
 
 	// Strict enables strict mode where any file parsing error causes a non-zero exit code.
 	Strict bool
+
+	// SkipEmpty omits files with no signatures/imports from the output entirely.
+	SkipEmpty bool
 }
 
 // DefaultConfig returns a Config with all default values set.
@@ -111,6 +114,7 @@ func DefaultConfig() *Config {
 		NoSchema:       true, // skip schema by default to save tokens
 		MaxFileSize:    512000, // 500KB
 		MaxDocLength:   0,      // no limit
+		SkipEmpty:      true,
 	}
 }
 
@@ -197,5 +201,6 @@ func (c *Config) ToOptions() *pkgcontext.Options {
 		NoSchema:         c.NoSchema,
 		SecurityCheck:    c.SecurityCheck,
 		IncludeCallGraph: c.CallGraph,
+		SkipEmpty:        c.SkipEmpty,
 	}
 }
