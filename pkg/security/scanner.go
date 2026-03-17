@@ -99,11 +99,18 @@ func (s *Scanner) Scan(result *extractor.ExtractResult) *ScanResult {
 }
 
 // scanFile scans a single extracted file and returns a redacted copy.
+// If no secrets are found, the original file is returned without copying.
 func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extractor.ExtractedFile {
 	if file.Error != nil {
 		return file
 	}
 
+	// Quick check: does this file contain any secrets?
+	if !s.containsSecret(file) {
+		return file
+	}
+
+	// Secrets found — create a redacted copy
 	redacted := extractor.ExtractedFile{
 		Path:     file.Path,
 		Language: file.Language,
@@ -127,6 +134,25 @@ func (s *Scanner) scanFile(file extractor.ExtractedFile, sr *ScanResult) extract
 	}
 
 	return redacted
+}
+
+// containsSecret checks if any text in the file matches a secret pattern.
+func (s *Scanner) containsSecret(file extractor.ExtractedFile) bool {
+	for _, sig := range file.Signatures {
+		for _, p := range s.patterns {
+			if p.Regex.MatchString(sig.Text) || p.Regex.MatchString(sig.Doc) {
+				return true
+			}
+		}
+	}
+	for _, imp := range file.RawImports {
+		for _, p := range s.patterns {
+			if p.Regex.MatchString(imp) {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // redactString replaces any matched secrets in the string with [REDACTED].
