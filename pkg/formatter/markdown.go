@@ -114,9 +114,14 @@ func (f *MarkdownFormatter) Format(data *PackageData) ([]byte, error) {
 			if !isEmpty {
 				for _, sig := range file.Signatures {
 					if sig.Doc != "" {
-						buf.WriteString("> ")
-						buf.WriteString(escapeMarkdown(truncateDoc(sig.Doc, data.MaxDocLength)))
-						buf.WriteString("\n")
+						// Prefix every line with the blockquote marker so
+						// multi-line docs stay inside the quote.
+						doc := truncateDoc(sig.Doc, data.MaxDocLength)
+						for _, line := range strings.Split(doc, "\n") {
+							buf.WriteString("> ")
+							buf.WriteString(escapeMarkdown(line))
+							buf.WriteString("\n")
+						}
 					}
 				}
 			}

@@ -304,6 +304,12 @@ func (p *TreeSitterParser) extractSignatures(
 	}
 	seen := make(map[dedupKey]bool)
 
+	// Collect standalone comment matches so they can be attached to the
+	// signatures they precede (see attachDocs). Every language captures
+	// comments as an independent (comment) @doc pattern, so they arrive as
+	// matches carrying only a doc capture (no name/signature).
+	var comments []docComment
+
 	for {
 		match := matches.Next()
 		if match == nil {
@@ -312,6 +318,7 @@ func (p *TreeSitterParser) extractSignatures(
 
 		sig := parser.Signature{}
 		sigColumn := 0
+		docStartLine, docEndLine := 0, 0
 		var kindNode *sitter.Node
 
 		for _, capture := range match.Captures {
@@ -343,6 +350,8 @@ func (p *TreeSitterParser) extractSignatures(
 			case CaptureDoc:
 				if len(raw) > 0 {
 					sig.Doc = cleanComment(string(raw))
+					docStartLine = int(node.StartPosition().Row) + 1
+					docEndLine = int(node.EndPosition().Row) + 1
 				}
 			}
 		}
@@ -501,10 +510,72 @@ func (p *TreeSitterParser) extractSignatures(
 
 			sig.Language = opts.Language
 			signatures = append(signatures, sig)
+		} else if sig.Doc != "" && docEndLine > 0 {
+			// Standalone comment match: remember it for doc attachment.
+			comments = append(comments, docComment{
+				startLine: docStartLine,
+				endLine:   docEndLine,
+				text:      sig.Doc,
+			})
 		}
 	}
 
+	attachDocs(signatures, comments)
+
 	return signatures, nil
+}
+
+// docComment is a standalone documentation comment captured during signature
+// extraction, tracked by the source lines it spans so it can be attached to the
+// declaration it precedes.
+type docComment struct {
+	startLine int
+	endLine   int
+	text      string // already cleaned via cleanComment
+}
+
+// attachDocs connects standalone documentation comments to the signatures they
+// immediately precede. A comment whose last line sits directly above a
+// signature's start line is attached as that signature's Doc, matching the
+// godoc/JSDoc convention.
+func attachDocs(signatures []parser.Signature, comments []docComment) {
+	if len(comments) == 0 {
+		return
+	}
+
+	// Index comments by the line they end on for O(1) lookup above a declaration.
+	byEndLine := make(map[int]docComment, len(comments))
+	for _, c := range comments {
+		byEndLine[c.endLine] = c
+	}
+
+	for i := range signatures {
+		if signatures[i].Doc != "" {
+			continue // already attached (e.g. via an in-pattern @doc capture)
+		}
+
+		// Walk contiguous comment lines upward starting just above the
+		// declaration. A blank line breaks the run, matching godoc semantics.
+		line := signatures[i].Line - 1
+		var block []string
+		for {
+			c, ok := byEndLine[line]
+			if !ok {
+				break
+			}
+			block = append(block, c.text)
+			line = c.startLine - 1
+		}
+		if len(block) == 0 {
+			continue
+		}
+
+		// block was collected bottom-up; reverse into reading order.
+		for l, r := 0, len(block)-1; l < r; l, r = l+1, r-1 {
+			block[l], block[r] = block[r], block[l]
+		}
+		signatures[i].Doc = strings.Join(block, "\n")
+	}
 }
 
 // cleanComment removes comment markers from the text.
