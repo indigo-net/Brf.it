@@ -75,6 +75,35 @@ export async function fetchUser(
 
 <br/>
 
+## Architektur
+
+`brfit` ist eine fünfstufige Pipeline. Ein Orchestrator – `Packager.Package()` in `internal/context` – führt Ihre Dateien durch jede Stufe:
+
+```mermaid
+flowchart LR
+    Files --> Scanner --> Extractor --> Security --> Formatter --> Tokenizer --> Output["XML / MD / JSON"]
+    Extractor -. uses .-> Parser["Parser × 19 languages"]
+```
+
+| Stufe | Paket | Aufgabe |
+|-------|-------|---------|
+| Scanner | `pkg/scanner` | Wählt zu lesende Dateien aus (.gitignore, glob, Größenfilter) |
+| Extractor | `pkg/extractor` | Führt Dateien nebenläufig durch den passenden Parser (Worker-Pool) |
+| Parser | `pkg/parser` | Parst eine Datei via Tree-sitter, extrahiert Signaturen (19 Sprachen) |
+| Security | `pkg/security` | Erkennt und maskiert Geheimnisse |
+| Formatter | `pkg/formatter` | Rendert Ausgabe als XML / Markdown / JSON |
+| Tokenizer | `pkg/tokenizer` | Zählt Ausgabe-Tokens |
+
+**Designprinzipien**
+
+- **Interface-first.** `Scanner`, `Extractor`, `Parser` und `Formatter` sind Interfaces. Eine Sprache, ein Format oder ein CLI-Flag hinzuzufügen bedeutet, einen Platz zu füllen – nicht den Kern umzubauen.
+- **Grenze Extractor → Parser.** Der Extractor kümmert sich um Skalierung (Nebenläufigkeit, I/O, Fehleraggregation); jeder Parser um eine Sprache. Sie sind über eine **Registry** lose gekoppelt, sodass eine neue Sprache den Extractor nie berührt.
+- **Zwei Einstiegspunkte, ein Kern.** `cmd/brfit` (CLI) und `cmd/brfit-mcp` (MCP-Server) teilen sich dieselben `pkg/`-Pakete.
+
+---
+
+<br/>
+
 ## Schnellstart
 
 ### Installation

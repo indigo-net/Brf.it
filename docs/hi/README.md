@@ -75,6 +75,35 @@ export async function fetchUser(
 
 <br/>
 
+## आर्किटेक्चर
+
+`brfit` एक पाँच-चरण पाइपलाइन है। एक ऑर्केस्ट्रेटर — `internal/context` में `Packager.Package()` — आपकी फ़ाइलों को हर चरण से गुज़ारता है:
+
+```mermaid
+flowchart LR
+    Files --> Scanner --> Extractor --> Security --> Formatter --> Tokenizer --> Output["XML / MD / JSON"]
+    Extractor -. uses .-> Parser["Parser × 19 languages"]
+```
+
+| चरण | पैकेज | ज़िम्मेदारी |
+|------|-------|-------------|
+| Scanner | `pkg/scanner` | पढ़ने योग्य फ़ाइलें चुनता है (.gitignore, glob, आकार फ़िल्टर) |
+| Extractor | `pkg/extractor` | फ़ाइलों को सही पार्सर से समानांतर चलाता है (वर्कर पूल) |
+| Parser | `pkg/parser` | Tree-sitter से एक फ़ाइल पार्स कर सिग्नेचर निकालता है (19 भाषाएँ) |
+| Security | `pkg/security` | सीक्रेट्स का पता लगाकर छिपाता है |
+| Formatter | `pkg/formatter` | आउटपुट को XML / Markdown / JSON में रेंडर करता है |
+| Tokenizer | `pkg/tokenizer` | आउटपुट टोकन गिनता है |
+
+**डिज़ाइन सिद्धांत**
+
+- **इंटरफ़ेस-प्रथम।** `Scanner`, `Extractor`, `Parser` और `Formatter` सभी इंटरफ़ेस हैं। भाषा, फ़ॉर्मेट या CLI फ़्लैग जोड़ना कोर को दोबारा बनाना नहीं, बल्कि एक तयशुदा जगह भरना है।
+- **Extractor → Parser सीमा।** Extractor स्केल (समानांतरता, I/O, एरर एकत्रीकरण) संभालता है; हर Parser एक भाषा। वे **Registry** के ज़रिए ढीले-ढाले जुड़े हैं, इसलिए नई भाषा जोड़ने पर Extractor को छूना नहीं पड़ता।
+- **दो प्रवेश-बिंदु, एक कोर।** `cmd/brfit` (CLI) और `cmd/brfit-mcp` (MCP सर्वर) एक ही `pkg/` पैकेज साझा करते हैं।
+
+---
+
+<br/>
+
 ## क्विक स्टार्ट
 
 ### इंस्टॉलेशन
