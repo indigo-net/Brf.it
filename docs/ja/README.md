@@ -75,6 +75,35 @@ export async function fetchUser(
 
 <br/>
 
+## アーキテクチャ
+
+`brfit` は5段階のパイプラインです。1つのオーケストレーター（`internal/context` の `Packager.Package()`）がファイルを各段階に通します：
+
+```mermaid
+flowchart LR
+    Files --> Scanner --> Extractor --> Security --> Formatter --> Tokenizer --> Output["XML / MD / JSON"]
+    Extractor -. uses .-> Parser["Parser × 19 languages"]
+```
+
+| 段階 | パッケージ | 役割 |
+|------|-----------|------|
+| Scanner | `pkg/scanner` | 読み込むファイルを選別（.gitignore、glob、サイズフィルタ） |
+| Extractor | `pkg/extractor` | ファイルを適切なパーサーで並行処理（ワーカープール） |
+| Parser | `pkg/parser` | Tree-sitter で1ファイルを解析しシグネチャを抽出（19言語） |
+| Security | `pkg/security` | シークレットの検出とマスキング |
+| Formatter | `pkg/formatter` | XML / Markdown / JSON で出力を整形 |
+| Tokenizer | `pkg/tokenizer` | 出力トークン数をカウント |
+
+**設計原則**
+
+- **インターフェース優先。** `Scanner`、`Extractor`、`Parser`、`Formatter` はすべてインターフェースです。言語・フォーマット・CLIフラグの追加は、コアを作り直すのではなく、決められた枠を埋める作業です。
+- **Extractor → Parser の境界。** Extractor はスケール（並行処理、I/O、エラー集約）を担い、各 Parser は1つの言語を担います。両者は **Registry** を介して疎結合しているため、新しい言語を追加しても Extractor には触れません。
+- **2つのエントリーポイント、1つのコア。** `cmd/brfit`（CLI）と `cmd/brfit-mcp`（MCPサーバー）は同じ `pkg/` パッケージを共有します。
+
+---
+
+<br/>
+
 ## クイックスタート
 
 ### インストール
