@@ -899,6 +899,17 @@ func TestIsBinaryContent(t *testing.T)
 func TestHasUTF16BOM(t *testing.T)
 ```
 
+### /home/runner/work/Brf.it/Brf.it/pkg/formatter/doc_render_test.go
+
+```go
+import (
+	"strings"
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func TestMarkdownFormatterMultiLineDocQuoted(t *testing.T)
+```
+
 ### /home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go
 
 ```go
@@ -1282,6 +1293,20 @@ func TestMockParser(t *testing.T)
 func TestRegistry(t *testing.T)
 func TestDefaultRegistry(t *testing.T)
 func TestDetectLanguage(t *testing.T)
+```
+
+### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/doc_test.go
+
+```go
+import (
+	"testing"
+	"github.com/indigo-net/Brf.it/pkg/parser"
+)
+func TestParseAttachesDocComment(t *testing.T)
+func TestParseAttachesMultiLineDoc(t *testing.T)
+func TestParseDoesNotAttachSeparatedComment(t *testing.T)
+func TestParseDoesNotAttachTrailingComment(t *testing.T)
+func TestParseAttachesBlockDoc(t *testing.T)
 ```
 
 ### /home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/binding.go

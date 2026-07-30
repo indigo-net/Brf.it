@@ -847,6 +847,14 @@ main &quot;$@&quot;</imports>
       <function>func TestIsBinaryContent(t *testing.T)</function>
       <function>func TestHasUTF16BOM(t *testing.T)</function>
     </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/doc_render_test.go" language="go">
+      <imports>import (
+	&quot;strings&quot;
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func TestMarkdownFormatterMultiLineDocQuoted(t *testing.T)</function>
+    </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/formatter/example_test.go" language="go">
       <imports>import (
 	&quot;fmt&quot;
@@ -1192,6 +1200,17 @@ main &quot;$@&quot;</imports>
       <function>func TestRegistry(t *testing.T)</function>
       <function>func TestDefaultRegistry(t *testing.T)</function>
       <function>func TestDetectLanguage(t *testing.T)</function>
+    </file>
+    <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/doc_test.go" language="go">
+      <imports>import (
+	&quot;testing&quot;
+	&quot;github.com/indigo-net/Brf.it/pkg/parser&quot;
+)</imports>
+      <function>func TestParseAttachesDocComment(t *testing.T)</function>
+      <function>func TestParseAttachesMultiLineDoc(t *testing.T)</function>
+      <function>func TestParseDoesNotAttachSeparatedComment(t *testing.T)</function>
+      <function>func TestParseDoesNotAttachTrailingComment(t *testing.T)</function>
+      <function>func TestParseAttachesBlockDoc(t *testing.T)</function>
     </file>
     <file path="/home/runner/work/Brf.it/Brf.it/pkg/parser/treesitter/grammars/csharp/binding.go" language="go">
       <imports>import &quot;C&quot;
