@@ -304,6 +304,12 @@ func (p *TreeSitterParser) extractSignatures(
 	}
 	seen := make(map[dedupKey]bool)
 
+	// Collect standalone comment matches so they can be attached to the
+	// signatures they precede (see attachDocs). Every language captures
+	// comments as an independent (comment) @doc pattern, so they arrive as
+	// matches carrying only a doc capture (no name/signature).
+	var comments []docComment
+
 	for {
 		match := matches.Next()
 		if match == nil {
@@ -312,6 +318,8 @@ func (p *TreeSitterParser) extractSignatures(
 
 		sig := parser.Signature{}
 		sigColumn := 0
+		docStartLine, docEndLine := 0, 0
+		docStandalone := false
 		var kindNode *sitter.Node
 
 		for _, capture := range match.Captures {
@@ -343,6 +351,9 @@ func (p *TreeSitterParser) extractSignatures(
 			case CaptureDoc:
 				if len(raw) > 0 {
 					sig.Doc = cleanComment(string(raw))
+					docStartLine = int(node.StartPosition().Row) + 1
+					docEndLine = int(node.EndPosition().Row) + 1
+					docStandalone = isStandaloneComment(content, start, int(node.StartPosition().Column))
 				}
 			}
 		}
@@ -501,10 +512,92 @@ func (p *TreeSitterParser) extractSignatures(
 
 			sig.Language = opts.Language
 			signatures = append(signatures, sig)
+		} else if sig.Doc != "" && docEndLine > 0 && docStandalone {
+			// Standalone (leading) comment match: remember it for doc
+			// attachment. Trailing/inline comments are skipped so they can't
+			// leak onto the following declaration.
+			comments = append(comments, docComment{
+				startLine: docStartLine,
+				endLine:   docEndLine,
+				text:      sig.Doc,
+			})
 		}
 	}
 
+	attachDocs(signatures, comments)
+
 	return signatures, nil
+}
+
+// docComment is a standalone documentation comment captured during signature
+// extraction, tracked by the source lines it spans so it can be attached to the
+// declaration it precedes.
+type docComment struct {
+	startLine int
+	endLine   int
+	text      string // already cleaned via cleanComment
+}
+
+// attachDocs connects standalone documentation comments to the signatures they
+// immediately precede. A comment whose last line sits directly above a
+// signature's start line is attached as that signature's Doc, matching the
+// godoc/JSDoc convention.
+func attachDocs(signatures []parser.Signature, comments []docComment) {
+	if len(comments) == 0 {
+		return
+	}
+
+	// Index comments by the line they end on for O(1) lookup above a declaration.
+	byEndLine := make(map[int]docComment, len(comments))
+	for _, c := range comments {
+		byEndLine[c.endLine] = c
+	}
+
+	for i := range signatures {
+		if signatures[i].Doc != "" {
+			continue // doc already set for this signature
+		}
+
+		// Walk contiguous comment lines upward starting just above the
+		// declaration. A blank line breaks the run, matching godoc semantics.
+		line := signatures[i].Line - 1
+		var block []string
+		for {
+			c, ok := byEndLine[line]
+			if !ok {
+				break
+			}
+			block = append(block, c.text)
+			line = c.startLine - 1
+		}
+		if len(block) == 0 {
+			continue
+		}
+
+		// block was collected bottom-up; reverse into reading order.
+		for l, r := 0, len(block)-1; l < r; l, r = l+1, r-1 {
+			block[l], block[r] = block[r], block[l]
+		}
+		signatures[i].Doc = strings.Join(block, "\n")
+	}
+}
+
+// isStandaloneComment reports whether the comment beginning at startByte is the
+// first non-whitespace token on its line (a leading doc comment), as opposed to
+// a trailing/inline comment that follows code on the same line. column is the
+// comment's start column in bytes, as reported by tree-sitter.
+func isStandaloneComment(content []byte, startByte uint, column int) bool {
+	start := int(startByte)
+	lineStart := start - column
+	if column < 0 || lineStart < 0 || start > len(content) {
+		return true // be permissive if positions look inconsistent
+	}
+	for _, b := range content[lineStart:start] {
+		if b != ' ' && b != '\t' {
+			return false
+		}
+	}
+	return true
 }
 
 // cleanComment removes comment markers from the text.
